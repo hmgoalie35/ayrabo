@@ -1,0 +1,45 @@
+{% load static %}
+{% load compress %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}E-ScoreSheet{% endblock %}</title>
+
+    {% compress css %}
+        <link rel="stylesheet" href="{% static 'bootstrap/dist/css/bootstrap.min.css' %}">
+        <link rel="stylesheet" href="{% static 'font-awesome/css/font-awesome.min.css' %}">
+        <link rel="stylesheet" href="{% static 'animate.css/animate.min.css' %}">
+        <link rel="stylesheet" type="text/scss" href="{% static 'stylesheets/main_style.scss' %}">
+
+        {% block extra_style %}
+        {% endblock %}
+
+    {% endcompress %}
+
+</head>
+<body>
+
+{% block messages %}
+{% endblock %}
+
+{% block navbar %}
+{% endblock %}
+
+{% block content %}
+{% endblock %}
+
+{% compress js %}
+
+    <script src="{% static 'jquery/dist/jquery.min.js' %}"></script>
+    <script src="{% static 'bootstrap/dist/js/bootstrap.min.js' %}"></script>
+
+    {% block extra_js %}
+    {% endblock %}
+
+{% endcompress %}
+</body>
+</html>
