@@ -1,5 +1,6 @@
 from allauth.account import forms as allauth_forms
 from django import forms
+from escoresheet.utils import remove_form_placeholders
 
 
 # @TODO set up hooks so that User.objects.create() does the necessary stuff for django all auth to work (create EmailAddress, EmailConfirmation, etc.)
@@ -15,8 +16,11 @@ class SignupForm(allauth_forms.SignupForm):
         self.fields.move_to_end('first_name', False)
         # The username field has autofocus by default, remove this because first name will have autofocus
         self.fields.get('username').widget.attrs.pop('autofocus')
-        # Remove all placeholder attributes
-        for field_name in self.fields:
-            attributes = self.fields.get(field_name).widget.attrs
-            if 'placeholder' in attributes:
-                attributes.pop('placeholder')
+        remove_form_placeholders(self.fields)
+
+
+class LoginForm(allauth_forms.LoginForm):
+    def __init__(self, *args, **kwargs):
+        super(LoginForm, self).__init__(*args, **kwargs)
+        self.fields.get('login').label = 'Username or email'
+        remove_form_placeholders(self.fields)
