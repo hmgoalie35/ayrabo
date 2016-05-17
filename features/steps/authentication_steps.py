@@ -68,12 +68,27 @@ def login(context, login_method='', email='', password=''):
             username_email_field=username_email_field, email=user.email if len(email) == 0 else email)
     fill_in_password_step = 'when I fill in "{password_field}" with "{password}"'.format(password_field=password_field,
                                                                                          password=user_password if len(
-                                                                                             password) == 0 else password)
+                                                                                                 password) == 0 else password)
     press_login_step = 'and I press "{login_btn}"'.format(login_btn=login_btn)
 
     steps = '''{step_1}\n{step_2}\n{step_3}'''.format(step_1=fill_in_username_email_step, step_2=fill_in_password_step,
                                                       step_3=press_login_step)
     context.execute_steps(steps)
+
+
+def logout(context):
+    """
+    Logs a user out via the dropdown menu and logout menu item only if a user is logged in
+    """
+
+    if 'Logout' in context.driver.page_source:
+        steps = '''when I press "account_menu"
+               when I press "logout_btn_acct_menu"
+               when I press "//*[@id="logout_btn_modal"]"
+        '''
+        context.execute_steps(steps)
+    context.test.assertIn('Login', context.driver.page_source)
+    context.test.assertNotIn('Logout', context.driver.page_source)
 
 
 """
@@ -111,12 +126,15 @@ Logging in / out
 """
 
 
+@step("I am logged in")
+def step_impl(context):
+    create_confirmed_account(context)
+    context.execute_steps('''when I login with valid credentials''')
+
+
 @given("I am not logged in")
 def step_impl(context):
-    context.driver.get(context.get_url('home'))
-    context.test.client.logout()
-    context.test.assertIn('Login', context.driver.page_source)
-    context.test.assertNotIn('Logout', context.driver.page_source)
+    logout(context)
 
 
 @when('I login with valid credentials\s*(?P<optional>via "(?P<login_method>.*)")?')
@@ -143,3 +161,8 @@ def step_impl(context):
 def step_impl(context):
     context.test.assertIn('Login', context.driver.page_source)
     context.test.assertNotIn('Logout', context.driver.page_source)
+
+
+@when("I logout")
+def step_impl(context):
+    logout(context)

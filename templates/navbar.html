@@ -82,7 +82,7 @@
                     <div class="text-center">
                         <form action="{% url 'account_logout' %}" method="post">
                             {% csrf_token %}
-                            <button role="button" type="submit" class="btn btn-primary">Logout</button>
+                            <button id="logout_btn_modal" role="button" type="submit" class="btn btn-primary">Logout</button>
                         </form>
                     </div>
                 </div>
