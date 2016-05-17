@@ -1,0 +1,21 @@
+#noty_topRight_layout_container {
+  :hover {
+    opacity: 0.5;
+  }
+
+  .list-group-item {
+    margin: 4px 0;
+  }
+}
+
+.noty_type_info {
+  color: #31708F;
+  background-color: #D9EDF7;
+  border-color: #BCE8F1;
+}
+
+.noty_type_alert {
+  color: #A94442;
+  background-color: #F2DEDE;
+  border-color: #EBCCD1;
+}

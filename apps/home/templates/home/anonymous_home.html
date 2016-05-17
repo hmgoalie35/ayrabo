@@ -5,7 +5,11 @@
         <div class="row">
             <div class="col-sm-12">
                 <div class="text-center">
-                    Welcome!
+                    {% if user.is_authenticated %}
+                        <h1>Welcome {{ user.full_name }}</h1>
+                    {% else %}
+                        <h3><a href="{% url 'account_register' %}">Register for an account</a></h3>
+                    {% endif %}
                 </div>
             </div>
         </div>

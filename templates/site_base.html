@@ -2,7 +2,7 @@
 {% load compress %}
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ LANGUAGE_CODE }}">
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -23,10 +23,8 @@
 </head>
 <body>
 
-{% block messages %}
-{% endblock %}
-
 {% block navbar %}
+    {% include 'navbar.html' %}
 {% endblock %}
 
 {% block content %}
@@ -36,10 +34,17 @@
 
     <script src="{% static 'jquery/dist/jquery.min.js' %}"></script>
     <script src="{% static 'bootstrap/dist/js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'javascripts/noty/packaged/jquery.noty.packaged.min.js' %}"></script>
 
     {% block extra_js %}
     {% endblock %}
 
 {% endcompress %}
+
+{% block messages %}
+    <!-- noty needs jquery to be loaded -->
+    {% include 'messages.html' %}
+{% endblock %}
+
 </body>
 </html>

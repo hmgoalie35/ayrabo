@@ -13,6 +13,8 @@ https://docs.djangoproject.com/en/1.9/ref/settings/
 import os
 import sys
 
+SITE_ID = 1
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
@@ -58,29 +60,36 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
 
     # 3rd party apps
     'debug_toolbar',
     'djangobower',
     'django_extensions',
     'compressor',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'behave_django',
+    'bootstrapform',
 
     # custom apps
-    'home'
+    'home',
 ]
 
-# @TODO this is important!!
+# @TODO Order matters,
 # https://docs.djangoproject.com/en/1.9/topics/i18n/translation/#how-django-discovers-language-preference
 MIDDLEWARE_CLASSES = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
+    'django.contrib.sites.middleware.CurrentSiteMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'django.middleware.locale.LocaleMiddleware',
 ]
 
 ROOT_URLCONF = 'escoresheet.urls'
@@ -116,6 +125,11 @@ DATABASES = {
         'NAME': os.path.join(BASE_DIR, 'prod_db.sqlite3'),
     }
 }
+
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',
+)
 
 
 # Password validation
@@ -280,8 +294,24 @@ COMPRESS_CSS_FILTERS = ['compressor.filters.css_default.CssAbsoluteFilter',
 COMPRESS_JS_FILTERS = ['compressor.filters.yuglify.YUglifyJSFilter']
 
 # User account related
+
+# Django all auth
+ACCOUNT_AUTHENTICATION_METHOD = 'username_email'
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
+ACCOUNT_FORMS = {
+    'signup': 'account.forms.SignupForm'
+    # 'login': 'mypath'
+}
+# ACCOUNT_SIGNUP_FORM_CLASS = 'home.forms.SignupForm'
+ACCOUNT_USERNAME_MIN_LENGTH = 1
+ACCOUNT_PASSWORD_MIN_LENGTH = 8
+ACCOUNT_SESSION_REMEMBER = False
+ACCOUNT_USER_DISPLAY = lambda user: user.email
+
+# Django auth settings
 LOGIN_URL = '/account/login/'
-LOGIN_REDIRECT_URL = '/account/login/'
+LOGIN_REDIRECT_URL = '/'
 LOGOUT_URL = '/account/logout/'
 
 

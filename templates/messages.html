@@ -1,0 +1,18 @@
+{% load static %}
+{% if messages %}
+    {% for msg in messages %}
+        <script type="text/javascript">
+            var duration = parseInt('{{ msg.message|length }}');
+            duration = (duration >= 100) ? 6000 : 4000;
+            noty({
+                theme: 'bootstrapTheme',
+                type: '{{msg.level_tag}}',
+                text: '{{msg.message}}',
+                layout: 'topRight',
+                timeout: duration,
+                force: true,
+                closeWith: ['click', 'button']
+            });
+        </script>
+    {% endfor %}
+{% endif %}

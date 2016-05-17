@@ -1,0 +1,20 @@
+{% extends "site_base.html" %}
+{% load bootstrap %}
+
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-offset-4 col-sm-4 col-sm-offset-4">
+                <h1>Register</h1>
+                <form class="signup" id="signup_form" method="post" action="{% url 'account_register' %}">
+                    {% csrf_token %}
+                    {{ form | bootstrap }}
+                    {% if redirect_field_value %}
+                        <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}"/>
+                    {% endif %}
+                    <button id="id_submit" type="submit" class="btn btn-primary">Register</button>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}
