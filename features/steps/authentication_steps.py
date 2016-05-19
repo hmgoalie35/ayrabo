@@ -2,40 +2,20 @@ import re
 
 from allauth.account.models import EmailAddress
 from behave import *
-from django.contrib.auth.models import User
 from django.core import mail
+from django.db.models import Q
 from generic_steps import find_element
 
-user = None
-user_password = None
 
-
-def create_confirmed_account(context):
-    create_unconfirmed_account(context)
-    confirm_account(context)
-
-
-def create_unconfirmed_account(context):
+def create_unconfirmed_account(context, user_data):
     # Doing User.objects.create() will not work because django all auth doesn't know you created a user obj, so need to
     # manually POST to the signup page
-    user_data = {
-        'first_name': 'John',
-        'last_name': 'Doe',
-        'username': 'islanders1980',
-        'email': 'user@example.com',
-        'password1': 'myweakpassword',
-        'password2': 'myweakpassword'
-    }
     context.test.client.post(context.get_url('account_register'), data=user_data)
-    global user
-    user = User.objects.get(email='user@example.com')
-    global user_password
-    user_password = 'myweakpassword'
 
 
-def confirm_account(context, method='manual'):
+def confirm_account(context, username_or_email, method='manual'):
     # When method is email, check the mail box and follow the link, otherwise programatically confirm the email address.
-    if method == 'email':
+    if method == 'email_link':
         email_body = mail.outbox[0].body
         # Django's test client's host is testserver, but we need it to be the current host selenium is using
         # So remove testserver and add in the current host that is being used
@@ -45,12 +25,13 @@ def confirm_account(context, method='manual'):
         confirm_btn = find_element(context, 'confirm_email_btn')
         confirm_btn.click()
     else:
-        email_address_obj = EmailAddress.objects.get(user=user)
+        email_address_obj = EmailAddress.objects.get(
+                Q(user__email=username_or_email) | Q(user__username=username_or_email))
         email_address_obj.verified = True
         email_address_obj.save()
 
 
-def login(context, login_method='', email='', password=''):
+def login(context, username_or_email, password, login_method=''):
     # Defaults are for logging in via login page, not the navbar
     login_path = 'account_login'
     username_email_field = 'id_login'
@@ -64,11 +45,10 @@ def login(context, login_method='', email='', password=''):
 
     context.driver.get(context.get_url(login_path))
 
-    fill_in_username_email_step = 'when I fill in "{username_email_field}" with "{email}"'.format(
-            username_email_field=username_email_field, email=user.email if len(email) == 0 else email)
+    fill_in_username_email_step = 'when I fill in "{username_email_field}" with "{username_or_email}"'.format(
+            username_email_field=username_email_field, username_or_email=username_or_email)
     fill_in_password_step = 'when I fill in "{password_field}" with "{password}"'.format(password_field=password_field,
-                                                                                         password=user_password if len(
-                                                                                                 password) == 0 else password)
+                                                                                         password=password)
     press_login_step = 'and I press "{login_btn}"'.format(login_btn=login_btn)
 
     steps = '''{step_1}\n{step_2}\n{step_3}'''.format(step_1=fill_in_username_email_step, step_2=fill_in_password_step,
@@ -80,13 +60,13 @@ def logout(context):
     """
     Logs a user out via the dropdown menu and logout menu item only if a user is logged in
     """
-
     if 'Logout' in context.driver.page_source:
         steps = '''when I press "account_menu"
                when I press "logout_btn_acct_menu"
                when I press "//*[@id="logout_btn_modal"]"
         '''
         context.execute_steps(steps)
+    context.driver.get(context.get_url('home'))
     context.test.assertIn('Login', context.driver.page_source)
     context.test.assertNotIn('Logout', context.driver.page_source)
 
@@ -98,19 +78,22 @@ Account management
 """
 
 
-@given("I have a confirmed account")
-def step_impl(context):
-    create_confirmed_account(context)
+@step("The following (?P<account_type>confirmed|unconfirmed) user accounts exist")
+def step_impl(context, account_type):
+    for row in context.table:
+        user_data = dict(row.as_dict())
+        user_data['password1'] = user_data['password']
+        user_data['password2'] = user_data['password']
+        user_data.pop('password')
+        username_or_email = user_data['email']
+        create_unconfirmed_account(context, user_data)
+        if account_type == 'confirmed':
+            confirm_account(context, username_or_email)
 
 
-@given("I have an unconfirmed account")
-def step_impl(context):
-    create_unconfirmed_account(context)
-
-
-@when('I confirm my account via "(?P<method>.*)"')
-def step_impl(context, method):
-    confirm_account(context, method)
+@when('I confirm "(?P<username_or_email>.*)" via "(?P<method>.*)"')
+def step_impl(context, username_or_email, method):
+    confirm_account(context, username_or_email, method)
 
 
 @when("I follow an invalid email link")
@@ -126,28 +109,14 @@ Logging in / out
 """
 
 
-@step("I am logged in")
-def step_impl(context):
-    create_confirmed_account(context)
-    context.execute_steps('''when I login with valid credentials''')
-
-
 @given("I am not logged in")
 def step_impl(context):
     logout(context)
 
 
-@when('I login with valid credentials\s*(?P<optional>via "(?P<login_method>.*)")?')
-def step_impl(context, optional, login_method):
-    login(context, login_method)
-
-
-@when('I login with an invalid "(?P<method>.*)"')
-def step_impl(context, method):
-    if method == 'email':
-        login(context, email='myinvalidemail@testing.com')
-    elif method == 'password':
-        login(context, password='myinvalidpassword')
+@step('I login with "(?P<username_or_email>[^"]*)" and "(?P<password>[^"]*)"\s?(?P<optional>via "(?P<login_method>[^"]*)")?')
+def step_impl(context, username_or_email, password, optional, login_method):
+    login(context, username_or_email, password, login_method)
 
 
 @then("I should be logged in")

@@ -19,17 +19,21 @@ Feature: Register for an account
     And A user account should exist for "islanders1980"
 
   Scenario: Confirm email address with a valid link
-    Given I have an unconfirmed account
-    When I confirm my account via "email"
+    Given The following unconfirmed user accounts exist
+      | first_name | last_name | username      | email            | password       |
+      | John       | Doe       | islanders1984 | user@example.com | myweakpassword |
+    When I confirm "user@example.com" via "email_link"
     Then I should see "You have confirmed user@example.com"
     And I should be on the "account_login" page
 
   Scenario: Attempt to confirm email address with an invalid link
-    Given I have an unconfirmed account
+    Given The following unconfirmed user accounts exist
+      | first_name | last_name | username      | email            | password       |
+      | John       | Doe       | islanders1984 | user@example.com | myweakpassword |
+
     When I follow an invalid email link
     Then I should see "This confirmation link has expired or is invalid"
     And I should see "request a new confirmation link"
-
 
   Scenario: Register for an account with no info
     Given I am on the "account_register" page
