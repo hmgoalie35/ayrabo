@@ -301,7 +301,9 @@ ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
 ACCOUNT_FORMS = {
     'signup': 'account.forms.SignupForm',
-    'login': 'account.forms.LoginForm'
+    'login': 'account.forms.LoginForm',
+    'reset_password': 'account.forms.PasswordResetForm',
+    'reset_password_from_key': 'account.forms.PasswordResetFromKeyForm'
 }
 # ACCOUNT_SIGNUP_FORM_CLASS = 'home.forms.SignupForm'
 ACCOUNT_USERNAME_MIN_LENGTH = 1

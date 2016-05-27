@@ -78,7 +78,7 @@ Account management
 """
 
 
-@step("The following (?P<account_type>confirmed|unconfirmed) user accounts exist")
+@step("The following (?P<account_type>confirmed|unconfirmed) user accounts? exists?")
 def step_impl(context, account_type):
     for row in context.table:
         user_data = dict(row.as_dict())

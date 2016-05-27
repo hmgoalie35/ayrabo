@@ -3,9 +3,5 @@
 
 {% user_display user as user_display %}
 <p>
-    <strong>
-        {% trans "Note" %}:
-    </strong>
-    {% blocktrans %}you are already logged in as {{ user_display }}
-    {% endblocktrans %}
+    {% blocktrans %}<strong>Note:&nbsp;</strong>You are already logged in as {{ user_display }}{% endblocktrans %}
 </p>

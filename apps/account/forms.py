@@ -24,3 +24,15 @@ class LoginForm(allauth_forms.LoginForm):
         super(LoginForm, self).__init__(*args, **kwargs)
         self.fields.get('login').label = 'Username or email'
         remove_form_placeholders(self.fields)
+
+
+class PasswordResetForm(allauth_forms.ResetPasswordForm):
+    def __init__(self, *args, **kwargs):
+        super(PasswordResetForm, self).__init__(*args, **kwargs)
+        remove_form_placeholders(self.fields)
+
+
+class PasswordResetFromKeyForm(allauth_forms.ResetPasswordKeyForm):
+    def __init__(self, *args, **kwargs):
+        super(PasswordResetFromKeyForm, self).__init__(*args, **kwargs)
+        remove_form_placeholders(self.fields)
