@@ -7,11 +7,11 @@ Feature: Login to my existing account
     Given I am on the "home" page
     And I am not logged in
     And The following confirmed user accounts exist
-      | first_name | last_name | username      | email            | password       |
-      | John       | Doe       | islanders1980 | user@example.com | myweakpassword |
+      | first_name | last_name | email            | password       |
+      | John       | Doe       | user@example.com | myweakpassword |
     And The following unconfirmed user accounts exist
-      | first_name | last_name | username      | email        | password       |
-      | Jane       | Doe       | islanders1984 | jane@doe.com | myweakpassword |
+      | first_name | last_name | email        | password       |
+      | Jane       | Doe       | jane@doe.com | myweakpassword |
 
   Scenario: Login successfully via navbar
     Given I login with "user@example.com" and "myweakpassword" via "navbar"
@@ -24,12 +24,12 @@ Feature: Login to my existing account
   Scenario: Login with invalid email
     Given I login with "myincorrectemail@testing.com" and "myweakpassword"
     Then I should not be logged in
-    And I should see "The login and/or password you specified are not correct."
+    And I should see "The e-mail address and/or password you specified are not correct."
 
   Scenario: Login with invalid password
     When I login with "user@example.com" and "myincorrectpassword"
     Then I should not be logged in
-    And I should see "The login and/or password you specified are not correct."
+    And I should see "The e-mail address and/or password you specified are not correct."
 
   Scenario: Login with unconfirmed account
     Given I login with "jane@doe.com" and "myweakpassword"

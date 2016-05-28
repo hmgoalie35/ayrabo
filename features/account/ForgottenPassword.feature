@@ -5,8 +5,8 @@ Feature: Forgotten password
 
   Background: Confirmed user account exists
     Given The following confirmed user account exists
-      | first_name | last_name | username      | email            | password       |
-      | John       | Doe       | islanders1980 | user@example.com | myweakpassword |
+      | first_name | last_name | email            | password       |
+      | John       | Doe       | user@example.com | myweakpassword |
 
   Scenario: Navigate to password reset page
     Given I am on the "account_login" page

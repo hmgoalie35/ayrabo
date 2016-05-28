@@ -5,8 +5,8 @@ Feature: Logout
 
   Scenario: Logout after logging in
     Given The following confirmed user accounts exist
-      | first_name | last_name | username      | email            | password       |
-      | John       | Doe       | islanders1980 | user@example.com | myweakpassword |
+      | first_name | last_name | email            | password       |
+      | John       | Doe       | user@example.com | myweakpassword |
     And I login with "user@example.com" and "myweakpassword"
     And I am on the "home" page
     When I press "account_menu"

@@ -14,15 +14,18 @@ class SignupForm(allauth_forms.SignupForm):
         # move_to_end will move to the front if False is specified
         self.fields.move_to_end('last_name', False)
         self.fields.move_to_end('first_name', False)
-        # The username field has autofocus by default, remove this because first name will have autofocus
-        self.fields.get('username').widget.attrs.pop('autofocus')
         remove_form_placeholders(self.fields)
+
+    def clean(self):
+        super(SignupForm, self).clean()
+        if self.cleaned_data.get('email', None) is not None:
+            # Make the username the same as the email
+            self.cleaned_data['username'] = self.cleaned_data['email']
 
 
 class LoginForm(allauth_forms.LoginForm):
     def __init__(self, *args, **kwargs):
         super(LoginForm, self).__init__(*args, **kwargs)
-        self.fields.get('login').label = 'Username or email'
         remove_form_placeholders(self.fields)
 
 

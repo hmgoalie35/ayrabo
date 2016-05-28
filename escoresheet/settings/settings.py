@@ -296,8 +296,9 @@ COMPRESS_JS_FILTERS = ['compressor.filters.yuglify.YUglifyJSFilter']
 # User account related
 
 # Django all auth
-ACCOUNT_AUTHENTICATION_METHOD = 'username_email'
+ACCOUNT_AUTHENTICATION_METHOD = 'email'
 ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_USERNAME_REQUIRED = False
 ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
 ACCOUNT_FORMS = {
     'signup': 'account.forms.SignupForm',
