@@ -21,7 +21,8 @@ Feature: Edit information associated with my account
     When I go to the "account_edit" page
     Then I should be on the "account_login" page
 
-  Scenario: Change my password if I am already logged in
+  # See ChangePassword.feature for steps regarding actually changing the password
+  Scenario: Navigate to change password page if I am already logged in
     Given I login with "user@example.com" and "myweakpassword"
     And I go to the "account_edit" page
     When I press "change_password_btn"

@@ -304,7 +304,8 @@ ACCOUNT_FORMS = {
     'signup': 'account.forms.SignupForm',
     'login': 'account.forms.LoginForm',
     'reset_password': 'account.forms.PasswordResetForm',
-    'reset_password_from_key': 'account.forms.PasswordResetFromKeyForm'
+    'reset_password_from_key': 'account.forms.PasswordResetFromKeyForm',
+    'change_password': 'account.forms.ChangePasswordForm'
 }
 # ACCOUNT_SIGNUP_FORM_CLASS = 'home.forms.SignupForm'
 ACCOUNT_USERNAME_MIN_LENGTH = 1

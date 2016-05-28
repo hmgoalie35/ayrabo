@@ -41,5 +41,11 @@ class PasswordResetFromKeyForm(allauth_forms.ResetPasswordKeyForm):
         remove_form_placeholders(self.fields)
 
 
+class ChangePasswordForm(allauth_forms.ChangePasswordForm):
+    def __init__(self, *args, **kwargs):
+        super(ChangePasswordForm, self).__init__(*args, **kwargs)
+        remove_form_placeholders(self.fields)
+
+
 class EditAccountForm(forms.Form):
     pass
