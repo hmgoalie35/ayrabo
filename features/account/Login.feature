@@ -4,7 +4,8 @@ Feature: Login to my existing account
   I want to be able to login to my account
 
   Background: Not logged in
-    Given I am not logged in
+    Given I am on the "home" page
+    And I am not logged in
     And The following confirmed user accounts exist
       | first_name | last_name | username      | email            | password       |
       | John       | Doe       | islanders1980 | user@example.com | myweakpassword |
