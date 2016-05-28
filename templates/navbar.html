@@ -19,8 +19,7 @@
                            aria-haspopup="true" aria-expanded="false">Account<span class="caret"></span></a>
                         <ul class="dropdown-menu">
                             <li>
-                                <!-- Edit account -->
-                                <a href="#"><span class="fa fa-cog"></span>&nbsp; {{ user.email }}</a>
+                                <a id="edit_account_link" href="{% url 'account_edit' %}"><span class="fa fa-cog"></span>&nbsp; {{ user.email }}</a>
                             </li>
 
                             <li class="divider"></li>

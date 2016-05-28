@@ -29,6 +29,12 @@ def step_impl(context, url):
     context.driver.get(context.get_url(url))
 
 
+@step('I go to the "(?P<url>[^"]*)" page')
+def step_impl(context, url):
+    step = 'given I am on the "{url}" page\n'.format(url=url)
+    context.execute_steps(step)
+
+
 @step('I fill in "(?P<element>.*)" with "(?P<value>.*)"')
 def step_impl(context, element, value):
     the_element = find_element(context, element)
@@ -43,7 +49,11 @@ def step_impl(context, element):
 
 @step('I should be on the "(?P<url>.*)" page')
 def step_impl(context, url):
-    context.test.assertEqual(context.driver.current_url, context.get_url(url))
+    current_url = context.driver.current_url
+    # Check for query params and discard if exist
+    if '?' in context.driver.current_url:
+        current_url = current_url.split('?')[0]
+    context.test.assertEqual(current_url, context.get_url(url))
 
 
 @step('I should see "(?P<text>.*)"')
