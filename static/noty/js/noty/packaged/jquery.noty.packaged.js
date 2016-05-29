@@ -1011,8 +1011,8 @@ $.noty.layouts.topRight = {
         selector: 'ul#noty_topRight_layout_container',
         style   : function() {
             $(this).css({
-                top          : 55,
-                right        : 20,
+                top          : 60,
+                right        : 8,
                 position     : 'fixed',
                 width        : '310px',
                 height       : 'auto',

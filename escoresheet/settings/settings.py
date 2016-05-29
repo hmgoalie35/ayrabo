@@ -283,6 +283,7 @@ BOWER_INSTALLED_APPS = [
     'bootstrap',
     'fontawesome',
     'animate.css',
+    'noty'
 ]
 
 # Django compressor related
