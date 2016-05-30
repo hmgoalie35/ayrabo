@@ -1,6 +1,6 @@
 from allauth.account import forms as allauth_forms
 from django import forms
-from escoresheet.utils import remove_form_placeholders
+from escoresheet.utils import remove_form_placeholders, add_autofocus_to_field
 
 
 # @TODO set up hooks so that User.objects.create() does the necessary stuff for django all auth to work (create EmailAddress, EmailConfirmation, etc.)
@@ -45,7 +45,14 @@ class ChangePasswordForm(allauth_forms.ChangePasswordForm):
     def __init__(self, *args, **kwargs):
         super(ChangePasswordForm, self).__init__(*args, **kwargs)
         remove_form_placeholders(self.fields)
+        add_autofocus_to_field(self.fields['oldpassword'])
 
 
 class EditAccountForm(forms.Form):
     pass
+
+
+class AddEmailForm(allauth_forms.AddEmailForm):
+    def __init__(self, *args, **kwargs):
+        super(AddEmailForm, self).__init__(*args, **kwargs)
+        remove_form_placeholders(self.fields)

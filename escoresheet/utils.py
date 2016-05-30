@@ -13,3 +13,7 @@ def remove_form_placeholders(field_list):
         attributes = field_list.get(field_name).widget.attrs
         if 'placeholder' in attributes:
             attributes.pop('placeholder')
+
+
+def add_autofocus_to_field(field):
+    field.widget.attrs['autofocus'] = 'true'
