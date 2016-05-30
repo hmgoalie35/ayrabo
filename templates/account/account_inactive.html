@@ -2,6 +2,15 @@
 {% load i18n %}
 
 {% block content %}
-    <h1>{% trans "Account Inactive" %}</h1>
-    <p>{% trans "This account is inactive." %}</p>
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="text-center">
+                    <br>
+                    <h1>{% trans "Account Inactive" %}</h1>
+                    <p>{% trans "Your account is currently inactive, please contact support" %}</p>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}
