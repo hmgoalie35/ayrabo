@@ -321,6 +321,8 @@ LOGIN_URL = '/account/login/'
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_URL = '/account/logout/'
 
+TEST_RUNNER = "redgreenunittest.django.runner.RedGreenDiscoverRunner"
+
 # @TODO make testing settings work with production settings (move to except clause)
 try:
     from .local_settings import *
