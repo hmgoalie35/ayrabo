@@ -19,13 +19,13 @@ from home.views import HomePageView
 from django.views.generic import RedirectView
 from allauth.account.views import signup
 from django.core.urlresolvers import reverse_lazy
-from account.views import EditAccountView, EmailView
+from account_custom.views import EditAccountView, NewConfirmationEmailView
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^$', HomePageView.as_view(), name='home'),
-    url(r'^account/email/$', EmailView.as_view(), name='account_email'),
     url(r'^account/edit/$', EditAccountView.as_view(), name='account_edit'),
+    url(r'^account/email/confirmation/new/$', NewConfirmationEmailView.as_view(), name='account_new_email_confirmation'),
     url(r'^account/register/$', signup, name='account_register'),
     url(r'^account/signup/$', RedirectView.as_view(url=reverse_lazy('account_register')), name='account_signup'),
     url(r'^account/', include('allauth.urls')),

@@ -47,9 +47,17 @@
                             {% trans "You currently do not have any e-mail address set up, please contact support" %}
                         </p>
                     {% endif %}
-                    <br>
-                    <h3>{% trans "Add E-mail Address" %}</h3>
 
+                </div>
+            </div>
+        </div>
+
+        <br>
+
+        <div class="row">
+            <div class="col-sm-offset-4 col-sm-4 col-sm-offset-4">
+                <div class="text-center">
+                    <h3>{% trans "Add E-mail Address" %}</h3>
                     <form method="post" action="{% url 'account_email' %}">
                         {% csrf_token %}
                         {{ form | bootstrap }}
@@ -58,6 +66,7 @@
                 </div>
             </div>
         </div>
+
     </div>
 
 {% endblock %}

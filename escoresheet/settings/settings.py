@@ -75,6 +75,7 @@ INSTALLED_APPS = [
 
     # custom apps
     'home',
+    'account_custom',
 ]
 
 # @TODO Order matters,
@@ -302,12 +303,12 @@ ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_USERNAME_REQUIRED = False
 ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
 ACCOUNT_FORMS = {
-    'signup': 'account.forms.SignupForm',
-    'login': 'account.forms.LoginForm',
-    'reset_password': 'account.forms.PasswordResetForm',
-    'reset_password_from_key': 'account.forms.PasswordResetFromKeyForm',
-    'change_password': 'account.forms.ChangePasswordForm',
-    'add_email': 'account.forms.AddEmailForm'
+    'signup': 'account_custom.forms.SignupForm',
+    'login': 'account_custom.forms.LoginForm',
+    'reset_password': 'account_custom.forms.PasswordResetForm',
+    'reset_password_from_key': 'account_custom.forms.PasswordResetFromKeyForm',
+    'change_password': 'account_custom.forms.ChangePasswordForm',
+    'add_email': 'account_custom.forms.AddEmailForm'
 }
 # ACCOUNT_SIGNUP_FORM_CLASS = 'home.forms.SignupForm'
 ACCOUNT_USERNAME_MIN_LENGTH = 1
@@ -320,8 +321,12 @@ LOGIN_URL = '/account/login/'
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_URL = '/account/logout/'
 
-
+# @TODO make testing settings work with production settings (move to except clause)
 try:
     from .local_settings import *
+    # Testing settings will use local settings and override any needed settings
+    if len(sys.argv) > 1 and 'test' in sys.argv:
+        from .testing_settings import *
 except ImportError as e:
+    # Move if statement here to have testing settings inherit from production settings
     pass

@@ -7,6 +7,7 @@ from django.db.models import Q
 from generic_steps import find_element
 
 
+# @TODO use factory
 def create_unconfirmed_account(context, user_data):
     # Doing User.objects.create() will not work because django all auth doesn't know you created a user obj, so need to
     # manually POST to the signup page
