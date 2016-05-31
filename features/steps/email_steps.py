@@ -34,10 +34,15 @@ def step_impl(context, username_or_email, num_emails):
             count += 1
     if num_emails == "no":
         num_emails = 0
-    context.test.assertEqual(num_emails, count)
+    context.test.assertEqual(int(num_emails), count)
 
 
 @step('I follow an invalid password reset link')
 def step_impl(context):
     invalid_url = context.get_url('account_reset_password_from_key', uidb36='myinvaliduidb36', key='myinvalidkey')
     context.driver.get(invalid_url)
+
+
+@step('An empty inbox')
+def step_impl(context):
+    mail.outbox = []
