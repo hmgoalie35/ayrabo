@@ -1,10 +1,11 @@
-from django.test import TestCase
-from account_custom.tests.factories.UserFactory import UserFactory
-from .factories.SportFactory import SportFactory
-from django.core.urlresolvers import reverse
 import factory
+from django.core.urlresolvers import reverse
+from django.test import TestCase
+
+from accounts.tests.factories.UserFactory import UserFactory
 from escoresheet.testing_utils import get_messages
 from sports.models import Sport
+from .factories.SportFactory import SportFactory
 
 
 class CreateSportViewTests(TestCase):
@@ -28,7 +29,6 @@ class CreateSportViewTests(TestCase):
         response = self.client.post(reverse('create_sport'), data, follow=True)
         self.assertIn('You do not have permission to access the requested page', get_messages(response))
         self.assertRedirects(response, reverse('home'))
-
 
     # GET
     def test_correct_template(self):

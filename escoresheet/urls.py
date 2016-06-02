@@ -13,13 +13,14 @@ Including another URLconf
     1. Import the include() function: from django.conf.urls import url, include
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
+from allauth.account.views import signup
 from django.conf.urls import url, include
 from django.contrib import admin
-from home.views import HomePageView
-from django.views.generic import RedirectView
-from allauth.account.views import signup
 from django.core.urlresolvers import reverse_lazy
-from account_custom.views import EditAccountView, NewConfirmationEmailView
+from django.views.generic import RedirectView
+
+from accounts.views import EditAccountView, NewConfirmationEmailView
+from home.views import HomePageView
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),

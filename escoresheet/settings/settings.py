@@ -75,7 +75,7 @@ INSTALLED_APPS = [
 
     # custom apps
     'home',
-    'account_custom',
+    'accounts',
     'sports',
 ]
 
@@ -304,12 +304,12 @@ ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_USERNAME_REQUIRED = False
 ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
 ACCOUNT_FORMS = {
-    'signup': 'account_custom.forms.SignupForm',
-    'login': 'account_custom.forms.LoginForm',
-    'reset_password': 'account_custom.forms.PasswordResetForm',
-    'reset_password_from_key': 'account_custom.forms.PasswordResetFromKeyForm',
-    'change_password': 'account_custom.forms.ChangePasswordForm',
-    'add_email': 'account_custom.forms.AddEmailForm'
+    'signup': 'accounts.forms.SignupForm',
+    'login': 'accounts.forms.LoginForm',
+    'reset_password': 'accounts.forms.PasswordResetForm',
+    'reset_password_from_key': 'accounts.forms.PasswordResetFromKeyForm',
+    'change_password': 'accounts.forms.ChangePasswordForm',
+    'add_email': 'accounts.forms.AddEmailForm'
 }
 # ACCOUNT_SIGNUP_FORM_CLASS = 'home.forms.SignupForm'
 ACCOUNT_USERNAME_MIN_LENGTH = 1
