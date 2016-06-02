@@ -1,6 +1,9 @@
 # escoresheet
 Sport scoresheets for the digital age
 
+Dev: [![Build Status](https://travis-ci.com/hmgoalie35/escoresheet.svg?token=6sJZQMC4LpsRyFkHBeAL&branch=dev)](https://travis-ci.com/hmgoalie35/escoresheet)
+Prod: [![Build Status](https://travis-ci.com/hmgoalie35/escoresheet.svg?token=6sJZQMC4LpsRyFkHBeAL&branch=master)](https://travis-ci.com/hmgoalie35/escoresheet)
+
 # Dependencies
 
 * python3

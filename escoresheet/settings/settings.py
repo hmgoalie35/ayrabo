@@ -327,7 +327,7 @@ TEST_RUNNER = "redgreenunittest.django.runner.RedGreenDiscoverRunner"
 try:
     from .local_settings import *
     # Testing settings will use local settings and override any needed settings
-    if len(sys.argv) > 1 and 'test' in sys.argv:
+    if len(sys.argv) > 1 and ('test' in sys.argv or 'behave' in sys.argv):
         from .testing_settings import *
 except ImportError as e:
     # Move if statement here to have testing settings inherit from production settings
