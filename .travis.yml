@@ -11,7 +11,7 @@ env:
     - DJANGO_SETTINGS_MODULE="escoresheet.settings.settings"
 
 before_script:
-  - ln -s $TRAVIS_BUILD_DIR/local_settings.py.dev $TRAVIS_BUILD_DIR/local_settings.py
+  - cd escoresheet/settings/ && ln -s local_settings.py.dev local_settings.py && cd ../../
 
 script:
   - python manage.py test apps/
