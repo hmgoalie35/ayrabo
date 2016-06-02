@@ -64,7 +64,7 @@ def logout(context):
     if 'Logout' in context.driver.page_source:
         steps = '''when I press "account_menu"
                when I press "logout_btn_acct_menu"
-               when I press "logout_btn_modal"
+               when I press "logout_btn"
         '''
         context.execute_steps(steps)
     context.driver.get(context.get_url('home'))

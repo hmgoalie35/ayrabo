@@ -8,7 +8,8 @@ use_step_matcher('re')
 
 
 def before_all(context):
-    context.driver = webdriver.Firefox()
+    context.driver = webdriver.PhantomJS()
+    # context.driver = webdriver.Firefox()
     # context.driver = webdriver.Chrome(executable_path=os.path.join(settings.BASE_DIR, 'selenium_drivers', 'chromedriver'))
     context.driver.maximize_window()
 

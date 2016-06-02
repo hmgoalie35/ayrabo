@@ -25,8 +25,7 @@
                             <li class="divider"></li>
 
                             <li>
-                                <a id="logout_btn_acct_menu" href="#" type="button" data-toggle="modal"
-                                   data-target="#logout_modal"><span class="fa fa-power-off"></span>&nbsp;Logout</a>
+                                <a id="logout_btn_acct_menu" href="{% url 'account_logout' %}"><span class="fa fa-power-off"></span>&nbsp;Logout</a>
                             </li>
 
                         </ul>
@@ -66,26 +65,3 @@
         </div>
     </div>
 </nav>
-
-{% if user.is_authenticated %}
-    <div class="modal fade" id="logout_modal" tabindex="-1" role="dialog" aria-labelledby="logout_modal_label">
-        <br><br><br><br><br>
-        <div class="modal-dialog modal-sm" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
-                            aria-hidden="true">&times;</span></button>
-                    <h4 class="modal-title" id="logoutModalLabel">Logout?</h4>
-                </div>
-                <div class="modal-body">
-                    <div class="text-center">
-                        <form action="{% url 'account_logout' %}" method="post">
-                            {% csrf_token %}
-                            <button id="logout_btn_modal" role="button" type="submit" class="btn btn-primary">Logout</button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-{% endif %}
