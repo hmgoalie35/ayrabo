@@ -13,7 +13,6 @@ before_script:
   - cd escoresheet/settings/ && ln -s local_settings.py.dev local_settings.py && cd ../../
 
 script:
-  - python manage.py migrate
   - python manage.py test apps/
   - python manage.py behave features/
 
