@@ -61,6 +61,11 @@ def step_impl(context, text):
     context.test.assertIn(text, str(context.driver.page_source))
 
 
+@step('I should not see "(?P<text>.*)"')
+def step_impl(context, text):
+    context.test.assertNotIn(text, str(context.driver.page_source))
+
+
 @step('A user account should exist for "(?P<username_or_email>.*)"')
 def step_impl(context, username_or_email):
     context.test.assertIsInstance(User.objects.get(Q(username=username_or_email) | Q(email=username_or_email)), User)

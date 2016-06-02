@@ -145,7 +145,6 @@ def step_impl(context):
 
 # Permission handling
 
-
 @step('"(?P<username_or_email>[^"]*)" has the following permissions? "(?P<permissions>[^"]*)"')
 def step_impl(context, username_or_email, permissions):
     valid_permissions = ['is_staff', 'is_superuser']
