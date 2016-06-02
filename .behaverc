@@ -1,3 +1,6 @@
 [behave]
 stdout_capture=false
 stderr_capture=false
+show_skipped=false
+logging_level=CRITICAL
+stop=true

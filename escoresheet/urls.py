@@ -29,4 +29,6 @@ urlpatterns = [
     url(r'^account/register/$', signup, name='account_register'),
     url(r'^account/signup/$', RedirectView.as_view(url=reverse_lazy('account_register')), name='account_signup'),
     url(r'^account/', include('allauth.urls')),
+
+    url(r'^sport/', include('sports.urls')),
 ]

@@ -1,7 +1,8 @@
 <nav class="navbar navbar-default navbar-static-top">
     <div class="container-fluid">
         <div class="navbar-header">
-            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar"
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+                    data-target="#navbar"
                     aria-expanded="false" aria-controls="navbar">
                 <span class="sr-only">Toggle navigation</span>
                 <span class="icon-bar"></span>
@@ -13,19 +14,36 @@
         <div id="navbar" class="navbar-collapse collapse" aria-expanded="false">
             <ul class="nav navbar-nav navbar-right">
                 {% if user.is_authenticated %}
+                    <li>
+                        <a id="create_dropdown_btn" href="#" class="dropdown-toggle"
+                           data-toggle="dropdown" role="button" aria-haspopup="true"
+                           aria-expanded="false"><span class="fa fa-plus"></span><span
+                                class="caret"></span></a>
+                        <ul class="dropdown-menu dropdown-menu-right">
+                            <li class="dropdown-header">Create New</li>
+                            {% if user.is_staff %}
+                                <li><a id="new_sport_link" href="{% url 'create_sport' %}">Sport</a></li>
+                            {% else %}
+                            {% endif %}
+                        </ul>
+                    </li>
                     <!-- Account dropdown -->
                     <li>
-                        <a id="account_menu" href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
-                           aria-haspopup="true" aria-expanded="false">Account<span class="caret"></span></a>
+                        <a id="account_menu" href="#" class="dropdown-toggle" data-toggle="dropdown"
+                           role="button"
+                           aria-haspopup="true" aria-expanded="false">Account<span
+                                class="caret"></span></a>
                         <ul class="dropdown-menu">
                             <li>
-                                <a id="edit_account_link" href="{% url 'account_edit' %}"><span class="fa fa-cog"></span>&nbsp; {{ user.email }}</a>
+                                <a id="edit_account_link" href="{% url 'account_edit' %}"><span
+                                        class="fa fa-cog"></span>&nbsp; {{ user.email }}</a>
                             </li>
 
                             <li class="divider"></li>
 
                             <li>
-                                <a id="logout_btn_acct_menu" href="{% url 'account_logout' %}"><span class="fa fa-power-off"></span>&nbsp;Logout</a>
+                                <a id="logout_btn_acct_menu" href="{% url 'account_logout' %}"><span
+                                        class="fa fa-power-off"></span>&nbsp;Logout</a>
                             </li>
 
                         </ul>
@@ -39,7 +57,9 @@
                                     <div class="input-group-addon">
                                         <span class="fa fa-user"></span>
                                     </div>
-                                    <input id="id_login_navbar" name="login" type="text" class="form-control input-sm" placeholder="E-mail" required>
+                                    <input id="id_login_navbar" name="login" type="text"
+                                           class="form-control input-sm" placeholder="E-mail"
+                                           required>
                                 </div>
                             </div>
                             <div class="form-group">
@@ -47,10 +67,14 @@
                                     <div class="input-group-addon">
                                         <span class="fa fa-lock"></span>
                                     </div>
-                                    <input id="id_password_navbar" name="password" type="password" class="form-control input-sm" placeholder="Password" required>
+                                    <input id="id_password_navbar" name="password" type="password"
+                                           class="form-control input-sm" placeholder="Password"
+                                           required>
                                 </div>
                             </div>
-                            <button id="login_navbar" role="button" type="submit" class="btn btn-default btn-sm">Login</button>
+                            <button id="login_navbar" role="button" type="submit"
+                                    class="btn btn-default btn-sm">Login
+                            </button>
                         </form>
                     </div>
 
