@@ -9,6 +9,9 @@ env:
   global:
     - DJANGO_SETTINGS_MODULE="escoresheet.settings.settings"
 
+before_script:
+  - cd escoresheet/settings/ && ln -s local_settings.py.dev local_settings.py
+
 script:
   - python manage.py migrate
   - python manage.py test apps/
