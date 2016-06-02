@@ -76,6 +76,7 @@ INSTALLED_APPS = [
     # custom apps
     'home',
     'account_custom',
+    'sports',
 ]
 
 # @TODO Order matters,

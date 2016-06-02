@@ -1,0 +1,20 @@
+{% extends 'site_base.html' %}
+{% load bootstrap %}
+
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-offset-4 col-sm-4 col-sm-offset-4">
+                <div class="text-center">
+                    <h1>Create Sport</h1>
+                    <br>
+                    <form action="." method="post">
+                        {% csrf_token %}
+                        {{ form | bootstrap }}
+                        <button id="create_sport_btn" class="btn btn-success">Create Sport</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
