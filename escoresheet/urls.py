@@ -20,11 +20,14 @@ from django.core.urlresolvers import reverse_lazy
 from django.views.generic import RedirectView
 
 from accounts.views import EditAccountView, NewConfirmationEmailView
-from home.views import HomePageView
+from home.views import HomePageView, AboutUsView, ContactUsView
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^$', HomePageView.as_view(), name='home'),
+    url(r'^about-us$', AboutUsView.as_view(), name='about_us'),
+    url(r'^contact-us$', ContactUsView.as_view(), name='contact_us'),
+
     url(r'^account/edit/$', EditAccountView.as_view(), name='account_edit'),
     url(r'^account/email/confirmation/new/$', NewConfirmationEmailView.as_view(), name='account_new_email_confirmation'),
     url(r'^account/register/$', signup, name='account_register'),

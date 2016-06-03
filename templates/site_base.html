@@ -30,6 +30,24 @@
 {% block content %}
 {% endblock %}
 
+{% block footer %}
+    <footer class="footer">
+        <ol class="breadcrumb breadcrumb-footer text-center">
+            {% if 'about' in request.path %}
+                <li class='active'>About</li>
+            {% else %}
+                <li><a id='about_us' href='{% url 'about_us' %}'>About</a></li>
+            {% endif %}
+
+            {% if 'contact' in request.path %}
+                <li class='active'>Contact</li>
+            {% else %}
+                <li><a id='contact_us' href='{% url 'contact_us' %}'>Contact</a></li>
+            {% endif %}
+        </ol>
+    </footer>
+{% endblock %}
+
 {% compress js %}
 
     <script src="{% static 'jquery/dist/jquery.min.js' %}"></script>
