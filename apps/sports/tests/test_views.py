@@ -1,6 +1,6 @@
 import factory
 from django.core.urlresolvers import reverse
-from django.test import TestCase
+from django.test import TransactionTestCase
 
 from accounts.tests.factories.UserFactory import UserFactory
 from escoresheet.testing_utils import get_messages
@@ -8,7 +8,8 @@ from sports.models import Sport
 from .factories.SportFactory import SportFactory
 
 
-class CreateSportViewTests(TestCase):
+# @TODO test_duplicate_slug fails when this inherits from TestCase, something with atomic transactions
+class CreateSportViewTests(TransactionTestCase):
     def setUp(self):
         self.staff_user = UserFactory.create(is_staff=True)
         self.client.login(email=self.staff_user.email, password='myweakpassword')

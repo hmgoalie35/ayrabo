@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/1.9/ref/settings/
 
 import os
 import sys
+import pytz
 
 SITE_ID = 1
 
@@ -76,11 +77,11 @@ INSTALLED_APPS = [
     # custom apps
     'home',
     'accounts',
+    'userprofiles',
     'sports',
 ]
 
-# @TODO Order matters,
-# https://docs.djangoproject.com/en/1.9/topics/i18n/translation/#how-django-discovers-language-preference
+
 MIDDLEWARE_CLASSES = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -92,6 +93,9 @@ MIDDLEWARE_CLASSES = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.contrib.sites.middleware.CurrentSiteMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'escoresheet.middleware.TranslationMiddleware',
+    'escoresheet.middleware.TimezoneMiddleware',
+    'userprofiles.middleware.UserProfileExistsMiddleware',
 ]
 
 ROOT_URLCONF = 'escoresheet.urls'
@@ -159,6 +163,8 @@ AUTH_PASSWORD_VALIDATORS = [
 LANGUAGE_CODE = 'en-us'
 
 TIME_ZONE = 'UTC'
+
+COMMON_TIMEZONES = [(tz, tz) for tz in pytz.common_timezones]
 
 USE_I18N = True
 

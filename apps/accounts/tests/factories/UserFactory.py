@@ -16,3 +16,5 @@ class UserFactory(DjangoModelFactory):
     email = factory.sequence(lambda x: 'user{x}@example.com'.format(x=x))
     username = email
     password = PostGenerationMethodCall('set_password', 'myweakpassword')
+    userprofile = factory.RelatedFactory('userprofiles.tests.factories.UserProfileFactory.UserProfileFactory', 'user')
+
