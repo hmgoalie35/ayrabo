@@ -1,9 +1,11 @@
-from selenium.common.exceptions import NoSuchElementException
-from selenium.webdriver.common.by import By
+import re
+
+from behave import *
 from django.contrib.auth.models import User
 from django.db.models import Q
-from behave import *
-import re
+from selenium.common.exceptions import NoSuchElementException
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.select import Select
 
 
 def find_element(context, element_to_find):
@@ -76,3 +78,9 @@ def step_impl(context, text, num):
     # findall returns a list of all matches
     num_matches = len(re.findall(text, context.driver.page_source))
     context.test.assertEqual(int(num), num_matches)
+
+
+@step('I select "(?P<select_option>[^"]*)" from "(?P<element>[^"]*)"')
+def step_impl(context, select_option, element):
+    the_element = Select(find_element(context, element))
+    the_element.select_by_value(select_option)

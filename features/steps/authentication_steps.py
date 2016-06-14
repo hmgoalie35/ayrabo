@@ -6,13 +6,16 @@ from django.core import mail
 from django.db.models import Q
 from generic_steps import find_element
 from django.contrib.auth.models import User
+from userprofiles.tests.factories.UserProfileFactory import UserProfileFactory
 
 
 # @TODO use factory
-def create_unconfirmed_account(context, user_data):
+def create_unconfirmed_account(context, user_data, create_userprofile=True):
     # Doing User.objects.create() will not work because django all auth doesn't know you created a user obj, so need to
     # manually POST to the signup page
     context.test.client.post(context.get_url('account_register'), data=user_data)
+    if create_userprofile:
+        UserProfileFactory.create(user=User.objects.get(email=user_data['email']))
 
 
 def confirm_account(context, username_or_email, method='manual'):
@@ -91,7 +94,8 @@ def step_impl(context, account_type):
         user_data['password2'] = user_data['password']
         user_data.pop('password')
         username_or_email = user_data['email']
-        create_unconfirmed_account(context, user_data)
+        create_userprofile = user_data['create_userprofile'] in ['True', 'true']
+        create_unconfirmed_account(context, user_data, create_userprofile)
         if account_type == 'confirmed':
             confirm_account(context, username_or_email)
 
