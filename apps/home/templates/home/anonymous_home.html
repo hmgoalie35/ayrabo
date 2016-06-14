@@ -5,13 +5,9 @@
         <div class="row">
             <div class="col-sm-12">
                 <div class="text-center">
-                    {% if user.is_authenticated %}
-                        <h1>Welcome {{ user.full_name }}</h1>
-                    {% else %}
-                        <h3><a href="{% url 'account_register' %}">Register for an account</a></h3>
-                        or
-                        <h3><a href="{% url 'account_login' %}">Login</a></h3>
-                    {% endif %}
+                    <h3><a class="btn btn-success" href="{% url 'account_register' %}">Register for an account</a></h3>
+                    or
+                    <h3><a class="btn btn-success" href="{% url 'account_login' %}">Login</a></h3>
                 </div>
             </div>
         </div>
