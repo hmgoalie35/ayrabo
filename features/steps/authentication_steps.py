@@ -10,7 +10,7 @@ from userprofiles.tests.factories.UserProfileFactory import UserProfileFactory
 
 
 # @TODO use factory
-def create_unconfirmed_account(context, user_data, create_userprofile=True):
+def create_unconfirmed_account(context, user_data, create_userprofile):
     # Doing User.objects.create() will not work because django all auth doesn't know you created a user obj, so need to
     # manually POST to the signup page
     context.test.client.post(context.get_url('account_register'), data=user_data)
@@ -94,7 +94,7 @@ def step_impl(context, account_type):
         user_data['password2'] = user_data['password']
         user_data.pop('password')
         username_or_email = user_data['email']
-        create_userprofile = user_data['create_userprofile'] in ['True', 'true']
+        create_userprofile = user_data.get('create_userprofile', 'true') in ['True', 'true']
         create_unconfirmed_account(context, user_data, create_userprofile)
         if account_type == 'confirmed':
             confirm_account(context, username_or_email)
