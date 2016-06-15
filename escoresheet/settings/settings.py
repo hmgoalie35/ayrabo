@@ -73,7 +73,7 @@ INSTALLED_APPS = [
     'allauth.account',
     'allauth.socialaccount',
     'behave_django',
-    'bootstrapform',
+    'crispy_forms',
 
     # custom apps
     'home',
@@ -82,6 +82,8 @@ INSTALLED_APPS = [
     'sports',
 ]
 
+
+CRISPY_TEMPLATE_PACK = 'bootstrap3'
 
 MIDDLEWARE_CLASSES = [
     'django.middleware.security.SecurityMiddleware',

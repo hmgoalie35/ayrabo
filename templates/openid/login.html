@@ -1,13 +1,13 @@
 {% extends 'site_base.html' %}
 {% load i18n %}
-{% load bootstrap %}
+{% load crispy_forms_tags %}
 
 {% block content %}
     <h1>{% trans 'OpenID Login' %}</h1>
     <br>
     <form id="openid_login_form" method="post" action="{% url 'openid_login' %}">
         {% csrf_token %}
-        {{form | bootstrap}}
+        {{form | crispy}}
         <button class="btn btn-primary" type="submit">Login</button>
     </form>
 {% endblock %}

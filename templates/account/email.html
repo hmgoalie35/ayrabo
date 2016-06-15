@@ -1,6 +1,6 @@
 {% extends "site_base.html" %}
 {% load i18n %}
-{% load bootstrap %}
+{% load crispy_forms_tags %}
 
 {% block title %}Account E-mail Addresses{% endblock %}
 
@@ -62,7 +62,7 @@
                     <h3>{% trans "Add E-mail Address" %}</h3>
                     <form method="post" action="{% url 'account_email' %}">
                         {% csrf_token %}
-                        {{ form | bootstrap }}
+                        {{ form | crispy }}
                         <button class="btn btn-sm btn-primary" name="action_add" type="submit">{% trans "Add E-mail" %}</button>
                     </form>
                 </div>
