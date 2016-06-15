@@ -14,19 +14,19 @@
         <div id="navbar" class="navbar-collapse collapse" aria-expanded="false">
             <ul class="nav navbar-nav navbar-right">
                 {% if user.is_authenticated %}
-                    <li>
-                        <a id="create_dropdown_btn" href="#" class="dropdown-toggle"
-                           data-toggle="dropdown" role="button" aria-haspopup="true"
-                           aria-expanded="false"><span class="fa fa-plus"></span><span
-                                class="caret"></span></a>
-                        <ul class="dropdown-menu dropdown-menu-right">
-                            <li class="dropdown-header">Create New</li>
-                            {% if user.is_staff %}
+                    {% if user.is_staff %}
+                        <li>
+                            <a id="create_dropdown_btn" href="#" class="dropdown-toggle"
+                               data-toggle="dropdown" role="button" aria-haspopup="true"
+                               aria-expanded="false"><span class="fa fa-plus"></span><span
+                                    class="caret"></span></a>
+                            <ul class="dropdown-menu dropdown-menu-right">
+                                <li class="dropdown-header">Create New</li>
                                 <li><a id="new_sport_link" href="{% url 'create_sport' %}">Sport</a></li>
-                            {% else %}
-                            {% endif %}
-                        </ul>
-                    </li>
+                            </ul>
+                        </li>
+                    {% endif %}
+
                     <!-- Account dropdown -->
                     <li>
                         <a id="account_menu" href="#" class="dropdown-toggle" data-toggle="dropdown"
@@ -35,7 +35,7 @@
                                 class="caret"></span></a>
                         <ul class="dropdown-menu">
                             <li>
-                                <a id="edit_account_link" href="{% url 'account_edit' %}"><span
+                                <a id="edit_account_link" href="{% url 'update_userprofile' %}"><span
                                         class="fa fa-cog"></span>&nbsp; {{ user.email }}</a>
                             </li>
 

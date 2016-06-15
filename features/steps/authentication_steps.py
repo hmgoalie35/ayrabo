@@ -111,6 +111,13 @@ def step_impl(context):
     context.driver.get(invalid_url)
 
 
+@step('The following userprofile exists for "(?P<username_or_email>.*)"')
+def step_impl(context, username_or_email):
+    user = User.objects.get(Q(email=username_or_email) | Q(username=username_or_email))
+    for row in context.table:
+        userprofile_data = dict(row.as_dict())
+        UserProfileFactory.create(user=user, **userprofile_data)
+
 """
 
 Logging in / out

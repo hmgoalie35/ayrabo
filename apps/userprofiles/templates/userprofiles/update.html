@@ -1,0 +1,38 @@
+{% extends 'site_base.html' %}
+{% load bootstrap %}
+{%  load i18n %}
+
+{% block content %}
+    <div class="container">
+
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="text-center">
+                    <h2>{% trans 'Account details' %}</h2>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-offset-4 col-sm-4 col-sm-offset-4">
+
+                <br>
+                <h4>Name: {{ user.get_full_name }}</h4>
+                <h4>Email: {{ user.email }}</h4>
+                <h4>Gender: {{ userprofile.gender | title }}</h4>
+                <h4>Birthday: {{ userprofile.birthday }}</h4>
+                <a id="change_password_link" href="{% url 'account_change_password' %}">Change Password</a>
+                <br>
+                <br>
+
+                <form action="" method="post">
+                    {% csrf_token %}
+                    {{ form | bootstrap }}
+                    <div class="text-center">
+                        <input id="update_userprofile_btn" class="btn btn-success" type="submit" value="Update Profile">
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}

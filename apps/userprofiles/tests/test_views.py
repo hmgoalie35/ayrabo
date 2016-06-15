@@ -98,3 +98,62 @@ class CreateUserProfileViewTests(TestCase):
             data['weight'] = invalid_weight
             response = self.client.post(reverse('create_userprofile'), data=data, follow=True)
             self.assertFormError(response, 'form', 'weight', 'Enter a whole number.')
+
+
+class UpdateUserProfileViewTests(TestCase):
+    def setUp(self):
+        self.email = 'user@example.com'
+        self.password = 'myweakpassword'
+        self.user = UserFactory.create(email=self.email, password=self.password)
+        self.client.login(email=self.email, password=self.password)
+
+    # GET
+    def test_get_anonymous_user(self):
+        self.client.logout()
+        response = self.client.get(reverse('update_userprofile'))
+        result_url = '%s?next=%s' % (reverse('account_login'), reverse('update_userprofile'))
+        self.assertRedirects(response, result_url)
+
+    def test_correct_template(self):
+        response = self.client.get(reverse('update_userprofile'))
+        self.assertTemplateUsed(response, 'userprofiles/update.html')
+
+    def test_200_status_code(self):
+        response = self.client.get(reverse('update_userprofile'))
+        self.assertEqual(response.status_code, 200)
+
+    # POST
+    # No need to test invalid values for height, weight, etc. That is done above (the forms are almost identical)
+    def test_post_anonymous_user(self):
+        self.client.logout()
+        data = factory.build(dict, FACTORY_CLASS=UserProfileFactory)
+        data.pop('gender')
+        data.pop('birthday')
+        response = self.client.post(reverse('update_userprofile'), data=data, follow=True)
+        result_url = '%s?next=%s' % (reverse('account_login'), reverse('update_userprofile'))
+        self.assertRedirects(response, result_url)
+
+    def test_post_no_changed_data(self):
+        data = factory.build(dict, FACTORY_CLASS=UserProfileFactory)
+        data.pop('gender')
+        data.pop('birthday')
+        response = self.client.post(reverse('update_userprofile'), data=data, follow=True)
+        self.assertRedirects(response, reverse('update_userprofile'))
+
+    def test_post_changed_data(self):
+        data = factory.build(dict, FACTORY_CLASS=UserProfileFactory)
+        # calling the factory will generate random values for all fields
+        data.pop('gender')
+        data.pop('birthday')
+        response = self.client.post(reverse('update_userprofile'), data=data, follow=True)
+        success_msg = 'Your profile has been updated'
+        self.assertIn(success_msg, get_messages(response))
+        self.assertTemplateUsed('userprofiles/update.html')
+
+    def test_userprofile_exists_in_context(self):
+        data = factory.build(dict, FACTORY_CLASS=UserProfileFactory)
+        # calling the factory will generate random values for all fields
+        data.pop('gender')
+        data.pop('birthday')
+        response = self.client.post(reverse('update_userprofile'), data=data, follow=True)
+        self.assertIn('userprofile', response.context)

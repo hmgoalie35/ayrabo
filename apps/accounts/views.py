@@ -1,15 +1,8 @@
-from django.views.generic import FormView, View
-from .forms import EditAccountForm
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.views.generic import View
 from django.contrib import messages
 from django.shortcuts import redirect
 from django.core.urlresolvers import reverse
 from allauth.account.models import EmailAddress
-
-
-class EditAccountView(LoginRequiredMixin, FormView):
-    form_class = EditAccountForm
-    template_name = 'account/edit_account.html'
 
 
 class NewConfirmationEmailView(View):
