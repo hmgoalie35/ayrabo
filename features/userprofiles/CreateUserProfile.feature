@@ -19,15 +19,15 @@ Feature: User profiles
 
   Scenario: Navigate to another page when profile doesn't exist
     Given I login with "user@example.com" and "myweakpassword"
-    When I go to the "account_edit" page
+    When I go to the "home" page
     Then I should be on the "create_userprofile" page
 
   Scenario: Fill out with invalid height
     Given I login with "user@example.com" and "myweakpassword"
     And I am on the "create_userprofile" page
     When I select "male" from "id_gender"
-    When I fill in "id_height" with "5' 7"
-    When I fill in "id_weight" with "130"
+    And I fill in "id_height" with "5' 7"
+    And I fill in "id_weight" with "130"
     And I press "create_userprofile_btn"
     Then I should see "Invalid format, please use the following format: 5' 7""
 
@@ -35,8 +35,8 @@ Feature: User profiles
     Given I login with "user@example.com" and "myweakpassword"
     And I am on the "create_userprofile" page
     When I select "male" from "id_gender"
-    When I fill in "id_height" with "5' 7""
-    When I fill in "id_weight" with "-1"
+    And I fill in "id_height" with "5' 7""
+    And I fill in "id_weight" with "-1"
     And I press "create_userprofile_btn"
     Then I should see "Weight must be greater than zero and less than 400"
 
@@ -50,8 +50,8 @@ Feature: User profiles
     Given I login with "user@example.com" and "myweakpassword"
     And I am on the "create_userprofile" page
     When I select "male" from "id_gender"
-    When I fill in "id_height" with "5' 7""
-    When I fill in "id_weight" with "130"
+    And I fill in "id_height" with "5' 7""
+    And I fill in "id_weight" with "130"
     And I press "create_userprofile_btn"
     Then I should see "Thank you for filling out your profile, you now have access to the entire site"
     And I should be on the "home" page
@@ -66,5 +66,5 @@ Feature: User profiles
     Given I login with "user1@example.com" and "myweakpassword"
     When I go to the "create_userprofile" page
     Then I should be on the "home" page
-    Then I should see "You are currently logged in as Jane Doe, user1@example.com"
+    And I should see "You are currently logged in as Jane Doe, user1@example.com"
 

@@ -40,6 +40,7 @@ def step_impl(context, url):
 @step('I fill in "(?P<element>.*)" with "(?P<value>.*)"')
 def step_impl(context, element, value):
     the_element = find_element(context, element)
+    the_element.clear()
     the_element.send_keys(value)
 
 

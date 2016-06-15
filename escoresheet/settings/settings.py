@@ -54,6 +54,7 @@ ALLOWED_HOSTS = ['*']
 
 # Application definition
 
+# @TODO move dev/test only dependencies to correct settings files, requirements files
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
