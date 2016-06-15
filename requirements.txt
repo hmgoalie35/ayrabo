@@ -26,7 +26,7 @@ redgreenunittest==0.1.1
 requests==2.10.0
 requests-oauthlib==0.6.1
 rjsmin==1.0.12
-selenium==2.53.2
+selenium==2.53.5
 six==1.10.0
 sqlparse==0.1.19
 Werkzeug==0.11.10
