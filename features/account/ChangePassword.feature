@@ -21,6 +21,7 @@ Feature: Change password when logged in
     And I fill in "id_password2" with "mynewpassword"
     And I press "change_password_btn"
     Then I should see "Password successfully changed"
+    And I should be on the "update_userprofile" page
 
   Scenario: Change password when entering incorrect current password
     Given I login with "user@example.com" and "myweakpassword"

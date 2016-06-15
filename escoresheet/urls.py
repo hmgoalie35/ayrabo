@@ -19,7 +19,7 @@ from django.contrib import admin
 from django.core.urlresolvers import reverse_lazy
 from django.views.generic import RedirectView
 
-from accounts.views import NewConfirmationEmailView
+from accounts.views import NewConfirmationEmailView, PasswordChangeView
 from home.views import HomePageView, AboutUsView, ContactUsView
 
 urlpatterns = [
@@ -31,6 +31,7 @@ urlpatterns = [
     url(r'^account/email/confirmation/new/$', NewConfirmationEmailView.as_view(), name='account_new_email_confirmation'),
     url(r'^account/register/$', signup, name='account_register'),
     url(r'^account/signup/$', RedirectView.as_view(url=reverse_lazy('account_register')), name='account_signup'),
+    url(r'^account/password/change/$', PasswordChangeView.as_view(), name='account_change_password'),
     url(r'^account/', include('allauth.urls')),
 
     url(r'^sport/', include('sports.urls')),
