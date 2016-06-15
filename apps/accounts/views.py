@@ -1,10 +1,10 @@
-from django.views.generic import View
-from django.contrib import messages
-from django.shortcuts import redirect
-from django.core.urlresolvers import reverse, reverse_lazy
-from allauth.account.models import EmailAddress
 from allauth.account import views
+from allauth.account.models import EmailAddress
+from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.urlresolvers import reverse, reverse_lazy
+from django.shortcuts import redirect
+from django.views.generic import View
 
 
 class NewConfirmationEmailView(View):
@@ -27,7 +27,8 @@ class NewConfirmationEmailView(View):
             messages.info(self.request, 'A new confirmation email has been sent to {email}'.format(email=email))
             return redirect(reverse('account_email_verification_sent'))
         else:
-            messages.error(self.request, '{email} is not a valid e-mail address or has already been confirmed'.format(email=email))
+            messages.error(self.request,
+                           '{email} is not a valid e-mail address or has already been confirmed'.format(email=email))
             return redirect(request_path)
 
 

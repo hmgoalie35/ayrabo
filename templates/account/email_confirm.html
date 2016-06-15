@@ -39,10 +39,14 @@
                                     {% csrf_token %}
                                     <input name="request_path" type="hidden" value="{{ request.path }}">
                                     <div class="form-group">
-                                        <label for="new_email_confirmation" class="control-label">Email Address</label>
-                                        <input class="form-control" id="new_email_confirmation" type="email" name="email" autofocus required>
+                                        <label for="new_email_confirmation" class="control-label">Email Address<span class="asteriskField">*</span></label>
+                                        <input class="form-control" id="new_email_confirmation" type="email"
+                                               name="email" autofocus required>
                                     </div>
-                                    <button id="request_new_confirmation_email" class="btn btn-primary">Request new confirmation email</button>
+                                    <button id="request_new_confirmation_email" class="btn btn-primary">Request new
+                                                                                                        confirmation
+                                                                                                        email
+                                    </button>
                                 </form>
                             </div>
                         {% endif %}

@@ -1,9 +1,7 @@
-import os
-import django
-from selenium import webdriver
-from django.contrib.sites.models import Site
-from django.conf import settings
 from behave import use_step_matcher
+from django.contrib.sites.models import Site
+from selenium import webdriver
+
 use_step_matcher('re')
 
 

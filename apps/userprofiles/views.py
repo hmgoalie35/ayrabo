@@ -1,9 +1,10 @@
-from django.views.generic import CreateView, UpdateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
-from userprofiles.models import UserProfile
-from django.shortcuts import redirect
 from django.core.urlresolvers import reverse, reverse_lazy
+from django.shortcuts import redirect
+from django.views.generic import CreateView, UpdateView
+
+from userprofiles.models import UserProfile
 from .forms import CreateUserProfileForm, UpdateUserProfileForm
 
 

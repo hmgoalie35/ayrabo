@@ -1,5 +1,6 @@
 from allauth.account import forms as allauth_forms
 from django import forms
+
 from escoresheet.utils import remove_form_placeholders, add_autofocus_to_field
 
 

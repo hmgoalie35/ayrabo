@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/1.9/ref/settings/
 
 import os
 import sys
+
 import pytz
 
 SITE_ID = 1
@@ -82,7 +83,6 @@ INSTALLED_APPS = [
     'sports',
 ]
 
-
 CRISPY_TEMPLATE_PACK = 'bootstrap3'
 
 MIDDLEWARE_CLASSES = [
@@ -124,7 +124,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'escoresheet.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/1.9/ref/settings/#databases
 
@@ -139,7 +138,6 @@ AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
     'allauth.account.auth_backends.AuthenticationBackend',
 )
-
 
 # Password validation
 # https://docs.djangoproject.com/en/1.9/ref/settings/#auth-password-validators
@@ -158,7 +156,6 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
-
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.9/topics/i18n/
@@ -270,7 +267,6 @@ EMAIL_USE_SSL = True
 EMAIL_SSL_CERTFILE = None
 EMAIL_SSL_KEYFILE = None
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.9/howto/static-files/
 
@@ -336,6 +332,7 @@ TEST_RUNNER = "redgreenunittest.django.runner.RedGreenDiscoverRunner"
 # @TODO make testing settings work with production settings (move to except clause)
 try:
     from .local_settings import *
+
     # Testing settings will use local settings and override any needed settings
     if len(sys.argv) > 1 and ('test' in sys.argv or 'behave' in sys.argv):
         from .testing_settings import *
