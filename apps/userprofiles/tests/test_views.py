@@ -1,10 +1,11 @@
-from django.test import TestCase
-from accounts.tests.factories.UserFactory import UserFactory
-from .factories.UserProfileFactory import UserProfileFactory
-from django.core.urlresolvers import reverse
 import factory
-from userprofiles.models import UserProfile
+from django.core.urlresolvers import reverse
+from django.test import TestCase
+
+from accounts.tests.factories.UserFactory import UserFactory
 from escoresheet.testing_utils import get_messages
+from userprofiles.models import UserProfile
+from .factories.UserProfileFactory import UserProfileFactory
 
 
 class CreateUserProfileViewTests(TestCase):
@@ -24,11 +25,11 @@ class CreateUserProfileViewTests(TestCase):
     def test_correct_template(self):
         response = self.client.get(reverse('create_userprofile'))
         self.assertTemplateUsed(response, 'userprofiles/create.html')
-    
+
     def test_200_status_code(self):
         response = self.client.get(reverse('create_userprofile'))
         self.assertEqual(response.status_code, 200)
-    
+
     def test_get_userprofile_already_created(self):
         self.client.logout()
         user_with_profile = UserFactory.create(password=self.password)

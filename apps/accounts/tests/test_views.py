@@ -3,6 +3,7 @@ from django.contrib.auth import get_user_model
 from django.core import mail
 from django.core.urlresolvers import reverse
 from django.test import TestCase
+
 from escoresheet.testing_utils import get_messages
 
 User = get_user_model()
@@ -62,7 +63,8 @@ class NewEmailConfirmationTests(TestCase):
         email_address.primary = True
         email_address.save()
         self.assertTrue(EmailAddress.objects.get(user=self.user).verified)
-        response = self.post_to_account_new_email_confirmation({'email': self.user.email, 'request_path': self.invalid_request_path})
+        response = self.post_to_account_new_email_confirmation(
+                {'email': self.user.email, 'request_path': self.invalid_request_path})
         error_msg = '{email} is not a valid e-mail address or has already been confirmed'.format(email=self.user.email)
         self.assertIn(error_msg, get_messages(response))
 

@@ -2,10 +2,11 @@ import re
 
 from allauth.account.models import EmailAddress
 from behave import *
+from django.contrib.auth.models import User
 from django.core import mail
 from django.db.models import Q
 from generic_steps import find_element
-from django.contrib.auth.models import User
+
 from userprofiles.tests.factories.UserProfileFactory import UserProfileFactory
 
 
@@ -25,14 +26,14 @@ def confirm_account(context, username_or_email, method='manual'):
         # Django's test client's host is testserver, but we need it to be the current host selenium is using
         # So remove testserver and add in the current host that is being used
         confirmation_link = re.search(r'https?://testserver(?P<link>.*)', str(email_body)).group(
-            'link')
+                'link')
         confirmation_link = context.get_url(confirmation_link)
         context.driver.get(confirmation_link)
         confirm_btn = find_element(context, 'confirm_email_btn')
         confirm_btn.click()
     else:
         email_address_obj = EmailAddress.objects.get(
-            Q(user__email=username_or_email) | Q(user__username=username_or_email))
+                Q(user__email=username_or_email) | Q(user__username=username_or_email))
         email_address_obj.verified = True
         email_address_obj.save()
 
@@ -52,10 +53,10 @@ def login(context, username_or_email, password, login_method=''):
     context.driver.get(context.get_url(login_path))
 
     fill_in_username_email_step = 'when I fill in "{username_email_field}" with "{username_or_email}"'.format(
-        username_email_field=username_email_field, username_or_email=username_or_email)
+            username_email_field=username_email_field, username_or_email=username_or_email)
     fill_in_password_step = 'when I fill in "{password_field}" with "{password}"'.format(
-        password_field=password_field,
-        password=password)
+            password_field=password_field,
+            password=password)
     press_login_step = 'and I press "{login_btn}"'.format(login_btn=login_btn)
 
     steps = '''{step_1}\n{step_2}\n{step_3}'''.format(step_1=fill_in_username_email_step,
@@ -118,6 +119,7 @@ def step_impl(context, username_or_email):
         userprofile_data = dict(row.as_dict())
         UserProfileFactory.create(user=user, **userprofile_data)
 
+
 """
 
 Logging in / out
@@ -131,7 +133,7 @@ def step_impl(context):
 
 
 @step(
-    'I login with "(?P<username_or_email>[^"]*)" and "(?P<password>[^"]*)"\s?(?P<optional>via "(?P<login_method>[^"]*)")?')
+        'I login with "(?P<username_or_email>[^"]*)" and "(?P<password>[^"]*)"\s?(?P<optional>via "(?P<login_method>[^"]*)")?')
 def step_impl(context, username_or_email, password, optional, login_method):
     login(context, username_or_email, password, login_method)
 
@@ -162,13 +164,13 @@ def step_impl(context, username_or_email, permissions):
     permissions = permissions.split(' ')
     for permission in permissions:
         user = User.objects.get(
-                    Q(email=username_or_email) | Q(username=username_or_email))
+                Q(email=username_or_email) | Q(username=username_or_email))
         if permission == 'is_staff':
             user.is_staff = True
         elif permission == 'is_superuser':
             user.is_superuser = True
         else:
             raise Exception(
-                '{permission} is not a permitted permission. Choose from {permissions}'.format(
-                    permission=permission, permissions=valid_permissions))
+                    '{permission} is not a permitted permission. Choose from {permissions}'.format(
+                            permission=permission, permissions=valid_permissions))
         user.save()

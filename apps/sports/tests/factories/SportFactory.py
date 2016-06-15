@@ -1,6 +1,7 @@
 import factory
 import factory.fuzzy
 from factory.django import DjangoModelFactory
+
 from sports.models import Sport
 
 

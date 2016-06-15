@@ -1,6 +1,7 @@
 from django import forms
-from .models import Sport
 from django.forms import TextInput
+
+from .models import Sport
 
 
 class SportForm(forms.ModelForm):

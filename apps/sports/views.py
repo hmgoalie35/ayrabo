@@ -1,12 +1,13 @@
-from django.views.generic import CreateView
+from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
-from .models import Sport
-from django.core.urlresolvers import reverse_lazy
 from django.contrib.messages.views import SuccessMessageMixin
-from .forms import SportForm
+from django.core.urlresolvers import reverse_lazy
 from django.db.utils import IntegrityError
 from django.shortcuts import render, redirect
-from django.contrib import messages
+from django.views.generic import CreateView
+
+from .forms import SportForm
+from .models import Sport
 
 
 class CreateSportView(LoginRequiredMixin, SuccessMessageMixin, CreateView):

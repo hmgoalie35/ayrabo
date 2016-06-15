@@ -1,5 +1,6 @@
 from django.core.urlresolvers import reverse
 from django.shortcuts import redirect
+
 from userprofiles.models import UserProfile
 
 

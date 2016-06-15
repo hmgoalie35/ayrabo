@@ -1,7 +1,7 @@
+import factory
 from django.contrib.auth import get_user_model
 from factory import PostGenerationMethodCall
 from factory.django import DjangoModelFactory
-import factory
 
 User = get_user_model()
 
@@ -17,4 +17,3 @@ class UserFactory(DjangoModelFactory):
     username = email
     password = PostGenerationMethodCall('set_password', 'myweakpassword')
     userprofile = factory.RelatedFactory('userprofiles.tests.factories.UserProfileFactory.UserProfileFactory', 'user')
-

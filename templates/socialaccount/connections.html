@@ -9,7 +9,8 @@
                 <div class="text-center">
                     <h1>{% trans "Account Connections" %}</h1>
                     {% if form.accounts %}
-                        <p>{% blocktrans %}You can sign in to your account using any of the following third party accounts{% endblocktrans %}</p>
+                        <p>{% blocktrans %}You can sign in to your account using any of the following third party
+                                           accounts{% endblocktrans %}</p>
                         <form method="post" action="{% url 'socialaccount_connections' %}">
                             {% csrf_token %}
                             <fieldset>

@@ -1,7 +1,7 @@
 import logging
 
-from django.shortcuts import render, redirect
 from django.core.urlresolvers import reverse
+from django.shortcuts import render, redirect
 from django.views.generic import View, TemplateView
 
 from userprofiles.models import UserProfile
