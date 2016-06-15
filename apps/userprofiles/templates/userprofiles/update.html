@@ -1,5 +1,5 @@
 {% extends 'site_base.html' %}
-{% load bootstrap %}
+{% load crispy_forms_tags %}
 {%  load i18n %}
 
 {% block title %}Update Profile{% endblock %}
@@ -30,7 +30,7 @@
 
                 <form action="" method="post">
                     {% csrf_token %}
-                    {{ form | bootstrap }}
+                    {{ form | crispy }}
                     <div class="text-center">
                         <input id="update_userprofile_btn" class="btn btn-success" type="submit" value="Update Profile">
                     </div>
