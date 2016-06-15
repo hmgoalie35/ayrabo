@@ -9,7 +9,7 @@ class SignupForm(allauth_forms.SignupForm):
     last_name = forms.CharField()
 
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+        super(SignupForm, self).__init__(*args, **kwargs)
         # Rearrange order so first name and last name are the first fields the user needs to fill in
         # move_to_end will move to the front if False is specified
         self.fields.move_to_end('last_name', False)
@@ -46,10 +46,6 @@ class ChangePasswordForm(allauth_forms.ChangePasswordForm):
         super(ChangePasswordForm, self).__init__(*args, **kwargs)
         remove_form_placeholders(self.fields)
         add_autofocus_to_field(self.fields['oldpassword'])
-
-
-class EditAccountForm(forms.Form):
-    pass
 
 
 class AddEmailForm(allauth_forms.AddEmailForm):

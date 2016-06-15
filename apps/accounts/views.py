@@ -1,8 +1,10 @@
 from django.views.generic import View
 from django.contrib import messages
 from django.shortcuts import redirect
-from django.core.urlresolvers import reverse
+from django.core.urlresolvers import reverse, reverse_lazy
 from allauth.account.models import EmailAddress
+from allauth.account import views
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 
 class NewConfirmationEmailView(View):
@@ -27,3 +29,7 @@ class NewConfirmationEmailView(View):
         else:
             messages.error(self.request, '{email} is not a valid e-mail address or has already been confirmed'.format(email=email))
             return redirect(request_path)
+
+
+class PasswordChangeView(LoginRequiredMixin, views.PasswordChangeView):
+    success_url = reverse_lazy('update_userprofile')
