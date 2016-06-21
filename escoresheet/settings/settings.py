@@ -19,6 +19,7 @@ SITE_ID = 1
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # Custom django apps are in apps/ directory, so add it to path
 sys.path.append(os.path.join(BASE_DIR, 'apps'))
@@ -328,6 +329,10 @@ LOGIN_REDIRECT_URL = '/'
 LOGOUT_URL = '/account/logout/'
 
 TEST_RUNNER = "redgreenunittest.django.runner.RedGreenDiscoverRunner"
+
+FIXTURE_DIRS = [
+    os.path.join(PROJECT_ROOT, 'fixtures')
+]
 
 # @TODO make testing settings work with production settings (move to except clause)
 try:
