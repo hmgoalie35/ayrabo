@@ -82,6 +82,7 @@ INSTALLED_APPS = [
     'accounts',
     'userprofiles',
     'sports',
+    'leagues',
 ]
 
 CRISPY_TEMPLATE_PACK = 'bootstrap3'
@@ -97,9 +98,9 @@ MIDDLEWARE_CLASSES = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.contrib.sites.middleware.CurrentSiteMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'userprofiles.middleware.UserProfileExistsMiddleware',
     'escoresheet.middleware.TranslationMiddleware',
     'escoresheet.middleware.TimezoneMiddleware',
-    'userprofiles.middleware.UserProfileExistsMiddleware',
 ]
 
 ROOT_URLCONF = 'escoresheet.urls'
