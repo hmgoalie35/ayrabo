@@ -3,6 +3,7 @@ from django.test import TestCase
 
 from userprofiles.models import MAX_WEIGHT
 from .factories.UserProfileFactory import UserProfileFactory
+from userprofiles.models import UserProfile
 
 
 class UserProfileModelTests(TestCase):
@@ -29,3 +30,60 @@ class UserProfileModelTests(TestCase):
         for valid_weight in valid_weights:
             up = UserProfileFactory.create(weight=valid_weight)
             self.assertIsNone(up.full_clean())
+
+    def test_to_string(self):
+        up = UserProfileFactory.create()
+        self.assertEqual(str(up), up.user.email)
+
+    def test_current_available_roles(self):
+        self.assertListEqual(UserProfile.ROLES, ['Player', 'Coach', 'Referee', 'Manager'])
+
+    def test_default_role_mask(self):
+        up = UserProfileFactory.create()
+        self.assertEqual(up.roles_mask, 0)
+
+    def test_set_roles_param_not_a_list(self):
+        up = UserProfileFactory.create()
+        with self.assertRaises(AssertionError):
+            up.set_roles(('Player', 'Manager'))
+
+    def test_set_roles_no_append(self):
+        up = UserProfileFactory.create()
+        up.set_roles(['Player', 'Manager'])
+        self.assertEqual(up.roles_mask, 9)
+
+    def test_set_roles_append(self):
+        up = UserProfileFactory.create()
+        up.set_roles(['Player', 'Manager'])
+        up.set_roles(['Coach'], append=True)
+        self.assertEqual(up.roles_mask, 11)
+
+    def test_set_roles_invalid_role(self):
+        up = UserProfileFactory.create()
+        up.set_roles(['Referee', 'Invalid'])
+        self.assertEqual(up.roles, ['Referee'])
+
+    def test_set_roles_empty_list(self):
+        up = UserProfileFactory.create()
+        up.set_roles([])
+        self.assertEqual(up.roles_mask, 0)
+
+    def test_roles_property(self):
+        roles = ['Player', 'Manager']
+        up = UserProfileFactory.create()
+        up.set_roles(roles)
+        self.assertEqual(up.roles, roles)
+
+    def test_has_role_true(self):
+        roles = ['Player', 'Manager']
+        up = UserProfileFactory.create()
+        up.set_roles(roles)
+        self.assertTrue(up.has_role('Player'))
+        self.assertTrue(up.has_role('manager'))
+
+    def test_has_role_false(self):
+        roles = ['Coach', 'Manager']
+        up = UserProfileFactory.create()
+        up.set_roles(roles)
+        self.assertFalse(up.has_role('Player'))
+        self.assertFalse(up.has_role('InvalidRole'))
