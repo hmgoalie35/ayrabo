@@ -83,6 +83,7 @@ INSTALLED_APPS = [
     'userprofiles',
     'sports',
     'leagues',
+    'divisions',
 ]
 
 CRISPY_TEMPLATE_PACK = 'bootstrap3'
