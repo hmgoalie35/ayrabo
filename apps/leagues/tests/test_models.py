@@ -2,13 +2,14 @@ from django.test import TestCase
 from .factories.LeagueFactory import LeagueFactory
 from leagues.models import League
 from django.db.utils import IntegrityError
+from escoresheet.testing_utils import is_queryset_in_alphabetical_order
 
 
 class LeagueModelTests(TestCase):
 
     def test_default_ordering(self):
-        leagues = LeagueFactory.create_batch(5)
-        self.assertListEqual(leagues, list(League.objects.all()))
+        LeagueFactory.create_batch(5)
+        self.assertTrue(is_queryset_in_alphabetical_order(League.objects.all(), 'full_name'))
 
     def test_to_string(self):
         nhl = LeagueFactory.create(full_name='National Hockey League')
