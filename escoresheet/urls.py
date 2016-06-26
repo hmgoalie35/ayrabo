@@ -35,6 +35,5 @@ urlpatterns = [
     url(r'^account/password/change/$', PasswordChangeView.as_view(), name='account_change_password'),
     url(r'^account/', include('allauth.urls')),
 
-    url(r'^sport/', include('sports.urls')),
     url(r'^profile/', include('userprofiles.urls')),
 ]

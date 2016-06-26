@@ -19,6 +19,7 @@ SITE_ID = 1
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # Custom django apps are in apps/ directory, so add it to path
 sys.path.append(os.path.join(BASE_DIR, 'apps'))
@@ -81,6 +82,8 @@ INSTALLED_APPS = [
     'accounts',
     'userprofiles',
     'sports',
+    'leagues',
+    'divisions',
 ]
 
 CRISPY_TEMPLATE_PACK = 'bootstrap3'
@@ -96,9 +99,9 @@ MIDDLEWARE_CLASSES = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.contrib.sites.middleware.CurrentSiteMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'userprofiles.middleware.UserProfileExistsMiddleware',
     'escoresheet.middleware.TranslationMiddleware',
     'escoresheet.middleware.TimezoneMiddleware',
-    'userprofiles.middleware.UserProfileExistsMiddleware',
 ]
 
 ROOT_URLCONF = 'escoresheet.urls'
@@ -328,6 +331,10 @@ LOGIN_REDIRECT_URL = '/'
 LOGOUT_URL = '/account/logout/'
 
 TEST_RUNNER = "redgreenunittest.django.runner.RedGreenDiscoverRunner"
+
+FIXTURE_DIRS = [
+    os.path.join(PROJECT_ROOT, 'fixtures')
+]
 
 # @TODO make testing settings work with production settings (move to except clause)
 try:

@@ -3,7 +3,7 @@ import re
 from behave import *
 from django.contrib.auth.models import User
 from django.db.models import Q
-from selenium.common.exceptions import NoSuchElementException
+from selenium.common.exceptions import NoSuchElementException, WebDriverException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.select import Select
 
@@ -22,6 +22,8 @@ def find_element(context, element_to_find):
             element = context.driver.find_element(method, element_to_find)
             return element
         except NoSuchElementException:
+            pass
+        except WebDriverException:
             pass
     raise NoSuchElementException('{element} does not exist on the page'.format(element=element_to_find))
 

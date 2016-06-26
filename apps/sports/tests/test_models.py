@@ -3,6 +3,7 @@ from django.test import TestCase
 
 from sports.models import Sport
 from .factories.SportFactory import SportFactory
+from escoresheet.testing_utils import is_queryset_in_alphabetical_order
 
 
 class SportModelTests(TestCase):
@@ -24,8 +25,8 @@ class SportModelTests(TestCase):
         self.assertEqual(ice_hockey.slug, 'ice-hockey')
 
     def test_default_ordering(self):
-        sports = SportFactory.create_batch(5)
-        self.assertListEqual(sports, list(Sport.objects.all()))
+        SportFactory.create_batch(5)
+        self.assertTrue(is_queryset_in_alphabetical_order(Sport.objects.all(), 'name'))
 
     def test_to_string(self):
         sport = SportFactory.build(name='Ice Hockey')
