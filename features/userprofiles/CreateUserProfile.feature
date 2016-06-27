@@ -25,7 +25,8 @@ Feature: User profiles
   Scenario: Fill out with invalid height
     Given I login with "user@example.com" and "myweakpassword"
     And I am on the "create_userprofile" page
-    When I select "male" from "id_gender"
+    When I press "id_roles_1"
+    And I select "male" from "id_gender"
     And I fill in "id_height" with "5' 7"
     And I fill in "id_weight" with "130"
     And I press "create_userprofile_btn"
@@ -34,22 +35,34 @@ Feature: User profiles
   Scenario: Fill out with invalid weight
     Given I login with "user@example.com" and "myweakpassword"
     And I am on the "create_userprofile" page
-    When I select "male" from "id_gender"
+    When I press "id_roles_1"
+    And I select "male" from "id_gender"
     And I fill in "id_height" with "5' 7""
     And I fill in "id_weight" with "-1"
     And I press "create_userprofile_btn"
     Then I should see "Weight must be greater than zero and less than 400"
 
+  Scenario: Fill out with no roles
+    Given I login with "user@example.com" and "myweakpassword"
+    And I am on the "create_userprofile" page
+    When I select "male" from "id_gender"
+    And I fill in "id_height" with "5' 7""
+    And I fill in "id_weight" with "-1"
+    And I press "create_userprofile_btn"
+    Then I should see "This field is required."
+
   Scenario: Submit invalid form
     Given I login with "user@example.com" and "myweakpassword"
     And I am on the "create_userprofile" page
     When I press "create_userprofile_btn"
-    Then "This field is required." should show up 3 times
+    Then "This field is required." should show up 4 times
 
   Scenario: Submit valid form
     Given I login with "user@example.com" and "myweakpassword"
     And I am on the "create_userprofile" page
-    When I select "male" from "id_gender"
+    When I press "id_roles_1"
+    And I press "id_roles_2"
+    And I select "male" from "id_gender"
     And I fill in "id_height" with "5' 7""
     And I fill in "id_weight" with "130"
     And I press "create_userprofile_btn"
