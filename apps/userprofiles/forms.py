@@ -36,15 +36,16 @@ class UserProfileAdminForm(forms.ModelForm):
     current_year = datetime.datetime.today().year
     birthday = forms.DateField(initial=datetime.datetime.today().replace(year=current_year - YEAR_DIFFERENCE),
                                widget=extras.SelectDateWidget(years=range(current_year - MAX_AGE, current_year)))
+    roles = forms.MultipleChoiceField(choices=[(role, role) for role in UserProfile.ROLES],
+                                      widget=forms.CheckboxSelectMultiple)
 
     class Meta:
         model = UserProfile
-        fields = ['user', 'roles_mask', 'gender', 'birthday', 'height', 'weight', 'language', 'timezone']
+        fields = ['user', 'gender', 'birthday', 'height', 'weight', 'language', 'timezone']
         labels = {
             'weight': _('Weight (in lbs)'),
         }
         help_texts = {
             'roles_mask': _(
-                    'Ask Harris how to convert roles_mask from int to list of strings and vice versa or see the'
-                    ' set_roles function in userprofiles/models.py')
+                    'Use the roles checkboxes to modify this value')
         }
