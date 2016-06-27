@@ -24,6 +24,7 @@
                 <h4>Email: {{ user.email }}</h4>
                 <h4>Gender: {{ userprofile.gender | title }}</h4>
                 <h4>Birthday: {{ userprofile.birthday }}</h4>
+                <h4>Current Roles: {{ user_roles }}</h4>
                 <a id="change_password_link" href="{% url 'account_change_password' %}">Change Password</a>
                 <br>
                 <br>

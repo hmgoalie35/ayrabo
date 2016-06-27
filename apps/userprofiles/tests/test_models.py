@@ -39,7 +39,7 @@ class UserProfileModelTests(TestCase):
         self.assertListEqual(UserProfile.ROLES, ['Player', 'Coach', 'Referee', 'Manager'])
 
     def test_default_role_mask(self):
-        up = UserProfileFactory.create()
+        up = UserProfileFactory.create(roles_mask=0)
         self.assertEqual(up.roles_mask, 0)
 
     def test_set_roles_param_not_a_list(self):

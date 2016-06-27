@@ -41,6 +41,8 @@ class CreateUserProfileViewTests(TestCase):
     def test_post_anonymous_user(self):
         self.client.logout()
         data = factory.build(dict, FACTORY_CLASS=UserProfileFactory)
+        del data['roles_mask']
+        data['roles'] = ['Player']
         response = self.client.post(reverse('create_userprofile'), data=data)
         result_url = '%s?next=%s' % (reverse('account_login'), reverse('create_userprofile'))
         self.assertRedirects(response, result_url)
@@ -50,11 +52,15 @@ class CreateUserProfileViewTests(TestCase):
         user_with_profile = UserFactory.create(password=self.password)
         self.client.login(email=user_with_profile.email, password=self.password)
         data = factory.build(dict, FACTORY_CLASS=UserProfileFactory)
+        del data['roles_mask']
+        data['roles'] = ['Player']
         response = self.client.post(reverse('create_userprofile'), data=data, follow=True)
         self.assertRedirects(response, reverse('home'))
 
     def test_valid_post_data(self):
         data = factory.build(dict, FACTORY_CLASS=UserProfileFactory)
+        del data['roles_mask']
+        data['roles'] = ['Player']
         response = self.client.post(reverse('create_userprofile'), data=data, follow=True)
         success_msg = 'Thank you for filling out your profile, you now have access to the entire site'
         self.assertIn(success_msg, get_messages(response))
@@ -62,8 +68,18 @@ class CreateUserProfileViewTests(TestCase):
 
     def test_user_attribute_is_set(self):
         data = factory.build(dict, FACTORY_CLASS=UserProfileFactory)
+        del data['roles_mask']
+        data['roles'] = ['Player']
         self.client.post(reverse('create_userprofile'), data=data, follow=True)
         self.assertTrue(UserProfile.objects.filter(user=self.user).exists())
+
+    def test_roles_are_set(self):
+        data = factory.build(dict, FACTORY_CLASS=UserProfileFactory)
+        del data['roles_mask']
+        data['roles'] = ['Player', 'Manager']
+        self.client.post(reverse('create_userprofile'), data=data, follow=True)
+        self.assertListEqual(self.user.userprofile.roles, data['roles'])
+        self.assertEqual(self.user.userprofile.roles_mask, 9)
 
     # Invalid POST data
     def test_no_height_weight_gender(self):
@@ -71,6 +87,8 @@ class CreateUserProfileViewTests(TestCase):
         data.pop('gender')
         data.pop('height')
         data.pop('weight')
+        del data['roles_mask']
+        data['roles'] = ['Player']
         response = self.client.post(reverse('create_userprofile'), data=data, follow=True)
         self.assertFormError(response, 'form', 'gender', 'This field is required.')
         self.assertFormError(response, 'form', 'height', 'This field is required.')
@@ -79,6 +97,8 @@ class CreateUserProfileViewTests(TestCase):
     def test_invaild_height_format(self):
         invalid_heights = ['5 7', '5 7\"', '5\' 7']
         data = factory.build(dict, FACTORY_CLASS=UserProfileFactory)
+        del data['roles_mask']
+        data['roles'] = ['Player']
         for invalid_height in invalid_heights:
             data['height'] = invalid_height
             response = self.client.post(reverse('create_userprofile'), data=data, follow=True)
@@ -87,6 +107,8 @@ class CreateUserProfileViewTests(TestCase):
     def test_negative_and_zero_weights(self):
         invalid_weights = [-1, -100, 0]
         data = factory.build(dict, FACTORY_CLASS=UserProfileFactory)
+        del data['roles_mask']
+        data['roles'] = ['Player']
         for invalid_weight in invalid_weights:
             data['weight'] = invalid_weight
             response = self.client.post(reverse('create_userprofile'), data=data, follow=True)
@@ -95,10 +117,18 @@ class CreateUserProfileViewTests(TestCase):
     def test_decimal_weights(self):
         invalid_weights = [.5, -.5]
         data = factory.build(dict, FACTORY_CLASS=UserProfileFactory)
+        del data['roles_mask']
+        data['roles'] = ['Player']
         for invalid_weight in invalid_weights:
             data['weight'] = invalid_weight
             response = self.client.post(reverse('create_userprofile'), data=data, follow=True)
             self.assertFormError(response, 'form', 'weight', 'Enter a whole number.')
+
+    def test_no_roles(self):
+        data = factory.build(dict, FACTORY_CLASS=UserProfileFactory)
+        del data['roles_mask']
+        response = self.client.post(reverse('create_userprofile'), data=data, follow=True)
+        self.assertFormError(response, 'form', 'roles', 'This field is required.')
 
 
 class UpdateUserProfileViewTests(TestCase):
@@ -123,6 +153,10 @@ class UpdateUserProfileViewTests(TestCase):
         response = self.client.get(reverse('update_userprofile'))
         self.assertEqual(response.status_code, 200)
 
+    def test_roles_in_context(self):
+        response = self.client.get(reverse('update_userprofile'))
+        self.assertIn('user_roles', response.context)
+
     # POST
     # No need to test invalid values for height, weight, etc. That is done above (the forms are almost identical)
     def test_post_anonymous_user(self):
@@ -130,6 +164,8 @@ class UpdateUserProfileViewTests(TestCase):
         data = factory.build(dict, FACTORY_CLASS=UserProfileFactory)
         data.pop('gender')
         data.pop('birthday')
+        del data['roles_mask']
+        data['roles'] = ['Player']
         response = self.client.post(reverse('update_userprofile'), data=data, follow=True)
         result_url = '%s?next=%s' % (reverse('account_login'), reverse('update_userprofile'))
         self.assertRedirects(response, result_url)
@@ -138,6 +174,8 @@ class UpdateUserProfileViewTests(TestCase):
         data = factory.build(dict, FACTORY_CLASS=UserProfileFactory)
         data.pop('gender')
         data.pop('birthday')
+        del data['roles_mask']
+        data['roles'] = ['Player']
         response = self.client.post(reverse('update_userprofile'), data=data, follow=True)
         self.assertRedirects(response, reverse('update_userprofile'))
 
@@ -146,6 +184,8 @@ class UpdateUserProfileViewTests(TestCase):
         # calling the factory will generate random values for all fields
         data.pop('gender')
         data.pop('birthday')
+        del data['roles_mask']
+        data['roles'] = ['Player']
         response = self.client.post(reverse('update_userprofile'), data=data, follow=True)
         success_msg = 'Your profile has been updated'
         self.assertIn(success_msg, get_messages(response))
@@ -156,5 +196,7 @@ class UpdateUserProfileViewTests(TestCase):
         # calling the factory will generate random values for all fields
         data.pop('gender')
         data.pop('birthday')
+        del data['roles_mask']
+        data['roles'] = ['Player']
         response = self.client.post(reverse('update_userprofile'), data=data, follow=True)
         self.assertIn('userprofile', response.context)
