@@ -27,6 +27,7 @@ class CreateUserProfileView(LoginRequiredMixin, SuccessMessageMixin, CreateView)
 
     def form_valid(self, form):
         form.instance.user = self.request.user
+        form.instance.set_roles(form.cleaned_data.get('roles', []))
         return super(CreateUserProfileView, self).form_valid(form)
 
 
@@ -37,6 +38,11 @@ class UpdateUserProfileView(LoginRequiredMixin, SuccessMessageMixin, UpdateView)
     success_url = reverse_lazy('update_userprofile')
     success_message = 'Your profile has been updated'
     context_object_name = 'userprofile'
+
+    def get_context_data(self, **kwargs):
+        context = super(UpdateUserProfileView, self).get_context_data(**kwargs)
+        context['user_roles'] = ', '.join(self.request.user.userprofile.roles)
+        return context
 
     def get_object(self, queryset=None):
         return self.request.user.userprofile
