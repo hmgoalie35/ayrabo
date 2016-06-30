@@ -49,3 +49,16 @@ body {
 div.alert.alert-block.alert-danger > ul > li{
   list-style: none;
 }
+
+.btn-back{
+  color: white;
+  background: #8b8b8b;
+  &:hover {
+    color: white;
+    background: #686868;
+  }
+}
+
+.no-bullets{
+  list-style: none;
+}

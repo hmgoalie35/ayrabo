@@ -84,6 +84,7 @@ INSTALLED_APPS = [
     'sports',
     'leagues',
     'divisions',
+    'teams',
 ]
 
 CRISPY_TEMPLATE_PACK = 'bootstrap3'

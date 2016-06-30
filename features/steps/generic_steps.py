@@ -1,4 +1,5 @@
 import re
+import os
 
 from behave import *
 from django.contrib.auth.models import User
@@ -6,6 +7,7 @@ from django.db.models import Q
 from selenium.common.exceptions import NoSuchElementException, WebDriverException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.select import Select
+from django.conf import settings
 
 
 def find_element(context, element_to_find):
@@ -37,6 +39,11 @@ def step_impl(context, url):
 def step_impl(context, url):
     step = 'given I am on the "{url}" page\n'.format(url=url)
     context.execute_steps(step)
+
+
+@step('The current url should contain "(?P<text>.*)"')
+def step_impl(context, text):
+    context.test.assertIn(text, context.driver.current_url)
 
 
 @step('I fill in "(?P<element>.*)" with "(?P<value>.*)"')
@@ -87,3 +94,10 @@ def step_impl(context, text, num):
 def step_impl(context, select_option, element):
     the_element = Select(find_element(context, element))
     the_element.select_by_value(select_option)
+
+
+@step('I upload "(?P<file_name>.*)" into "(?P<element>.*)"')
+def step_impl(context, file_name, element):
+    the_element = find_element(context, element)
+    file_path = os.path.join(settings.BASE_DIR, 'static', 'csv_examples', 'testing', file_name)
+    the_element.send_keys(file_path)

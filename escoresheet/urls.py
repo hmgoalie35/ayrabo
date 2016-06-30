@@ -21,8 +21,10 @@ from django.views.generic import RedirectView
 
 from accounts.views import NewConfirmationEmailView, PasswordChangeView
 from home.views import HomePageView, AboutUsView, ContactUsView
+from teams.views import BulkUploadTeamsView
 
 urlpatterns = [
+    url(r'^admin/teams/team/bulk-upload-teams', BulkUploadTeamsView.as_view(), name='bulk_upload_teams'),
     url(r'^admin/', admin.site.urls),
     url(r'^$', HomePageView.as_view(), name='home'),
     url(r'^about-us$', AboutUsView.as_view(), name='about_us'),

@@ -12,6 +12,7 @@ omit =
     */migrations/*
     */apps.py
     */tests/*
+    escoresheet/testing_utils.py
 
 
 [report]
