@@ -25,8 +25,7 @@ Feature: Bulk upload teams from csv
     And I fill in "id_password" with "myweakpassword"
     And I press "#login-form > div.submit-row > input[type="submit"]"
     And I am on the "admin:teams_team_changelist" page
-    When I press "download_example_csv_btn"
-    Then The current url should contain "static/csv_examples/Bulk%20Upload%20Teams%20Example.csv"
+    Then I should see "Download Example .csv"
 
   Scenario: Must be logged in to access bulk upload team page
     When I go to the "bulk_upload_teams" page
