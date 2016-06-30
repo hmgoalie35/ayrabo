@@ -1,0 +1,57 @@
+{% extends 'site_base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Admin - Bulk Upload Teams{% endblock %}
+
+{% block navbar %}
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="text-center">
+                    <br><br>
+                    <h1>This page is staff only</h1>
+                </div>
+            </div>
+        </div>
+
+        <br><br>
+
+        <div class="row">
+            <div class="col-sm-offset-4 col-sm-4 col-sm-offset-4">
+                <ul>
+                    {% for error in errors %}
+                        <div class="text-center alert alert-danger alert-dismissible" role="alert">
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span
+                                    aria-hidden="true">&times;</span></button>
+                            <li class="no-bullets">{{ error }}</li>
+                        </div>
+                    {% endfor %}
+                </ul>
+
+                <form action="" method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    {{ form | crispy }}
+                    <input id="bulk_upload_submit_btn" class="btn btn-primary" type="submit" value="Upload">
+                </form>
+            </div>
+        </div>
+
+        <br><br>
+
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="text-center">
+                    <a class="btn btn-back btn-sm" href="{% url 'admin:teams_team_changelist' %}">Back to admin
+                                                                                                  panel</a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+{% endblock %}
+
+{% block footer %}
+{% endblock %}
