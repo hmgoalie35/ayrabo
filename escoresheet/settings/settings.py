@@ -336,13 +336,9 @@ FIXTURE_DIRS = [
     os.path.join(PROJECT_ROOT, 'fixtures')
 ]
 
-# @TODO make testing settings work with production settings (move to except clause)
 try:
     from .local_settings import *
-
-    # Testing settings will use local settings and override any needed settings
+except ImportError as e:
+    # Testing settings will use production settings and override any needed settings
     if len(sys.argv) > 1 and ('test' in sys.argv or 'behave' in sys.argv):
         from .testing_settings import *
-except ImportError as e:
-    # Move if statement here to have testing settings inherit from production settings
-    pass
