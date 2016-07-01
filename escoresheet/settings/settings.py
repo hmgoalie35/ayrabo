@@ -299,8 +299,6 @@ BOWER_INSTALLED_APPS = [
 ]
 
 # Django compressor related
-COMPRESS_ENABLED = not DEBUG
-COMPRESS_OFFLINE = not DEBUG
 COMPRESS_PRECOMPILERS = [('text/scss', 'sassc {infile} {outfile}')]
 COMPRESS_CSS_FILTERS = ['compressor.filters.css_default.CssAbsoluteFilter',
                         'compressor.filters.yuglify.YUglifyCSSFilter']
