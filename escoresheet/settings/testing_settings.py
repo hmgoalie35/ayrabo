@@ -7,6 +7,9 @@ from django.conf import settings
 
 logging.disable(logging.CRITICAL)
 
+COMPRESS_ENABLED = False
+COMPRESS_OFFLINE = False
+
 CSRF_COOKIE_SECURE = False
 SESSION_COOKIE_SECURE = False
 SECURE_SSL_REDIRECT = False
