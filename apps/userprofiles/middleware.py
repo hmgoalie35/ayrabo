@@ -12,10 +12,14 @@ class UserProfileExistsMiddleware(object):
         to logout if they don't have a userprofile
         """
         create_profile_url = reverse('create_userprofile')
-        whitelisted_urls = [reverse('account_logout'), create_profile_url]
+        finish_profile_url = reverse('finish_userprofile')
+        whitelisted_urls = [reverse('account_logout'), create_profile_url, finish_profile_url]
         # Do not apply this middleware to anonymous users, or for any request to a whitelisted url
         if request.user.is_authenticated() and request.path not in whitelisted_urls:
             # Do not apply this middleware if the user already has a userprofile
-            if not UserProfile.objects.filter(user=request.user).exists():
+            up = UserProfile.objects.filter(user=request.user)
+            if not up.exists():
                 return redirect(create_profile_url)
+            elif not up.first().is_complete:
+                return redirect(finish_profile_url)
         return None

@@ -13,6 +13,8 @@ omit =
     */apps.py
     */tests/*
     escoresheet/testing_utils.py
+    escoresheet/utils.py
+    */management/*
 
 
 [report]

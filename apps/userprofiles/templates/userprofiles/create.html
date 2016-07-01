@@ -1,7 +1,7 @@
 {% extends 'site_base.html' %}
 {% load crispy_forms_tags %}
 
-{% block title %}Complete Profile{% endblock %}
+{% block title %}Create Profile{% endblock %}
 
 {% block content %}
     <div class="container">
@@ -9,8 +9,8 @@
         <div class="row">
             <div class="col-sm-12">
                 <div class="text-center">
-                    <h2>Complete Your Profile</h2>
-                    <p>We need a few more pieces of information from you before you can access the site</p>
+                    <h2>Create Your Profile</h2>
+                    <p>You will fill out your team and any role specific information in the next step</p>
                 </div>
             </div>
         </div>
@@ -22,7 +22,9 @@
                 <form action="" method="post">
                     {% csrf_token %}
                     {{ form | crispy }}
-                    <input id="create_userprofile_btn" class="btn btn-success" type="submit" value="Create Profile">
+                    <div class="text-center">
+                        <input id="create_userprofile_btn" class="btn btn-success" type="submit" value="Create Profile">
+                    </div>
                 </form>
             </div>
         </div>

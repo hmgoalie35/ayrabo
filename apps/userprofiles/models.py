@@ -53,6 +53,10 @@ class UserProfile(models.Model):
     language = models.CharField(max_length=128, choices=LANGUAGES, default='en', verbose_name='Language')
     timezone = models.CharField(max_length=128, choices=settings.COMMON_TIMEZONES, default=settings.TIME_ZONE,
                                 verbose_name='Timezone')
+    # This will be used to check if the appropriate player, coach, referee, manager objects have been created
+    # after the initial userprofile creation. It will be False if the aforementioned objects have
+    # not been created, True otherwise
+    is_complete = models.BooleanField(default=False, verbose_name='Is Profile Complete')
 
     def set_roles(self, roles, append=False):
         """
