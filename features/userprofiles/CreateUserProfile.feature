@@ -9,13 +9,13 @@ Feature: User profiles
       | John       | Doe       | user@example.com  | myweakpassword | false              |
       | Jane       | Doe       | user1@example.com | myweakpassword | true               |
 
-# Userprofile does not exist
+# Userprofile does not exist, create profile page
   Scenario: Prompted to fill out user profile after logging in for the first time
     Given I login with "user@example.com" and "myweakpassword"
     When I go to the "home" page
     Then I should be on the "create_userprofile" page
-    And I should see "Complete Your Profile"
-    And I should see "We need a few more pieces of information from you before you can access the site"
+    And I should see "Create Your Profile"
+    And I should see "You will fill out your team and any role specific information in the next step"
 
   Scenario: Navigate to another page when profile doesn't exist
     Given I login with "user@example.com" and "myweakpassword"
@@ -66,8 +66,10 @@ Feature: User profiles
     And I fill in "id_height" with "5' 7""
     And I fill in "id_weight" with "130"
     And I press "create_userprofile_btn"
-    Then I should see "Thank you for filling out your profile, you now have access to the entire site"
-    And I should be on the "home" page
+    Then I should be on the "finish_userprofile" page
+
+    # See coaches, players, referees, managers folders in features/ for tests regarding the next steps for filling out coach, players, etc. specific info
+
 
 # Userprofile exists
   Scenario: Userprofile already exists

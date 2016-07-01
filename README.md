@@ -10,7 +10,7 @@ Prod: [![Build Status](https://travis-ci.com/hmgoalie35/escoresheet.svg?token=6s
 * python3
 * pip3
 * virtualenv and/or virtualenvwrapper (virtualenvwrapper recommended)
-* node.js
+* node.js v6.2.2 and npm v3.10.3
     * bower
     * phantomjs-prebuilt
     * yuglify (prod only)
@@ -28,9 +28,10 @@ Prod: [![Build Status](https://travis-ci.com/hmgoalie35/escoresheet.svg?token=6s
     * You can replace env with the name of the virtualenv you want to create
 3. Make sure your virtual environment is activated, then run `pip install -r requirements.txt`
 4. Install node.js
-5. `[sudo] npm -g install bower phantomjs-prebuilt`
-    * yuglify is only for prod 
-    * You might need to run as root
+5. `[sudo] npm -g install`
+    * npm will install packages from the package.json file included in the repo
+    * yuglify is only for prod but will be installed by npm anyway
+    * You will likely need to run as root
 6. `cd escoresheet/settings/ && ln -s local_settings.py.dev local_settings.py`
 
 # Integration Tests

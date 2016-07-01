@@ -33,3 +33,4 @@ class UserProfileFactory(DjangoModelFactory):
     language = 'en'
     # see COMMON_TIMEZONES in the settings file for all available timezones
     timezone = settings.TIME_ZONE
+    is_complete = True

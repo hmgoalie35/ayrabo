@@ -78,13 +78,14 @@ INSTALLED_APPS = [
     'crispy_forms',
 
     # custom apps
-    'home',
-    'accounts',
-    'userprofiles',
-    'sports',
-    'leagues',
-    'divisions',
-    'teams',
+    'home.apps.HomeConfig',
+    'accounts.apps.AccountsConfig',
+    'userprofiles.apps.UserprofilesConfig',
+    'sports.apps.SportsConfig',
+    'leagues.apps.LeaguesConfig',
+    'divisions.apps.DivisionsConfig',
+    'teams.apps.TeamsConfig',
+    'coaches.apps.CoachesConfig',
 ]
 
 CRISPY_TEMPLATE_PACK = 'bootstrap3'
@@ -298,8 +299,6 @@ BOWER_INSTALLED_APPS = [
 ]
 
 # Django compressor related
-COMPRESS_ENABLED = not DEBUG
-COMPRESS_OFFLINE = not DEBUG
 COMPRESS_PRECOMPILERS = [('text/scss', 'sassc {infile} {outfile}')]
 COMPRESS_CSS_FILTERS = ['compressor.filters.css_default.CssAbsoluteFilter',
                         'compressor.filters.yuglify.YUglifyCSSFilter']

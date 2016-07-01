@@ -101,3 +101,15 @@ def step_impl(context, file_name, element):
     the_element = find_element(context, element)
     file_path = os.path.join(settings.BASE_DIR, 'static', 'csv_examples', 'testing', file_name)
     the_element.send_keys(file_path)
+
+
+@step('"(?P<element>.*)" should be visible')
+def step_impl(context, element):
+    the_element = find_element(context, element)
+    context.test.assertTrue(the_element.is_displayed())
+
+
+@step('"(?P<element>.*)" should not be visible')
+def step_impl(context, element):
+    the_element = find_element(context, element)
+    context.test.assertFalse(the_element.is_displayed())
