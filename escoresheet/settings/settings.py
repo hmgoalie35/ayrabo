@@ -78,13 +78,14 @@ INSTALLED_APPS = [
     'crispy_forms',
 
     # custom apps
-    'home',
-    'accounts',
-    'userprofiles',
-    'sports',
-    'leagues',
-    'divisions',
-    'teams',
+    'home.apps.HomeConfig',
+    'accounts.apps.AccountsConfig',
+    'userprofiles.apps.UserprofilesConfig',
+    'sports.apps.SportsConfig',
+    'leagues.apps.LeaguesConfig',
+    'divisions.apps.DivisionsConfig',
+    'teams.apps.TeamsConfig',
+    'coaches.apps.CoachesConfig',
 ]
 
 CRISPY_TEMPLATE_PACK = 'bootstrap3'

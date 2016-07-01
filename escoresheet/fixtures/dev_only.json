@@ -8,6 +8,36 @@
     }
   },
   {
+    "model": "account.emailconfirmation",
+    "pk": 1,
+    "fields": {
+      "email_address": 1,
+      "created": "2016-06-28T04:40:09.922Z",
+      "sent": "2016-06-28T04:40:10.053Z",
+      "key": "nlofszplz7dg9q5ptdaladwgweutywrsewmfmmeqkb5avokgpzw27sophn6zigp2"
+    }
+  },
+  {
+    "model": "account.emailconfirmation",
+    "pk": 2,
+    "fields": {
+      "email_address": 2,
+      "created": "2016-06-30T04:28:05.438Z",
+      "sent": "2016-06-30T04:28:05.872Z",
+      "key": "xbx3zsecnlld0pncoatpgomuejpl1xnjrqz5rtuyorzlqaxne3qz1dgjhren9qh3"
+    }
+  },
+  {
+    "model": "account.emailconfirmation",
+    "pk": 3,
+    "fields": {
+      "email_address": 3,
+      "created": "2016-06-30T04:29:08.542Z",
+      "sent": "2016-06-30T04:29:08.698Z",
+      "key": "nxzjuwss1mvwwfucgjuhl76motew9noqzmo8phbo2klt03ecfonoli2qzchaiysr"
+    }
+  },
+  {
     "model": "sports.sport",
     "pk": 1,
     "fields": {
@@ -26,6 +56,15 @@
     }
   },
   {
+    "model": "leagues.league",
+    "pk": 2,
+    "fields": {
+      "full_name": "National Hockey League",
+      "abbreviated_name": "NHL",
+      "sport": 1
+    }
+  },
+  {
     "model": "divisions.division",
     "pk": 1,
     "fields": {
@@ -34,11 +73,68 @@
     }
   },
   {
+    "model": "divisions.division",
+    "pk": 2,
+    "fields": {
+      "name": "Pacific Division",
+      "league": 2
+    }
+  },
+  {
+    "model": "divisions.division",
+    "pk": 3,
+    "fields": {
+      "name": "Central Division",
+      "league": 2
+    }
+  },
+  {
+    "model": "divisions.division",
+    "pk": 4,
+    "fields": {
+      "name": "Metropolitan Division",
+      "league": 2
+    }
+  },
+  {
+    "model": "divisions.division",
+    "pk": 5,
+    "fields": {
+      "name": "Atlantic Division",
+      "league": 2
+    }
+  },
+  {
+    "model": "divisions.division",
+    "pk": 6,
+    "fields": {
+      "name": "Pee Wee",
+      "league": 1
+    }
+  },
+  {
+    "model": "divisions.division",
+    "pk": 7,
+    "fields": {
+      "name": "Mites",
+      "league": 1
+    }
+  },
+  {
+    "model": "teams.team",
+    "pk": 1,
+    "fields": {
+      "name": "Green Machine IceCats",
+      "website": "http://www.icecathockey.com",
+      "division": 1
+    }
+  },
+  {
     "model": "auth.user",
     "pk": 1,
     "fields": {
       "password": "pbkdf2_sha256$24000$W9gGpBiqG4zz$V1NtV4aDTH6SPGjBDd54vqbToFUyREbE6ygHDMDFFoM=",
-      "last_login": "2016-06-28T04:40:22Z",
+      "last_login": "2016-06-30T04:29:50.077Z",
       "is_superuser": true,
       "username": "h@p.com",
       "first_name": "Harris",
@@ -49,6 +145,72 @@
       "date_joined": "2016-06-28T04:40:02Z",
       "groups": [],
       "user_permissions": []
+    }
+  },
+  {
+    "model": "auth.user",
+    "pk": 2,
+    "fields": {
+      "password": "pbkdf2_sha256$24000$POQetsYVWFGj$5ReRk+u1vzX5QTK2Iw4LPh6nMDmGdvZuuxQQgFdh8vQ=",
+      "last_login": "2016-06-30T04:28:33.802Z",
+      "is_superuser": false,
+      "username": "m@p.com",
+      "first_name": "Marc",
+      "last_name": "Pittinsky",
+      "email": "m@p.com",
+      "is_staff": false,
+      "is_active": true,
+      "date_joined": "2016-06-30T04:28:04.986Z",
+      "groups": [],
+      "user_permissions": []
+    }
+  },
+  {
+    "model": "auth.user",
+    "pk": 3,
+    "fields": {
+      "password": "pbkdf2_sha256$24000$PaeVsJd4N8ck$cSYmzpSusXaVt8kR30a94cDGxbv5ojfzYHMLIfqVs7o=",
+      "last_login": "2016-06-30T04:29:27.438Z",
+      "is_superuser": false,
+      "username": "l@p.com",
+      "first_name": "Lauren",
+      "last_name": "Pittinsky",
+      "email": "l@p.com",
+      "is_staff": false,
+      "is_active": true,
+      "date_joined": "2016-06-30T04:29:08.215Z",
+      "groups": [],
+      "user_permissions": []
+    }
+  },
+  {
+    "model": "account.emailaddress",
+    "pk": 1,
+    "fields": {
+      "user": 1,
+      "email": "h@p.com",
+      "verified": true,
+      "primary": true
+    }
+  },
+  {
+    "model": "account.emailaddress",
+    "pk": 2,
+    "fields": {
+      "user": 2,
+      "email": "m@p.com",
+      "verified": true,
+      "primary": true
+    }
+  },
+  {
+    "model": "account.emailaddress",
+    "pk": 3,
+    "fields": {
+      "user": 3,
+      "email": "l@p.com",
+      "verified": true,
+      "primary": true
     }
   },
   {
@@ -66,23 +228,31 @@
     }
   },
   {
-    "model": "account.emailaddress",
-    "pk": 1,
+    "model": "userprofiles.userprofile",
+    "pk": 2,
     "fields": {
-      "user": 1,
-      "email": "h@p.com",
-      "verified": true,
-      "primary": true
+      "user": 2,
+      "roles_mask": 3,
+      "gender": "male",
+      "birthday": "1996-06-30",
+      "height": "5' 7\"",
+      "weight": 130,
+      "language": "en",
+      "timezone": "US/Eastern"
     }
   },
   {
-    "model": "account.emailconfirmation",
-    "pk": 1,
+    "model": "userprofiles.userprofile",
+    "pk": 3,
     "fields": {
-      "email_address": 1,
-      "created": "2016-06-28T04:40:09.922Z",
-      "sent": "2016-06-28T04:40:10.053Z",
-      "key": "nlofszplz7dg9q5ptdaladwgweutywrsewmfmmeqkb5avokgpzw27sophn6zigp2"
+      "user": 3,
+      "roles_mask": 2,
+      "gender": "female",
+      "birthday": "1996-06-30",
+      "height": "6' 7\"",
+      "weight": 100,
+      "language": "en",
+      "timezone": "US/Eastern"
     }
   }
 ]
