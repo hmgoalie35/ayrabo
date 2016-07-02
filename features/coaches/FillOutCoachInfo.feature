@@ -9,7 +9,7 @@ Feature: Create coach in the system
       | John       | Doe       | user@example.com | myweakpassword | false              |
     And The following team exists "Green Machine IceCats" in division "Midget Minor AA"
     And I login with "user@example.com" and "myweakpassword"
-    And I am on the "create_userprofile" page
+    And I am on the "profile:create" page
     # id_roles_2 is the Coach checkbox
     And I press "id_roles_2"
     And I select "male" from "id_gender"
@@ -18,7 +18,7 @@ Feature: Create coach in the system
     And I press "create_userprofile_btn"
 
   Scenario: Submit valid coach form
-    Given I am on the "finish_userprofile" page
+    Given I am on the "profile:finish" page
     When I select "Head Coach" from "id_position"
     And I select "1" from "id_team"
     And I press "finish_profile_btn"
@@ -26,8 +26,8 @@ Feature: Create coach in the system
     And I should be on the "home" page
 
    Scenario: Submit invalid coach form
-     Given I am on the "finish_userprofile" page
+     Given I am on the "profile:finish" page
      When I select "Head Coach" from "id_position"
      And I press "finish_profile_btn"
-     Then I should be on the "finish_userprofile" page
+     Then I should be on the "profile:finish" page
      And "This field is required." should show up 1 time

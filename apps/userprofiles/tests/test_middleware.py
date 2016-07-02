@@ -24,14 +24,14 @@ class UserProfileExistsMiddlewareTests(TestCase):
 
     def test_no_redirect_loop_on_create_userprofile_page(self):
         self.client.login(email=self.user_without_profile.email, password='myweakpassword')
-        response = self.client.get(reverse('create_userprofile'))
+        response = self.client.get(reverse('profile:create'))
         self.assertTemplateUsed(response, 'userprofiles/create.html')
         self.assertEqual(response.status_code, 200)
 
     def test_redirects_when_no_userprofile_exists(self):
         self.client.login(email=self.user_without_profile.email, password='myweakpassword')
         response = self.client.get(reverse('home'))
-        self.assertRedirects(response, reverse('create_userprofile'))
+        self.assertRedirects(response, reverse('profile:create'))
 
     def test_no_redirect_when_profile_exists(self):
         self.client.login(email=self.user_with_profile.email, password='myweakpassword')
@@ -45,7 +45,7 @@ class UserProfileExistsMiddlewareTests(TestCase):
         self.user_with_profile.userprofile.save()
         self.client.login(email=self.user_with_profile.email, password='myweakpassword')
         response = self.client.get(reverse('home'))
-        self.assertRedirects(response, reverse('finish_userprofile'))
+        self.assertRedirects(response, reverse('profile:finish'))
 
     def test_no_redirect_when_profile_complete(self):
         self.client.login(email=self.user_with_profile.email, password='myweakpassword')
