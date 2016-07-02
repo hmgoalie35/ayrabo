@@ -11,10 +11,10 @@ class Sport(models.Model):
     class Meta:
         ordering = ['name']
 
-    def save(self, *args, **kwargs):
+    def clean(self):
         self.name = self.name.title()
         self.slug = slugify(self.name)
-        super(Sport, self).save(*args, **kwargs)
+        self.save()
 
     def __str__(self):
         return self.name
