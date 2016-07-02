@@ -19,7 +19,7 @@ class HomeViewTests(TestCase):
         UserFactory.create(email=self.email, password=self.password, userprofile=None)
         self.client.login(email=self.email, password=self.password)
         response = self.client.get(reverse('home'))
-        self.assertRedirects(response, reverse('create_userprofile'))
+        self.assertRedirects(response, reverse('profile:create'))
 
     def test_authenticated_valid_user_profile(self):
         UserFactory.create(email=self.email, password=self.password)

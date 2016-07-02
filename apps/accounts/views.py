@@ -33,4 +33,4 @@ class NewConfirmationEmailView(View):
 
 
 class PasswordChangeView(LoginRequiredMixin, views.PasswordChangeView):
-    success_url = reverse_lazy('update_userprofile')
+    success_url = reverse_lazy('profile:update')

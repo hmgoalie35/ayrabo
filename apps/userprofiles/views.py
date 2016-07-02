@@ -14,7 +14,7 @@ from .forms import CreateUserProfileForm, UpdateUserProfileForm
 class CreateUserProfileView(LoginRequiredMixin, CreateView):
     model = UserProfile
     template_name = 'userprofiles/create.html'
-    success_url = reverse_lazy('finish_userprofile')
+    success_url = reverse_lazy('profile:finish')
     form_class = CreateUserProfileForm
 
     def get(self, request, *args, **kwargs):
@@ -85,7 +85,7 @@ class UpdateUserProfileView(LoginRequiredMixin, SuccessMessageMixin, UpdateView)
     model = UserProfile
     form_class = UpdateUserProfileForm
     template_name = 'userprofiles/update.html'
-    success_url = reverse_lazy('update_userprofile')
+    success_url = reverse_lazy('profile:update')
     success_message = 'Your profile has been updated'
     context_object_name = 'userprofile'
 
@@ -101,4 +101,4 @@ class UpdateUserProfileView(LoginRequiredMixin, SuccessMessageMixin, UpdateView)
         if form.has_changed():
             return super(UpdateUserProfileView, self).form_valid(form)
         else:
-            return redirect(reverse('update_userprofile'))
+            return redirect(reverse('profile:update'))
