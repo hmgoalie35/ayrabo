@@ -1,5 +1,6 @@
 from django.db.utils import IntegrityError
 from django.test import TestCase
+from django.utils.text import slugify
 
 from escoresheet.testing_utils import is_queryset_in_alphabetical_order
 from leagues.models import League
@@ -27,7 +28,8 @@ class LeagueModelTests(TestCase):
     def test_full_name_unique_with_sport(self):
         LeagueFactory.create(full_name='National Hockey League', sport=self.ice_hockey)
         with self.assertRaises(IntegrityError, msg='UNIQUE constraint failed: leagues_league.full_name'):
-            LeagueFactory.create(full_name='National Hockey League', sport=self.ice_hockey).full_clean(exclude=['abbreviated_name'])
+            LeagueFactory.create(full_name='National Hockey League', sport=self.ice_hockey).full_clean(
+                    exclude=['abbreviated_name'])
 
     def test_abbreviated_name_lowercase(self):
         # Make sure first letters are capitalized
@@ -49,3 +51,14 @@ class LeagueModelTests(TestCase):
         fake_league = LeagueFactory.create(full_name=' League With  Extra  Space', sport=self.ice_hockey)
         fake_league.full_clean(exclude=['abbreviated_name'])
         self.assertEqual(fake_league.abbreviated_name, 'LWES')
+
+    def test_slug_generation(self):
+        nhl = LeagueFactory(full_name='National Hockey League', sport=self.ice_hockey)
+        self.assertEqual(nhl.slug, slugify(nhl.abbreviated_name))
+
+    def test_slug_unique_with_sport(self):
+        LeagueFactory.create(full_name='National Hockey League', sport=self.ice_hockey)
+        with self.assertRaises(IntegrityError,
+                               msg='UNIQUE constraint failed: leagues_league.slug, leagues_league.sport_id'):
+            # Below has the same abbreviated name and slug, so should throw an error
+            LeagueFactory(full_name='Notareal Hockey League', sport=self.ice_hockey)
