@@ -7,6 +7,7 @@ from django.views.generic import CreateView, UpdateView, View
 from django.views.generic.base import ContextMixin
 
 from coaches.forms import CoachForm
+from managers.forms import ManagerForm
 from userprofiles.models import UserProfile
 from .forms import CreateUserProfileForm, UpdateUserProfileForm
 
@@ -47,7 +48,7 @@ class FinishUserProfileView(LoginRequiredMixin, ContextMixin, View):
         if 'Player' in user_roles:
             context['player_form'] = None
         if 'Manager' in user_roles:
-            context['manager_form'] = None
+            context['manager_form'] = ManagerForm(self.request.POST or None)
         if 'Referee' in user_roles:
             context['referee_form'] = None
         return context
@@ -65,20 +66,40 @@ class FinishUserProfileView(LoginRequiredMixin, ContextMixin, View):
             return redirect(reverse('home'))
 
         context = self.get_context_data(**kwargs)
-        coach_form = context.get('coach_form')
-        player_form = context.get('player_form')
-        manager_form = context.get('manager_form')
-        referee_form = context.get('referee_form')
+
+        all_forms = {'coach_form', 'player_form', 'manager_form', 'referee_form'}
+        forms_that_were_submitted = set()
+        is_form_valid = {'coach_form': False, 'player_form': False, 'manager_form': False, 'referee_form': False}
+
+        coach_form = context.get('coach_form', None)
+        player_form = context.get('player_form', None)
+        manager_form = context.get('manager_form', None)
+        referee_form = context.get('referee_form', None)
         user = request.user
+
         if coach_form is not None:
+            forms_that_were_submitted.add('coach_form')
             coach_form.instance.user = user
             if coach_form.is_valid():
+                is_form_valid['coach_form'] = True
                 coach_form.save()
-                user.userprofile.is_complete = True
-                user.userprofile.save()
-                messages.success(request, self.success_message)
-                return redirect(reverse('home'))
-        return render(request, self.template_name, context)
+
+        if manager_form is not None:
+            forms_that_were_submitted.add('manager_form')
+            manager_form.instance.user = user
+            if manager_form.is_valid():
+                is_form_valid['manager_form'] = True
+                manager_form.save()
+
+        forms_to_check_are_valid = all_forms & forms_that_were_submitted
+        for submitted_form in forms_to_check_are_valid:
+            if not is_form_valid[submitted_form]:
+                return render(request, self.template_name, context)
+
+        user.userprofile.is_complete = True
+        user.userprofile.save()
+        messages.success(request, self.success_message)
+        return redirect(reverse('home'))
 
 
 class UpdateUserProfileView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
