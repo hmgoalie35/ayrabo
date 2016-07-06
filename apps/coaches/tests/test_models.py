@@ -27,5 +27,5 @@ class CoachModelTests(TestCase):
         coach = CoachFactory.create(user=user, team=team)
         with self.assertRaises(ValidationError,
                                msg='{full_name} does not have the coach role assigned, please update their userprofile to include it'.format(
-                                       full_name=user.get_full_name)):
+                                       full_name=user.get_full_name())):
             coach.clean()
