@@ -1,5 +1,6 @@
 from django.db.utils import IntegrityError
 from django.test import TestCase
+from django.utils.text import slugify
 
 from escoresheet.testing_utils import is_queryset_in_alphabetical_order
 from sports.models import Sport
@@ -22,7 +23,7 @@ class SportModelTests(TestCase):
 
     def test_slug_generation(self):
         ice_hockey = SportFactory.create(name='Ice hockey')
-        self.assertEqual(ice_hockey.slug, 'ice-hockey')
+        self.assertEqual(ice_hockey.slug, slugify(ice_hockey.name))
 
     def test_default_ordering(self):
         SportFactory.create_batch(5)

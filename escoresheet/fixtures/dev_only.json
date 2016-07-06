@@ -69,6 +69,7 @@
     "pk": 1,
     "fields": {
       "name": "Midget Minor AA",
+      "slug": "midget-minor-aa",
       "league": 1
     }
   },
@@ -77,6 +78,7 @@
     "pk": 2,
     "fields": {
       "name": "Pacific Division",
+      "slug": "pacific-division",
       "league": 2
     }
   },
@@ -85,6 +87,7 @@
     "pk": 3,
     "fields": {
       "name": "Central Division",
+      "slug": "central-division",
       "league": 2
     }
   },
@@ -93,6 +96,7 @@
     "pk": 4,
     "fields": {
       "name": "Metropolitan Division",
+      "slug": "metropolitan-division",
       "league": 2
     }
   },
@@ -101,6 +105,7 @@
     "pk": 5,
     "fields": {
       "name": "Atlantic Division",
+      "slug": "atlantic-division",
       "league": 2
     }
   },
@@ -109,6 +114,7 @@
     "pk": 6,
     "fields": {
       "name": "Pee Wee",
+      "slug": "pee-wee",
       "league": 1
     }
   },
@@ -117,6 +123,7 @@
     "pk": 7,
     "fields": {
       "name": "Mites",
+      "slug": "mites",
       "league": 1
     }
   },
@@ -134,7 +141,7 @@
     "pk": 1,
     "fields": {
       "password": "pbkdf2_sha256$24000$W9gGpBiqG4zz$V1NtV4aDTH6SPGjBDd54vqbToFUyREbE6ygHDMDFFoM=",
-      "last_login": "2016-06-30T04:29:50.077Z",
+      "last_login": "2016-07-05T22:16:38.155Z",
       "is_superuser": true,
       "username": "h@p.com",
       "first_name": "Harris",
@@ -224,7 +231,8 @@
       "height": "5' 7\"",
       "weight": 130,
       "language": "en",
-      "timezone": "US/Eastern"
+      "timezone": "US/Eastern",
+      "is_complete": true
     }
   },
   {
@@ -238,7 +246,8 @@
       "height": "5' 7\"",
       "weight": 130,
       "language": "en",
-      "timezone": "US/Eastern"
+      "timezone": "US/Eastern",
+      "is_complete": false
     }
   },
   {
@@ -252,7 +261,17 @@
       "height": "6' 7\"",
       "weight": 100,
       "language": "en",
-      "timezone": "US/Eastern"
+      "timezone": "US/Eastern",
+      "is_complete": false
+    }
+  },
+  {
+    "model": "coaches.coach",
+    "pk": 1,
+    "fields": {
+      "user": 1,
+      "position": "Head Coach",
+      "team": 1
     }
   }
 ]
