@@ -55,7 +55,7 @@ Feature: User profiles
     Given I login with "user@example.com" and "myweakpassword"
     And I am on the "profile:create" page
     When I press "create_userprofile_btn"
-    Then "This field is required." should show up 4 times
+    Then "This field is required." should show up 5 times
 
   Scenario: Submit valid form
     Given I login with "user@example.com" and "myweakpassword"
@@ -63,6 +63,10 @@ Feature: User profiles
     When I press "id_roles_1"
     And I press "id_roles_2"
     And I select "male" from "id_gender"
+    # 4 stands for April
+    And I select "4" from "id_birthday_month"
+    And I select "4" from "id_birthday_day"
+    And I select "1994" from "id_birthday_year"
     And I fill in "id_height" with "5' 7""
     And I fill in "id_weight" with "130"
     And I press "create_userprofile_btn"
