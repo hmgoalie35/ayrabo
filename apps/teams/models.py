@@ -1,10 +1,12 @@
 from django.db import models
+from django.utils.text import slugify
 
 from divisions.models import Division
 
 
 class Team(models.Model):
     name = models.CharField(max_length=255, verbose_name='Name')
+    slug = models.SlugField(null=True, blank=True, verbose_name='Slug')
     website = models.URLField(max_length=255, verbose_name='Website', null=True, blank=True,
                               help_text='You must include http:// or https://')
     division = models.ForeignKey(Division)
@@ -21,9 +23,15 @@ class Team(models.Model):
     office_phone - CharField
     """
 
+    def clean(self):
+        self.slug = slugify(self.name)
+
     class Meta:
         ordering = ['name', 'division']
-        unique_together = (('name', 'division'),)
+        unique_together = (
+            ('name', 'division'),
+            ('slug', 'division')
+        )
 
     def __str__(self):
         return '{division} - {name}'.format(division=self.division.name, name=self.name)

@@ -1,5 +1,6 @@
 from django.db.utils import IntegrityError
 from django.test import TestCase
+from django.utils.text import slugify
 
 from divisions.tests.factories.DivisionFactory import DivisionFactory
 from escoresheet.testing_utils import is_queryset_in_alphabetical_order
@@ -44,3 +45,13 @@ class TeamModelTests(TestCase):
     def test_to_string(self):
         icecats = TeamFactory.create(name='Green Machine IceCats', division=self.pee_wee_division)
         self.assertEqual(str(icecats), '{division} - {name}'.format(division=icecats.division.name, name=icecats.name))
+
+    def test_slug_generation(self):
+        icecats = TeamFactory(name='Green Machine IceCats', division=self.pee_wee_division)
+        self.assertEqual(icecats.slug, slugify(icecats.name))
+
+    def test_slug_unique_with_division(self):
+        TeamFactory(name='Green Machine IceCats', division=self.pee_wee_division)
+        with self.assertRaises(IntegrityError, msg='UNIQUE constraint failed: teams_team.slug, teams_team.division_id'):
+            # make sure the team name is not the same as above, or it will fail the uniqueness constraint for name
+            TeamFactory(name='green machine iceCats', division=self.pee_wee_division)

@@ -5,11 +5,12 @@ from .models import Team
 
 
 class TeamAdmin(admin.ModelAdmin):
-    list_display = ['id', 'name', 'division', 'league', 'sport', 'website_link']
+    list_display = ['id', 'name', 'slug', 'division', 'league', 'sport', 'website_link']
     list_display_links = ['name']
     # list_filter = ['division__name', 'division__league__full_name', 'division__league__abbreviated_name',
     #                'division__league__sport__name']
     search_fields = ['name', 'division__name', 'division__league__abbreviated_name', 'division__league__sport__name']
+    prepopulated_fields = {'slug': ('name',)}
 
     def website_link(self, obj):
         return format_html('<a target="_blank" href="{url}">{url}</a>', url=obj.website)
