@@ -13,6 +13,10 @@ Feature: Create coach in the system
     # id_roles_2 is the Coach checkbox
     And I press "id_roles_2"
     And I select "male" from "id_gender"
+    # 4 stands for April
+    And I select "4" from "id_birthday_month"
+    And I select "4" from "id_birthday_day"
+    And I select "1994" from "id_birthday_year"
     And I fill in "id_height" with "5' 7""
     And I fill in "id_weight" with "130"
     And I press "create_userprofile_btn"
