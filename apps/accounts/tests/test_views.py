@@ -79,3 +79,9 @@ class NewEmailConfirmationTests(TestCase):
         self.assertEqual(len(mail.outbox), 1)
         # Make sure redirect
         self.assertRedirects(response, self.valid_request_path)
+
+
+class RestrictAllAuthEmailView(TestCase):
+    def test_url_redirects_to_home(self):
+        response = self.client.get(reverse('account_email'))
+        self.assertRedirects(response, reverse('home'))
