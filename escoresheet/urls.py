@@ -32,6 +32,7 @@ urlpatterns = [
 
     url(r'^account/email/confirmation/new/$', NewConfirmationEmailView.as_view(),
         name='account_new_email_confirmation'),
+    url(r'^account/email/', RedirectView.as_view(url=reverse_lazy('home')), name='account_email'),
     url(r'^account/register/$', signup, name='account_register'),
     url(r'^account/signup/$', RedirectView.as_view(url=reverse_lazy('account_register')), name='account_signup'),
     url(r'^account/password/change/$', PasswordChangeView.as_view(), name='account_change_password'),
