@@ -36,7 +36,6 @@ class DivisionModelTests(TestCase):
         division_name = 'Midget Minor AA'
         midget_minor_aa = DivisionFactory(name=division_name, league=liahl)
         self.assertEqual(midget_minor_aa.slug, slugify(division_name))
-        import pdb; pdb.set_trace()
 
     def test_slug_unique_for_league(self):
         liahl = LeagueFactory(full_name='Long Island Amateur Hockey League')
