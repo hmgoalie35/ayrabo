@@ -41,8 +41,6 @@ class FinishUserProfileView(LoginRequiredMixin, ContextMixin, View):
     def get_context_data(self, **kwargs):
         context = super(FinishUserProfileView, self).get_context_data(**kwargs)
         user_roles = self.request.user.userprofile.roles
-        # there is most likely a bug here when i start posting multiple forms to this view
-        # self.request.POST will need to be parsed for the correct form data to instantiate the below forms with
         if 'Coach' in user_roles:
             context['coach_form'] = CoachForm(self.request.POST or None)
         if 'Player' in user_roles:

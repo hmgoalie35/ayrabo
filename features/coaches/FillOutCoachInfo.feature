@@ -23,15 +23,15 @@ Feature: Create coach in the system
 
   Scenario: Submit valid coach form
     Given I am on the "profile:finish" page
-    When I select "Head Coach" from "id_position"
-    And I select "1" from "id_team"
+    When I select "Head Coach" from "id_coach-position"
+    And I select "1" from "id_coach-team"
     And I press "finish_profile_btn"
     Then I should see "You have successfully completed your profile, you can now access the site"
     And I should be on the "home" page
 
    Scenario: Submit invalid coach form
      Given I am on the "profile:finish" page
-     When I select "Head Coach" from "id_position"
+     When I select "Head Coach" from "id_coach-position"
      And I press "finish_profile_btn"
      Then I should be on the "profile:finish" page
      And "This field is required." should show up 1 time

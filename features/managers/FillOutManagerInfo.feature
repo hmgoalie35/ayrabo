@@ -23,7 +23,7 @@ Feature: Create manager in the system
 
   Scenario: Submit valid manager form
     Given I am on the "profile:finish" page
-    When I select "1" from "id_team"
+    When I select "1" from "id_manager-team"
     And I press "finish_profile_btn"
     Then I should see "You have successfully completed your profile, you can now access the site"
     And I should be on the "home" page
