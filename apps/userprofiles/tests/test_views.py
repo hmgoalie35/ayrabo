@@ -178,14 +178,19 @@ class FinishUserProfileViewTests(TestCase):
     def setUp(self):
         self.email = 'user@example.com'
         self.password = 'myweakpassword'
+
         self.coach_post_data = factory.build(dict, FACTORY_CLASS=CoachFactory)
+        self.coach_post_data['coach-position'] = self.coach_post_data.pop('position')
+
         self.manager_post_data = factory.build(dict, FACTORY_CLASS=ManagerFactory)
         self.division = DivisionFactory(name='Midget Minor AA')
         self.team = TeamFactory(name='Green Machine IceCats', division=self.division)
-        self.coach_post_data['team'] = str(self.team.id)
-        self.manager_post_data['team'] = str(self.team.id)
+
+        self.coach_post_data['coach-team'] = str(self.team.id)
+        self.manager_post_data['manager-team'] = str(self.team.id)
         del self.coach_post_data['user']
         del self.manager_post_data['user']
+
         self.user = UserFactory.create(email=self.email, password=self.password)
         self.user.userprofile.is_complete = False
         self.user.userprofile.set_roles(['Coach'])
@@ -267,7 +272,7 @@ class FinishUserProfileViewTests(TestCase):
         self.assertTrue(Coach.objects.filter(user=self.user).exists())
 
     def test_post_invalid_coach_form_data(self):
-        del self.coach_post_data['position']
+        del self.coach_post_data['coach-position']
         response = self.client.post(reverse('profile:finish'), data=self.coach_post_data, follow=True)
         self.assertFormError(response, 'coach_form', 'position', 'This field is required.')
 
@@ -281,7 +286,6 @@ class FinishUserProfileViewTests(TestCase):
 
     def test_post_invalid_manager_form_data(self):
         self.user.userprofile.set_roles(['Manager'])
-        self.manager_post_data['team'] = str(0)
+        self.manager_post_data['manager-team'] = ''
         response = self.client.post(reverse('profile:finish'), data=self.manager_post_data, follow=True)
-        self.assertFormError(response, 'manager_form', 'team',
-                             'Select a valid choice. That choice is not one of the available choices.')
+        self.assertFormError(response, 'manager_form', 'team', 'This field is required.')
