@@ -8,6 +8,7 @@ from django.views.generic.base import ContextMixin
 
 from coaches.forms import CoachForm
 from managers.forms import ManagerForm
+from referees.forms import RefereeForm
 from userprofiles.models import UserProfile
 from .forms import CreateUserProfileForm, UpdateUserProfileForm
 
@@ -54,7 +55,7 @@ class FinishUserProfileView(LoginRequiredMixin, ContextMixin, View):
         if 'Manager' in user_roles:
             context['manager_form'] = ManagerForm(self.request.POST or None)
         if 'Referee' in user_roles:
-            context['referee_form'] = None
+            context['referee_form'] = RefereeForm(self.request.POST or None)
         return context
 
     def get(self, request, *args, **kwargs):
@@ -95,6 +96,13 @@ class FinishUserProfileView(LoginRequiredMixin, ContextMixin, View):
             if manager_form.is_valid():
                 is_form_valid['manager_form'] = True
                 manager_form.save()
+
+        if referee_form is not None:
+            forms_that_were_submitted.append('referee_form')
+            referee_form.instance.user = user
+            if referee_form.is_valid():
+                is_form_valid['referee_form'] = True
+                referee_form.save()
 
         # Check to see if all of the forms that were submitted are valid.
         # If there is a non valid form that was submitted, redisplay the form with errors

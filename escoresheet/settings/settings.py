@@ -87,6 +87,7 @@ INSTALLED_APPS = [
     'teams.apps.TeamsConfig',
     'coaches.apps.CoachesConfig',
     'managers.apps.ManagersConfig',
+    'referees.apps.RefereesConfig',
 ]
 
 CRISPY_TEMPLATE_PACK = 'bootstrap3'
