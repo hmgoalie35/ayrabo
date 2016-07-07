@@ -20,4 +20,4 @@ class Division(models.Model):
         )
 
     def __str__(self):
-        return self.name
+        return '{division} - {league}'.format(division=self.name, league=self.league.abbreviated_name)

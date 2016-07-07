@@ -15,7 +15,8 @@ class DivisionModelTests(TestCase):
 
     def test_to_string(self):
         metro_division = DivisionFactory(name='Metropolitan Division')
-        self.assertEqual(str(metro_division), 'Metropolitan Division')
+        self.assertEqual(str(metro_division), '{division} - {league}'.format(division=metro_division.name,
+                                                                             league=metro_division.league.abbreviated_name))
 
     def test_duplicate_division_name_same_league(self):
         liahl = LeagueFactory(full_name='Long Island Amateur Hockey League')
