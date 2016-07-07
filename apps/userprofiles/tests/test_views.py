@@ -289,3 +289,24 @@ class FinishUserProfileViewTests(TestCase):
         self.manager_post_data['manager-team'] = ''
         response = self.client.post(reverse('profile:finish'), data=self.manager_post_data, follow=True)
         self.assertFormError(response, 'manager_form', 'team', 'This field is required.')
+
+    def test_post_valid_coach_and_manager_forms(self):
+        self.user.userprofile.set_roles(['Coach', 'Manager'])
+        post_data = self.manager_post_data.copy()
+        post_data.update(self.coach_post_data)
+        response = self.client.post(reverse('profile:finish'), data=post_data, follow=True)
+        self.assertIn('You have successfully completed your profile, you can now access the site',
+                      get_messages(response))
+        self.assertRedirects(response, reverse('home'))
+        self.assertTrue(Manager.objects.filter(user=self.user).exists())
+        self.assertTrue(Coach.objects.filter(user=self.user).exists())
+
+    def test_post_invalid_coach_manager_forms(self):
+        self.user.userprofile.set_roles(['Coach', 'Manager'])
+        post_data = self.manager_post_data.copy()
+        post_data.update(self.coach_post_data)
+        del post_data['coach-position']
+        del post_data['manager-team']
+        response = self.client.post(reverse('profile:finish'), data=post_data, follow=True)
+        self.assertFormError(response, 'coach_form', 'position', 'This field is required.')
+        self.assertFormError(response, 'manager_form', 'team', 'This field is required.')
