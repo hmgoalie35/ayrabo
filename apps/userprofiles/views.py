@@ -39,6 +39,12 @@ class FinishUserProfileView(LoginRequiredMixin, ContextMixin, View):
     success_message = 'You have successfully completed your profile, you can now access the site'
 
     def get_context_data(self, **kwargs):
+        """
+        Instantiates a blank form, or a form with POST data
+        Note that CoachForm, ManagerForm, etc have a prefix field set so that the name attributed on a field is scoped
+        to that model, so no issues arise from having fields with the same name in different models
+        The form knows what prefixed data to instantiate the form with
+        """
         context = super(FinishUserProfileView, self).get_context_data(**kwargs)
         user_roles = self.request.user.userprofile.roles
         if 'Coach' in user_roles:
@@ -65,8 +71,9 @@ class FinishUserProfileView(LoginRequiredMixin, ContextMixin, View):
 
         context = self.get_context_data(**kwargs)
 
-        all_forms = {'coach_form', 'player_form', 'manager_form', 'referee_form'}
-        forms_that_were_submitted = set()
+        # Forms that were submitted are added to this list. Only check the forms in this list for validity
+        forms_that_were_submitted = []
+        # If a form was submitted and is_valid is True, the corresponding value will be set to True
         is_form_valid = {'coach_form': False, 'player_form': False, 'manager_form': False, 'referee_form': False}
 
         coach_form = context.get('coach_form', None)
@@ -76,24 +83,26 @@ class FinishUserProfileView(LoginRequiredMixin, ContextMixin, View):
         user = request.user
 
         if coach_form is not None:
-            forms_that_were_submitted.add('coach_form')
+            forms_that_were_submitted.append('coach_form')
             coach_form.instance.user = user
             if coach_form.is_valid():
                 is_form_valid['coach_form'] = True
                 coach_form.save()
 
         if manager_form is not None:
-            forms_that_were_submitted.add('manager_form')
+            forms_that_were_submitted.append('manager_form')
             manager_form.instance.user = user
             if manager_form.is_valid():
                 is_form_valid['manager_form'] = True
                 manager_form.save()
 
-        forms_to_check_are_valid = all_forms & forms_that_were_submitted
-        for submitted_form in forms_to_check_are_valid:
+        # Check to see if all of the forms that were submitted are valid.
+        # If there is a non valid form that was submitted, redisplay the form with errors
+        for submitted_form in forms_that_were_submitted:
             if not is_form_valid[submitted_form]:
                 return render(request, self.template_name, context)
 
+        # Otherwise all forms that were submitted are valid
         user.userprofile.is_complete = True
         user.userprofile.save()
         messages.success(request, self.success_message)
