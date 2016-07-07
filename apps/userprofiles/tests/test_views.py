@@ -9,6 +9,8 @@ from divisions.tests.factories.DivisionFactory import DivisionFactory
 from escoresheet.testing_utils import get_messages
 from managers.models import Manager
 from managers.tests.factories.ManagerFactory import ManagerFactory
+from referees.models import Referee
+from referees.tests.factories.RefereeFactory import RefereeFactory
 from teams.tests.factories.TeamFactory import TeamFactory
 from userprofiles.models import UserProfile
 from .factories.UserProfileFactory import UserProfileFactory
@@ -181,15 +183,21 @@ class FinishUserProfileViewTests(TestCase):
 
         self.coach_post_data = factory.build(dict, FACTORY_CLASS=CoachFactory)
         self.coach_post_data['coach-position'] = self.coach_post_data.pop('position')
-
         self.manager_post_data = factory.build(dict, FACTORY_CLASS=ManagerFactory)
+        self.referee_post_data = factory.build(dict, FACTORY_CLASS=RefereeFactory)
+
         self.division = DivisionFactory(name='Midget Minor AA')
         self.team = TeamFactory(name='Green Machine IceCats', division=self.division)
 
+        self.referee_post_data['referee-division'] = str(self.division.id)
         self.coach_post_data['coach-team'] = str(self.team.id)
         self.manager_post_data['manager-team'] = str(self.team.id)
         del self.coach_post_data['user']
         del self.manager_post_data['user']
+        del self.referee_post_data['user']
+        del self.coach_post_data['team']
+        del self.manager_post_data['team']
+        del self.referee_post_data['division']
 
         self.user = UserFactory.create(email=self.email, password=self.password)
         self.user.userprofile.is_complete = False
@@ -242,6 +250,13 @@ class FinishUserProfileViewTests(TestCase):
         response = self.client.get(reverse('profile:finish'))
         self.assertIn('coach_form', response.context)
         self.assertIn('player_form', response.context)
+
+    def test_coach_manager_referee_forms_in_context(self):
+        self.user.userprofile.set_roles(['Coach', 'Manager', 'Referee'])
+        response = self.client.get(reverse('profile:finish'))
+        self.assertIn('coach_form', response.context)
+        self.assertIn('manager_form', response.context)
+        self.assertIn('referee_form', response.context)
 
     def test_get_already_complete_profile(self):
         self.user.userprofile.is_complete = True
@@ -310,3 +325,30 @@ class FinishUserProfileViewTests(TestCase):
         response = self.client.post(reverse('profile:finish'), data=post_data, follow=True)
         self.assertFormError(response, 'coach_form', 'position', 'This field is required.')
         self.assertFormError(response, 'manager_form', 'team', 'This field is required.')
+
+    def test_post_valid_coach_manager_referee_forms(self):
+        self.user.userprofile.set_roles(['Coach', 'Manager', 'Referee'])
+        post_data = self.manager_post_data.copy()
+        post_data.update(self.coach_post_data)
+        post_data.update(self.referee_post_data)
+
+        response = self.client.post(reverse('profile:finish'), data=post_data, follow=True)
+        self.assertIn('You have successfully completed your profile, you can now access the site',
+                      get_messages(response))
+        self.assertRedirects(response, reverse('home'))
+        self.assertTrue(Manager.objects.filter(user=self.user).exists())
+        self.assertTrue(Coach.objects.filter(user=self.user).exists())
+        self.assertTrue(Referee.objects.filter(user=self.user).exists())
+
+    def test_post_invalid_coach_manager_referee_forms(self):
+        self.user.userprofile.set_roles(['Coach', 'Manager', 'Referee'])
+        post_data = self.manager_post_data.copy()
+        post_data.update(self.coach_post_data)
+        post_data.update(self.referee_post_data)
+        del post_data['coach-position']
+        del post_data['manager-team']
+        del post_data['referee-division']
+        response = self.client.post(reverse('profile:finish'), data=post_data, follow=True)
+        self.assertFormError(response, 'coach_form', 'position', 'This field is required.')
+        self.assertFormError(response, 'manager_form', 'team', 'This field is required.')
+        self.assertFormError(response, 'referee_form', 'division', 'This field is required.')
