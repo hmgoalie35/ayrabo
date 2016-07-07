@@ -7,6 +7,7 @@ from django.views.generic import CreateView, UpdateView, View
 from django.views.generic.base import ContextMixin
 
 from coaches.forms import CoachForm
+from managers.forms import ManagerForm
 from userprofiles.models import UserProfile
 from .forms import CreateUserProfileForm, UpdateUserProfileForm
 
@@ -38,16 +39,20 @@ class FinishUserProfileView(LoginRequiredMixin, ContextMixin, View):
     success_message = 'You have successfully completed your profile, you can now access the site'
 
     def get_context_data(self, **kwargs):
+        """
+        Instantiates a blank form, or a form with POST data
+        Note that CoachForm, ManagerForm, etc have a prefix field set so that the name attributed on a field is scoped
+        to that model, so no issues arise from having fields with the same name in different models
+        The form knows what prefixed data to instantiate the form with
+        """
         context = super(FinishUserProfileView, self).get_context_data(**kwargs)
         user_roles = self.request.user.userprofile.roles
-        # there is most likely a bug here when i start posting multiple forms to this view
-        # self.request.POST will need to be parsed for the correct form data to instantiate the below forms with
         if 'Coach' in user_roles:
             context['coach_form'] = CoachForm(self.request.POST or None)
         if 'Player' in user_roles:
             context['player_form'] = None
         if 'Manager' in user_roles:
-            context['manager_form'] = None
+            context['manager_form'] = ManagerForm(self.request.POST or None)
         if 'Referee' in user_roles:
             context['referee_form'] = None
         return context
@@ -65,20 +70,43 @@ class FinishUserProfileView(LoginRequiredMixin, ContextMixin, View):
             return redirect(reverse('home'))
 
         context = self.get_context_data(**kwargs)
-        coach_form = context.get('coach_form')
-        player_form = context.get('player_form')
-        manager_form = context.get('manager_form')
-        referee_form = context.get('referee_form')
+
+        # Forms that were submitted are added to this list. Only check the forms in this list for validity
+        forms_that_were_submitted = []
+        # If a form was submitted and is_valid is True, the corresponding value will be set to True
+        is_form_valid = {'coach_form': False, 'player_form': False, 'manager_form': False, 'referee_form': False}
+
+        coach_form = context.get('coach_form', None)
+        player_form = context.get('player_form', None)
+        manager_form = context.get('manager_form', None)
+        referee_form = context.get('referee_form', None)
         user = request.user
+
         if coach_form is not None:
+            forms_that_were_submitted.append('coach_form')
             coach_form.instance.user = user
             if coach_form.is_valid():
+                is_form_valid['coach_form'] = True
                 coach_form.save()
-                user.userprofile.is_complete = True
-                user.userprofile.save()
-                messages.success(request, self.success_message)
-                return redirect(reverse('home'))
-        return render(request, self.template_name, context)
+
+        if manager_form is not None:
+            forms_that_were_submitted.append('manager_form')
+            manager_form.instance.user = user
+            if manager_form.is_valid():
+                is_form_valid['manager_form'] = True
+                manager_form.save()
+
+        # Check to see if all of the forms that were submitted are valid.
+        # If there is a non valid form that was submitted, redisplay the form with errors
+        for submitted_form in forms_that_were_submitted:
+            if not is_form_valid[submitted_form]:
+                return render(request, self.template_name, context)
+
+        # Otherwise all forms that were submitted are valid
+        user.userprofile.is_complete = True
+        user.userprofile.save()
+        messages.success(request, self.success_message)
+        return redirect(reverse('home'))
 
 
 class UpdateUserProfileView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):

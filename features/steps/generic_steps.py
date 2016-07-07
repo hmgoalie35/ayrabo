@@ -92,8 +92,33 @@ def step_impl(context, text, num):
 
 @step('I select "(?P<select_option>[^"]*)" from "(?P<element>[^"]*)"')
 def step_impl(context, select_option, element):
+    success = False
     the_element = Select(find_element(context, element))
-    the_element.select_by_value(select_option)
+    try:
+        the_element.select_by_value(select_option)
+        success = True
+    except NoSuchElementException:
+        pass
+
+    try:
+        the_element.select_by_visible_text(select_option)
+        success = True
+    except NoSuchElementException:
+        pass
+
+    try:
+        the_element.select_by_index(int(select_option))
+        success = True
+    except TypeError:
+        pass
+    except ValueError:
+        pass
+    except NoSuchElementException:
+        pass
+
+    if not success:
+        raise NoSuchElementException(
+            'Cannot locate {select_option} by value, visible text or index'.format(select_option=select_option))
 
 
 @step('I upload "(?P<file_name>.*)" into "(?P<element>.*)"')

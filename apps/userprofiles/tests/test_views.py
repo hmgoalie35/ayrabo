@@ -3,12 +3,14 @@ from django.core.urlresolvers import reverse
 from django.test import TestCase
 
 from accounts.tests.factories.UserFactory import UserFactory
+from coaches.models import Coach
 from coaches.tests.factories.CoachFactory import CoachFactory
 from divisions.tests.factories.DivisionFactory import DivisionFactory
 from escoresheet.testing_utils import get_messages
+from managers.models import Manager
+from managers.tests.factories.ManagerFactory import ManagerFactory
 from teams.tests.factories.TeamFactory import TeamFactory
 from userprofiles.models import UserProfile
-from coaches.models import Coach
 from .factories.UserProfileFactory import UserProfileFactory
 
 
@@ -176,11 +178,19 @@ class FinishUserProfileViewTests(TestCase):
     def setUp(self):
         self.email = 'user@example.com'
         self.password = 'myweakpassword'
-        self.post_data = factory.build(dict, FACTORY_CLASS=CoachFactory)
+
+        self.coach_post_data = factory.build(dict, FACTORY_CLASS=CoachFactory)
+        self.coach_post_data['coach-position'] = self.coach_post_data.pop('position')
+
+        self.manager_post_data = factory.build(dict, FACTORY_CLASS=ManagerFactory)
         self.division = DivisionFactory(name='Midget Minor AA')
         self.team = TeamFactory(name='Green Machine IceCats', division=self.division)
-        self.post_data['team'] = str(self.team.id)
-        del self.post_data['user']
+
+        self.coach_post_data['coach-team'] = str(self.team.id)
+        self.manager_post_data['manager-team'] = str(self.team.id)
+        del self.coach_post_data['user']
+        del self.manager_post_data['user']
+
         self.user = UserFactory.create(email=self.email, password=self.password)
         self.user.userprofile.is_complete = False
         self.user.userprofile.set_roles(['Coach'])
@@ -207,6 +217,11 @@ class FinishUserProfileViewTests(TestCase):
         """
         response = self.client.get(reverse('profile:finish'))
         self.assertIn('coach_form', response.context)
+
+    def test_manager_form_in_context(self):
+        self.user.userprofile.set_roles(['Manager'])
+        response = self.client.get(reverse('profile:finish'))
+        self.assertIn('manager_form', response.context)
 
     def test_all_forms_in_context(self):
         """
@@ -239,24 +254,59 @@ class FinishUserProfileViewTests(TestCase):
     # POST
     def test_post_anonymous_user(self):
         self.client.logout()
-        response = self.client.post(reverse('profile:finish'), data=self.post_data, follow=True)
+        response = self.client.post(reverse('profile:finish'), data=self.coach_post_data, follow=True)
         result_url = '%s?next=%s' % (reverse('account_login'), reverse('profile:finish'))
         self.assertRedirects(response, result_url)
 
     def test_post_already_complete_profile(self):
         self.user.userprofile.is_complete = True
         self.user.userprofile.save()
-        response = self.client.post(reverse('profile:finish'), data=self.post_data, follow=True)
+        response = self.client.post(reverse('profile:finish'), data=self.coach_post_data, follow=True)
         self.assertRedirects(response, reverse('home'))
 
     def test_post_valid_coach_form_data(self):
-        response = self.client.post(reverse('profile:finish'), data=self.post_data, follow=True)
+        response = self.client.post(reverse('profile:finish'), data=self.coach_post_data, follow=True)
         self.assertIn('You have successfully completed your profile, you can now access the site',
                       get_messages(response))
         self.assertRedirects(response, reverse('home'))
         self.assertTrue(Coach.objects.filter(user=self.user).exists())
 
     def test_post_invalid_coach_form_data(self):
-        del self.post_data['position']
-        response = self.client.post(reverse('profile:finish'), data=self.post_data, follow=True)
+        del self.coach_post_data['coach-position']
+        response = self.client.post(reverse('profile:finish'), data=self.coach_post_data, follow=True)
         self.assertFormError(response, 'coach_form', 'position', 'This field is required.')
+
+    def test_post_valid_manager_form_data(self):
+        self.user.userprofile.set_roles(['Manager'])
+        response = self.client.post(reverse('profile:finish'), data=self.manager_post_data, follow=True)
+        self.assertIn('You have successfully completed your profile, you can now access the site',
+                      get_messages(response))
+        self.assertRedirects(response, reverse('home'))
+        self.assertTrue(Manager.objects.filter(user=self.user).exists())
+
+    def test_post_invalid_manager_form_data(self):
+        self.user.userprofile.set_roles(['Manager'])
+        self.manager_post_data['manager-team'] = ''
+        response = self.client.post(reverse('profile:finish'), data=self.manager_post_data, follow=True)
+        self.assertFormError(response, 'manager_form', 'team', 'This field is required.')
+
+    def test_post_valid_coach_and_manager_forms(self):
+        self.user.userprofile.set_roles(['Coach', 'Manager'])
+        post_data = self.manager_post_data.copy()
+        post_data.update(self.coach_post_data)
+        response = self.client.post(reverse('profile:finish'), data=post_data, follow=True)
+        self.assertIn('You have successfully completed your profile, you can now access the site',
+                      get_messages(response))
+        self.assertRedirects(response, reverse('home'))
+        self.assertTrue(Manager.objects.filter(user=self.user).exists())
+        self.assertTrue(Coach.objects.filter(user=self.user).exists())
+
+    def test_post_invalid_coach_manager_forms(self):
+        self.user.userprofile.set_roles(['Coach', 'Manager'])
+        post_data = self.manager_post_data.copy()
+        post_data.update(self.coach_post_data)
+        del post_data['coach-position']
+        del post_data['manager-team']
+        response = self.client.post(reverse('profile:finish'), data=post_data, follow=True)
+        self.assertFormError(response, 'coach_form', 'position', 'This field is required.')
+        self.assertFormError(response, 'manager_form', 'team', 'This field is required.')
