@@ -34,7 +34,10 @@ elif [ $SHELL == "/bin/zsh" ] ; then
 fi
 
 echo "Creating virtualenv"
+source /usr/local/bin/virtualenvwrapper.sh
 mkvirtualenv escoresheet -p `which python3`
+workon escoresheet
+
 
 echo "Installing project pip packages"
 pip install -r requirements.txt
@@ -42,9 +45,11 @@ pip install -r requirements.txt
 echo "Symlinking local_settings file"
 cd escoresheet/settings/ && ln -s local_settings.py.dev local_settings.py ; cd ../../
 
-echo "Running initial migrations and loading test data"
-python manage.py migrate
-python manage.py loaddata dev_only
+if grep -q django.db.backends.sqlite3 escoresheet/settings/local_settings.py ; then
+    echo "Detected local sqlite3 database, running initial migrations and loading test data"
+    python manage.py migrate
+    python manage.py loaddata dev_only
+fi
 
 echo "Running tests..."
 
