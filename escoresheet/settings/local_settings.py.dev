@@ -23,3 +23,7 @@ CACHES = {
         'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
     }
 }
+DEBUG_TOOLBAR_CONFIG = {
+    'JQUERY_URL': '',
+    'SHOW_COLLAPSED': True,
+}

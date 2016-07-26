@@ -5,34 +5,46 @@ Dev: [![Build Status](https://travis-ci.com/hmgoalie35/escoresheet.svg?token=6sJ
 
 Prod: [![Build Status](https://travis-ci.com/hmgoalie35/escoresheet.svg?token=6sJZQMC4LpsRyFkHBeAL&branch=master)](https://travis-ci.com/hmgoalie35/escoresheet)
 
-# Dependencies
+# Apt Dependencies
 
-* python3
-* pip3
-* virtualenv and/or virtualenvwrapper (virtualenvwrapper recommended)
-* node.js v6.2.2 and npm v3.10.3
-    * bower
-    * phantomjs-prebuilt
-    * yuglify (prod only)
-* apt-get packages
-    * python3-pip
-    * python3-dev
+* python3-pip
+* python-pip
+* nodejs
+
+# Pip Packages (to be installed globally)
+* virtualenv or virtualenvwrapper (virtualenvwrapper recommended)
+
+# Npm Packages
+* bower
+* phantomjs-prebuilt
+* yuglify (prod only)
 
 *nix system recommended, Linux VM will also suffice
 
 # Installation
 
+You can either follow the instructions below or run setup_dev_env.bash (which installs necessary packages and runs the commands below)
+
 1. Clone the repo and cd in it
-2. ```mkvirtualenv env -p `which python3` ```
+2. Make sure the dependencies above are installed
+3. ```mkvirtualenv escoresheet -p `which python3` ```
     * Swap `mkvirtualenv` with `virtualenv` if you use virtualenv
-    * You can replace env with the name of the virtualenv you want to create
-3. Make sure your virtual environment is activated, then run `pip install -r requirements.txt`
-4. Install node.js
-5. `[sudo] npm -g install`
-    * npm will install packages from the package.json file included in the repo
-    * yuglify is only for prod but will be installed by npm anyway
+    * You can replace escoresheet with the name of the virtualenv you want to create
+4. Make sure your virtual environment is activated, then run `pip install -r requirements.txt`
+5. `sudo npm -g install phantomjs-prebuilt bower yuglify`
+    * yuglify is only for prod but for consistency install it anyway
     * You will likely need to run as root
-6. `cd escoresheet/settings/ && ln -s local_settings.py.dev local_settings.py`
+6. `cd escoresheet/settings/ && ln -s local_settings.py.dev local_settings.py ; cd ../../`
+
+Only do the following if you are using your own local sqlite database or if the database is brand new
+
+1. Apply migrations with `python manage.py migrate`
+2. Load useful development related data with `python manage.py loaddata dev_only`
+    * dev_only is a json fixture file located in escoresheet/fixtures/
+
+
+Lastly, run unit/functional/integration tests to make sure everything is setup correctly (see below)
+NOTE: The tests may take a few minutes
 
 # Integration Tests
 
@@ -41,7 +53,7 @@ Prod: [![Build Status](https://travis-ci.com/hmgoalie35/escoresheet.svg?token=6s
 
 ### Running Integration Tests (via selenium, phantomjs)
 1. Make sure you are in the directory where manage.py is
-2. Run `python manage.py behave`
+2. Run `python manage.py behave features/`
     * You can specify specific files or directories to test i.e. `python manage.py behave features/account/Login.feature`
 
 # Functional and Unit Tests
@@ -51,5 +63,5 @@ Prod: [![Build Status](https://travis-ci.com/hmgoalie35/escoresheet.svg?token=6s
 
 ### Running Functional and Unit Tests
 1. Make sure you are in the directory where manage.py is
-2. Run `python manage.py test apps/`
-    * **Note:** You need to specify the apps/ folder
+2. Run `python manage.py test`
+    * You can specify specific test files or test classes for an app i.e. `python manage.py test userprofiles.tests.test_models.UserProfileModelTests`
