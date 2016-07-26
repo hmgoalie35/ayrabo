@@ -8,6 +8,7 @@ from divisions.models import Division
 class Referee(models.Model):
     user = models.ForeignKey(User)
     division = models.ForeignKey(Division)
+    created = models.DateTimeField(auto_now_add=True, verbose_name='Created')
 
     class Meta:
         unique_together = (('user', 'division'),)

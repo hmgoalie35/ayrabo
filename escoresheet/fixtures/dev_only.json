@@ -43,7 +43,8 @@
     "fields": {
       "name": "Ice Hockey",
       "slug": "ice-hockey",
-      "description": ""
+      "description": "",
+      "created": "2016-06-28T04:40:02Z"
     }
   },
   {
@@ -52,7 +53,8 @@
     "fields": {
       "full_name": "Long Island Amateur Hockey League",
       "abbreviated_name": "LIAHL",
-      "sport": 1
+      "sport": 1,
+      "created": "2016-06-28T04:40:02Z"
     }
   },
   {
@@ -61,7 +63,8 @@
     "fields": {
       "full_name": "National Hockey League",
       "abbreviated_name": "NHL",
-      "sport": 1
+      "sport": 1,
+      "created": "2016-06-28T04:40:02Z"
     }
   },
   {
@@ -70,7 +73,8 @@
     "fields": {
       "name": "Midget Minor AA",
       "slug": "midget-minor-aa",
-      "league": 1
+      "league": 1,
+      "created": "2016-06-28T04:40:02Z"
     }
   },
   {
@@ -79,7 +83,8 @@
     "fields": {
       "name": "Pacific Division",
       "slug": "pacific-division",
-      "league": 2
+      "league": 2,
+      "created": "2016-06-28T04:40:02Z"
     }
   },
   {
@@ -88,7 +93,8 @@
     "fields": {
       "name": "Central Division",
       "slug": "central-division",
-      "league": 2
+      "league": 2,
+      "created": "2016-06-28T04:40:02Z"
     }
   },
   {
@@ -97,7 +103,8 @@
     "fields": {
       "name": "Metropolitan Division",
       "slug": "metropolitan-division",
-      "league": 2
+      "league": 2,
+      "created": "2016-06-28T04:40:02Z"
     }
   },
   {
@@ -106,7 +113,8 @@
     "fields": {
       "name": "Atlantic Division",
       "slug": "atlantic-division",
-      "league": 2
+      "league": 2,
+      "created": "2016-06-28T04:40:02Z"
     }
   },
   {
@@ -115,7 +123,8 @@
     "fields": {
       "name": "Pee Wee",
       "slug": "pee-wee",
-      "league": 1
+      "league": 1,
+      "created": "2016-06-28T04:40:02Z"
     }
   },
   {
@@ -124,7 +133,8 @@
     "fields": {
       "name": "Mites",
       "slug": "mites",
-      "league": 1
+      "league": 1,
+      "created": "2016-06-28T04:40:02Z"
     }
   },
   {
@@ -133,7 +143,8 @@
     "fields": {
       "name": "Green Machine IceCats",
       "website": "http://www.icecathockey.com",
-      "division": 1
+      "division": 1,
+      "created": "2016-06-28T04:40:02Z"
     }
   },
   {
@@ -271,7 +282,8 @@
     "fields": {
       "user": 1,
       "position": "Head Coach",
-      "team": 1
+      "team": 1,
+      "created": "2016-06-28T04:40:02Z"
     }
   }
 ]

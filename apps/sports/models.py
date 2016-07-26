@@ -7,6 +7,7 @@ class Sport(models.Model):
                             error_messages={'unique': 'Sport with this name already exists (case-insensitive)'})
     slug = models.SlugField(unique=True)
     description = models.TextField(null=True, blank=True)
+    created = models.DateTimeField(auto_now_add=True, verbose_name='Created')
 
     class Meta:
         ordering = ['name']
