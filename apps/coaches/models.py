@@ -18,6 +18,7 @@ class Coach(models.Model):
     user = models.ForeignKey(User)
     position = models.CharField(max_length=255, verbose_name='Position', choices=POSITIONS)
     team = models.ForeignKey(Team)
+    created = models.DateTimeField(auto_now_add=True, verbose_name='Created')
 
     class Meta:
         verbose_name = 'Coach'

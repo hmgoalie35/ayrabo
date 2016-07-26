@@ -9,6 +9,7 @@ from teams.models import Team
 class Manager(models.Model):
     user = models.ForeignKey(User)
     team = models.ForeignKey(Team)
+    created = models.DateTimeField(auto_now_add=True, verbose_name='Created')
 
     class Meta:
         unique_together = (('user', 'team'),)
