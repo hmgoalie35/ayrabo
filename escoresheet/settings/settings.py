@@ -45,7 +45,7 @@ SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.9/howto/deployment/checklist/
 
-# @TODO make this env var, and regenerate new key
+# @TODO make this env var, and regenerate new key, if env var not found, default to development key
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = '9(31c+k9q8p++7a46ite17(@a3os_*)gg@+yqn4_5isb^v5=tr'
 
@@ -88,6 +88,7 @@ INSTALLED_APPS = [
     'coaches.apps.CoachesConfig',
     'managers.apps.ManagersConfig',
     'referees.apps.RefereesConfig',
+    'players.apps.PlayersConfig',
 ]
 
 CRISPY_TEMPLATE_PACK = 'bootstrap3'
