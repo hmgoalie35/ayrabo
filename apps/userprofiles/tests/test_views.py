@@ -14,6 +14,8 @@ from referees.tests.factories.RefereeFactory import RefereeFactory
 from teams.tests.factories.TeamFactory import TeamFactory
 from userprofiles.models import UserProfile
 from .factories.UserProfileFactory import UserProfileFactory
+from players.tests.factories.PlayerFactory import HockeyPlayerFactory
+from players.models import HockeyPlayer
 
 
 class CreateUserProfileViewTests(TestCase):
@@ -185,6 +187,7 @@ class FinishUserProfileViewTests(TestCase):
         self.coach_post_data['coach-position'] = self.coach_post_data.pop('position')
         self.manager_post_data = factory.build(dict, FACTORY_CLASS=ManagerFactory)
         self.referee_post_data = factory.build(dict, FACTORY_CLASS=RefereeFactory)
+        self.hockeyplayer_post_data = factory.build(dict, FACTORY_CLASS=HockeyPlayerFactory)
 
         self.division = DivisionFactory(name='Midget Minor AA')
         self.team = TeamFactory(name='Green Machine IceCats', division=self.division)
@@ -192,12 +195,22 @@ class FinishUserProfileViewTests(TestCase):
         self.referee_post_data['referee-division'] = str(self.division.id)
         self.coach_post_data['coach-team'] = str(self.team.id)
         self.manager_post_data['manager-team'] = str(self.team.id)
+
+        self.hockeyplayer_post_data['hockeyplayer-team'] = str(self.team.id)
+        self.hockeyplayer_post_data['hockeyplayer-position'] = self.hockeyplayer_post_data.pop('position')
+        self.hockeyplayer_post_data['hockeyplayer-jersey_number'] = self.hockeyplayer_post_data.pop('jersey_number')
+        self.hockeyplayer_post_data['hockeyplayer-handedness'] = self.hockeyplayer_post_data.pop('handedness')
+
         del self.coach_post_data['user']
         del self.manager_post_data['user']
         del self.referee_post_data['user']
+        del self.hockeyplayer_post_data['user']
+
         del self.coach_post_data['team']
         del self.manager_post_data['team']
         del self.referee_post_data['division']
+        del self.hockeyplayer_post_data['team']
+        del self.hockeyplayer_post_data['sport']
 
         self.user = UserFactory.create(email=self.email, password=self.password)
         self.user.userprofile.is_complete = False
@@ -305,6 +318,20 @@ class FinishUserProfileViewTests(TestCase):
         response = self.client.post(reverse('profile:finish'), data=self.manager_post_data, follow=True)
         self.assertFormError(response, 'manager_form', 'team', 'This field is required.')
 
+    def test_post_valid_hockeyplayer_form_data(self):
+        self.user.userprofile.set_roles(['Player'])
+        response = self.client.post(reverse('profile:finish'), data=self.hockeyplayer_post_data, follow=True)
+        self.assertIn('You have successfully completed your profile, you can now access the site',
+                      get_messages(response))
+        self.assertRedirects(response, reverse('home'))
+        self.assertTrue(HockeyPlayer.objects.filter(user=self.user).exists())
+
+    def test_post_invalid_hockeyplayer_form_data(self):
+        self.user.userprofile.set_roles(['Player'])
+        self.hockeyplayer_post_data['hockeyplayer-position'] = ''
+        response = self.client.post(reverse('profile:finish'), data=self.hockeyplayer_post_data, follow=True)
+        self.assertFormError(response, 'player_form', 'position', 'This field is required.')
+
     def test_post_valid_coach_and_manager_forms(self):
         self.user.userprofile.set_roles(['Coach', 'Manager'])
         post_data = self.manager_post_data.copy()
@@ -352,3 +379,51 @@ class FinishUserProfileViewTests(TestCase):
         self.assertFormError(response, 'coach_form', 'position', 'This field is required.')
         self.assertFormError(response, 'manager_form', 'team', 'This field is required.')
         self.assertFormError(response, 'referee_form', 'division', 'This field is required.')
+
+    def test_post_valid_coach_manager_referee_hockeyplayer_forms(self):
+        self.user.userprofile.set_roles(['Coach', 'Manager', 'Referee', 'Player'])
+        post_data = self.manager_post_data.copy()
+        post_data.update(self.coach_post_data)
+        post_data.update(self.referee_post_data)
+        post_data.update(self.hockeyplayer_post_data)
+
+        response = self.client.post(reverse('profile:finish'), data=post_data, follow=True)
+        self.assertIn('You have successfully completed your profile, you can now access the site',
+                      get_messages(response))
+        self.assertRedirects(response, reverse('home'))
+        self.assertTrue(Manager.objects.filter(user=self.user).exists())
+        self.assertTrue(Coach.objects.filter(user=self.user).exists())
+        self.assertTrue(Referee.objects.filter(user=self.user).exists())
+        self.assertTrue(HockeyPlayer.objects.filter(user=self.user).exists())
+
+    def test_post_invalid_coach_manager_referee_hockeyplayer_forms(self):
+        self.user.userprofile.set_roles(['Coach', 'Manager', 'Referee', 'Player'])
+        post_data = self.manager_post_data.copy()
+        post_data.update(self.coach_post_data)
+        post_data.update(self.referee_post_data)
+        post_data.update(self.hockeyplayer_post_data)
+
+        del post_data['coach-position']
+        del post_data['manager-team']
+        del post_data['referee-division']
+        del post_data['hockeyplayer-position']
+
+        response = self.client.post(reverse('profile:finish'), data=post_data, follow=True)
+        self.assertFormError(response, 'coach_form', 'position', 'This field is required.')
+        self.assertFormError(response, 'manager_form', 'team', 'This field is required.')
+        self.assertFormError(response, 'referee_form', 'division', 'This field is required.')
+        self.assertFormError(response, 'player_form', 'position', 'This field is required.')
+
+    def test_post_invalid_coach_form_valid_manager_form(self):
+        """
+        We only want to save the forms if all of the submitted forms are valid
+        """
+        self.user.userprofile.set_roles(['Coach', 'Manager'])
+        post_data = self.manager_post_data.copy()
+        post_data.update(self.coach_post_data)
+        # Coach form is invalid
+        del post_data['coach-position']
+        response = self.client.post(reverse('profile:finish'), data=post_data, follow=True)
+        self.assertFormError(response, 'coach_form', 'position', 'This field is required.')
+        self.assertFalse(Manager.objects.filter(user=self.user).exists())
+        self.assertFalse(Coach.objects.filter(user=self.user).exists())
