@@ -2,6 +2,7 @@ from django.core.exceptions import ValidationError
 from django.db.utils import IntegrityError
 from django.test import TestCase
 
+from accounts.tests.factories.UserFactory import UserFactory
 from .factories.PlayerFactory import HockeyPlayerFactory
 
 
@@ -45,6 +46,15 @@ class PlayerModelTests(TestCase):
                                msg='UNIQUE constraint failed: players_hockeyplayer.user_id, players_hockeyplayer.team_id'):
             HockeyPlayerFactory(user=self.player.user, team=self.player.team)
 
+    def test_create_player_user_missing_player_role(self):
+        user = UserFactory()
+        user.userprofile.set_roles(['Referee'])
+        player = HockeyPlayerFactory(user=user, league=self.player.team)
+        with self.assertRaises(ValidationError,
+                               msg='{full_name} does not have the player role assigned, please update their userprofile to include it'.format(
+                                       full_name=user.get_full_name())):
+            player.clean()
+
 
 class HockeyPlayerModelTests(TestCase):
     def setUp(self):
@@ -53,7 +63,7 @@ class HockeyPlayerModelTests(TestCase):
 
     def test_duplicate_jersey_number(self):
         validation_msg = 'Please choose another number, {jersey_number} is currently unavailable for {team}'.format(
-            jersey_number=self.jersey_number, team=self.hockey_player.team)
+                jersey_number=self.jersey_number, team=self.hockey_player.team)
         with self.assertRaises(ValidationError, msg=validation_msg):
             HockeyPlayerFactory(team=self.hockey_player.team, jersey_number=self.jersey_number).full_clean()
 
@@ -61,3 +71,12 @@ class HockeyPlayerModelTests(TestCase):
         jersey_number = 23
         another_hockey_player = HockeyPlayerFactory(team=self.hockey_player.team, jersey_number=jersey_number)
         self.assertEqual(another_hockey_player.jersey_number, jersey_number)
+
+    def test_create_player_user_missing_player_role(self):
+        user = UserFactory()
+        user.userprofile.set_roles(['Referee'])
+        player = HockeyPlayerFactory(user=user, league=self.hockey_player.team)
+        with self.assertRaises(ValidationError,
+                               msg='{full_name} does not have the player role assigned, please update their userprofile to include it'.format(
+                                       full_name=user.get_full_name())):
+            player.clean()

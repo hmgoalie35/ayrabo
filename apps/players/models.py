@@ -34,6 +34,12 @@ class Player(models.Model):
     def division(self):
         return self.team.division.name
 
+    def clean(self):
+        if hasattr(self, 'user') and not self.user.userprofile.has_role('Player'):
+            raise ValidationError(
+                    '{user} does not have the player role assigned, please update their userprofile to include it'.format(
+                            user=self.user.get_full_name()))
+
     class Meta:
         abstract = True
         unique_together = (
@@ -69,6 +75,7 @@ class HockeyPlayer(Player):
     # might need to move jersey_number into this model
 
     def clean(self):
+        super(HockeyPlayer, self).clean()
         if hasattr(self, 'team'):
             # If we do not exclude the current user this validation error will always be triggered.
             qs = HockeyPlayer.objects.filter(team=self.team, jersey_number=self.jersey_number).exclude(user=self.user)
