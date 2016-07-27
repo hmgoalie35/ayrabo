@@ -10,6 +10,7 @@ class Team(models.Model):
     website = models.URLField(max_length=255, verbose_name='Website', null=True, blank=True,
                               help_text='You must include http:// or https://')
     division = models.ForeignKey(Division)
+    created = models.DateTimeField(auto_now_add=True, verbose_name='Created')
 
     """
     The fields below are not really necessary to store in this model for the MVP, a link to the team's website would

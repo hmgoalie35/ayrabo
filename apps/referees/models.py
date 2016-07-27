@@ -8,6 +8,7 @@ from leagues.models import League
 class Referee(models.Model):
     user = models.ForeignKey(User)
     league = models.ForeignKey(League)
+    created = models.DateTimeField(auto_now_add=True, verbose_name='Created')
 
     class Meta:
         unique_together = (('user', 'league'),)

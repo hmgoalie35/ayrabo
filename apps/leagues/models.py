@@ -10,6 +10,7 @@ class League(models.Model):
     abbreviated_name = models.CharField(max_length=32, verbose_name='Abbreviated Name')
     slug = models.SlugField(null=True, blank=True, verbose_name='Slug')
     sport = models.ForeignKey(Sport, verbose_name='Sport')
+    created = models.DateTimeField(auto_now_add=True, verbose_name='Created')
 
     class Meta:
         ordering = ['full_name']
