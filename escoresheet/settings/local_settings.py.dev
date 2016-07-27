@@ -24,6 +24,5 @@ CACHES = {
     }
 }
 DEBUG_TOOLBAR_CONFIG = {
-    'JQUERY_URL': '',
     'SHOW_COLLAPSED': True,
 }
