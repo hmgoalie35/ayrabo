@@ -7,15 +7,16 @@ from coaches.models import Coach
 from coaches.tests.factories.CoachFactory import CoachFactory
 from divisions.tests.factories.DivisionFactory import DivisionFactory
 from escoresheet.testing_utils import get_messages
+from leagues.tests.factories.LeagueFactory import LeagueFactory
 from managers.models import Manager
 from managers.tests.factories.ManagerFactory import ManagerFactory
+from players.models import HockeyPlayer
+from players.tests.factories.PlayerFactory import HockeyPlayerFactory
 from referees.models import Referee
 from referees.tests.factories.RefereeFactory import RefereeFactory
 from teams.tests.factories.TeamFactory import TeamFactory
 from userprofiles.models import UserProfile
 from .factories.UserProfileFactory import UserProfileFactory
-from players.tests.factories.PlayerFactory import HockeyPlayerFactory
-from players.models import HockeyPlayer
 
 
 class CreateUserProfileViewTests(TestCase):
@@ -189,10 +190,11 @@ class FinishUserProfileViewTests(TestCase):
         self.referee_post_data = factory.build(dict, FACTORY_CLASS=RefereeFactory)
         self.hockeyplayer_post_data = factory.build(dict, FACTORY_CLASS=HockeyPlayerFactory)
 
-        self.division = DivisionFactory(name='Midget Minor AA')
+        self.league = LeagueFactory(full_name='Long Island Amateur Hockey League')
+        self.division = DivisionFactory(name='Midget Minor AA', league=self.league)
         self.team = TeamFactory(name='Green Machine IceCats', division=self.division)
 
-        self.referee_post_data['referee-division'] = str(self.division.id)
+        self.referee_post_data['referee-league'] = str(self.league.id)
         self.coach_post_data['coach-team'] = str(self.team.id)
         self.manager_post_data['manager-team'] = str(self.team.id)
 
@@ -208,7 +210,7 @@ class FinishUserProfileViewTests(TestCase):
 
         del self.coach_post_data['team']
         del self.manager_post_data['team']
-        del self.referee_post_data['division']
+        del self.referee_post_data['league']
         del self.hockeyplayer_post_data['team']
         del self.hockeyplayer_post_data['sport']
 
@@ -374,11 +376,11 @@ class FinishUserProfileViewTests(TestCase):
         post_data.update(self.referee_post_data)
         del post_data['coach-position']
         del post_data['manager-team']
-        del post_data['referee-division']
+        del post_data['referee-league']
         response = self.client.post(reverse('profile:finish'), data=post_data, follow=True)
         self.assertFormError(response, 'coach_form', 'position', 'This field is required.')
         self.assertFormError(response, 'manager_form', 'team', 'This field is required.')
-        self.assertFormError(response, 'referee_form', 'division', 'This field is required.')
+        self.assertFormError(response, 'referee_form', 'league', 'This field is required.')
 
     def test_post_valid_coach_manager_referee_hockeyplayer_forms(self):
         self.user.userprofile.set_roles(['Coach', 'Manager', 'Referee', 'Player'])
@@ -405,13 +407,13 @@ class FinishUserProfileViewTests(TestCase):
 
         del post_data['coach-position']
         del post_data['manager-team']
-        del post_data['referee-division']
+        del post_data['referee-league']
         del post_data['hockeyplayer-position']
 
         response = self.client.post(reverse('profile:finish'), data=post_data, follow=True)
         self.assertFormError(response, 'coach_form', 'position', 'This field is required.')
         self.assertFormError(response, 'manager_form', 'team', 'This field is required.')
-        self.assertFormError(response, 'referee_form', 'division', 'This field is required.')
+        self.assertFormError(response, 'referee_form', 'league', 'This field is required.')
         self.assertFormError(response, 'player_form', 'position', 'This field is required.')
 
     def test_post_invalid_coach_form_valid_manager_form(self):

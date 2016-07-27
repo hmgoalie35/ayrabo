@@ -2,7 +2,7 @@ import factory
 from factory import django
 
 from accounts.tests.factories.UserFactory import UserFactory
-from divisions.tests.factories.DivisionFactory import DivisionFactory
+from leagues.tests.factories.LeagueFactory import LeagueFactory
 from referees.models import Referee
 
 
@@ -11,4 +11,4 @@ class RefereeFactory(django.DjangoModelFactory):
         model = Referee
 
     user = factory.SubFactory(UserFactory)
-    division = factory.SubFactory(DivisionFactory)
+    league = factory.SubFactory(LeagueFactory)
