@@ -13,7 +13,7 @@ Feature: Create referee in the system
   Scenario: Submit valid referee form
     Given "user@example.com" has a userprofile with role "Referee"
     And I am on the "profile:finish" page
-    When I select "Midget Minor AA - LIAHL" from "id_referee-division"
+    When I select "Long Island Amateur Hockey League" from "id_referee-league"
     And I press "finish_profile_btn"
     Then I should see "You have successfully completed your profile, you can now access the site"
     And I should be on the "home" page

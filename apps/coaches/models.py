@@ -26,7 +26,7 @@ class Coach(models.Model):
         unique_together = (('user', 'team'),)
 
     def clean(self):
-        if 'Coach' not in self.user.userprofile.roles:
+        if hasattr(self, 'user') and not self.user.userprofile.has_role('Coach'):
             raise ValidationError(
                     '{user} does not have the coach role assigned, please update their userprofile to include it'.format(
                             user=self.user.get_full_name()))

@@ -8,4 +8,4 @@ class RefereeForm(forms.ModelForm):
 
     class Meta:
         model = Referee
-        fields = ['division']
+        fields = ['league']

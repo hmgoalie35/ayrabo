@@ -44,7 +44,7 @@ Feature: Finish userprofile, filling in any coach/manager/player/referee specifi
     When I select "Head Coach" from "id_coach-position"
     And I select "Midget Minor AA - Green Machine IceCats" from "id_coach-team"
     And I select "Midget Minor AA - Green Machine IceCats" from "id_manager-team"
-    And I select "Midget Minor AA - LIAHL" from "id_referee-division"
+    And I select "Long Island Amateur Hockey League" from "id_referee-league"
     And I press "finish_profile_btn"
     Then I should see "You have successfully completed your profile, you can now access the site"
     And I should be on the "home" page
@@ -57,3 +57,27 @@ Feature: Finish userprofile, filling in any coach/manager/player/referee specifi
     And I press "finish_profile_btn"
     Then I should be on the "profile:finish" page
     And "This field is required." should show up 2 times
+
+  Scenario: Submit valid form for Coach, Manager, Referee, Player roles
+    Given "user@example.com" has a userprofile with roles "Coach, Manager, Referee, Player"
+    And I am on the "profile:finish" page
+    When I select "Head Coach" from "id_coach-position"
+    And I select "Midget Minor AA - Green Machine IceCats" from "id_hockeyplayer-team"
+    And I fill in "id_hockeyplayer-jersey_number" with "35"
+    And I select "G" from "id_hockeyplayer-position"
+    And I select "Left" from "id_hockeyplayer-handedness"
+    And I select "Midget Minor AA - Green Machine IceCats" from "id_coach-team"
+    And I select "Midget Minor AA - Green Machine IceCats" from "id_manager-team"
+    And I select "Long Island Amateur Hockey League" from "id_referee-league"
+    And I press "finish_profile_btn"
+    Then I should see "You have successfully completed your profile, you can now access the site"
+    And I should be on the "home" page
+
+  Scenario: Submit invalid form for Coach, Manager, Referee, Player roles
+    Given "user@example.com" has a userprofile with roles "Coach, Manager, Referee, Player"
+    Given I am on the "profile:finish" page
+    When I select "Head Coach" from "id_coach-position"
+    And I select "Midget Minor AA - Green Machine IceCats" from "id_coach-team"
+    And I press "finish_profile_btn"
+    Then I should be on the "profile:finish" page
+    And "This field is required." should show up 6 times

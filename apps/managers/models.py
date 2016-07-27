@@ -15,7 +15,7 @@ class Manager(models.Model):
         unique_together = (('user', 'team'),)
 
     def clean(self):
-        if 'Manager' not in self.user.userprofile.roles:
+        if hasattr(self, 'user') and not self.user.userprofile.has_role('Manager'):
             raise ValidationError(
                     '{user} does not have the manager role assigned, please update their userprofile to include it'.format(
                             user=self.user.get_full_name()))
