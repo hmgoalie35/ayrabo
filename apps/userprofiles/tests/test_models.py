@@ -1,9 +1,8 @@
 from django.core.exceptions import ValidationError
 from django.test import TestCase
 
-from userprofiles.models import MAX_WEIGHT
-from .factories.UserProfileFactory import UserProfileFactory
 from userprofiles.models import UserProfile
+from .factories.UserProfileFactory import UserProfileFactory
 
 
 class UserProfileModelTests(TestCase):
@@ -19,17 +18,25 @@ class UserProfileModelTests(TestCase):
             up = UserProfileFactory.create(height=valid_height)
             self.assertIsNone(up.full_clean())
 
-    def test_invalid_weight(self):
-        invalid_weights = [-1, 0, -100, -.5, .5, MAX_WEIGHT + 1]
-        for invalid_weight in invalid_weights:
-            with self.assertRaises(ValidationError, msg='Weight must be greater than zero and less than 400'):
-                UserProfileFactory.create(weight=invalid_weight).full_clean()
+    def test_min_weight(self):
+        # MIN_WEIGHT is currently 1
+        with self.assertRaises(ValidationError, msg='Ensure this value is greater than or equal to 1.'):
+            UserProfileFactory(weight=0).full_clean()
+            UserProfileFactory(weight=-1).full_clean()
+
+    def test_max_weight(self):
+        # MAX_WEIGHT is currently 400
+        with self.assertRaises(ValidationError, msg='Ensure this value is less than or equal to 400.'):
+            UserProfileFactory(weight=401).full_clean()
+
+    def test_weight_floating_point_number(self):
+        with self.assertRaises(ValidationError):
+            UserProfileFactory(weight=.5).full_clean()
+            UserProfileFactory(weight=-.5).full_clean()
 
     def test_valid_weight(self):
-        valid_weights = [1, 2, 100, 30, 130, MAX_WEIGHT - 1, MAX_WEIGHT]
-        for valid_weight in valid_weights:
-            up = UserProfileFactory.create(weight=valid_weight)
-            self.assertIsNone(up.full_clean())
+        up = UserProfileFactory(weight=200)
+        self.assertIsNone(up.full_clean())
 
     def test_to_string(self):
         up = UserProfileFactory.create()

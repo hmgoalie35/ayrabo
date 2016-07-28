@@ -4,10 +4,8 @@ from django.conf import settings
 from django.conf.global_settings import LANGUAGES
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
+from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
-
-MIN_WEIGHT = 0
-MAX_WEIGHT = 400
 
 
 def validate_height(height):
@@ -23,23 +21,16 @@ def validate_height(height):
         raise ValidationError('Invalid format, please use the following format: 5\' 7\"')
 
 
-def validate_weight(weight):
-    """
-    Checks to see if weight is between MIN_WEIGHT and MAX_WEIGHT
-    :param weight: The weight to check
-    :raises ValidationError if weight > MIN_WEIGHT or weight <= MAX_WEIGHT
-    """
-    if weight <= MIN_WEIGHT or weight > MAX_WEIGHT:
-        raise ValidationError('Weight must be greater than zero and less than 400')
-
-
 class UserProfile(models.Model):
     """
     Model used to store additional information for a user
     """
-    GENDERS = [('male', 'Male'), ('female', 'Female')]
+    GENDERS = [('Male', 'Male'), ('Female', 'Female')]
 
     ROLES = ['Player', 'Coach', 'Referee', 'Manager']
+
+    MIN_WEIGHT = 1
+    MAX_WEIGHT = 400
 
     user = models.OneToOneField(User)
     roles_mask = models.SmallIntegerField(default=0, verbose_name='Roles Mask')
@@ -47,7 +38,8 @@ class UserProfile(models.Model):
     birthday = models.DateField(verbose_name='Birthday')
     height = models.CharField(max_length=8, validators=[validate_height], verbose_name='Height',
                               help_text='Use the following format: 5\' 7\"')
-    weight = models.SmallIntegerField(verbose_name='Weight', validators=[validate_weight],
+    weight = models.SmallIntegerField(verbose_name='Weight',
+                                      validators=[MinValueValidator(MIN_WEIGHT), MaxValueValidator(MAX_WEIGHT)],
                                       help_text='Round to the nearest whole number')
     # settings.LANGUAGE_CODE is en-us, while LANGUAGES only contains en, so default to regular en instead of en-us
     language = models.CharField(max_length=128, choices=LANGUAGES, default='en', verbose_name='Language')
