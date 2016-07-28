@@ -294,11 +294,12 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 BOWER_COMPONENTS_ROOT = os.path.join(BASE_DIR, '', 'static')
 # Remember to delete any unnecessary folders/files bower downloads
 BOWER_INSTALLED_APPS = [
-    'jquery',
-    'bootstrap',
-    'fontawesome',
-    'animate.css',
-    'noty'
+    'animate.css#3.5.2',
+    'bootstrap#3.3.7',
+    'chosen#1.6.1',
+    'font-awesome#4.6.3',
+    'jquery#2.2.4',
+    'noty#2.3.8'
 ]
 
 # Django compressor related
