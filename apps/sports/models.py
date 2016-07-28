@@ -3,7 +3,7 @@ from django.utils.text import slugify
 
 
 class Sport(models.Model):
-    name = models.CharField(max_length=256, unique=True,
+    name = models.CharField(max_length=255, unique=True,
                             error_messages={'unique': 'Sport with this name already exists (case-insensitive)'})
     slug = models.SlugField(unique=True)
     description = models.TextField(null=True, blank=True)

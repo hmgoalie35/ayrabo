@@ -5,8 +5,8 @@ from leagues.models import League
 
 
 class Division(models.Model):
-    name = models.CharField(max_length=128, verbose_name='Name')
-    slug = models.SlugField(null=True, blank=True, verbose_name='Slug')
+    name = models.CharField(max_length=255, verbose_name='Name')
+    slug = models.SlugField(verbose_name='Slug')
     league = models.ForeignKey(League)
     created = models.DateTimeField(auto_now_add=True, verbose_name='Created')
 

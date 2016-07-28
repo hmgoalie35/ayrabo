@@ -26,7 +26,7 @@ Feature: User profiles
     Given I login with "user@example.com" and "myweakpassword"
     And I am on the "profile:create" page
     When I press "id_roles_1"
-    And I select "male" from "id_gender"
+    And I select "Male" from "id_gender"
     And I fill in "id_height" with "5' 7"
     And I fill in "id_weight" with "130"
     And I press "create_userprofile_btn"
@@ -36,16 +36,16 @@ Feature: User profiles
     Given I login with "user@example.com" and "myweakpassword"
     And I am on the "profile:create" page
     When I press "id_roles_1"
-    And I select "male" from "id_gender"
+    And I select "Male" from "id_gender"
     And I fill in "id_height" with "5' 7""
     And I fill in "id_weight" with "-1"
     And I press "create_userprofile_btn"
-    Then I should see "Weight must be greater than zero and less than 400"
+    Then I should see "Ensure this value is greater than or equal to 1."
 
   Scenario: Fill out with no roles
     Given I login with "user@example.com" and "myweakpassword"
     And I am on the "profile:create" page
-    When I select "male" from "id_gender"
+    When I select "Male" from "id_gender"
     And I fill in "id_height" with "5' 7""
     And I fill in "id_weight" with "-1"
     And I press "create_userprofile_btn"
@@ -62,7 +62,7 @@ Feature: User profiles
     And I am on the "profile:create" page
     When I press "id_roles_1"
     And I press "id_roles_2"
-    And I select "male" from "id_gender"
+    And I select "Male" from "id_gender"
     # 4 stands for April
     And I select "4" from "id_birthday_month"
     And I select "4" from "id_birthday_day"

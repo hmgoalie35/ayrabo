@@ -101,7 +101,7 @@ class CreateUserProfileViewTests(TestCase):
         for invalid_weight in invalid_weights:
             self.post_data['weight'] = invalid_weight
             response = self.client.post(reverse('profile:create'), data=self.post_data, follow=True)
-            self.assertFormError(response, 'form', 'weight', 'Weight must be greater than zero and less than 400')
+            self.assertFormError(response, 'form', 'weight', 'Ensure this value is greater than or equal to 1.')
 
     def test_decimal_weights(self):
         invalid_weights = [.5, -.5]
