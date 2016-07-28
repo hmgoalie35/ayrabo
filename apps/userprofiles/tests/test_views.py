@@ -15,17 +15,20 @@ from players.tests.factories.PlayerFactory import HockeyPlayerFactory
 from referees.models import Referee
 from referees.tests.factories.RefereeFactory import RefereeFactory
 from teams.tests.factories.TeamFactory import TeamFactory
-from userprofiles.models import UserProfile
+from userprofiles.models import UserProfile, RolesMask
 from .factories.UserProfileFactory import UserProfileFactory
+from .factories.RolesMaskFactory import RolesMaskFactory
+from sports.tests.factories.SportFactory import SportFactory
 
 
 class CreateUserProfileViewTests(TestCase):
     def setUp(self):
         self.email = 'user@example.com'
         self.password = 'myweakpassword'
+        self.ice_hockey = SportFactory(name='Ice Hockey')
+        self.soccer = SportFactory(name='Soccer')
         self.post_data = factory.build(dict, FACTORY_CLASS=UserProfileFactory)
-        del self.post_data['roles_mask']
-        self.post_data['roles'] = ['Player']
+        self.post_data.update({'sports': [str(self.ice_hockey.id), str(self.soccer.id)]})
         self.user = UserFactory.create(email=self.email, password=self.password, userprofile=None)
         self.client.login(email=self.email, password=self.password)
 
@@ -73,11 +76,22 @@ class CreateUserProfileViewTests(TestCase):
         self.client.post(reverse('profile:create'), data=self.post_data, follow=True)
         self.assertTrue(UserProfile.objects.filter(user=self.user).exists())
 
-    def test_roles_are_set(self):
-        self.post_data['roles'] = ['Player', 'Manager']
+    def test_roles_mask_objects_created(self):
+        """
+        This tests that POSTing sport ids will result in the appropriate RolesMask objects being created for that sport
+        and user
+        """
         self.client.post(reverse('profile:create'), data=self.post_data, follow=True)
-        self.assertListEqual(self.user.userprofile.roles, self.post_data['roles'])
-        self.assertEqual(self.user.userprofile.roles_mask, 9)
+        hockey_roles_mask = RolesMask.objects.filter(user=self.user, sport=self.ice_hockey)
+        soccer_roles_mask = RolesMask.objects.filter(user=self.user, sport=self.soccer)
+
+        self.assertTrue(hockey_roles_mask.exists())
+        self.assertTrue(soccer_roles_mask.exists())
+
+    def test_post_invalid_sport_id(self):
+        self.post_data['sports'] = ['1000']
+        self.client.post(reverse('profile:create'), data=self.post_data, follow=True)
+        self.assertQuerysetEqual(RolesMask.objects.all(), [])
 
     # Invalid POST data
     def test_no_height_weight_gender(self):
@@ -110,10 +124,10 @@ class CreateUserProfileViewTests(TestCase):
             response = self.client.post(reverse('profile:create'), data=self.post_data, follow=True)
             self.assertFormError(response, 'form', 'weight', 'Enter a whole number.')
 
-    def test_no_roles(self):
-        self.post_data['roles'] = []
+    def test_no_sports(self):
+        self.post_data['sports'] = []
         response = self.client.post(reverse('profile:create'), data=self.post_data, follow=True)
-        self.assertFormError(response, 'form', 'roles', 'This field is required.')
+        self.assertFormError(response, 'form', 'sports', 'This field is required.')
 
 
 class UpdateUserProfileViewTests(TestCase):

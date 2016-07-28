@@ -10,14 +10,14 @@ from coaches.forms import CoachForm
 from managers.forms import ManagerForm
 from players.forms import HockeyPlayerForm
 from referees.forms import RefereeForm
-from userprofiles.models import UserProfile
+from userprofiles.models import UserProfile, RolesMask
 from .forms import CreateUserProfileForm, UpdateUserProfileForm
 
 
 class CreateUserProfileView(LoginRequiredMixin, CreateView):
     model = UserProfile
     template_name = 'userprofiles/create.html'
-    success_url = reverse_lazy('profile:finish')
+    success_url = reverse_lazy('profile:select_roles')
     form_class = CreateUserProfileForm
 
     def get(self, request, *args, **kwargs):
@@ -31,9 +31,34 @@ class CreateUserProfileView(LoginRequiredMixin, CreateView):
         return super(CreateUserProfileView, self).post(request, *args, **kwargs)
 
     def form_valid(self, form):
-        form.instance.user = self.request.user
-        form.instance.set_roles(form.cleaned_data.get('roles', []))
+        user = self.request.user
+        form.instance.user = user
+        form.instance.set_roles([])
+        sports = form.cleaned_data.get('sports', [])
+        for sport in sports:
+            # For every sport the user wants to register for, create a roles mask object for the given sport.
+            # Later on the actual roles_mask will be updated to reflect the user's desired roles for a given sport.
+            RolesMask.objects.get_or_create(user=user, sport=sport)
+
         return super(CreateUserProfileView, self).form_valid(form)
+
+
+class SelectRolesView(LoginRequiredMixin, ContextMixin, View):
+    template_name = 'userprofiles/select_roles.html'
+
+    def get(self, request, *args, **kwargs):
+        incomplete_roles_masks = RolesMask.objects.filter(user=request.user, is_complete=False)
+        if not incomplete_roles_masks.exists():
+            return redirect(reverse('home'))
+
+        return render(request, self.template_name, {})
+
+    def post(self, request, *args, **kwargs):
+        incomplete_roles_masks = RolesMask.objects.filter(user=request.user, is_complete=False)
+        if not incomplete_roles_masks.exists():
+            return redirect(reverse('home'))
+
+        return render(request, self.template_name, {})
 
 
 class FinishUserProfileView(LoginRequiredMixin, ContextMixin, View):
@@ -62,15 +87,15 @@ class FinishUserProfileView(LoginRequiredMixin, ContextMixin, View):
         return context
 
     def get(self, request, *args, **kwargs):
-        # only allow not complete profiles
-        if request.user.userprofile.is_complete:
+        # make sure a userprofile already exists, and it is not already complete
+        if not hasattr(request.user, 'userprofile') or request.user.userprofile.is_complete:
             return redirect(reverse('home'))
         context = self.get_context_data(**kwargs)
         return render(request, self.template_name, context)
 
     def post(self, request, *args, **kwargs):
-        # only allow not complete profiles
-        if request.user.userprofile.is_complete:
+        # make sure a userprofile already exists, and it is not already complete
+        if not hasattr(request.user, 'userprofile') or request.user.userprofile.is_complete:
             return redirect(reverse('home'))
 
         context = self.get_context_data(**kwargs)
