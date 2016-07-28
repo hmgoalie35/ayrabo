@@ -2,6 +2,7 @@ from django.core.urlresolvers import reverse
 from django.test import TestCase
 
 from accounts.tests.factories.UserFactory import UserFactory
+from userprofiles.tests.factories.RolesMaskFactory import RolesMaskFactory
 
 
 class UserProfileExistsMiddlewareTests(TestCase):
@@ -33,12 +34,32 @@ class UserProfileExistsMiddlewareTests(TestCase):
         response = self.client.get(reverse('home'))
         self.assertRedirects(response, reverse('profile:create'))
 
+    def test_redirect_incompelete_rolesmasks_exist(self):
+        RolesMaskFactory(user=self.user_with_profile, is_complete=False)
+        self.client.login(email=self.user_with_profile.email, password='myweakpassword')
+        response = self.client.get(reverse('home'))
+        self.assertRedirects(response, reverse('profile:select_roles'))
+
+    def test_no_redirect_loop_select_roles_page(self):
+        RolesMaskFactory(user=self.user_with_profile, is_complete=False)
+        self.client.login(email=self.user_with_profile.email, password='myweakpassword')
+        response = self.client.get(reverse('profile:select_roles'))
+        self.assertTemplateUsed(response, 'userprofiles/select_roles.html')
+
     def test_no_redirect_when_profile_exists(self):
         self.client.login(email=self.user_with_profile.email, password='myweakpassword')
         response = self.client.get(reverse('home'))
         self.assertTemplateUsed(response, 'home/authenticated_home.html')
         self.assertTemplateNotUsed(response, 'userprofiles/create.html')
         self.assertEqual(response.status_code, 200)
+
+    def test_redirect_rolesmasks_all_complete(self):
+        self.client.login(email=self.user_with_profile.email, password='myweakpassword')
+        self.user_with_profile.userprofile.is_complete = False
+        self.user_with_profile.userprofile.save()
+        RolesMaskFactory(user=self.user_with_profile, is_complete=True)
+        response = self.client.get(reverse('home'))
+        self.assertRedirects(response, reverse('profile:finish'))
 
     def test_redirect_when_profile_not_complete(self):
         self.user_with_profile.userprofile.is_complete = False
@@ -53,4 +74,3 @@ class UserProfileExistsMiddlewareTests(TestCase):
         self.assertTemplateUsed(response, 'home/authenticated_home.html')
         self.assertTemplateNotUsed(response, 'userprofiles/finish_profile.html')
         self.assertEqual(response.status_code, 200)
-
