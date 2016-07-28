@@ -8,6 +8,8 @@ Feature: User profiles
       | first_name | last_name | email             | password       | create_userprofile |
       | John       | Doe       | user@example.com  | myweakpassword | false              |
       | Jane       | Doe       | user1@example.com | myweakpassword | true               |
+    And The following sport exists "Ice Hockey"
+    And The following sport exists "Soccer"
 
 # Userprofile does not exist, create profile page
   Scenario: Prompted to fill out user profile after logging in for the first time
@@ -15,7 +17,8 @@ Feature: User profiles
     When I go to the "home" page
     Then I should be on the "profile:create" page
     And I should see "Create Your Profile"
-    And I should see "You will fill out your team and any role specific information in the next step"
+    And I should see "For every sport you choose, you will be prompted to fill out the roles you want to register for."
+    And I should see "In the next steps you will be asked to fill out any role specific information."
 
   Scenario: Navigate to another page when profile doesn't exist
     Given I login with "user@example.com" and "myweakpassword"
@@ -25,7 +28,8 @@ Feature: User profiles
   Scenario: Fill out with invalid height
     Given I login with "user@example.com" and "myweakpassword"
     And I am on the "profile:create" page
-    When I press "id_roles_1"
+    When I press "id_sports_chosen"
+    And I press "#id_sports_chosen > div > ul > li:nth-child(1)"
     And I select "Male" from "id_gender"
     And I fill in "id_height" with "5' 7"
     And I fill in "id_weight" with "130"
@@ -35,14 +39,15 @@ Feature: User profiles
   Scenario: Fill out with invalid weight
     Given I login with "user@example.com" and "myweakpassword"
     And I am on the "profile:create" page
-    When I press "id_roles_1"
+    When I press "id_sports_chosen"
+    And I press "#id_sports_chosen > div > ul > li:nth-child(1)"
     And I select "Male" from "id_gender"
     And I fill in "id_height" with "5' 7""
     And I fill in "id_weight" with "-1"
     And I press "create_userprofile_btn"
     Then I should see "Ensure this value is greater than or equal to 1."
 
-  Scenario: Fill out with no roles
+  Scenario: Fill out with no sports
     Given I login with "user@example.com" and "myweakpassword"
     And I am on the "profile:create" page
     When I select "Male" from "id_gender"
@@ -60,11 +65,10 @@ Feature: User profiles
   Scenario: Submit valid form
     Given I login with "user@example.com" and "myweakpassword"
     And I am on the "profile:create" page
-    When I press "id_roles_1"
-    And I press "id_roles_2"
+    When I press "id_sports_chosen"
+    And I press "#id_sports_chosen > div > ul > li:nth-child(1)"
     And I select "Male" from "id_gender"
-    # 4 stands for April
-    And I select "4" from "id_birthday_month"
+    And I select "April" from "id_birthday_month"
     And I select "4" from "id_birthday_day"
     And I select "1994" from "id_birthday_year"
     And I fill in "id_height" with "5' 7""

@@ -1,7 +1,11 @@
 from django.core.exceptions import ValidationError
+from django.db.utils import IntegrityError
 from django.test import TestCase
 
-from userprofiles.models import UserProfile
+from accounts.tests.factories.UserFactory import UserFactory
+from sports.tests.factories.SportFactory import SportFactory
+from userprofiles.models import UserProfile, RolesMask
+from .factories.RolesMaskFactory import RolesMaskFactory
 from .factories.UserProfileFactory import UserProfileFactory
 
 
@@ -94,3 +98,70 @@ class UserProfileModelTests(TestCase):
         up.set_roles(roles)
         self.assertFalse(up.has_role('Player'))
         self.assertFalse(up.has_role('InvalidRole'))
+
+
+class RolesMaskModelTests(TestCase):
+    def test_to_string(self):
+        rm = RolesMaskFactory()
+        self.assertEqual(str(rm), rm.user.email)
+
+    def test_current_available_roles(self):
+        self.assertListEqual(RolesMask.ROLES, ['Player', 'Coach', 'Referee', 'Manager'])
+
+    def test_default_role_mask(self):
+        rm = RolesMaskFactory(roles_mask=0)
+        self.assertEqual(rm.roles_mask, 0)
+
+    def test_set_roles_param_not_a_list(self):
+        rm = RolesMaskFactory()
+        with self.assertRaises(AssertionError):
+            rm.set_roles(('Player', 'Manager'))
+
+    def test_set_roles_no_append(self):
+        rm = RolesMaskFactory()
+        rm.set_roles(['Player', 'Manager'])
+        self.assertEqual(rm.roles_mask, 9)
+
+    def test_set_roles_append(self):
+        rm = RolesMaskFactory()
+        rm.set_roles(['Player', 'Manager'])
+        rm.set_roles(['Coach'], append=True)
+        self.assertEqual(rm.roles_mask, 11)
+
+    def test_set_roles_invalid_role(self):
+        rm = RolesMaskFactory()
+        rm.set_roles(['Referee', 'Invalid'])
+        self.assertEqual(rm.roles, ['Referee'])
+
+    def test_set_roles_empty_list(self):
+        rm = RolesMaskFactory()
+        rm.set_roles([])
+        self.assertEqual(rm.roles_mask, 0)
+
+    def test_roles_property(self):
+        roles = ['Player', 'Manager']
+        rm = RolesMaskFactory()
+        rm.set_roles(roles)
+        self.assertEqual(rm.roles, roles)
+
+    def test_has_role_true(self):
+        roles = ['Player', 'Manager']
+        rm = RolesMaskFactory()
+        rm.set_roles(roles)
+        self.assertTrue(rm.has_role('Player'))
+        self.assertTrue(rm.has_role('manager'))
+
+    def test_has_role_false(self):
+        roles = ['Coach', 'Manager']
+        rm = RolesMaskFactory()
+        rm.set_roles(roles)
+        self.assertFalse(rm.has_role('Player'))
+        self.assertFalse(rm.has_role('InvalidRole'))
+
+    def test_user_unique_with_sport(self):
+        user = UserFactory(email='testing@example.com')
+        sport = SportFactory(name='Ice Hockey')
+        RolesMaskFactory(user=user, sport=sport)
+        with self.assertRaises(IntegrityError,
+                               msg='UNIQUE constraint failed: userprofiles_rolesmask.user_id, userprofiles_rolesmask.sport_id'):
+            RolesMaskFactory(user=user, sport=sport)
