@@ -60,6 +60,7 @@ coverage.xml
 production_static/*
 media/*
 local_settings.py
+static/CACHE/
 
 # Sphinx documentation
 docs/_build/

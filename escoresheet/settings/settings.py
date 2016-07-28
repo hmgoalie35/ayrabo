@@ -297,6 +297,7 @@ BOWER_INSTALLED_APPS = [
     'animate.css#3.5.2',
     'bootstrap#3.3.7',
     'chosen#1.6.1',
+    'chosen-bootstrap#1.1.0',
     'font-awesome#4.6.3',
     'jquery#2.2.4',
     'noty#2.3.8'
@@ -307,6 +308,8 @@ COMPRESS_PRECOMPILERS = [('text/scss', 'sassc {infile} {outfile}')]
 COMPRESS_CSS_FILTERS = ['compressor.filters.css_default.CssAbsoluteFilter',
                         'compressor.filters.yuglify.YUglifyCSSFilter']
 COMPRESS_JS_FILTERS = ['compressor.filters.yuglify.YUglifyJSFilter']
+
+COMPRESS_ROOT = STATICFILES_DIRS[0]
 
 # User account related
 
