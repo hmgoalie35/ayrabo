@@ -115,6 +115,7 @@ class RolesMask(models.Model):
     is_complete = models.BooleanField(default=False, verbose_name='Is Complete')
 
     class Meta:
+        ordering = ['user']
         unique_together = (
             ('user', 'sport'),
         )

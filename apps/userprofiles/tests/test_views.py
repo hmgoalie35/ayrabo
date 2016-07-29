@@ -14,11 +14,11 @@ from players.models import HockeyPlayer
 from players.tests.factories.PlayerFactory import HockeyPlayerFactory
 from referees.models import Referee
 from referees.tests.factories.RefereeFactory import RefereeFactory
+from sports.tests.factories.SportFactory import SportFactory
 from teams.tests.factories.TeamFactory import TeamFactory
 from userprofiles.models import UserProfile, RolesMask
-from .factories.UserProfileFactory import UserProfileFactory
 from .factories.RolesMaskFactory import RolesMaskFactory
-from sports.tests.factories.SportFactory import SportFactory
+from .factories.UserProfileFactory import UserProfileFactory
 
 
 class CreateUserProfileViewTests(TestCase):
@@ -443,3 +443,141 @@ class FinishUserProfileViewTests(TestCase):
         self.assertFormError(response, 'coach_form', 'position', 'This field is required.')
         self.assertFalse(Manager.objects.filter(user=self.user).exists())
         self.assertFalse(Coach.objects.filter(user=self.user).exists())
+
+
+class SelectRolesViewTests(TestCase):
+    def setUp(self):
+        self.url = reverse('profile:select_roles')
+        self.email = 'user@example.com'
+        self.password = 'myweakpassword'
+        self.user = UserFactory.create(email=self.email, password=self.password)
+        self.user.userprofile.is_complete = False
+        self.user.userprofile.set_roles(['Coach'])
+        self.ice_hockey_rm = RolesMaskFactory(user=self.user, sport__name='Ice Hockey', is_complete=False, roles_mask=0)
+        self.soccer_rm = RolesMaskFactory(user=self.user, sport__name='Soccer', is_complete=False, roles_mask=0)
+        self.tennis_rm = RolesMaskFactory(user=self.user, sport__name='Tennis', is_complete=False, roles_mask=0)
+
+        self.roles = ['Player', 'Coach', 'Manager']
+        self.post_data = {'roles': self.roles}
+
+        self.client.login(email=self.email, password=self.password)
+
+    # GET
+    def test_get_anonymous_user(self):
+        self.client.logout()
+        response = self.client.get(self.url)
+        result_url = '%s?next=%s' % (reverse('account_login'), self.url)
+        self.assertRedirects(response, result_url)
+
+    def test_renders_correct_template(self):
+        response = self.client.get(self.url)
+        self.assertTemplateUsed(response, 'userprofiles/select_roles.html')
+
+    def test_200_status_code(self):
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+
+    def test_get_all_incomplete_roles_masks_exist(self):
+        response = self.client.get(self.url)
+        self.assertEqual(response.context['remaining_roles_masks'], 3)
+        self.assertTrue(response.context['incomplete_roles_masks_exist'])
+        self.assertEqual(response.context['sport_name'], 'Ice Hockey')
+        self.assertIsNotNone(response.context['form'])
+
+    def test_get_2_incomplete_roles_masks_exist(self):
+        self.ice_hockey_rm.is_complete = True
+        self.ice_hockey_rm.save()
+        response = self.client.get(self.url)
+        self.assertEqual(response.context['remaining_roles_masks'], 2)
+        self.assertTrue(response.context['incomplete_roles_masks_exist'])
+        self.assertEqual(response.context['sport_name'], 'Soccer')
+        self.assertIsNotNone(response.context['form'])
+
+    def test_get_1_incomplete_roles_masks_exist(self):
+        self.ice_hockey_rm.is_complete = True
+        self.ice_hockey_rm.save()
+        self.soccer_rm.is_complete = True
+        self.soccer_rm.save()
+        response = self.client.get(self.url)
+        self.assertEqual(response.context['remaining_roles_masks'], 1)
+        self.assertTrue(response.context['incomplete_roles_masks_exist'])
+        self.assertEqual(response.context['sport_name'], 'Tennis')
+        self.assertIsNotNone(response.context['form'])
+
+    def test_get_no_incomplete_roles_masks_exist_redirects(self):
+        self.ice_hockey_rm.is_complete = True
+        self.ice_hockey_rm.save()
+        self.soccer_rm.is_complete = True
+        self.soccer_rm.save()
+        self.tennis_rm.is_complete = True
+        self.tennis_rm.save()
+        response = self.client.get(self.url, follow=True)
+        self.assertNotIn('sport_name', response.context)
+        self.assertRedirects(response, reverse('profile:finish'))
+
+    # POST
+    def test_post_anonymous_user(self):
+        self.client.logout()
+        response = self.client.post(self.url, data=self.post_data, follow=True)
+        result_url = '%s?next=%s' % (reverse('account_login'), self.url)
+        self.assertRedirects(response, result_url)
+
+    # Valid POST data
+    def test_post_all_incomplete_roles_masks_exist(self):
+        response = self.client.post(self.url, data=self.post_data, follow=True)
+        # We POSTed valid data, so the response should now have 1 less remaining role mask, and the next sport should
+        # be in the context
+        self.assertEqual(response.context['remaining_roles_masks'], 2)
+        self.assertTrue(response.context['incomplete_roles_masks_exist'])
+        self.assertEqual(response.context['sport_name'], 'Soccer')
+        self.assertIsNotNone(response.context['form'])
+        self.assertRedirects(response, self.url)
+
+    def test_post_2_incomplete_roles_masks_exist(self):
+        self.ice_hockey_rm.is_complete = True
+        self.ice_hockey_rm.save()
+        response = self.client.post(self.url, data=self.post_data, follow=True)
+        # We POSTed valid data, so the response should now have 1 less remaining role mask, and the next sport should
+        # be in the context
+        self.assertEqual(response.context['remaining_roles_masks'], 1)
+        self.assertTrue(response.context['incomplete_roles_masks_exist'])
+        self.assertEqual(response.context['sport_name'], 'Tennis')
+        self.assertIsNotNone(response.context['form'])
+        self.assertRedirects(response, self.url)
+
+    def test_post_1_incomplete_roles_masks_exist(self):
+        self.ice_hockey_rm.is_complete = True
+        self.ice_hockey_rm.save()
+        self.soccer_rm.is_complete = True
+        self.soccer_rm.save()
+        response = self.client.post(self.url, data=self.post_data, follow=True)
+        # We POSTed valid data, when there was only 1 more remaining roles mask left, so we should redirect
+        # to profile finish page
+        self.assertNotIn('sport_name', response.context)
+        self.assertRedirects(response, reverse('profile:finish'))
+
+    def test_post_no_incomplete_roles_masks_exist_redirects(self):
+        self.ice_hockey_rm.is_complete = True
+        self.ice_hockey_rm.save()
+        self.soccer_rm.is_complete = True
+        self.soccer_rm.save()
+        self.tennis_rm.is_complete = True
+        self.tennis_rm.save()
+        response = self.client.post(self.url, data=self.post_data, follow=True)
+        self.assertNotIn('sport_name', response.context)
+        self.assertRedirects(response, reverse('profile:finish'))
+
+    def test_post_updates_roles_and_is_complete(self):
+        self.client.post(self.url, data=self.post_data, follow=True)
+        rm = RolesMask.objects.get(user=self.user, sport__name='Ice Hockey')
+        self.assertEqual(rm.roles, self.roles)
+        self.assertTrue(rm.is_complete)
+
+    # Invalid POST data
+    def test_post_invalid_role(self):
+        self.post_data['roles'] = ['InvalidChoice']
+        response = self.client.post(self.url, data=self.post_data, follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'userprofiles/select_roles.html')
+        self.assertFormError(response, 'form', 'roles',
+                             'Select a valid choice. InvalidChoice is not one of the available choices.')

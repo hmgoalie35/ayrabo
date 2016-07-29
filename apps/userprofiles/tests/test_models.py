@@ -3,6 +3,7 @@ from django.db.utils import IntegrityError
 from django.test import TestCase
 
 from accounts.tests.factories.UserFactory import UserFactory
+from escoresheet.testing_utils import is_queryset_in_alphabetical_order
 from sports.tests.factories.SportFactory import SportFactory
 from userprofiles.models import UserProfile, RolesMask
 from .factories.RolesMaskFactory import RolesMaskFactory
@@ -101,6 +102,13 @@ class UserProfileModelTests(TestCase):
 
 
 class RolesMaskModelTests(TestCase):
+    def test_default_ordering(self):
+        RolesMaskFactory(sport__name='Ice Hockey')
+        RolesMaskFactory(sport__name='Soccer')
+        RolesMaskFactory(sport__name='Tennis')
+        self.assertTrue(is_queryset_in_alphabetical_order(RolesMask.objects.all(), 'sport', fk='name'))
+        self.assertTrue(is_queryset_in_alphabetical_order(RolesMask.objects.all(), 'user', fk='email'))
+
     def test_to_string(self):
         rm = RolesMaskFactory()
         self.assertEqual(str(rm), '{email} - {sport}'.format(email=rm.user.email, sport=rm.sport.name))

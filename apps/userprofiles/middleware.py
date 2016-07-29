@@ -15,6 +15,11 @@ class UserProfileExistsMiddleware(object):
         finish_profile_url = reverse('profile:finish')
         select_roles_url = reverse('profile:select_roles')
         whitelisted_urls = [reverse('account_logout'), create_profile_url, finish_profile_url, select_roles_url]
+        # debug_toolbar wasn't working properly because of my custom middleware
+        # so let all debug_toolbar requests through
+        if '__debug__' in request.path:
+            return None
+
         # Do not apply this middleware to anonymous users, or for any request to a whitelisted url
         if request.user.is_authenticated() and request.path not in whitelisted_urls:
             # Do not apply this middleware if the user already has a userprofile

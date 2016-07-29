@@ -1,0 +1,34 @@
+{% extends 'site_base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Select Roles{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="text-center">
+                    <h2>Select Roles for {{ sport_name }}</h2>
+                    <p>The roles you choose here will affect the permissions you have throughout {{ request.site }}</p>
+                    <br>
+                    <h4 class="text-muted">{{ remaining_roles_masks }} sport{{ remaining_roles_masks|pluralize }} remaining</h4>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-offset-4 col-sm-4 col-sm-offset-4">
+                <h2>{{ sport_name }}</h2>
+                <br>
+                <form action="" method="post">
+                    {% csrf_token %}
+                    {{ form | crispy }}
+                    <br>
+                    <div class="text-center">
+                        <input id="select_roles_next_sport" type="submit" value="Go to next sport" class="btn btn-success">
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}

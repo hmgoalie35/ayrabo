@@ -102,3 +102,10 @@ class RolesMaskAdminForm(forms.ModelForm):
             'roles_mask': _(
                     'Use the roles checkboxes to modify this value')
         }
+
+
+class RolesMaskForm(forms.Form):
+    roles = forms.MultipleChoiceField(choices=[(role, role) for role in RolesMask.ROLES],
+                                      widget=forms.CheckboxSelectMultiple)
+
+

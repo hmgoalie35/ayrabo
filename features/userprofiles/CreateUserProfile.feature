@@ -74,7 +74,7 @@ Feature: User profiles
     And I fill in "id_height" with "5' 7""
     And I fill in "id_weight" with "130"
     And I press "create_userprofile_btn"
-    Then I should be on the "profile:finish" page
+    Then I should be on the "profile:select_roles" page
 
     # See coaches, players, referees, managers folders in features/ for tests regarding the next steps for filling out coach, players, etc. specific info
 

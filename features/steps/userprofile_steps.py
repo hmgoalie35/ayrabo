@@ -14,3 +14,10 @@ def step_impl(context, username_or_email, roles):
     userprofile.is_complete = False
     userprofile.set_roles(roles_list)
     userprofile.save()
+
+
+@step('The userprofile for "(?P<username_or_email>.*)" is not complete')
+def step_impl(context, username_or_email):
+    userprofile = UserProfile.objects.get(Q(user__email=username_or_email) | Q(user__username=username_or_email))
+    userprofile.is_complete = False
+    userprofile.save()

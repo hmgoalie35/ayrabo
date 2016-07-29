@@ -11,7 +11,7 @@ from managers.forms import ManagerForm
 from players.forms import HockeyPlayerForm
 from referees.forms import RefereeForm
 from userprofiles.models import UserProfile, RolesMask
-from .forms import CreateUserProfileForm, UpdateUserProfileForm
+from .forms import CreateUserProfileForm, UpdateUserProfileForm, RolesMaskForm
 
 
 class CreateUserProfileView(LoginRequiredMixin, CreateView):
@@ -46,19 +46,37 @@ class CreateUserProfileView(LoginRequiredMixin, CreateView):
 class SelectRolesView(LoginRequiredMixin, ContextMixin, View):
     template_name = 'userprofiles/select_roles.html'
 
-    def get(self, request, *args, **kwargs):
-        incomplete_roles_masks = RolesMask.objects.filter(user=request.user, is_complete=False)
-        if not incomplete_roles_masks.exists():
-            return redirect(reverse('home'))
+    def get_context_data(self, **kwargs):
+        context = super(SelectRolesView, self).get_context_data(**kwargs)
+        incomplete_roles_masks = RolesMask.objects.filter(user=self.request.user, is_complete=False).select_related('sport')
+        roles_mask_count = incomplete_roles_masks.count()
+        context['remaining_roles_masks'] = roles_mask_count
+        context['incomplete_roles_masks_exist'] = incomplete_roles_masks.exists()
+        if context.get('incomplete_roles_masks_exist'):
+            incomplete_mask = incomplete_roles_masks.first()
+            context['sport_name'] = incomplete_mask.sport.name
+            context['form'] = RolesMaskForm(self.request.POST or None, initial=incomplete_mask)
+        return context
 
-        return render(request, self.template_name, {})
+    def get(self, request, *args, **kwargs):
+        context = self.get_context_data(**kwargs)
+        if not context.get('incomplete_roles_masks_exist'):
+            return redirect(reverse('profile:finish'))
+
+        return render(request, self.template_name, context)
 
     def post(self, request, *args, **kwargs):
-        incomplete_roles_masks = RolesMask.objects.filter(user=request.user, is_complete=False)
-        if not incomplete_roles_masks.exists():
-            return redirect(reverse('home'))
+        context = self.get_context_data(**kwargs)
+        if not context.get('incomplete_roles_masks_exist'):
+            return redirect(reverse('profile:finish'))
+        form = context.get('form')
+        if form.is_valid():
+            form.initial.set_roles(form.cleaned_data.get('roles'), [])
+            form.initial.is_complete = True
+            form.initial.save()
+            return redirect(reverse('profile:select_roles'))
 
-        return render(request, self.template_name, {})
+        return render(request, self.template_name, context)
 
 
 class FinishUserProfileView(LoginRequiredMixin, ContextMixin, View):
@@ -87,15 +105,32 @@ class FinishUserProfileView(LoginRequiredMixin, ContextMixin, View):
         return context
 
     def get(self, request, *args, **kwargs):
-        # make sure a userprofile already exists, and it is not already complete
-        if not hasattr(request.user, 'userprofile') or request.user.userprofile.is_complete:
+        # If the user hasn't created a userprofile yet, redirect them to the profile creation page
+        if not hasattr(request.user, 'userprofile'):
+            return redirect(reverse('profile:create'))
+        # If the user has incomplete roles masks (choosing what roles for the sports they chose) then redirect to
+        # the page that will prompt them to finish the roles masks
+        qs = RolesMask.objects.filter(user=self.request.user, is_complete=False)
+        if qs.exists():
+            return redirect(reverse('profile:select_roles'))
+        # If the user's profile is complete, redirect to the home page so they can start using the site
+        if request.user.userprofile.is_complete:
             return redirect(reverse('home'))
+
         context = self.get_context_data(**kwargs)
         return render(request, self.template_name, context)
 
     def post(self, request, *args, **kwargs):
-        # make sure a userprofile already exists, and it is not already complete
-        if not hasattr(request.user, 'userprofile') or request.user.userprofile.is_complete:
+        # If the user hasn't created a userprofile yet, redirect them to the profile creation page
+        if not hasattr(request.user, 'userprofile'):
+            return redirect(reverse('profile:create'))
+        # If the user has incomplete roles masks (choosing what roles for the sports they chose) then redirect to
+        # the page that will prompt them to finish the roles masks
+        qs = RolesMask.objects.filter(user=self.request.user, is_complete=False)
+        if qs.exists():
+            return redirect(reverse('profile:select_roles'))
+        # If the user's profile is complete, redirect to the home page so they can start using the site
+        if request.user.userprofile.is_complete:
             return redirect(reverse('home'))
 
         context = self.get_context_data(**kwargs)
