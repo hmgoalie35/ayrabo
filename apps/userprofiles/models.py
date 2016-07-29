@@ -158,4 +158,4 @@ class RolesMask(models.Model):
         return role.title() in self.roles or role in self.roles
 
     def __str__(self):
-        return self.user.email
+        return '{email} - {sport}'.format(email=self.user.email, sport=self.sport.name)

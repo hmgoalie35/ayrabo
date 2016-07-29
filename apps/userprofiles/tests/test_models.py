@@ -103,7 +103,7 @@ class UserProfileModelTests(TestCase):
 class RolesMaskModelTests(TestCase):
     def test_to_string(self):
         rm = RolesMaskFactory()
-        self.assertEqual(str(rm), rm.user.email)
+        self.assertEqual(str(rm), '{email} - {sport}'.format(email=rm.user.email, sport=rm.sport.name))
 
     def test_current_available_roles(self):
         self.assertListEqual(RolesMask.ROLES, ['Player', 'Coach', 'Referee', 'Manager'])
