@@ -110,9 +110,13 @@ class RolesMask(models.Model):
     sport = models.ForeignKey(Sport)
     roles_mask = models.SmallIntegerField(default=0, verbose_name='Roles Mask')
     # This field is used to determine if all of the objects corresponding to the roles have been created
-    # i.e. If an instance of this model has roles Coach and Referee, is_complete will only be True if a Coach and
-    # Referee object have both been created for the user
-    is_complete = models.BooleanField(default=False, verbose_name='Is Complete')
+    # i.e. If an instance of this model has roles Coach and Referee, are_objects_created will only be True
+    # if a Coach and Referee object have both been created for the user
+    are_role_objects_created = models.BooleanField(default=False, verbose_name='Role Objects Created')
+
+    # This field is used to determine if the user has set the roles for the roles mask. This is used to get objects
+    # that have not had the corresponding Player, Coach, Referee, Manager objects created yet.
+    are_roles_set = models.BooleanField(default=False, verbose_name='Are Roles Set')
 
     class Meta:
         ordering = ['user']
@@ -140,6 +144,8 @@ class RolesMask(models.Model):
             self.roles_mask += accumulator
         else:
             self.roles_mask = accumulator
+
+        self.are_roles_set = True
         self.save()
 
     @property

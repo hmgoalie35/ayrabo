@@ -116,9 +116,10 @@ class RolesMaskModelTests(TestCase):
     def test_current_available_roles(self):
         self.assertListEqual(RolesMask.ROLES, ['Player', 'Coach', 'Referee', 'Manager'])
 
-    def test_default_role_mask(self):
-        rm = RolesMaskFactory(roles_mask=0)
-        self.assertEqual(rm.roles_mask, 0)
+    def test_calling_set_roles_sets_are_roles_set_true(self):
+        rm = RolesMaskFactory(are_roles_set=False, are_role_objects_created=False)
+        rm.set_roles(['Player'])
+        self.assertTrue(rm.are_roles_set)
 
     def test_set_roles_param_not_a_list(self):
         rm = RolesMaskFactory()

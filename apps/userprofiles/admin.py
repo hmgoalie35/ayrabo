@@ -31,7 +31,7 @@ class UserProfileAdmin(admin.ModelAdmin):
 
 
 class RolesMaskAdmin(admin.ModelAdmin):
-    list_display = ['id', 'user', 'roles_mask', 'roles_mask_to_string', 'is_complete', 'sport']
+    list_display = ['id', 'user', 'roles_mask', 'roles_mask_to_string', 'are_role_objects_created', 'are_roles_set', 'sport']
     list_display_links = ['user']
     form = RolesMaskAdminForm
     readonly_fields = ['roles_mask']

@@ -97,7 +97,7 @@ class RolesMaskAdminForm(forms.ModelForm):
 
     class Meta:
         model = RolesMask
-        fields = ['user', 'sport', 'is_complete']
+        fields = ['user', 'sport', 'are_roles_set', 'are_role_objects_created']
         help_texts = {
             'roles_mask': _(
                     'Use the roles checkboxes to modify this value')

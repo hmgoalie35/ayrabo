@@ -14,4 +14,5 @@ class RolesMaskFactory(django.DjangoModelFactory):
     sport = factory.SubFactory(SportFactory)
     # 1 signifies only the player role
     roles_mask = 1
-    is_complete = True
+    are_role_objects_created = True
+    are_roles_set = True
