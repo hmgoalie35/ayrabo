@@ -106,7 +106,7 @@ MIDDLEWARE_CLASSES = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'escoresheet.middleware.TranslationMiddleware',
     'escoresheet.middleware.TimezoneMiddleware',
-    'userprofiles.middleware.UserProfileExistsMiddleware',
+    'accounts.middleware.AccountRegistrationCompleteMiddleware',
 ]
 
 ROOT_URLCONF = 'escoresheet.urls'
