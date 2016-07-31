@@ -3,6 +3,7 @@ from django.core.validators import ValidationError
 from django.db import models
 
 from leagues.models import League
+from userprofiles.models import RolesMask
 
 
 class Referee(models.Model):
@@ -14,10 +15,13 @@ class Referee(models.Model):
         unique_together = (('user', 'league'),)
 
     def clean(self):
-        if hasattr(self, 'user') and not self.user.userprofile.has_role('Referee'):
-            raise ValidationError(
-                    '{user} does not have the referee role assigned, please update their userprofile to include it'.format(
-                            user=self.user.get_full_name()))
+        if hasattr(self, 'user') and hasattr(self, 'league'):
+            sport = self.league.sport
+            qs = RolesMask.objects.filter(user=self.user, sport=sport)
+            if qs.exists() and not qs.first().has_role('Referee'):
+                raise ValidationError(
+                        '{user} - {sport} might not have a rolesmask object or the rolesmask object does not have the referee role assigned'.format(
+                                user=self.user.email, sport=sport.name))
 
     def __str__(self):
         return 'Referee {full_name}'.format(full_name=self.user.get_full_name())

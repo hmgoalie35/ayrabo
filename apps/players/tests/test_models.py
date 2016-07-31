@@ -3,6 +3,7 @@ from django.db.utils import IntegrityError
 from django.test import TestCase
 
 from accounts.tests.factories.UserFactory import UserFactory
+from userprofiles.tests.factories.RolesMaskFactory import RolesMaskFactory
 from .factories.PlayerFactory import HockeyPlayerFactory
 
 
@@ -48,11 +49,13 @@ class PlayerModelTests(TestCase):
 
     def test_create_player_user_missing_player_role(self):
         user = UserFactory()
-        user.userprofile.set_roles(['Referee'])
-        player = HockeyPlayerFactory(user=user, league=self.player.team)
+        sport = self.player.team.division.league.sport
+        rm = RolesMaskFactory(user=user, sport=sport)
+        rm.set_roles(['Referee'])
+        player = HockeyPlayerFactory(user=user, sport=sport, team=self.player.team)
         with self.assertRaises(ValidationError,
-                               msg='{full_name} does not have the player role assigned, please update their userprofile to include it'.format(
-                                       full_name=user.get_full_name())):
+                               msg='{user} - {sport} might not have a rolesmask object or the rolesmask object does not have the player role assigned'.format(
+                                       user=user.email, sport=sport)):
             player.clean()
 
 
@@ -74,9 +77,11 @@ class HockeyPlayerModelTests(TestCase):
 
     def test_create_player_user_missing_player_role(self):
         user = UserFactory()
-        user.userprofile.set_roles(['Referee'])
-        player = HockeyPlayerFactory(user=user, league=self.hockey_player.team)
+        sport = self.hockey_player.team.division.league.sport
+        rm = RolesMaskFactory(user=user, sport=sport)
+        rm.set_roles(['Referee'])
+        player = HockeyPlayerFactory(user=user, sport=sport, team=self.hockey_player.team)
         with self.assertRaises(ValidationError,
-                               msg='{full_name} does not have the player role assigned, please update their userprofile to include it'.format(
-                                       full_name=user.get_full_name())):
+                               msg='{user} - {sport} might not have a rolesmask object or the rolesmask object does not have the player role assigned'.format(
+                                       user=user.email, sport=sport)):
             player.clean()

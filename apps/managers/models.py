@@ -4,6 +4,7 @@ from django.db import models
 
 from sports.models import Sport
 from teams.models import Team
+from userprofiles.models import RolesMask
 
 
 class Manager(models.Model):
@@ -15,10 +16,13 @@ class Manager(models.Model):
         unique_together = (('user', 'team'),)
 
     def clean(self):
-        if hasattr(self, 'user') and not self.user.userprofile.has_role('Manager'):
-            raise ValidationError(
-                    '{user} does not have the manager role assigned, please update their userprofile to include it'.format(
-                            user=self.user.get_full_name()))
+        if hasattr(self, 'user') and hasattr(self, 'team'):
+            sport = self.team.division.league.sport
+            qs = RolesMask.objects.filter(user=self.user, sport=sport)
+            if qs.exists() and not qs.first().has_role('Manager'):
+                raise ValidationError(
+                        '{user} - {sport} might not have a rolesmask object or the rolesmask object does not have the manager role assigned'.format(
+                                user=self.user.email, sport=sport.name))
 
     def __str__(self):
         return 'Manager {full_name}'.format(full_name=self.user.get_full_name())

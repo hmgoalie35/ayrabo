@@ -6,6 +6,7 @@ from django.utils.translation import ugettext_lazy as _
 from leagues.models import League
 from sports.models import Sport
 from teams.models import Team
+from userprofiles.models import RolesMask
 
 
 class Player(models.Model):
@@ -35,10 +36,12 @@ class Player(models.Model):
         return self.team.division.name
 
     def clean(self):
-        if hasattr(self, 'user') and not self.user.userprofile.has_role('Player'):
-            raise ValidationError(
-                    '{user} does not have the player role assigned, please update their userprofile to include it'.format(
-                            user=self.user.get_full_name()))
+        if hasattr(self, 'user') and hasattr(self, 'sport'):
+            qs = RolesMask.objects.filter(user=self.user, sport=self.sport)
+            if qs.exists() and not qs.first().has_role('Player'):
+                raise ValidationError(
+                        '{user} - {sport} might not have a rolesmask object or the rolesmask object does not have the player role assigned'.format(
+                                user=self.user.email, sport=self.sport.name))
 
     class Meta:
         abstract = True
@@ -72,6 +75,7 @@ class HockeyPlayer(Player):
 
     position = models.CharField(max_length=255, choices=POSITIONS, verbose_name='Position')
     handedness = models.CharField(max_length=255, choices=HANDEDNESS, verbose_name='Shoots')
+
     # might need to move jersey_number into this model
 
     def clean(self):
