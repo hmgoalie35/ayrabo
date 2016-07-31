@@ -104,9 +104,9 @@ MIDDLEWARE_CLASSES = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.contrib.sites.middleware.CurrentSiteMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'userprofiles.middleware.UserProfileExistsMiddleware',
     'escoresheet.middleware.TranslationMiddleware',
     'escoresheet.middleware.TimezoneMiddleware',
+    'accounts.middleware.AccountRegistrationCompleteMiddleware',
 ]
 
 ROOT_URLCONF = 'escoresheet.urls'
@@ -294,11 +294,13 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 BOWER_COMPONENTS_ROOT = os.path.join(BASE_DIR, '', 'static')
 # Remember to delete any unnecessary folders/files bower downloads
 BOWER_INSTALLED_APPS = [
-    'jquery',
-    'bootstrap',
-    'fontawesome',
-    'animate.css',
-    'noty'
+    'animate.css#3.5.2',
+    'bootstrap#3.3.7',
+    'chosen#1.6.1',
+    'chosen-bootstrap#1.1.0',
+    'font-awesome#4.6.3',
+    'jquery#2.2.4',
+    'noty#2.3.8'
 ]
 
 # Django compressor related
@@ -306,6 +308,8 @@ COMPRESS_PRECOMPILERS = [('text/scss', 'sassc {infile} {outfile}')]
 COMPRESS_CSS_FILTERS = ['compressor.filters.css_default.CssAbsoluteFilter',
                         'compressor.filters.yuglify.YUglifyCSSFilter']
 COMPRESS_JS_FILTERS = ['compressor.filters.yuglify.YUglifyJSFilter']
+
+COMPRESS_ROOT = STATICFILES_DIRS[0]
 
 # User account related
 

@@ -6,7 +6,8 @@ from django import forms
 from django.forms import extras
 from django.utils.translation import ugettext_lazy as _
 
-from .models import UserProfile
+from sports.models import Sport
+from .models import UserProfile, RolesMask
 
 YEAR_DIFFERENCE = 20
 MAX_AGE = 100
@@ -31,7 +32,7 @@ class CreateUserProfileForm(forms.ModelForm):
         super(CreateUserProfileForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.layout = Layout(
-                Field('roles'),
+                Field('sports'),
                 Field('gender'),
                 Field('birthday', wrapper_class='form-inline'),
                 Field('height'),
@@ -46,9 +47,11 @@ class CreateUserProfileForm(forms.ModelForm):
     year_range = range(current_year - MAX_AGE, current_year + 1)
     birthday = forms.DateField(
             widget=SelectDateMonthDayYearInitiallyBlankWidget(years=year_range))
-    roles = forms.MultipleChoiceField(choices=[(role, role) for role in UserProfile.ROLES],
-                                      widget=forms.CheckboxSelectMultiple)
-    field_order = ['roles', 'gender', 'birthday', 'height', 'weight', 'language', 'timezone']
+
+    sports = forms.ModelMultipleChoiceField(queryset=Sport.objects.all(),
+                                            help_text='Tip: You can search for sports by typing in the input box above')
+
+    field_order = ['sports', 'gender', 'birthday', 'height', 'weight', 'language', 'timezone']
 
     class Meta:
         model = UserProfile
@@ -73,16 +76,27 @@ class UserProfileAdminForm(forms.ModelForm):
     birthday = forms.DateField(
             widget=SelectDateMonthDayYearInitiallyBlankWidget(years=year_range))
 
-    roles = forms.MultipleChoiceField(choices=[(role, role) for role in UserProfile.ROLES],
-                                      widget=forms.CheckboxSelectMultiple)
-
     class Meta:
         model = UserProfile
-        fields = ['user', 'gender', 'birthday', 'height', 'weight', 'language', 'timezone', 'is_complete']
+        fields = ['user', 'gender', 'birthday', 'height', 'weight', 'language', 'timezone']
         labels = {
             'weight': _('Weight (in lbs)'),
         }
+
+
+class RolesMaskAdminForm(forms.ModelForm):
+    roles = forms.MultipleChoiceField(choices=[(role, role) for role in RolesMask.ROLES],
+                                      widget=forms.CheckboxSelectMultiple)
+
+    class Meta:
+        model = RolesMask
+        fields = ['user', 'sport', 'are_roles_set', 'are_role_objects_created']
         help_texts = {
             'roles_mask': _(
                     'Use the roles checkboxes to modify this value')
         }
+
+
+class RolesMaskForm(forms.Form):
+    roles = forms.MultipleChoiceField(choices=[(role, role) for role in RolesMask.ROLES],
+                                      widget=forms.CheckboxSelectMultiple)

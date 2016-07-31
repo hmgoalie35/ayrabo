@@ -6,6 +6,7 @@ from django.utils.translation import ugettext_lazy as _
 from leagues.models import League
 from sports.models import Sport
 from teams.models import Team
+from userprofiles.models import RolesMask
 
 
 class Player(models.Model):
@@ -23,7 +24,8 @@ class Player(models.Model):
     # TODO add in team/player history model to keep track of a player's teams throughout their career
     team = models.ForeignKey(Team)
     jersey_number = models.SmallIntegerField(verbose_name='Jersey Number',
-                                             validators=[MinValueValidator(MIN_JERSEY_NUMBER), MaxValueValidator(MAX_JERSEY_NUMBER)])
+                                             validators=[MinValueValidator(MIN_JERSEY_NUMBER),
+                                                         MaxValueValidator(MAX_JERSEY_NUMBER)])
     created = models.DateTimeField(auto_now_add=True, verbose_name='Created')
 
     @property
@@ -35,10 +37,12 @@ class Player(models.Model):
         return self.team.division.name
 
     def clean(self):
-        if hasattr(self, 'user') and not self.user.userprofile.has_role('Player'):
-            raise ValidationError(
-                    '{user} does not have the player role assigned, please update their userprofile to include it'.format(
-                            user=self.user.get_full_name()))
+        if hasattr(self, 'user') and hasattr(self, 'sport'):
+            qs = RolesMask.objects.filter(user=self.user, sport=self.sport)
+            if qs.exists() and not qs.first().has_role('Player'):
+                raise ValidationError(
+                        '{user} - {sport} might not have a rolesmask object or the rolesmask object does not have the player role assigned'.format(
+                                user=self.user.email, sport=self.sport.name))
 
     class Meta:
         abstract = True
@@ -72,6 +76,7 @@ class HockeyPlayer(Player):
 
     position = models.CharField(max_length=255, choices=POSITIONS, verbose_name='Position')
     handedness = models.CharField(max_length=255, choices=HANDEDNESS, verbose_name='Shoots')
+
     # might need to move jersey_number into this model
 
     def clean(self):
@@ -79,6 +84,79 @@ class HockeyPlayer(Player):
         if hasattr(self, 'team'):
             # If we do not exclude the current user this validation error will always be triggered.
             qs = HockeyPlayer.objects.filter(team=self.team, jersey_number=self.jersey_number).exclude(user=self.user)
+            if qs.exists():
+                error_msg = 'Please choose another number, {jersey_number} is currently unavailable for {team}'.format(
+                        jersey_number=self.jersey_number, team=self.team.name)
+                raise ValidationError({
+                    'jersey_number': _(error_msg)})
+
+
+class BaseballPlayer(Player):
+    """
+    A model representing a baseball player
+    """
+
+    POSITIONS = (
+        ('C', 'Catcher'),
+        ('P', 'Pitcher'),
+        ('1B', 'First Base'),
+        ('2B', 'Second Base'),
+        ('SS', 'Shortstop'),
+        ('3B', 'Third Base'),
+        ('LF', 'Left Field'),
+        ('CF', 'Center Field'),
+        ('RF', 'Right Field'),
+    )
+
+    CATCHES = (
+        ('Left', 'Left'),
+        ('Right', 'Right'),
+    )
+
+    BATS = (
+        ('Left', 'Left'),
+        ('Right', 'Right'),
+    )
+
+    # TODO definitely need to add more fields, im definitely missing stuff
+    position = models.CharField(max_length=255, choices=POSITIONS, verbose_name='Position')
+    catches = models.CharField(max_length=255, choices=CATCHES, verbose_name='Catches')
+    bats = models.CharField(max_length=255, choices=BATS, verbose_name='Bats')
+
+    def clean(self):
+        super(BaseballPlayer, self).clean()
+        if hasattr(self, 'team'):
+            # If we do not exclude the current user this validation error will always be triggered.
+            qs = BaseballPlayer.objects.filter(team=self.team, jersey_number=self.jersey_number).exclude(user=self.user)
+            if qs.exists():
+                error_msg = 'Please choose another number, {jersey_number} is currently unavailable for {team}'.format(
+                        jersey_number=self.jersey_number, team=self.team.name)
+                raise ValidationError({
+                    'jersey_number': _(error_msg)})
+
+
+class BasketballPlayer(Player):
+    POSITIONS = (
+        ('PG', 'Point Guard'),
+        ('SG', 'Shooting Guard'),
+        ('SF', 'Small Forward'),
+        ('PF', 'Power Forward'),
+        ('C', 'Center'),
+    )
+
+    SHOOTS = (
+        ('Left', 'Left'),
+        ('Right', 'Right'),
+    )
+
+    position = models.CharField(max_length=255, choices=POSITIONS, verbose_name='Position')
+    shoots = models.CharField(max_length=255, choices=SHOOTS, verbose_name='Shoots')
+
+    def clean(self):
+        super(BasketballPlayer, self).clean()
+        if hasattr(self, 'team'):
+            # If we do not exclude the current user this validation error will always be triggered.
+            qs = BasketballPlayer.objects.filter(team=self.team, jersey_number=self.jersey_number).exclude(user=self.user)
             if qs.exists():
                 error_msg = 'Please choose another number, {jersey_number} is currently unavailable for {team}'.format(
                         jersey_number=self.jersey_number, team=self.team.name)

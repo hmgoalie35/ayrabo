@@ -11,7 +11,8 @@ class TranslationMiddleware(object):
         else:
             language_code = translation.get_language_from_request(request)
         request.session[translation.LANGUAGE_SESSION_KEY] = language_code
-        return translation.activate(language_code)
+        translation.activate(language_code)
+        return None
 
 
 class TimezoneMiddleware(object):
@@ -21,3 +22,4 @@ class TimezoneMiddleware(object):
         else:
             tz = settings.TIME_ZONE
         timezone.activate(pytz.timezone(tz))
+        return None

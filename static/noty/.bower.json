@@ -15,7 +15,7 @@
     "commit": "6fe2cf81c7b8ecdbdafaa875b82b78cf65e2f100"
   },
   "_source": "https://github.com/needim/noty.git",
-  "_target": "^2.3.8",
+  "_target": "2.3.8",
   "_originalSource": "noty",
   "_direct": true
 }
