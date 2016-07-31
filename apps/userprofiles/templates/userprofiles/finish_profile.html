@@ -10,7 +10,7 @@
             <div class="col-sm-12">
                 <div class="text-center">
                     <h2>Finish Your Profile</h2>
-                    <p>Please fill out the required information for the following role(s) you chose</p>
+                    <p>Please fill out the required information for {{ sport_name }}</p>
                 </div>
             </div>
         </div>
@@ -28,7 +28,7 @@
                     {% endif %}
 
                     {% if player_form %}
-                        <h3 class="text-center">{{ player_type }} Player</h3>
+                        <h3 class="text-center">{{ sport_name }} Player</h3>
                         {{ player_form | crispy }}
                     {% endif %}
 

@@ -8,10 +8,33 @@ from django.views.generic.base import ContextMixin
 
 from coaches.forms import CoachForm
 from managers.forms import ManagerForm
-from players.forms import HockeyPlayerForm
+from players.forms import HockeyPlayerForm, BaseballPlayerForm
 from referees.forms import RefereeForm
 from userprofiles.models import UserProfile, RolesMask
 from .forms import CreateUserProfileForm, UpdateUserProfileForm, RolesMaskForm
+
+
+def check_account_completed(request):
+    """
+    This helper function performs the same thing as the middleware, but because the middleware lets the whitelisted
+    urls through, we need to do the check again in the actual view.
+    :param request: The request object passed to the view
+    :return: redirect_url: The url to redirect to, redirect_needed: If the redirect needs to happen
+    """
+    # These checks are needed because the middleware allows through any request from the whitelisted urls
+    up = UserProfile.objects.filter(user=request.user)
+    roles_not_set = RolesMask.objects.filter(user=request.user, are_roles_set=False)
+    objects_not_created = RolesMask.objects.filter(user=request.user, are_role_objects_created=False)
+    redirect_url = None
+    if not up.exists():
+        redirect_url = reverse('profile:create')
+    elif roles_not_set.exists():
+        redirect_url = reverse('profile:select_roles')
+    elif objects_not_created.exists():
+        redirect_url = reverse('profile:finish')
+    # The latter part of this statement prevents redirect loops
+    redirect_needed = redirect_url is not None and request.path != redirect_url
+    return redirect_url, redirect_needed
 
 
 class CreateUserProfileView(LoginRequiredMixin, CreateView):
@@ -21,13 +44,15 @@ class CreateUserProfileView(LoginRequiredMixin, CreateView):
     form_class = CreateUserProfileForm
 
     def get(self, request, *args, **kwargs):
-        if UserProfile.objects.filter(user=request.user).exists():
-            return redirect(reverse('home'))
+        redirect_url, redirect_needed = check_account_completed(request)
+        if redirect_needed:
+            return redirect(redirect_url)
         return super(CreateUserProfileView, self).get(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
-        if UserProfile.objects.filter(user=request.user).exists():
-            return redirect(reverse('home'))
+        redirect_url, redirect_needed = check_account_completed(request)
+        if redirect_needed:
+            return redirect(redirect_url)
         return super(CreateUserProfileView, self).post(request, *args, **kwargs)
 
     def form_valid(self, form):
@@ -48,7 +73,8 @@ class SelectRolesView(LoginRequiredMixin, ContextMixin, View):
 
     def get_context_data(self, **kwargs):
         context = super(SelectRolesView, self).get_context_data(**kwargs)
-        incomplete_roles_masks = RolesMask.objects.filter(user=self.request.user, is_complete=False).select_related('sport')
+        incomplete_roles_masks = RolesMask.objects.filter(user=self.request.user,
+                                                          are_roles_set=False).select_related('sport')
         roles_mask_count = incomplete_roles_masks.count()
         context['remaining_roles_masks'] = roles_mask_count
         context['incomplete_roles_masks_exist'] = incomplete_roles_masks.exists()
@@ -59,20 +85,21 @@ class SelectRolesView(LoginRequiredMixin, ContextMixin, View):
         return context
 
     def get(self, request, *args, **kwargs):
+        redirect_url, redirect_needed = check_account_completed(request)
+        if redirect_needed:
+            return redirect(redirect_url)
         context = self.get_context_data(**kwargs)
-        if not context.get('incomplete_roles_masks_exist'):
-            return redirect(reverse('profile:finish'))
-
         return render(request, self.template_name, context)
 
     def post(self, request, *args, **kwargs):
+        redirect_url, redirect_needed = check_account_completed(request)
+        if redirect_needed:
+            return redirect(redirect_url)
         context = self.get_context_data(**kwargs)
-        if not context.get('incomplete_roles_masks_exist'):
-            return redirect(reverse('profile:finish'))
         form = context.get('form')
         if form.is_valid():
+            # The set_roles function sets are_roles_set to True when it is called
             form.initial.set_roles(form.cleaned_data.get('roles'), [])
-            form.initial.is_complete = True
             form.initial.save()
             return redirect(reverse('profile:select_roles'))
 
@@ -82,58 +109,56 @@ class SelectRolesView(LoginRequiredMixin, ContextMixin, View):
 class FinishUserProfileView(LoginRequiredMixin, ContextMixin, View):
     template_name = 'userprofiles/finish_profile.html'
     success_message = 'You have successfully completed your profile, you can now access the site'
+    sport_player_form_mappings = {'Ice Hockey': HockeyPlayerForm, 'Baseball': BaseballPlayerForm}
 
     def get_context_data(self, **kwargs):
-        """
-        Instantiates a blank form, or a form with POST data
-        Note that CoachForm, ManagerForm, etc have a prefix field set so that the name attributed on a field is scoped
-        to that model, so no issues arise from having fields with the same name in different models
-        The form knows what prefixed data to instantiate the form with
-        """
         context = super(FinishUserProfileView, self).get_context_data(**kwargs)
-        user_roles = self.request.user.userprofile.roles
-        if 'Coach' in user_roles:
-            context['coach_form'] = CoachForm(self.request.POST or None)
-        if 'Player' in user_roles:
-            # this needs to perform logic to determine what player form to use.
-            context['player_type'] = 'Hockey'
-            context['player_form'] = HockeyPlayerForm(self.request.POST or None)
-        if 'Manager' in user_roles:
-            context['manager_form'] = ManagerForm(self.request.POST or None)
-        if 'Referee' in user_roles:
-            context['referee_form'] = RefereeForm(self.request.POST or None)
+        roles_masks = RolesMask.objects.filter(user=self.request.user, are_roles_set=True,
+                                               are_role_objects_created=False).select_related('sport')
+        context['roles_masks_exist'] = roles_masks.exists()
+        if context.get('roles_masks_exist'):
+            rm = roles_masks.first()
+            context['roles_mask'] = rm
+            context['sport_name'] = rm.sport.name
+            if rm.has_role('Coach'):
+                context['coach_form'] = CoachForm(self.request.POST or None)
+            if rm.has_role('Player'):
+                # Devs have to manually add in the form class to the sport_player_form_mappings dictionary
+                # This is because each sport has a different player model, there is no generic player model
+                if rm.sport.name not in self.sport_player_form_mappings:
+                    raise Exception(
+                            "Form class for a {sport} player hasn't been configured yet, add it to sport_player_form_mappings".format(
+                                    sport=rm.sport.name))
+                context['player_form'] = self.sport_player_form_mappings[rm.sport.name](self.request.POST or None)
+            if rm.has_role('Manager'):
+                context['manager_form'] = ManagerForm(self.request.POST or None)
+            if rm.has_role('Referee'):
+                context['referee_form'] = RefereeForm(self.request.POST or None)
         return context
 
     def get(self, request, *args, **kwargs):
-        # If the user hasn't created a userprofile yet, redirect them to the profile creation page
-        if not hasattr(request.user, 'userprofile'):
-            return redirect(reverse('profile:create'))
-        # If the user has incomplete roles masks (choosing what roles for the sports they chose) then redirect to
-        # the page that will prompt them to finish the roles masks
-        qs = RolesMask.objects.filter(user=self.request.user, is_complete=False)
-        if qs.exists():
-            return redirect(reverse('profile:select_roles'))
-        # If the user's profile is complete, redirect to the home page so they can start using the site
-        if request.user.userprofile.is_complete:
-            return redirect(reverse('home'))
+        redirect_url, redirect_needed = check_account_completed(request)
+        if redirect_needed:
+            return redirect(redirect_url)
 
         context = self.get_context_data(**kwargs)
+
+        if not context.get('roles_masks_exist'):
+            messages.success(request, self.success_message)
+            return redirect(reverse('home'))
+
         return render(request, self.template_name, context)
 
     def post(self, request, *args, **kwargs):
-        # If the user hasn't created a userprofile yet, redirect them to the profile creation page
-        if not hasattr(request.user, 'userprofile'):
-            return redirect(reverse('profile:create'))
-        # If the user has incomplete roles masks (choosing what roles for the sports they chose) then redirect to
-        # the page that will prompt them to finish the roles masks
-        qs = RolesMask.objects.filter(user=self.request.user, is_complete=False)
-        if qs.exists():
-            return redirect(reverse('profile:select_roles'))
-        # If the user's profile is complete, redirect to the home page so they can start using the site
-        if request.user.userprofile.is_complete:
-            return redirect(reverse('home'))
+        redirect_url, redirect_needed = check_account_completed(request)
+        if redirect_needed:
+            return redirect(redirect_url)
 
         context = self.get_context_data(**kwargs)
+
+        if not context.get('roles_masks_exist'):
+            messages.success(request, self.success_message)
+            return redirect(reverse('home'))
 
         # Forms that were submitted are added to this list. Only check the forms in this list for validity
         forms_that_were_submitted = []
@@ -181,12 +206,10 @@ class FinishUserProfileView(LoginRequiredMixin, ContextMixin, View):
         for form, is_valid in is_form_valid.items():
             if is_valid:
                 form.save()
-
-        # Otherwise all forms that were submitted are valid
-        user.userprofile.is_complete = True
-        user.userprofile.save()
-        messages.success(request, self.success_message)
-        return redirect(reverse('home'))
+        rm = context.get('roles_mask')
+        rm.are_role_objects_created = True
+        rm.save()
+        return redirect(reverse('profile:finish'))
 
 
 class UpdateUserProfileView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):

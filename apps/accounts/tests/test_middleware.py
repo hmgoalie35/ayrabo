@@ -42,7 +42,7 @@ class AccountRegistrationCompleteMiddlewareTests(TestCase):
 
     def test_roles_not_set(self):
         self.client.login(email=self.user_with_profile.email, password=self.password)
-        RolesMaskFactory(user=self.user_with_profile, sport__name='Soccer', are_roles_set=False,
+        RolesMaskFactory(user=self.user_with_profile, sport__name='Baseball', are_roles_set=False,
                          are_role_objects_created=False)
         RolesMaskFactory(user=self.user_with_profile, sport__name='Ice Hockey', are_roles_set=False,
                          are_role_objects_created=False)
@@ -51,17 +51,17 @@ class AccountRegistrationCompleteMiddlewareTests(TestCase):
 
     def test_role_objects_not_created(self):
         self.client.login(email=self.user_with_profile.email, password=self.password)
-        soccer_rm = RolesMaskFactory(user=self.user_with_profile, sport__name='Soccer', are_role_objects_created=False)
+        baseball_rm = RolesMaskFactory(user=self.user_with_profile, sport__name='Baseball', are_role_objects_created=False)
         hockey_rm = RolesMaskFactory(user=self.user_with_profile, sport__name='Ice Hockey',
                                      are_role_objects_created=False)
-        soccer_rm.set_roles(['Player', 'Coach'])
+        baseball_rm.set_roles(['Player', 'Coach'])
         hockey_rm.set_roles(['Manager'])
         response = self.client.get(reverse('home'), follow=True)
         self.assertRedirects(response, reverse('profile:finish'))
 
     def test_account_completed(self):
         self.client.login(email=self.user_with_profile.email, password=self.password)
-        RolesMaskFactory(user=self.user_with_profile, sport__name='Soccer', are_roles_set=True,
+        RolesMaskFactory(user=self.user_with_profile, sport__name='Baseball', are_roles_set=True,
                          are_role_objects_created=True)
         RolesMaskFactory(user=self.user_with_profile, sport__name='Ice Hockey', are_roles_set=True,
                          are_role_objects_created=True)
