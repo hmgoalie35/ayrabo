@@ -125,7 +125,7 @@ class FinishUserProfileView(LoginRequiredMixin, ContextMixin, View):
             context['roles_mask'] = rm
             context['sport_name'] = rm.sport.name
             if rm.has_role('Coach'):
-                context['coach_form'] = CoachForm(self.request.POST or None)
+                context['coach_form'] = CoachForm(self.request.POST or None, sport=rm.sport)
             if rm.has_role('Player'):
                 # Devs have to manually add in the form class to the sport_player_form_mappings dictionary
                 # This is because each sport has a different player model, there is no generic player model
@@ -133,11 +133,11 @@ class FinishUserProfileView(LoginRequiredMixin, ContextMixin, View):
                     raise Exception(
                             "Form class for a {sport} player hasn't been configured yet, add it to sport_player_form_mappings".format(
                                     sport=rm.sport.name))
-                context['player_form'] = self.sport_player_form_mappings[rm.sport.name](self.request.POST or None)
+                context['player_form'] = self.sport_player_form_mappings[rm.sport.name](self.request.POST or None, sport=rm.sport)
             if rm.has_role('Manager'):
-                context['manager_form'] = ManagerForm(self.request.POST or None)
+                context['manager_form'] = ManagerForm(self.request.POST or None, sport=rm.sport)
             if rm.has_role('Referee'):
-                context['referee_form'] = RefereeForm(self.request.POST or None)
+                context['referee_form'] = RefereeForm(self.request.POST or None, sport=rm.sport)
         return context
 
     def get(self, request, *args, **kwargs):
