@@ -81,7 +81,7 @@ class UserProfileAdminForm(forms.ModelForm):
 
     class Meta:
         model = UserProfile
-        fields = ['user', 'gender', 'birthday', 'height', 'weight', 'language', 'timezone', 'is_complete']
+        fields = ['user', 'gender', 'birthday', 'height', 'weight', 'language', 'timezone']
         labels = {
             'weight': _('Weight (in lbs)'),
         }

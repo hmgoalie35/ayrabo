@@ -8,11 +8,11 @@ Feature: Create player in the system
       | first_name | last_name | email            | password       |
       | John       | Doe       | user@example.com | myweakpassword |
     And The following team exists "Green Machine IceCats" in division "Midget Minor AA"
+    And A rolesmask exists for "user@example.com" for "Ice Hockey" with role "Player"
     And I login with "user@example.com" and "myweakpassword"
 
   Scenario: Submit valid player form
-    Given "user@example.com" has a userprofile with role "Player"
-    And I am on the "profile:finish" page
+    Given I am on the "profile:finish" page
     When I select "1" from "id_hockeyplayer-team"
     And I fill in "id_hockeyplayer-jersey_number" with "35"
     And I select "G" from "id_hockeyplayer-position"
@@ -22,8 +22,7 @@ Feature: Create player in the system
     And I should be on the "home" page
 
   Scenario: Submit invalid player form
-    Given "user@example.com" has a userprofile with role "Player"
-    And I am on the "profile:finish" page
+    Given I am on the "profile:finish" page
     When I press "finish_profile_btn"
     Then I should be on the "profile:finish" page
     And "This field is required." should show up 4 times

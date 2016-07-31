@@ -8,11 +8,11 @@ Feature: Create coach in the system
       | first_name | last_name | email            | password       |
       | John       | Doe       | user@example.com | myweakpassword |
     And The following team exists "Green Machine IceCats" in division "Midget Minor AA"
+    And A rolesmask exists for "user@example.com" for "Ice Hockey" with role "Coach"
     And I login with "user@example.com" and "myweakpassword"
 
   Scenario: Submit valid coach form
-    Given "user@example.com" has a userprofile with role "Coach"
-    And I am on the "profile:finish" page
+    Given I am on the "profile:finish" page
     When I select "Head Coach" from "id_coach-position"
     And I select "1" from "id_coach-team"
     And I press "finish_profile_btn"
@@ -20,8 +20,7 @@ Feature: Create coach in the system
     And I should be on the "home" page
 
    Scenario: Submit invalid coach form
-     Given "user@example.com" has a userprofile with role "Coach"
-     And I am on the "profile:finish" page
+     Given I am on the "profile:finish" page
      When I select "Head Coach" from "id_coach-position"
      And I press "finish_profile_btn"
      Then I should be on the "profile:finish" page

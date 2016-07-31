@@ -6,7 +6,7 @@ from .models import UserProfile, RolesMask
 
 class UserProfileAdmin(admin.ModelAdmin):
     list_display = [
-        'id', 'user', 'roles_mask', 'roles_list_to_string', 'is_complete', 'gender', 'birthday', 'height', 'weight',
+        'id', 'user', 'roles_mask', 'roles_list_to_string', 'gender', 'birthday', 'height', 'weight',
         'language',
         'timezone']
     list_display_links = ['user']

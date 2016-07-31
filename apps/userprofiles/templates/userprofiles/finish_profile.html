@@ -11,6 +11,8 @@
                 <div class="text-center">
                     <h2>Finish Your Profile</h2>
                     <p>Please fill out the required information for {{ sport_name }}</p>
+                    <br>
+                    <h4 class="text-muted">{{ remaining_roles_masks }} sport{{ remaining_roles_masks|pluralize }} remaining</h4>
                 </div>
             </div>
         </div>
@@ -42,8 +44,10 @@
                         {{ referee_form | crispy }}
                     {% endif %}
 
+                    <br>
+
                     <div class="text-center">
-                        <input id="finish_profile_btn" class="btn btn-success" type="submit" value="Finish Profile">
+                        <input id="finish_profile_btn" class="btn btn-success" type="submit" value="Finish profile">
                     </div>
                 </form>
             </div>

@@ -206,7 +206,6 @@ class SelectRolesViewTests(TestCase):
         self.email = 'user@example.com'
         self.password = 'myweakpassword'
         self.user = UserFactory.create(email=self.email, password=self.password)
-        self.user.userprofile.is_complete = False
         self.ice_hockey_rm = RolesMaskFactory(user=self.user, sport__name='Ice Hockey', are_role_objects_created=False,
                                               are_roles_set=False, roles_mask=0)
         self.soccer_rm = RolesMaskFactory(user=self.user, sport__name='Soccer', are_role_objects_created=False,

@@ -8,7 +8,7 @@ from django.views.generic.base import ContextMixin
 
 from coaches.forms import CoachForm
 from managers.forms import ManagerForm
-from players.forms import HockeyPlayerForm, BaseballPlayerForm
+from players.forms import HockeyPlayerForm, BaseballPlayerForm, BasketballPlayerForm
 from referees.forms import RefereeForm
 from userprofiles.models import UserProfile, RolesMask
 from .forms import CreateUserProfileForm, UpdateUserProfileForm, RolesMaskForm
@@ -58,7 +58,6 @@ class CreateUserProfileView(LoginRequiredMixin, CreateView):
     def form_valid(self, form):
         user = self.request.user
         form.instance.user = user
-        form.instance.set_roles([])
         sports = form.cleaned_data.get('sports', [])
         for sport in sports:
             # For every sport the user wants to register for, create a roles mask object for the given sport.
@@ -109,13 +108,18 @@ class SelectRolesView(LoginRequiredMixin, ContextMixin, View):
 class FinishUserProfileView(LoginRequiredMixin, ContextMixin, View):
     template_name = 'userprofiles/finish_profile.html'
     success_message = 'You have successfully completed your profile, you can now access the site'
-    sport_player_form_mappings = {'Ice Hockey': HockeyPlayerForm, 'Baseball': BaseballPlayerForm}
+    sport_player_form_mappings = {
+        'Ice Hockey': HockeyPlayerForm,
+        'Baseball': BaseballPlayerForm,
+        'Basketball': BasketballPlayerForm
+    }
 
     def get_context_data(self, **kwargs):
         context = super(FinishUserProfileView, self).get_context_data(**kwargs)
         roles_masks = RolesMask.objects.filter(user=self.request.user, are_roles_set=True,
                                                are_role_objects_created=False).select_related('sport')
         context['roles_masks_exist'] = roles_masks.exists()
+        context['remaining_roles_masks'] = roles_masks.count()
         if context.get('roles_masks_exist'):
             rm = roles_masks.first()
             context['roles_mask'] = rm
@@ -219,11 +223,6 @@ class UpdateUserProfileView(LoginRequiredMixin, SuccessMessageMixin, UpdateView)
     success_url = reverse_lazy('profile:update')
     success_message = 'Your profile has been updated'
     context_object_name = 'userprofile'
-
-    def get_context_data(self, **kwargs):
-        context = super(UpdateUserProfileView, self).get_context_data(**kwargs)
-        context['user_roles'] = ', '.join(self.request.user.userprofile.roles)
-        return context
 
     def get_object(self, queryset=None):
         return self.request.user.userprofile

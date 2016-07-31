@@ -17,10 +17,9 @@ Feature: Select sport roles
     Given The following confirmed user account exists
       | first_name | last_name | email            | password       |
       | John       | Doe       | user@example.com | myweakpassword |
-    And The userprofile for "user@example.com" is not complete
     And A rolesmask exists for "user@example.com" for "Ice Hockey"
-    And A rolesmask exists for "user@example.com" for "Soccer"
-    And A rolesmask exists for "user@example.com" for "Tennis"
+    And A rolesmask exists for "user@example.com" for "Baseball"
+    And A rolesmask exists for "user@example.com" for "Basketball"
     And I login with "user@example.com" and "myweakpassword"
 
   Scenario: Correct descriptions and text are displayed
@@ -29,6 +28,14 @@ Feature: Select sport roles
     Then I should see "Select Roles for Ice Hockey"
     And I should see "The roles you choose here will affect the permissions you have throughout"
     And I should see "3 sports remaining"
+
+  Scenario: Try to navigate to profile create page
+    Given I go to the "profile:create" page
+    Then I should be on the "profile:select_roles" page
+
+  Scenario: Try to navigate to profile finish page
+    Given I go to the "profile:finish" page
+    Then I should be on the "profile:select_roles" page
 
   Scenario: Prompted to fill out Ice Hockey form first
     Given I am on the "profile:select_roles" page
@@ -50,15 +57,15 @@ Feature: Select sport roles
     Then "This field is required." should show up 1 time
     And I should see "3 sports remaining"
 
-  Scenario: Prompted to fill out Soccer form second
+  Scenario: Prompted to fill out Baseball form second
     Given I am on the "profile:select_roles" page
     And The rolesmask for "user@example.com" and "Ice Hockey" is complete
     And I am on the "profile:select_roles" page
-    Then I should see "Select Roles for Soccer"
+    Then I should see "Select Roles for Baseball"
     And I should see "2 sports remaining"
-    And I should see "Soccer"
+    And I should see "Baseball"
 
-  Scenario: Submit valid form for soccer
+  Scenario: Submit valid form for baseball
     Given I am on the "profile:select_roles" page
     And The rolesmask for "user@example.com" and "Ice Hockey" is complete
     And I am on the "profile:select_roles" page
@@ -68,7 +75,7 @@ Feature: Select sport roles
     Then I should be on the "profile:select_roles" page
     And I should see "1 sport remaining"
 
-  Scenario: Submit invalid form for soccer
+  Scenario: Submit invalid form for baseball
     Given I am on the "profile:select_roles" page
     And The rolesmask for "user@example.com" and "Ice Hockey" is complete
     And I am on the "profile:select_roles" page
@@ -76,29 +83,29 @@ Feature: Select sport roles
     Then "This field is required." should show up 1 time
     And I should see "2 sports remaining"
 
-  Scenario: Prompted to fill out Tennis form last
+  Scenario: Prompted to fill out basketball form last
     Given I am on the "profile:select_roles" page
     And The rolesmask for "user@example.com" and "Ice Hockey" is complete
-    And The rolesmask for "user@example.com" and "Soccer" is complete
+    And The rolesmask for "user@example.com" and "Baseball" is complete
     And I am on the "profile:select_roles" page
-    Then I should see "Select Roles for Tennis"
+    Then I should see "Select Roles for Basketball"
     And I should see "1 sport remaining"
-    And I should see "Tennis"
+    And I should see "Basketball"
 
-  Scenario: Submit valid form for tennis
+  Scenario: Submit valid form for basketball
     Given I am on the "profile:select_roles" page
     And The rolesmask for "user@example.com" and "Ice Hockey" is complete
-    And The rolesmask for "user@example.com" and "Soccer" is complete
+    And The rolesmask for "user@example.com" and "Basketball" is complete
     And I am on the "profile:select_roles" page
     When I press "id_roles_1"
     And I press "id_roles_3"
     And I press "select_roles_next_sport"
     Then I should be on the "profile:finish" page
 
-  Scenario: Submit invalid form for tennis
+  Scenario: Submit invalid form for basketball
     Given I am on the "profile:select_roles" page
     And The rolesmask for "user@example.com" and "Ice Hockey" is complete
-    And The rolesmask for "user@example.com" and "Soccer" is complete
+    And The rolesmask for "user@example.com" and "Basketball" is complete
     And I am on the "profile:select_roles" page
     When I press "select_roles_next_sport"
     Then "This field is required." should show up 1 time

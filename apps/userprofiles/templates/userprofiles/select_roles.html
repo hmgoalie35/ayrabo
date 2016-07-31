@@ -24,8 +24,11 @@
                     {% csrf_token %}
                     {{ form | crispy }}
                     <br>
+                    <br>
                     <div class="text-center">
-                        <input id="select_roles_next_sport" type="submit" value="Go to next sport" class="btn btn-success">
+                        <button id="select_roles_next_sport" type="submit" role="button" class="btn btn-success">
+                            Go to next {% if remaining_roles_masks == 1 %}step{% else %}sport{% endif %}
+                        </button>
                     </div>
                 </form>
             </div>
