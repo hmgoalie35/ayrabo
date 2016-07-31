@@ -30,3 +30,12 @@ class HockeyPlayerFactory(PlayerFactory):
 
     position = fuzzy.FuzzyChoice([position[0] for position in models.HockeyPlayer.POSITIONS])
     handedness = fuzzy.FuzzyChoice([handedness[0] for handedness in models.HockeyPlayer.HANDEDNESS])
+
+
+class BaseballPlayerFactory(PlayerFactory):
+    class Meta:
+        model = models.BaseballPlayer
+
+    position = fuzzy.FuzzyChoice([position[0] for position in models.BaseballPlayer.POSITIONS])
+    catches = fuzzy.FuzzyChoice([catches[0] for catches in models.BaseballPlayer.CATCHES])
+    bats = fuzzy.FuzzyChoice([bats[0] for bats in models.BaseballPlayer.BATS])

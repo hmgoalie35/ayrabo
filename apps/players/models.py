@@ -24,7 +24,8 @@ class Player(models.Model):
     # TODO add in team/player history model to keep track of a player's teams throughout their career
     team = models.ForeignKey(Team)
     jersey_number = models.SmallIntegerField(verbose_name='Jersey Number',
-                                             validators=[MinValueValidator(MIN_JERSEY_NUMBER), MaxValueValidator(MAX_JERSEY_NUMBER)])
+                                             validators=[MinValueValidator(MIN_JERSEY_NUMBER),
+                                                         MaxValueValidator(MAX_JERSEY_NUMBER)])
     created = models.DateTimeField(auto_now_add=True, verbose_name='Created')
 
     @property
@@ -83,6 +84,50 @@ class HockeyPlayer(Player):
         if hasattr(self, 'team'):
             # If we do not exclude the current user this validation error will always be triggered.
             qs = HockeyPlayer.objects.filter(team=self.team, jersey_number=self.jersey_number).exclude(user=self.user)
+            if qs.exists():
+                error_msg = 'Please choose another number, {jersey_number} is currently unavailable for {team}'.format(
+                        jersey_number=self.jersey_number, team=self.team.name)
+                raise ValidationError({
+                    'jersey_number': _(error_msg)})
+
+
+class BaseballPlayer(Player):
+    """
+    A model representing a baseball player
+    """
+
+    POSITIONS = (
+        ('C', 'Catcher'),
+        ('P', 'Pitcher'),
+        ('1B', 'First Base'),
+        ('2B', 'Second Base'),
+        ('SS', 'Shortstop'),
+        ('3B', 'Third Base'),
+        ('LF', 'Left Field'),
+        ('CF', 'Center Field'),
+        ('RF', 'Right Field'),
+    )
+
+    CATCHES = (
+        ('Left', 'Left'),
+        ('Right', 'Right'),
+    )
+
+    BATS = (
+        ('Left', 'Left'),
+        ('Right', 'Right'),
+    )
+
+    # TODO definitely need to add more fields, im definitely missing stuff
+    position = models.CharField(max_length=255, choices=POSITIONS, verbose_name='Position')
+    catches = models.CharField(max_length=255, choices=CATCHES, verbose_name='Catches')
+    bats = models.CharField(max_length=255, choices=BATS, verbose_name='Bats')
+
+    def clean(self):
+        super(BaseballPlayer, self).clean()
+        if hasattr(self, 'team'):
+            # If we do not exclude the current user this validation error will always be triggered.
+            qs = BaseballPlayer.objects.filter(team=self.team, jersey_number=self.jersey_number).exclude(user=self.user)
             if qs.exists():
                 error_msg = 'Please choose another number, {jersey_number} is currently unavailable for {team}'.format(
                         jersey_number=self.jersey_number, team=self.team.name)

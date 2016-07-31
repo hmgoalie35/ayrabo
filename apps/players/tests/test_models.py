@@ -4,7 +4,7 @@ from django.test import TestCase
 
 from accounts.tests.factories.UserFactory import UserFactory
 from userprofiles.tests.factories.RolesMaskFactory import RolesMaskFactory
-from .factories.PlayerFactory import HockeyPlayerFactory
+from .factories.PlayerFactory import HockeyPlayerFactory, BaseballPlayerFactory
 
 
 class PlayerModelTests(TestCase):
@@ -81,6 +81,34 @@ class HockeyPlayerModelTests(TestCase):
         rm = RolesMaskFactory(user=user, sport=sport)
         rm.set_roles(['Referee'])
         player = HockeyPlayerFactory(user=user, sport=sport, team=self.hockey_player.team)
+        with self.assertRaises(ValidationError,
+                               msg='{user} - {sport} might not have a rolesmask object or the rolesmask object does not have the player role assigned'.format(
+                                       user=user.email, sport=sport)):
+            player.clean()
+
+
+class BaseballPlayerModelTests(TestCase):
+    def setUp(self):
+        self.jersey_number = 35
+        self.baseball_player = BaseballPlayerFactory(jersey_number=self.jersey_number)
+
+    def test_duplicate_jersey_number(self):
+        validation_msg = 'Please choose another number, {jersey_number} is currently unavailable for {team}'.format(
+                jersey_number=self.jersey_number, team=self.baseball_player.team)
+        with self.assertRaises(ValidationError, msg=validation_msg):
+            BaseballPlayerFactory(team=self.baseball_player.team, jersey_number=self.jersey_number).full_clean()
+
+    def test_different_jersey_numbers(self):
+        jersey_number = 23
+        another_baseball_player = BaseballPlayerFactory(team=self.baseball_player.team, jersey_number=jersey_number)
+        self.assertEqual(another_baseball_player.jersey_number, jersey_number)
+
+    def test_create_player_user_missing_player_role(self):
+        user = UserFactory()
+        sport = self.baseball_player.team.division.league.sport
+        rm = RolesMaskFactory(user=user, sport=sport)
+        rm.set_roles(['Referee'])
+        player = BaseballPlayerFactory(user=user, sport=sport, team=self.baseball_player.team)
         with self.assertRaises(ValidationError,
                                msg='{user} - {sport} might not have a rolesmask object or the rolesmask object does not have the player role assigned'.format(
                                        user=user.email, sport=sport)):
