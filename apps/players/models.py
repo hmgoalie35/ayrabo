@@ -133,3 +133,32 @@ class BaseballPlayer(Player):
                         jersey_number=self.jersey_number, team=self.team.name)
                 raise ValidationError({
                     'jersey_number': _(error_msg)})
+
+
+class BasketballPlayer(Player):
+    POSITIONS = (
+        ('PG', 'Point Guard'),
+        ('SG', 'Shooting Guard'),
+        ('SF', 'Small Forward'),
+        ('PF', 'Power Forward'),
+        ('C', 'Center'),
+    )
+
+    SHOOTS = (
+        ('Left', 'Left'),
+        ('Right', 'Right'),
+    )
+
+    position = models.CharField(max_length=255, choices=POSITIONS, verbose_name='Position')
+    shoots = models.CharField(max_length=255, choices=SHOOTS, verbose_name='Shoots')
+
+    def clean(self):
+        super(BasketballPlayer, self).clean()
+        if hasattr(self, 'team'):
+            # If we do not exclude the current user this validation error will always be triggered.
+            qs = BasketballPlayer.objects.filter(team=self.team, jersey_number=self.jersey_number).exclude(user=self.user)
+            if qs.exists():
+                error_msg = 'Please choose another number, {jersey_number} is currently unavailable for {team}'.format(
+                        jersey_number=self.jersey_number, team=self.team.name)
+                raise ValidationError({
+                    'jersey_number': _(error_msg)})
