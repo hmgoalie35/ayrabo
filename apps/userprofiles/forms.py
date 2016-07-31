@@ -76,23 +76,16 @@ class UserProfileAdminForm(forms.ModelForm):
     birthday = forms.DateField(
             widget=SelectDateMonthDayYearInitiallyBlankWidget(years=year_range))
 
-    roles = forms.MultipleChoiceField(choices=[(role, role) for role in UserProfile.ROLES],
-                                      widget=forms.CheckboxSelectMultiple)
-
     class Meta:
         model = UserProfile
         fields = ['user', 'gender', 'birthday', 'height', 'weight', 'language', 'timezone']
         labels = {
             'weight': _('Weight (in lbs)'),
         }
-        help_texts = {
-            'roles_mask': _(
-                    'Use the roles checkboxes to modify this value')
-        }
 
 
 class RolesMaskAdminForm(forms.ModelForm):
-    roles = forms.MultipleChoiceField(choices=[(role, role) for role in UserProfile.ROLES],
+    roles = forms.MultipleChoiceField(choices=[(role, role) for role in RolesMask.ROLES],
                                       widget=forms.CheckboxSelectMultiple)
 
     class Meta:
@@ -107,5 +100,3 @@ class RolesMaskAdminForm(forms.ModelForm):
 class RolesMaskForm(forms.Form):
     roles = forms.MultipleChoiceField(choices=[(role, role) for role in RolesMask.ROLES],
                                       widget=forms.CheckboxSelectMultiple)
-
-

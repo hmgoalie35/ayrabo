@@ -29,13 +29,10 @@ class UserProfile(models.Model):
     """
     GENDERS = [('Male', 'Male'), ('Female', 'Female')]
 
-    ROLES = ['Player', 'Coach', 'Referee', 'Manager']
-
     MIN_WEIGHT = 1
     MAX_WEIGHT = 400
 
     user = models.OneToOneField(User)
-    roles_mask = models.SmallIntegerField(default=0, verbose_name='Roles Mask')
     gender = models.CharField(max_length=128, choices=GENDERS, verbose_name='Gender')
     birthday = models.DateField(verbose_name='Birthday')
     height = models.CharField(max_length=8, validators=[validate_height], verbose_name='Height',

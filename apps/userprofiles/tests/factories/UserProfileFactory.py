@@ -22,8 +22,6 @@ class UserProfileFactory(django.DjangoModelFactory):
         model = UserProfile
 
     user = factory.SubFactory('accounts.tests.factories.UserFactory.UserFactory', userprofile=None)
-    # 1 signifies having only the Player role
-    roles_mask = 1
     gender = fuzzy.FuzzyChoice(['Male', 'Female'])
     birthday = factory.LazyFunction(generate_birthday)
     height = factory.LazyFunction(generate_height)

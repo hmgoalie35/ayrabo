@@ -143,8 +143,6 @@ class UpdateUserProfileViewTests(TestCase):
         self.password = 'myweakpassword'
 
         self.post_data = factory.build(dict, FACTORY_CLASS=UserProfileFactory)
-        del self.post_data['roles_mask']
-        self.post_data['roles'] = ['Player']
 
         self.user = UserFactory.create(email=self.email, password=self.password)
         self.client.login(email=self.email, password=self.password)
@@ -163,10 +161,6 @@ class UpdateUserProfileViewTests(TestCase):
     def test_200_status_code(self):
         response = self.client.get(reverse('profile:update'))
         self.assertEqual(response.status_code, 200)
-
-    def test_roles_in_context(self):
-        response = self.client.get(reverse('profile:update'))
-        self.assertIn('user_roles', response.context)
 
     # POST
     # No need to test invalid values for height, weight, etc. That is done above (the forms are almost identical)
@@ -412,7 +406,7 @@ class FinishUserProfileViewTests(TestCase):
         """
         All roles
         """
-        self.rm.set_roles([role for role in UserProfile.ROLES])
+        self.rm.set_roles([role for role in RolesMask.ROLES])
         response = self.client.get(self.url)
         self.assertIn('coach_form', response.context)
         self.assertIn('player_form', response.context)

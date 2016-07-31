@@ -11,7 +11,6 @@ from .factories.RefereeFactory import RefereeFactory
 class RefereeModelTests(TestCase):
     def setUp(self):
         self.user = UserFactory()
-        self.user.userprofile.set_roles(['Referee'])
         self.league = LeagueFactory(full_name='Long Island Amateur Hockey League')
 
     def test_to_string(self):
