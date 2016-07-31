@@ -7,13 +7,13 @@ Feature: Create player in the system
     Given The following confirmed user account exists
       | first_name | last_name | email            | password       |
       | John       | Doe       | user@example.com | myweakpassword |
-    And The following team exists "Green Machine IceCats" in division "Midget Minor AA"
+    And The following team exists "Green Machine IceCats" in division "Midget Minor AA" in league "Long Island Amateur Hockey League" in sport "Ice Hockey"
     And A rolesmask exists for "user@example.com" for "Ice Hockey" with role "Player"
     And I login with "user@example.com" and "myweakpassword"
 
   Scenario: Submit valid player form
     Given I am on the "profile:finish" page
-    When I select "1" from "id_hockeyplayer-team"
+    When I select "Midget Minor AA - Green Machine IceCats" from "id_hockeyplayer-team"
     And I fill in "id_hockeyplayer-jersey_number" with "35"
     And I select "G" from "id_hockeyplayer-position"
     And I select "Left" from "id_hockeyplayer-handedness"

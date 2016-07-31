@@ -7,13 +7,13 @@ Feature: Create manager in the system
     Given The following confirmed user account exists
       | first_name | last_name | email            | password       |
       | John       | Doe       | user@example.com | myweakpassword |
-    And The following team exists "Green Machine IceCats" in division "Midget Minor AA"
+    And The following team exists "Green Machine IceCats" in division "Midget Minor AA" in league "Long Island Amateur Hockey League" in sport "Ice Hockey"
     And A rolesmask exists for "user@example.com" for "Ice Hockey" with role "Manager"
     And I login with "user@example.com" and "myweakpassword"
 
   Scenario: Submit valid manager form
     Given I am on the "profile:finish" page
-    When I select "1" from "id_manager-team"
+    When I select "Midget Minor AA - Green Machine IceCats" from "id_manager-team"
     And I press "finish_profile_btn"
     Then I should see "You have successfully completed your profile, you can now access the site"
     And I should be on the "home" page

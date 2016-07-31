@@ -7,7 +7,7 @@ Feature: Create referee in the system
     Given The following confirmed user account exists
       | first_name | last_name | email            | password       |
       | John       | Doe       | user@example.com | myweakpassword |
-    And The following division exists "Midget Minor AA" in league "Long Island Amateur Hockey League"
+    And The following league exists "Long Island Amateur Hockey League" in sport "Ice Hockey"
     And A rolesmask exists for "user@example.com" for "Ice Hockey" with role "Referee"
     And I login with "user@example.com" and "myweakpassword"
 
