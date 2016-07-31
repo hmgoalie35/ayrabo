@@ -25,16 +25,19 @@ Prod: [![Build Status](https://travis-ci.com/hmgoalie35/escoresheet.svg?token=6s
 
 You can either follow the instructions below or run setup_dev_env.bash (which installs necessary packages and runs the commands below)
 
+*This project uses pre-commit, whenever you commit files a few optimizers, code checkers, etc. will be run to check the committed files for any errors/potential bugs*
+
 1. Clone the repo and cd in it
 2. Make sure the dependencies above are installed
 3. ```mkvirtualenv escoresheet -p `which python3` ```
     * Swap `mkvirtualenv` with `virtualenv` if you use virtualenv
     * You can replace escoresheet with the name of the virtualenv you want to create
 4. Make sure your virtual environment is activated, then run `pip install -r requirements.txt`
-5. `sudo npm -g install phantomjs-prebuilt bower yuglify`
+5. Run `pre-commit install` to install pre-commit.
+6. `sudo npm -g install phantomjs-prebuilt bower yuglify`
     * yuglify is only for prod but for consistency install it anyway
     * You will likely need to run as root
-6. `cd escoresheet/settings/ && ln -s local_settings.py.dev local_settings.py ; cd ../../`
+7. `cd escoresheet/settings/ && ln -s local_settings.py.dev local_settings.py ; cd ../../`
 
 Only do the following if you are using your own local sqlite database or if the database is brand new
 

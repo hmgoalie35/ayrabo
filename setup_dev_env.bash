@@ -42,6 +42,9 @@ workon escoresheet
 echo "Installing project pip packages"
 pip install -r requirements.txt
 
+echo "Installing pre-commit"
+pre-commit install
+
 echo "Symlinking local_settings file"
 cd escoresheet/settings/ && ln -s local_settings.py.dev local_settings.py ; cd ../../
 
