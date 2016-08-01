@@ -16,8 +16,10 @@ Feature: User profiles
     Given I go to the "home" page
     Then I should be on the "profile:create" page
     And I should see "Create Your Profile"
-    And I should see "For every sport you choose, you will be prompted to fill out the roles you want to register for."
-    And I should see "In the next steps you will be asked to fill out any role specific information."
+    And I should see "Please only choose the sports you are currently playing."
+    And I should see "You can always register for other sports after your profile has been finished."
+    And I should see "You will be able to choose from the following roles: player, coach, referee, manager for each sport you select."
+    And I should see "In the next steps you will be asked to fill out your team, jersey number, etc. for every sport you chose."
 
   Scenario: Navigate to select_roles page when userprofile not complete
     Given I go to the "profile:select_roles" page
