@@ -43,6 +43,11 @@ class CreateUserProfileView(LoginRequiredMixin, CreateView):
     success_url = reverse_lazy('profile:select_roles')
     form_class = CreateUserProfileForm
 
+    def get_context_data(self, **kwargs):
+        context = super(CreateUserProfileView, self).get_context_data(**kwargs)
+        context['roles'] = ', '.join(role.lower() for role in RolesMask.ROLES)
+        return context
+
     def get(self, request, *args, **kwargs):
         redirect_url, redirect_needed = check_account_completed(request)
         if redirect_needed:

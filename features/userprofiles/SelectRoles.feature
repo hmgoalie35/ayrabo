@@ -26,7 +26,8 @@ Feature: Select sport roles
     Given I am on the "profile:select_roles" page
     Then I should be on the "profile:select_roles" page
     Then I should see "Select Roles for Ice Hockey"
-    And I should see "The roles you choose here will affect the permissions you have throughout"
+    And I should see "The roles you choose here will determine your permissions for Ice Hockey throughout the site."
+    And I should see "You can always update your roles after your profile has been finished."
     And I should see "3 sports remaining"
 
   Scenario: Try to navigate to profile create page

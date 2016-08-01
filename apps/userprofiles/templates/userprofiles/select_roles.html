@@ -9,7 +9,7 @@
             <div class="col-sm-12">
                 <div class="text-center">
                     <h2>Select Roles for {{ sport_name }}</h2>
-                    <p>The roles you choose here will affect the permissions you have throughout {{ request.site }}</p>
+                    <p>The roles you choose here will determine your permissions for {{ sport_name }} throughout the site.<br>You can always update your roles after your profile has been finished.</p>
                     <br>
                     <h4 class="text-muted">{{ remaining_roles_masks }} sport{{ remaining_roles_masks|pluralize }} remaining</h4>
                 </div>
@@ -23,7 +23,6 @@
                 <form action="" method="post">
                     {% csrf_token %}
                     {{ form | crispy }}
-                    <br>
                     <br>
                     <div class="text-center">
                         <button id="select_roles_next_sport" type="submit" role="button" class="btn btn-success">

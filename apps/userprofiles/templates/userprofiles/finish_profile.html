@@ -10,7 +10,8 @@
             <div class="col-sm-12">
                 <div class="text-center">
                     <h2>Finish Your Profile</h2>
-                    <p>Please fill out the required information for {{ sport_name }}</p>
+                    <h3>{{ sport_name }}</h3>
+                    <p>Please fill out any role specific information below.</p>
                     <br>
                     <h4 class="text-muted">{{ remaining_roles_masks }} sport{{ remaining_roles_masks|pluralize }} remaining</h4>
                 </div>
@@ -25,23 +26,27 @@
                     {% csrf_token %}
 
                     {% if coach_form %}
-                        <h3 class="text-center">Coach</h3>
+                        <h3 class="text-center">{{ sport_name }} Coach</h3>
                         {{ coach_form | crispy }}
+                        <br>
                     {% endif %}
 
                     {% if player_form %}
                         <h3 class="text-center">{{ sport_name }} Player</h3>
                         {{ player_form | crispy }}
+                        <br>
                     {% endif %}
 
                     {% if manager_form %}
-                        <h3 class="text-center">Manager</h3>
+                        <h3 class="text-center">{{ sport_name }} Manager</h3>
                         {{ manager_form | crispy }}
+                        <br>
                     {% endif %}
 
                     {% if referee_form %}
-                        <h3 class="text-center">Referee</h3>
+                        <h3 class="text-center">{{ sport_name }} Referee</h3>
                         {{ referee_form | crispy }}
+                        <br>
                     {% endif %}
 
                     <br>
@@ -49,6 +54,7 @@
                     <div class="text-center">
                         <input id="finish_profile_btn" class="btn btn-success" type="submit" value="Finish profile">
                     </div>
+                    <br>
                 </form>
             </div>
         </div>

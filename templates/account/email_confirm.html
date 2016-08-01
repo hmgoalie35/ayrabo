@@ -12,6 +12,7 @@
                     {% if request.user.is_anonymous %}
                         <br>
                         <h1>{% trans "Confirm E-mail Address" %}</h1>
+                        <br>
                         {% if confirmation %}
                             {% user_display confirmation.email_address.user as user_display %}
                             <p>
@@ -22,11 +23,12 @@
                             <br>
                             <form method="post" action="{% url 'account_confirm_email' confirmation.key %}">
                                 {% csrf_token %}
-                                <button class="btn btn-primary btn-sm" id="confirm_email_btn"
+                                <button class="btn btn-primary" id="confirm_email_btn"
                                         type="submit">{% trans 'Confirm' %}</button>
                             </form>
                         {% else %}
                             {% url 'account_email' as email_url %}
+                            <br>
                             <p>
                                 {% blocktrans %}
                                     This confirmation link has expired or is invalid
@@ -34,6 +36,7 @@
                                     Please request a new confirmation link through the form below
                                 {% endblocktrans %}
                             </p>
+                            <br>
                             <div class="col-sm-offset-4 col-sm-4 col-sm-offset-4">
                                 <form method="post" action="{% url 'account_new_email_confirmation' %}">
                                     {% csrf_token %}
@@ -43,10 +46,8 @@
                                         <input class="form-control" id="new_email_confirmation" type="email"
                                                name="email" autofocus required>
                                     </div>
-                                    <button id="request_new_confirmation_email" class="btn btn-primary">Request new
-                                                                                                        confirmation
-                                                                                                        email
-                                    </button>
+                                    <br>
+                                    <button id="request_new_confirmation_email" class="btn btn-primary">Request new confirmation email</button>
                                 </form>
                             </div>
                         {% endif %}

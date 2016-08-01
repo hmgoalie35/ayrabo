@@ -27,11 +27,12 @@ Feature: Finish userprofile, filling in any coach/manager/player/referee specifi
     Given A rolesmask exists for "user@example.com" for "Ice Hockey" with roles "Coach, Manager"
     And A rolesmask exists for "user@example.com" for "Basketball" with roles "Coach, Manager"
     And I am on the "profile:finish" page
-    Then I should see "Please fill out the required information for Ice Hockey"
-    And I should see "Coach"
-    And I should see "Manager"
+    Then I should see "Ice Hockey"
+    And I should see "Please fill out any role specific information below."
+    And I should see "Ice Hockey Coach"
+    And I should see "Ice Hockey Manager"
     And I should not see "Ice Hockey Player"
-    And I should not see "Referee"
+    And I should not see "Ice Hockey Referee"
     And I should see "2 sports remaining"
 
   Scenario: Submit valid form for ice hockey and Coach and Manager roles

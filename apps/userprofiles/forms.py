@@ -1,7 +1,7 @@
 import datetime
 
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Layout, Field, Submit, Div
+from crispy_forms.layout import Layout, Field, Submit, Div, HTML
 from django import forms
 from django.forms import extras
 from django.utils.translation import ugettext_lazy as _
@@ -39,8 +39,10 @@ class CreateUserProfileForm(forms.ModelForm):
                 Field('weight'),
                 Field('language'),
                 Field('timezone'),
+                HTML('<br>'),
                 Div(Submit('create_userprofile_btn', 'Go to next step', css_class='btn btn-success'),
                     css_class='text-center'),
+                HTML('<br>'),
         )
 
     current_year = datetime.datetime.today().year
