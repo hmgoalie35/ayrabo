@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils.text import slugify
+from django.contrib.auth.models import User
 
 
 class Sport(models.Model):
@@ -19,3 +20,69 @@ class Sport(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class SportRegistration(models.Model):
+    """
+    Model used to store what roles a user has for a sport. A user chooses to register for a sport and has the option to
+    choose what roles(s) they want for a specific sport
+
+    i.e. user John might want to be a Player and Referee for Ice Hockey, but only wants to be a Coach for Soccer. There
+    would b 2 SportRegistration objects, both tied to John but one is for Ice Hockey with roles_mask corresponding to
+    Player and Referee and another tied to sport Soccer with a roles_mask corresponding to Coach
+    """
+
+    ROLES = ['Player', 'Coach', 'Referee', 'Manager']
+
+    user = models.ForeignKey(User)
+    sport = models.ForeignKey(Sport)
+    roles_mask = models.SmallIntegerField(default=0, verbose_name='Roles Mask')
+    # Signifies if each Coach, Referee, Manager, HockeyPlayer, etc. object has been created for all roles of this model
+    is_complete = models.BooleanField(default=False, verbose_name='Is Registration Complete')
+
+    class Meta:
+        ordering = ['user']
+        unique_together = (
+            ('user', 'sport'),
+        )
+
+    def set_roles(self, roles, append=False):
+        """
+        Given a list of roles (taken from ROLES) creates a mask (int) that represents the roles currently valid for this
+        user for a given sport
+        :param append: Set to True to indicate you want to append roles to any existent roles, set to False to overwrite
+        any existing roles with roles
+        :param roles: The role(s) to add
+        """
+
+        assert type(roles) == list
+
+        # & performs an intersection and will omit any roles that are misspelled or DNE
+        valid_roles = set(roles) & set(self.ROLES)
+        accumulator = 0
+        for role in valid_roles:
+            accumulator += 2 ** self.ROLES.index(role)
+        if append:
+            self.roles_mask += accumulator
+        else:
+            self.roles_mask = accumulator
+        self.save()
+
+    @property
+    def roles(self):
+        """
+        Converts the role mask (int) to the actual roles (strings)
+        :return: A list containing all of the roles associated with the user
+        """
+        return [role for role in self.ROLES if (self.roles_mask & 2 ** self.ROLES.index(role)) != 0]
+
+    def has_role(self, role):
+        """
+        Checks to see if the current user has the specified role for the appropriate sport
+        :param role: The role to check for (case insensitive)
+        :return: True if the user has the current role, False otherwise
+        """
+        return role.title() in self.roles or role in self.roles
+
+    def __str__(self):
+        return '{email} - {sport}'.format(email=self.user.email, sport=self.sport.name)
