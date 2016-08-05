@@ -3,10 +3,6 @@
 
 {% block title %}Create Profile{% endblock %}
 
-{% block extra_style %}
-    <link rel="stylesheet" href="{% static 'chosen-bootstrap/chosen.bootstrap.min.css' %}">
-{% endblock %}
-
 {% block content %}
     <div class="container">
 
@@ -14,10 +10,8 @@
             <div class="col-sm-12">
                 <div class="text-center">
                     <h2>Create Your Profile</h2>
-                    <br>
-                    <p>Please only choose the sports you are currently playing.<br>You can always register for other sports after your profile has been finished.</p>
-                    <p>You will be able to choose from the following roles: {{ roles }} for each sport you select.</p>
-                    <p>In the next steps you will be asked to fill out your team, jersey number, etc. for every sport you chose.</p>
+                    <p>Please fill out the required information below.</p>
+                    <p>You will be prompted to register for sports on the next page.</p>
                 </div>
             </div>
         </div>
@@ -32,9 +26,4 @@
             </div>
         </div>
     </div>
-{% endblock %}
-
-{% block extra_js %}
-    <script src="{% static 'chosen/chosen.jquery.js' %}"></script>
-    <script src="{% static 'userprofiles/select_sports_chosen.js' %}"></script>
 {% endblock %}

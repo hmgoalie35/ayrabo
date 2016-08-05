@@ -10,11 +10,12 @@ from coaches.forms import CoachForm
 from managers.forms import ManagerForm
 from players.forms import HockeyPlayerForm, BaseballPlayerForm, BasketballPlayerForm
 from referees.forms import RefereeForm
+from sports.models import SportRegistration
 from userprofiles.models import UserProfile, RolesMask
 from .forms import CreateUserProfileForm, UpdateUserProfileForm, RolesMaskForm
 
 
-def check_account_completed(request):
+def check_account_registration_completed(request):
     """
     This helper function performs the same thing as the middleware, but because the middleware lets the whitelisted
     urls through, we need to do the check again in the actual view.
@@ -23,15 +24,12 @@ def check_account_completed(request):
     """
     # These checks are needed because the middleware allows through any request from the whitelisted urls
     up = UserProfile.objects.filter(user=request.user)
-    roles_not_set = RolesMask.objects.filter(user=request.user, are_roles_set=False)
-    objects_not_created = RolesMask.objects.filter(user=request.user, are_role_objects_created=False)
+    sport_registrations = SportRegistration.objects.filter(user=request.user)
     redirect_url = None
     if not up.exists():
         redirect_url = reverse('profile:create')
-    elif roles_not_set.exists():
-        redirect_url = reverse('profile:select_roles')
-    elif objects_not_created.exists():
-        redirect_url = reverse('profile:finish')
+    elif not sport_registrations.exists():
+        redirect_url = reverse('sport:create_sport_registration')
     # The latter part of this statement prevents redirect loops
     redirect_needed = redirect_url is not None and request.path != redirect_url
     return redirect_url, redirect_needed
@@ -40,35 +38,23 @@ def check_account_completed(request):
 class CreateUserProfileView(LoginRequiredMixin, CreateView):
     model = UserProfile
     template_name = 'userprofiles/create.html'
-    success_url = reverse_lazy('profile:select_roles')
+    success_url = reverse_lazy('sport:create_sport_registration')
     form_class = CreateUserProfileForm
 
-    def get_context_data(self, **kwargs):
-        context = super(CreateUserProfileView, self).get_context_data(**kwargs)
-        context['roles'] = ', '.join(role.lower() for role in RolesMask.ROLES)
-        return context
-
     def get(self, request, *args, **kwargs):
-        redirect_url, redirect_needed = check_account_completed(request)
+        redirect_url, redirect_needed = check_account_registration_completed(request)
         if redirect_needed:
             return redirect(redirect_url)
         return super(CreateUserProfileView, self).get(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
-        redirect_url, redirect_needed = check_account_completed(request)
+        redirect_url, redirect_needed = check_account_registration_completed(request)
         if redirect_needed:
             return redirect(redirect_url)
         return super(CreateUserProfileView, self).post(request, *args, **kwargs)
 
     def form_valid(self, form):
-        user = self.request.user
-        form.instance.user = user
-        sports = form.cleaned_data.get('sports', [])
-        for sport in sports:
-            # For every sport the user wants to register for, create a roles mask object for the given sport.
-            # Later on the actual roles_mask will be updated to reflect the user's desired roles for a given sport.
-            RolesMask.objects.get_or_create(user=user, sport=sport)
-
+        form.instance.user = self.request.user
         return super(CreateUserProfileView, self).form_valid(form)
 
 
@@ -89,14 +75,14 @@ class SelectRolesView(LoginRequiredMixin, ContextMixin, View):
         return context
 
     def get(self, request, *args, **kwargs):
-        redirect_url, redirect_needed = check_account_completed(request)
+        redirect_url, redirect_needed = check_account_registration_completed(request)
         if redirect_needed:
             return redirect(redirect_url)
         context = self.get_context_data(**kwargs)
         return render(request, self.template_name, context)
 
     def post(self, request, *args, **kwargs):
-        redirect_url, redirect_needed = check_account_completed(request)
+        redirect_url, redirect_needed = check_account_registration_completed(request)
         if redirect_needed:
             return redirect(redirect_url)
         context = self.get_context_data(**kwargs)
@@ -138,7 +124,8 @@ class FinishUserProfileView(LoginRequiredMixin, ContextMixin, View):
                     raise Exception(
                             "Form class for a {sport} player hasn't been configured yet, add it to sport_player_form_mappings".format(
                                     sport=rm.sport.name))
-                context['player_form'] = self.sport_player_form_mappings[rm.sport.name](self.request.POST or None, sport=rm.sport)
+                context['player_form'] = self.sport_player_form_mappings[rm.sport.name](self.request.POST or None,
+                                                                                        sport=rm.sport)
             if rm.has_role('Manager'):
                 context['manager_form'] = ManagerForm(self.request.POST or None, sport=rm.sport)
             if rm.has_role('Referee'):
@@ -146,7 +133,7 @@ class FinishUserProfileView(LoginRequiredMixin, ContextMixin, View):
         return context
 
     def get(self, request, *args, **kwargs):
-        redirect_url, redirect_needed = check_account_completed(request)
+        redirect_url, redirect_needed = check_account_registration_completed(request)
         if redirect_needed:
             return redirect(redirect_url)
 
@@ -159,7 +146,7 @@ class FinishUserProfileView(LoginRequiredMixin, ContextMixin, View):
         return render(request, self.template_name, context)
 
     def post(self, request, *args, **kwargs):
-        redirect_url, redirect_needed = check_account_completed(request)
+        redirect_url, redirect_needed = check_account_registration_completed(request)
         if redirect_needed:
             return redirect(redirect_url)
 

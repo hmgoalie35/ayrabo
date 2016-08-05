@@ -32,7 +32,6 @@ class CreateUserProfileForm(forms.ModelForm):
         super(CreateUserProfileForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.layout = Layout(
-                Field('sports'),
                 Field('gender'),
                 Field('birthday', wrapper_class='form-inline'),
                 Field('height'),
@@ -40,7 +39,7 @@ class CreateUserProfileForm(forms.ModelForm):
                 Field('language'),
                 Field('timezone'),
                 HTML('<br>'),
-                Div(Submit('create_userprofile_btn', 'Go to next step', css_class='btn btn-success'),
+                Div(Submit('create_userprofile_btn', 'Create profile and continue', css_class='btn btn-success'),
                     css_class='text-center'),
                 HTML('<br>'),
         )
@@ -49,11 +48,6 @@ class CreateUserProfileForm(forms.ModelForm):
     year_range = range(current_year - MAX_AGE, current_year + 1)
     birthday = forms.DateField(
             widget=SelectDateMonthDayYearInitiallyBlankWidget(years=year_range))
-
-    sports = forms.ModelMultipleChoiceField(queryset=Sport.objects.all(),
-                                            help_text='Tip: You can search for sports by typing in the input box above')
-
-    field_order = ['sports', 'gender', 'birthday', 'height', 'weight', 'language', 'timezone']
 
     class Meta:
         model = UserProfile

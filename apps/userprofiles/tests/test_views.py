@@ -15,7 +15,6 @@ from players.models import HockeyPlayer
 from players.tests.factories.PlayerFactory import HockeyPlayerFactory
 from referees.models import Referee
 from referees.tests.factories.RefereeFactory import RefereeFactory
-from sports.tests.factories.SportFactory import SportFactory
 from teams.tests.factories.TeamFactory import TeamFactory
 from userprofiles.models import UserProfile, RolesMask
 from .factories.RolesMaskFactory import RolesMaskFactory
@@ -26,10 +25,7 @@ class CreateUserProfileViewTests(TestCase):
     def setUp(self):
         self.email = 'user@example.com'
         self.password = 'myweakpassword'
-        self.ice_hockey = SportFactory(name='Ice Hockey')
-        self.soccer = SportFactory(name='Soccer')
         self.post_data = factory.build(dict, FACTORY_CLASS=UserProfileFactory)
-        self.post_data.update({'sports': [str(self.ice_hockey.id), str(self.soccer.id)]})
         self.user = UserFactory.create(email=self.email, password=self.password, userprofile=None)
         self.client.login(email=self.email, password=self.password)
 
@@ -58,7 +54,7 @@ class CreateUserProfileViewTests(TestCase):
         RolesMaskFactory(user=user_with_profile, are_roles_set=False, are_role_objects_created=False)
         self.client.login(email=user_with_profile.email, password=self.password)
         response = self.client.get(reverse('profile:create'))
-        self.assertRedirects(response, reverse('profile:select_roles'))
+        self.assertRedirects(response, reverse('sport:create_sport_registration'))
 
     # POST
     def test_post_anonymous_user(self):
@@ -73,33 +69,17 @@ class CreateUserProfileViewTests(TestCase):
         RolesMaskFactory(user=user_with_profile, are_roles_set=False, are_role_objects_created=False)
         self.client.login(email=user_with_profile.email, password=self.password)
         response = self.client.post(reverse('profile:create'), data=self.post_data, follow=True)
-        self.assertRedirects(response, reverse('profile:select_roles'))
+        self.assertRedirects(response, reverse('sport:create_sport_registration'))
 
     def test_valid_post_data(self):
         response = self.client.post(reverse('profile:create'), data=self.post_data, follow=True)
-        self.assertRedirects(response, reverse('profile:select_roles'))
+        self.assertRedirects(response, reverse('sport:create_sport_registration'))
 
     def test_user_attribute_is_set(self):
         self.client.post(reverse('profile:create'), data=self.post_data, follow=True)
         self.assertTrue(UserProfile.objects.filter(user=self.user).exists())
 
-    def test_roles_mask_objects_created(self):
-        """
-        This tests that POSTing sport ids will result in the appropriate RolesMask objects being created for that sport
-        and user
-        """
-        self.client.post(reverse('profile:create'), data=self.post_data, follow=True)
-        hockey_roles_mask = RolesMask.objects.filter(user=self.user, sport=self.ice_hockey)
-        soccer_roles_mask = RolesMask.objects.filter(user=self.user, sport=self.soccer)
-
-        self.assertTrue(hockey_roles_mask.exists())
-        self.assertTrue(soccer_roles_mask.exists())
-
     # Invalid POST data
-    def test_post_invalid_sport_id(self):
-        self.post_data['sports'] = ['1000']
-        self.client.post(reverse('profile:create'), data=self.post_data, follow=True)
-        self.assertQuerysetEqual(RolesMask.objects.all(), [])
 
     def test_no_height_weight_gender(self):
         self.post_data.pop('gender')
@@ -130,11 +110,6 @@ class CreateUserProfileViewTests(TestCase):
             self.post_data['weight'] = invalid_weight
             response = self.client.post(reverse('profile:create'), data=self.post_data, follow=True)
             self.assertFormError(response, 'form', 'weight', 'Enter a whole number.')
-
-    def test_no_sports(self):
-        self.post_data['sports'] = []
-        response = self.client.post(reverse('profile:create'), data=self.post_data, follow=True)
-        self.assertFormError(response, 'form', 'sports', 'This field is required.')
 
 
 class UpdateUserProfileViewTests(TestCase):
