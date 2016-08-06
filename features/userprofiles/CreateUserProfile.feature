@@ -65,4 +65,4 @@ Feature: User profiles
     And I press "create_userprofile_btn"
     Then I should be on the "sport:create_sport_registration" page
 
-    # See features/sportregistrations/ for the next set of tests
+    # See features/sports/NewSportRegistration.feature for the next set of tests

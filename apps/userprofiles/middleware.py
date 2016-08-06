@@ -6,8 +6,7 @@ from userprofiles.models import UserProfile
 
 class UserProfileCreatedMiddleware(object):
     """
-    This middleware makes sure a user has created a userprofile, chosen the roles for every sport they
-    registered for and that the corresponding Coach, Referee, etc. objects have been created.
+    This middleware makes sure a user has created a userprofile.
     """
 
     def process_request(self, request):

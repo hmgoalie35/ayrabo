@@ -15,3 +15,20 @@ class SportRegistrationAdminForm(forms.ModelForm):
             'roles_mask': _(
                     'Use the roles checkboxes to modify this value')
         }
+
+
+class CreateSportRegistrationForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        sports_already_registered_for = kwargs.pop('sports_already_registered_for', None)
+        super(CreateSportRegistrationForm, self).__init__(*args, **kwargs)
+        if sports_already_registered_for is not None:
+            self.fields['sport'].queryset = models.Sport.objects.all().exclude(id__in=sports_already_registered_for)
+
+    roles = forms.MultipleChoiceField(choices=[(role, role) for role in models.SportRegistration.ROLES],
+                                      widget=forms.CheckboxSelectMultiple)
+
+    field_order = ['sport', 'roles']
+
+    class Meta:
+        model = models.SportRegistration
+        fields = ['sport']

@@ -107,7 +107,7 @@ MIDDLEWARE_CLASSES = [
     'escoresheet.middleware.TranslationMiddleware',
     'escoresheet.middleware.TimezoneMiddleware',
     'userprofiles.middleware.UserProfileCreatedMiddleware',
-    # 'sports.middleware.SportRegistrationCompleteMiddleware',
+    'sports.middleware.SportRegistrationCompleteMiddleware',
 ]
 
 ROOT_URLCONF = 'escoresheet.urls'
