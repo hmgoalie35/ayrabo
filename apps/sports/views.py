@@ -32,18 +32,17 @@ class SportRegistrationInlineFormSet(BaseInlineFormSet):
 
 class CreateSportRegistrationView(LoginRequiredMixin, ContextMixin, generic.View):
     template_name = 'sports/sport_registration_create.html'
-    already_registered_msg = 'You have already registered for all available sports. ' \
-                             'Check back later to see if any new sports have been added.'
+    already_registered_msg = 'You have already registered for all available sports. Check back later to see if any new sports have been added.'
 
     def get_context_data(self, **kwargs):
         context = super(CreateSportRegistrationView, self).get_context_data(**kwargs)
         sports_already_registered_for = SportRegistration.objects.filter(user=self.request.user).values_list('sport_id')
-        context['sport_count'] = Sport.objects.count() - len(sports_already_registered_for)
-        context['user_registered_for_all_sports'] = context.get('sport_count') == 0
+        context['remaining_sport_count'] = Sport.objects.count() - len(sports_already_registered_for)
+        context['user_registered_for_all_sports'] = context.get('remaining_sport_count') == 0
         sport_registration_form_set = inlineformset_factory(User, SportRegistration, form=CreateSportRegistrationForm,
                                                             formset=SportRegistrationInlineFormSet,
                                                             extra=0,
-                                                            min_num=1, max_num=context.get('sport_count'),
+                                                            min_num=1, max_num=context.get('remaining_sport_count'),
                                                             validate_min=True, validate_max=True, can_delete=False)
         context['formset'] = sport_registration_form_set(self.request.POST or None,
                                                          form_kwargs={
