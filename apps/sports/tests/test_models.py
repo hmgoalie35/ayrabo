@@ -2,9 +2,11 @@ from django.db.utils import IntegrityError
 from django.test import TestCase
 from django.utils.text import slugify
 
+from accounts.tests.factories.UserFactory import UserFactory
 from escoresheet.testing_utils import is_queryset_in_alphabetical_order
-from sports.models import Sport
+from sports.models import Sport, SportRegistration
 from .factories.SportFactory import SportFactory
+from .factories.SportRegistrationFactory import SportRegistrationFactory
 
 
 class SportModelTests(TestCase):
@@ -36,3 +38,73 @@ class SportModelTests(TestCase):
     def test_name_converted_to_titlecase(self):
         sport = SportFactory.create(name='ice hockey')
         self.assertEqual(sport.name, 'Ice Hockey')
+
+
+class SportRegistrationModelTests(TestCase):
+    def test_default_ordering(self):
+        SportRegistrationFactory(sport__name='Ice Hockey')
+        SportRegistrationFactory(sport__name='Soccer')
+        SportRegistrationFactory(sport__name='Tennis')
+        self.assertTrue(is_queryset_in_alphabetical_order(SportRegistration.objects.all(), 'sport', fk='name'))
+        self.assertTrue(is_queryset_in_alphabetical_order(SportRegistration.objects.all(), 'user', fk='email'))
+
+    def test_to_string(self):
+        sr = SportRegistrationFactory()
+        self.assertEqual(str(sr), '{email} - {sport}'.format(email=sr.user.email, sport=sr.sport.name))
+
+    def test_current_available_roles(self):
+        self.assertListEqual(SportRegistration.ROLES, ['Player', 'Coach', 'Referee', 'Manager'])
+
+    def test_set_roles_param_not_a_list(self):
+        sr = SportRegistrationFactory()
+        with self.assertRaises(AssertionError):
+            sr.set_roles(('Player', 'Manager'))
+
+    def test_set_roles_no_append(self):
+        sr = SportRegistrationFactory()
+        sr.set_roles(['Player', 'Manager'])
+        self.assertEqual(sr.roles_mask, 9)
+
+    def test_set_roles_append(self):
+        sr = SportRegistrationFactory()
+        sr.set_roles(['Player', 'Manager'])
+        sr.set_roles(['Coach'], append=True)
+        self.assertEqual(sr.roles_mask, 11)
+
+    def test_set_roles_invalid_role(self):
+        sr = SportRegistrationFactory()
+        sr.set_roles(['Referee', 'Invalid'])
+        self.assertEqual(sr.roles, ['Referee'])
+
+    def test_set_roles_empty_list(self):
+        sr = SportRegistrationFactory()
+        sr.set_roles([])
+        self.assertEqual(sr.roles_mask, 0)
+
+    def test_roles_property(self):
+        roles = ['Player', 'Manager']
+        sr = SportRegistrationFactory()
+        sr.set_roles(roles)
+        self.assertEqual(sr.roles, roles)
+
+    def test_has_role_true(self):
+        roles = ['Player', 'Manager']
+        sr = SportRegistrationFactory()
+        sr.set_roles(roles)
+        self.assertTrue(sr.has_role('Player'))
+        self.assertTrue(sr.has_role('manager'))
+
+    def test_has_role_false(self):
+        roles = ['Coach', 'Manager']
+        sr = SportRegistrationFactory()
+        sr.set_roles(roles)
+        self.assertFalse(sr.has_role('Player'))
+        self.assertFalse(sr.has_role('InvalidRole'))
+
+    def test_user_unique_with_sport(self):
+        user = UserFactory(email='testing@example.com')
+        sport = SportFactory(name='Ice Hockey')
+        SportRegistrationFactory(user=user, sport=sport)
+        with self.assertRaises(IntegrityError,
+                               msg='UNIQUE constraint failed: userprofiles_rolesmask.user_id, userprofiles_rolesmask.sport_id'):
+            SportRegistrationFactory(user=user, sport=sport)

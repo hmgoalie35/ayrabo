@@ -1,7 +1,7 @@
 {% extends 'site_base.html' %}
 {% load crispy_forms_tags %}
 
-{% block title %}Finish Profile{% endblock %}
+{% block title %}Finish Sport Registrations{% endblock %}
 
 {% block content %}
     <div class="container">
@@ -9,11 +9,10 @@
         <div class="row">
             <div class="col-sm-12">
                 <div class="text-center">
-                    <h2>Finish Your Profile</h2>
-                    <h3>{{ sport_name }}</h3>
-                    <p>Please fill out any role specific information below.</p>
+                    <h2>Finish Sport Registration for {{ sport_name }}</h2>
+                    <p>Please fill out any role specific information below.<br>You will be prompted to </p>
                     <br>
-                    <h4 class="text-muted">{{ remaining_roles_masks }} sport{{ remaining_roles_masks|pluralize }} remaining</h4>
+                    <h4 class="text-muted">{{ remaining_sport_registrations }} sport registration{{ remaining_sport_registrations|pluralize }} remaining</h4>
                 </div>
             </div>
         </div>
@@ -52,7 +51,9 @@
                     <br>
 
                     <div class="text-center">
-                        <input id="finish_profile_btn" class="btn btn-success" type="submit" value="Finish profile">
+                        <button id="next_sport_registration_btn" type="submit" role="button" class="btn btn-success">
+                            {% if remaining_sport_registrations == 1 %}Finish{% else %}Next{% endif %} sport registration
+                        </button>
                     </div>
                     <br>
                 </form>

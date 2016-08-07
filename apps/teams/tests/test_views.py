@@ -7,6 +7,8 @@ from django.test import TransactionTestCase
 from accounts.tests.factories.UserFactory import UserFactory
 from divisions.tests.factories.DivisionFactory import DivisionFactory
 from escoresheet.testing_utils import get_messages
+from sports.tests.factories.SportFactory import SportFactory
+from sports.tests.factories.SportRegistrationFactory import SportRegistrationFactory
 
 
 class TeamViewTests(TransactionTestCase):
@@ -14,7 +16,10 @@ class TeamViewTests(TransactionTestCase):
         self.email = 'user@example.com'
         self.password = 'myweakpassword'
         self.user = UserFactory.create(email=self.email, password=self.password, is_staff=True)
+        self.ice_hockey = SportFactory(name='Ice Hockey')
+        SportRegistrationFactory(user=self.user, sport=self.ice_hockey, is_complete=True)
         self.non_staff = UserFactory.create(email='non_staff@example.com', password=self.password)
+        SportRegistrationFactory(user=self.non_staff, sport=self.ice_hockey, is_complete=True)
         self.client.login(email=self.email, password=self.password)
         self.test_file_path = os.path.join(settings.BASE_DIR, 'static', 'csv_examples', 'testing')
         self.midget_minor_aa = DivisionFactory.create(name='Midget Minor AA')

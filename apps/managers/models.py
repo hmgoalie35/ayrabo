@@ -2,10 +2,8 @@ from django.contrib.auth.models import User
 from django.core.validators import ValidationError
 from django.db import models
 
-from sports.models import Sport
+from sports.models import Sport, SportRegistration
 from teams.models import Team
-from userprofiles.models import RolesMask
-
 
 class Manager(models.Model):
     user = models.ForeignKey(User)
@@ -18,10 +16,10 @@ class Manager(models.Model):
     def clean(self):
         if hasattr(self, 'user') and hasattr(self, 'team'):
             sport = self.team.division.league.sport
-            qs = RolesMask.objects.filter(user=self.user, sport=sport)
+            qs = SportRegistration.objects.filter(user=self.user, sport=sport)
             if qs.exists() and not qs.first().has_role('Manager'):
                 raise ValidationError(
-                        '{user} - {sport} might not have a rolesmask object or the rolesmask object does not have the manager role assigned'.format(
+                        '{user} - {sport} might not have a sportregistration object or the sportregistration object does not have the manager role assigned'.format(
                                 user=self.user.email, sport=sport.name))
 
     def __str__(self):

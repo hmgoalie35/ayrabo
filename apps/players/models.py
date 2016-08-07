@@ -4,9 +4,8 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
 from leagues.models import League
-from sports.models import Sport
+from sports.models import Sport, SportRegistration
 from teams.models import Team
-from userprofiles.models import RolesMask
 
 
 class Player(models.Model):
@@ -38,10 +37,10 @@ class Player(models.Model):
 
     def clean(self):
         if hasattr(self, 'user') and hasattr(self, 'sport'):
-            qs = RolesMask.objects.filter(user=self.user, sport=self.sport)
+            qs = SportRegistration.objects.filter(user=self.user, sport=self.sport)
             if qs.exists() and not qs.first().has_role('Player'):
                 raise ValidationError(
-                        '{user} - {sport} might not have a rolesmask object or the rolesmask object does not have the player role assigned'.format(
+                        '{user} - {sport} might not have a sportregistration object or the sportregistration object does not have the player role assigned'.format(
                                 user=self.user.email, sport=self.sport.name))
 
     class Meta:
@@ -156,7 +155,8 @@ class BasketballPlayer(Player):
         super(BasketballPlayer, self).clean()
         if hasattr(self, 'team'):
             # If we do not exclude the current user this validation error will always be triggered.
-            qs = BasketballPlayer.objects.filter(team=self.team, jersey_number=self.jersey_number).exclude(user=self.user)
+            qs = BasketballPlayer.objects.filter(team=self.team, jersey_number=self.jersey_number).exclude(
+                user=self.user)
             if qs.exists():
                 error_msg = 'Please choose another number, {jersey_number} is currently unavailable for {team}'.format(
                         jersey_number=self.jersey_number, team=self.team.name)

@@ -12,6 +12,7 @@ Feature: Login to my existing account
     And The following unconfirmed user accounts exist
       | first_name | last_name | email        | password       |
       | Jane       | Doe       | jane@doe.com | myweakpassword |
+    And The following sport exists "Ice Hockey"
 
   Scenario: Login successfully via navbar
     Given I login with "user@example.com" and "myweakpassword" via "navbar"

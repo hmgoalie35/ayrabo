@@ -39,4 +39,5 @@ urlpatterns = [
     url(r'^account/', include('allauth.urls')),
 
     url(r'^profile/', include('userprofiles.urls', namespace='profile')),
+    url(r'^sport/', include('sports.urls', namespace='sport')),
 ]

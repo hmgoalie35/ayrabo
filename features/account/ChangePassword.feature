@@ -7,6 +7,7 @@ Feature: Change password when logged in
     Given The following confirmed user accounts exists
       | first_name | last_name | email            | password       |
       | John       | Doe       | user@example.com | myweakpassword |
+    And "user@example.com" is completely registered for "Ice Hockey" with roles "Coach, Referee"
 
   Scenario: Navigate to change password page when not authenticated
     Given I am on the "home" page

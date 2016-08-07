@@ -2,6 +2,7 @@ from django.core.urlresolvers import reverse
 from django.test import TestCase
 
 from accounts.tests.factories.UserFactory import UserFactory
+from sports.tests.factories.SportRegistrationFactory import SportRegistrationFactory
 
 
 class HomeViewTests(TestCase):
@@ -16,17 +17,11 @@ class HomeViewTests(TestCase):
         self.assertTemplateUsed(response, 'home/anonymous_home.html')
 
     def test_authenticated_no_user_profile(self):
-        UserFactory.create(email=self.email, password=self.password, userprofile=None)
-        self.client.login(email=self.email, password=self.password)
-        response = self.client.get(reverse('home'))
-        self.assertRedirects(response, reverse('profile:create'))
-
-    def test_authenticated_valid_user_profile(self):
-        UserFactory.create(email=self.email, password=self.password)
+        user = UserFactory(email=self.email, password=self.password)
+        SportRegistrationFactory(user=user)
         self.client.login(email=self.email, password=self.password)
         response = self.client.get(reverse('home'))
         self.assertTemplateUsed(response, 'home/authenticated_home.html')
-        self.assertEqual(response.status_code, 200)
 
 
 class AboutUsViewTests(TestCase):

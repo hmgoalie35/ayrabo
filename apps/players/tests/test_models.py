@@ -3,11 +3,11 @@ from django.db.utils import IntegrityError
 from django.test import TestCase
 
 from accounts.tests.factories.UserFactory import UserFactory
-from userprofiles.tests.factories.RolesMaskFactory import RolesMaskFactory
+from sports.tests.factories.SportRegistrationFactory import SportRegistrationFactory 
 from .factories.PlayerFactory import HockeyPlayerFactory, BaseballPlayerFactory, BasketballPlayerFactory
 
 
-class PlayerModelTests(TestCase):
+class PlayesrodelTests(TestCase):
     """
     The tests in this class are testing the shared functionality the abstract Player class provides to subclasses.
     Subclasses shouldn't need to test the fields, properties, etc of the Player class as all of that is handled by this
@@ -50,16 +50,16 @@ class PlayerModelTests(TestCase):
     def test_create_player_user_missing_player_role(self):
         user = UserFactory()
         sport = self.player.team.division.league.sport
-        rm = RolesMaskFactory(user=user, sport=sport)
-        rm.set_roles(['Referee'])
+        sr = SportRegistrationFactory(user=user, sport=sport)
+        sr.set_roles(['Referee'])
         player = HockeyPlayerFactory(user=user, sport=sport, team=self.player.team)
         with self.assertRaises(ValidationError,
-                               msg='{user} - {sport} might not have a rolesmask object or the rolesmask object does not have the player role assigned'.format(
+                               msg='{user} - {sport} might not have a sportregistration object or the sportregistration object does not have the player role assigned'.format(
                                        user=user.email, sport=sport)):
             player.clean()
 
 
-class HockeyPlayerModelTests(TestCase):
+class HockeyPlayesrodelTests(TestCase):
     def setUp(self):
         self.jersey_number = 35
         self.hockey_player = HockeyPlayerFactory(jersey_number=self.jersey_number)
@@ -78,16 +78,16 @@ class HockeyPlayerModelTests(TestCase):
     def test_create_player_user_missing_player_role(self):
         user = UserFactory()
         sport = self.hockey_player.team.division.league.sport
-        rm = RolesMaskFactory(user=user, sport=sport)
-        rm.set_roles(['Referee'])
+        sr = SportRegistrationFactory(user=user, sport=sport)
+        sr.set_roles(['Referee'])
         player = HockeyPlayerFactory(user=user, sport=sport, team=self.hockey_player.team)
         with self.assertRaises(ValidationError,
-                               msg='{user} - {sport} might not have a rolesmask object or the rolesmask object does not have the player role assigned'.format(
+                               msg='{user} - {sport} might not have a sportregistration object or the sportregistration object does not have the player role assigned'.format(
                                        user=user.email, sport=sport)):
             player.clean()
 
 
-class BaseballPlayerModelTests(TestCase):
+class BaseballPlayesrodelTests(TestCase):
     def setUp(self):
         self.jersey_number = 35
         self.baseball_player = BaseballPlayerFactory(jersey_number=self.jersey_number)
@@ -106,16 +106,16 @@ class BaseballPlayerModelTests(TestCase):
     def test_create_player_user_missing_player_role(self):
         user = UserFactory()
         sport = self.baseball_player.team.division.league.sport
-        rm = RolesMaskFactory(user=user, sport=sport)
-        rm.set_roles(['Referee'])
+        sr = SportRegistrationFactory(user=user, sport=sport)
+        sr.set_roles(['Referee'])
         player = BaseballPlayerFactory(user=user, sport=sport, team=self.baseball_player.team)
         with self.assertRaises(ValidationError,
-                               msg='{user} - {sport} might not have a rolesmask object or the rolesmask object does not have the player role assigned'.format(
+                               msg='{user} - {sport} might not have a sportregistration object or the sportregistration object does not have the player role assigned'.format(
                                        user=user.email, sport=sport)):
             player.clean()
 
 
-class BasketballPlayerModelTests(TestCase):
+class BasketballPlayesrodelTests(TestCase):
     def setUp(self):
         self.jersey_number = 35
         self.basketball_player = BasketballPlayerFactory(jersey_number=self.jersey_number)
@@ -134,10 +134,10 @@ class BasketballPlayerModelTests(TestCase):
     def test_create_player_user_missing_player_role(self):
         user = UserFactory()
         sport = self.basketball_player.team.division.league.sport
-        rm = RolesMaskFactory(user=user, sport=sport)
-        rm.set_roles(['Referee'])
+        sr = SportRegistrationFactory(user=user, sport=sport)
+        sr.set_roles(['Referee'])
         player = BasketballPlayerFactory(user=user, sport=sport, team=self.basketball_player.team)
         with self.assertRaises(ValidationError,
-                               msg='{user} - {sport} might not have a rolesmask object or the rolesmask object does not have the player role assigned'.format(
+                               msg='{user} - {sport} might not have a sportregistration object or the sportregistration object does not have the player role assigned'.format(
                                        user=user.email, sport=sport)):
             player.clean()

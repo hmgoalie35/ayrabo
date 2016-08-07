@@ -1,13 +1,13 @@
-import re
 import os
+import re
 
 from behave import *
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.db.models import Q
 from selenium.common.exceptions import NoSuchElementException, WebDriverException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.select import Select
-from django.conf import settings
 
 
 def find_element(context, element_to_find):
@@ -30,7 +30,7 @@ def find_element(context, element_to_find):
     raise NoSuchElementException('{element} does not exist on the page'.format(element=element_to_find))
 
 
-@given('I am on the "(?P<url>.*)" page')
+@step('I am on the "(?P<url>.*)" page')
 def step_impl(context, url):
     context.driver.get(context.get_url(url))
 
@@ -118,8 +118,19 @@ def step_impl(context, select_option, element):
 
     if not success:
         raise NoSuchElementException(
-            'Cannot locate {select_option} by value, visible text or index'.format(select_option=select_option))
+                'Cannot locate {select_option} by value, visible text or index'.format(select_option=select_option))
 
+
+@step('"(?P<element>.*)" should not have the option "(?P<option_text>.*)"')
+def step_impl(context, element, option_text):
+    the_element = Select(find_element(context, element))
+    options = the_element.options
+    text_dne = True
+    for option in options:
+        if option.text == option_text:
+            text_dne = False
+            break
+    context.test.assertTrue(text_dne)
 
 @step('I upload "(?P<file_name>.*)" into "(?P<element>.*)"')
 def step_impl(context, file_name, element):
@@ -138,3 +149,12 @@ def step_impl(context, element):
 def step_impl(context, element):
     the_element = find_element(context, element)
     context.test.assertFalse(the_element.is_displayed())
+
+
+@step('"(?P<element>.*)" should be (?P<prefix>dis|en)abled')
+def step_impl(context, element, prefix):
+    the_element = find_element(context, element)
+    result = the_element.is_enabled()
+    if prefix == 'dis':
+        result = not result
+    context.test.assertTrue(result)

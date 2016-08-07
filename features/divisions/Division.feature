@@ -10,6 +10,7 @@ Feature: Division: used to organize a league (i.e. NHL -> Atlantic, Metropolitan
       | first_name | last_name | email            | password       |
       | John       | Doe       | user@example.com | myweakpassword |
     And "user@example.com" has the following permissions "is_staff is_superuser"
+    And "user@example.com" is completely registered for "Ice Hockey" with roles "Coach, Referee"
     And I am on the "admin:login" page
     And I fill in "id_username" with "user@example.com"
     And I fill in "id_password" with "myweakpassword"
