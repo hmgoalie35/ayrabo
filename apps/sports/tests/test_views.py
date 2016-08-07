@@ -59,9 +59,9 @@ class CreateSportRegistrationViewTests(TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_get_redirects_already_registered_for_all_sports(self):
-        SportRegistrationFactory(sport=self.ice_hockey, user=self.user, is_complete=False)
-        SportRegistrationFactory(sport=self.baseball, user=self.user, is_complete=False)
-        SportRegistrationFactory(sport=self.basketball, user=self.user, is_complete=False)
+        SportRegistrationFactory(sport=self.ice_hockey, user=self.user, is_complete=True)
+        SportRegistrationFactory(sport=self.baseball, user=self.user, is_complete=True)
+        SportRegistrationFactory(sport=self.basketball, user=self.user, is_complete=True)
         response = self.client.get(self.url, follow=True)
         self.assertIn(
                 'You have already registered for all available sports. Check back later to see if any new sports have been added.',
@@ -69,7 +69,7 @@ class CreateSportRegistrationViewTests(TestCase):
         self.assertRedirects(response, reverse('home'))
 
     def test_form_only_displays_sports_not_registered_for(self):
-        SportRegistrationFactory(sport=self.ice_hockey, user=self.user, is_complete=False)
+        SportRegistrationFactory(sport=self.ice_hockey, user=self.user, is_complete=True)
         response = self.client.get(self.url)
         formset_as_html = response.context['formset'].as_p()
         self.assertNotIn('Ice Hockey', formset_as_html)
@@ -90,9 +90,9 @@ class CreateSportRegistrationViewTests(TestCase):
         self.assertRedirects(response, result_url)
 
     def test_post_redirects_already_registered_for_all_sports(self):
-        SportRegistrationFactory(sport=self.ice_hockey, user=self.user, is_complete=False)
-        SportRegistrationFactory(sport=self.baseball, user=self.user, is_complete=False)
-        SportRegistrationFactory(sport=self.basketball, user=self.user, is_complete=False)
+        SportRegistrationFactory(sport=self.ice_hockey, user=self.user, is_complete=True)
+        SportRegistrationFactory(sport=self.baseball, user=self.user, is_complete=True)
+        SportRegistrationFactory(sport=self.basketball, user=self.user, is_complete=True)
         response = self.client.post(self.url, data=self.post_data, follow=True)
         self.assertIn(
                 'You have already registered for all available sports. Check back later to see if any new sports have been added.',

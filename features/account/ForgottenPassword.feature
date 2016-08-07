@@ -42,7 +42,8 @@ Feature: Forgotten password
 
 
   Scenario: Reset password while already logged in
-    Given I login with "user@example.com" and "myweakpassword"
+    Given "user@example.com" is completely registered for "Ice Hockey" with roles "Coach, Referee"
+    And I login with "user@example.com" and "myweakpassword"
     And I am on the "account_reset_password" page
     # Because the text below contains an anchor tag, selenium can't match all of the text
     Then I should see "You are already logged in, please use this"

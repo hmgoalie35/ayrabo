@@ -4,7 +4,7 @@ from django.test import TestCase
 
 from accounts.tests.factories.UserFactory import UserFactory
 from leagues.tests.factories.LeagueFactory import LeagueFactory
-from userprofiles.tests.factories.RolesMaskFactory import RolesMaskFactory
+from sports.tests.factories.SportRegistrationFactory import SportRegistrationFactory
 from .factories.RefereeFactory import RefereeFactory
 
 
@@ -24,10 +24,10 @@ class RefereeModelTests(TestCase):
             RefereeFactory(user=self.user, league=self.league)
 
     def test_create_referee_user_missing_referee_role(self):
-        rm = RolesMaskFactory(user=self.user, sport=self.league.sport)
-        rm.set_roles(['Player'])
+        sr = SportRegistrationFactory(user=self.user, sport=self.league.sport)
+        sr.set_roles(['Player'])
         referee = RefereeFactory(user=self.user, league=self.league)
         with self.assertRaises(ValidationError,
-                               msg='{user} - {sport} might not have a rolesmask object or the rolesmask object does not have the referee role assigned'.format(
+                               msg='{user} - {sport} might not have a sportregistration object or the sportregistration object does not have the referee role assigned'.format(
                                        user=self.user.email, sport=self.league.sport.name)):
             referee.clean()

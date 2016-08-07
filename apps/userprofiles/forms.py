@@ -6,8 +6,7 @@ from django import forms
 from django.forms import extras
 from django.utils.translation import ugettext_lazy as _
 
-from sports.models import Sport
-from .models import UserProfile, RolesMask
+from .models import UserProfile
 
 YEAR_DIFFERENCE = 20
 MAX_AGE = 100
@@ -78,21 +77,3 @@ class UserProfileAdminForm(forms.ModelForm):
         labels = {
             'weight': _('Weight (in lbs)'),
         }
-
-
-class RolesMaskAdminForm(forms.ModelForm):
-    roles = forms.MultipleChoiceField(choices=[(role, role) for role in RolesMask.ROLES],
-                                      widget=forms.CheckboxSelectMultiple)
-
-    class Meta:
-        model = RolesMask
-        fields = ['user', 'sport', 'are_roles_set', 'are_role_objects_created']
-        help_texts = {
-            'roles_mask': _(
-                    'Use the roles checkboxes to modify this value')
-        }
-
-
-class RolesMaskForm(forms.Form):
-    roles = forms.MultipleChoiceField(choices=[(role, role) for role in RolesMask.ROLES],
-                                      widget=forms.CheckboxSelectMultiple)

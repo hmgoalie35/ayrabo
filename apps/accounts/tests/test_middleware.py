@@ -49,8 +49,8 @@ class AccountAndSportRegistrationCompleteMiddlewareTests(TestCase):
         Make sure accessing a whitelisted url does not lead to a redirect loop
         """
         self.client.login(email=self.user_with_profile.email, password=self.password)
-        SportRegistrationFactory(user=self.user_with_profile, sport=self.ice_hockey)
-        SportRegistrationFactory(user=self.user_with_profile, sport=self.baseball)
+        SportRegistrationFactory(user=self.user_with_profile, sport=self.ice_hockey, is_complete=False)
+        SportRegistrationFactory(user=self.user_with_profile, sport=self.baseball, is_complete=False)
         response = self.client.get(reverse('sport:finish_sport_registration'))
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'sports/sport_registration_finish.html')

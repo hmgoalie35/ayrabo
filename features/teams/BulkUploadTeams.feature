@@ -9,6 +9,8 @@ Feature: Bulk upload teams from csv
       | John       | Doe       | user@example.com       | myweakpassword |
       | Jane       | Doe       | non_staff@example.com | myweakpassword |
     And "user@example.com" has the following permissions "is_staff is_superuser"
+    And "user@example.com" is completely registered for "Ice Hockey" with roles "Coach, Referee"
+    And "non_staff@example.com" is completely registered for "Ice Hockey" with roles "Coach, Referee"
 
   Scenario: Navigate to bulk upload team page
     Given I am on the "admin:login" page

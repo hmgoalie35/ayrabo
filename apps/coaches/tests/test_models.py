@@ -5,7 +5,7 @@ from django.test import TestCase
 from accounts.tests.factories.UserFactory import UserFactory
 from teams.tests.factories.TeamFactory import TeamFactory
 from .factories.CoachFactory import CoachFactory
-from userprofiles.tests.factories.RolesMaskFactory import RolesMaskFactory
+from sports.tests.factories.SportRegistrationFactory import SportRegistrationFactory
 
 
 class CoachModelTests(TestCase):
@@ -24,10 +24,10 @@ class CoachModelTests(TestCase):
     def test_create_coach_user_missing_coach_role(self):
         user = UserFactory.create()
         team = TeamFactory(name='Green Machine IceCats')
-        rm = RolesMaskFactory(user=user, sport=team.division.league.sport)
-        rm.set_roles(['Player', 'Referee'])
+        sr = SportRegistrationFactory(user=user, sport=team.division.league.sport)
+        sr.set_roles(['Player', 'Referee'])
         coach = CoachFactory.create(user=user, team=team)
         with self.assertRaises(ValidationError,
-                               msg='{user} - {sport} might not have a rolesmask object or the rolesmask object does not have the coach role assigned'.format(
+                               msg='{user} - {sport} might not have a sportregistration object or the sportregistration object does not have the coach role assigned'.format(
                                        user=user.email, sport=team.division.league.sport.name)):
             coach.clean()
