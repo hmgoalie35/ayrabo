@@ -12,8 +12,10 @@ class SportRegistrationCompleteMiddleware(object):
     """
 
     def process_request(self, request):
-        sport_registration_url = reverse('sport:create_sport_registration')
-        whitelisted_urls = [reverse('account_logout'), sport_registration_url]
+        create_sport_registration_url = reverse('sport:create_sport_registration')
+        finish_sport_registration_url = reverse('sport:finish_sport_registration')
+
+        whitelisted_urls = [reverse('account_logout'), create_sport_registration_url, finish_sport_registration_url]
 
         # debug_toolbar wasn't working properly because of my custom middleware so let all debug_toolbar
         # requests through
@@ -24,8 +26,11 @@ class SportRegistrationCompleteMiddleware(object):
         # loop would occur if sport_registration_url wasn't whitelisted
         if request.user.is_authenticated() and request.path not in whitelisted_urls:
             sport_registrations = SportRegistration.objects.filter(user=request.user)
+            incomplete_sport_registrations = SportRegistration.objects.filter(user=request.user, is_complete=False)
             if not sport_registrations.exists():
-                return redirect(sport_registration_url)
+                return redirect(create_sport_registration_url)
+            elif incomplete_sport_registrations.exists():
+                return redirect(finish_sport_registration_url)
             else:
                 # The user's account is "complete"
                 return None

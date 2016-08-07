@@ -2,9 +2,10 @@ from django.core.urlresolvers import reverse
 from django.test import TestCase
 
 from accounts.tests.factories.UserFactory import UserFactory
+from sports.tests.factories.SportRegistrationFactory import SportRegistrationFactory
 
 
-class SportRegistrationCompleteMiddlewareTests(TestCase):
+class AccountAndSportRegistrationCompleteMiddlewareTests(TestCase):
     def setUp(self):
         self.password = 'myweakpassword'
         self.user = UserFactory(password=self.password)
@@ -18,10 +19,17 @@ class SportRegistrationCompleteMiddlewareTests(TestCase):
         self.assertTemplateNotUsed(response, 'sports/sport_registration_create.html')
 
     # Testing whitelisted urls
-    def test_no_redirect_loop_sport_registration_url(self):
+    def test_no_redirect_loop_create_sport_registration_url(self):
         response = self.client.get(reverse('sport:create_sport_registration'))
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'sports/sport_registration_create.html')
+
+    def test_no_redirect_loop_finish_sport_registration_url(self):
+        SportRegistrationFactory(user=self.user, sport__name='Ice Hockey')
+        SportRegistrationFactory(user=self.user, sport__name='Baseball')
+        response = self.client.get(reverse('sport:finish_sport_registration'))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'sports/sport_registration_finish.html')
 
     def test_no_redirect_on_logout(self):
         response = self.client.get(reverse('account_logout'))
