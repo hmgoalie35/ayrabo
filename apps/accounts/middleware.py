@@ -34,7 +34,7 @@ class AccountAndSportRegistrationCompleteMiddleware(object):
             sport_registrations = SportRegistration.objects.filter(user=request.user)
             if not sport_registrations.exists():
                 return redirect(create_sport_registration_url)
-            incomplete_sport_registrations = sport_registrations.filter(user=request.user, is_complete=False)
+            incomplete_sport_registrations = sport_registrations.filter(is_complete=False)
             if incomplete_sport_registrations.exists():
                 return redirect(finish_sport_registration_url)
             else:

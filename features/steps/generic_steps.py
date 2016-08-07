@@ -30,7 +30,7 @@ def find_element(context, element_to_find):
     raise NoSuchElementException('{element} does not exist on the page'.format(element=element_to_find))
 
 
-@given('I am on the "(?P<url>.*)" page')
+@step('I am on the "(?P<url>.*)" page')
 def step_impl(context, url):
     context.driver.get(context.get_url(url))
 

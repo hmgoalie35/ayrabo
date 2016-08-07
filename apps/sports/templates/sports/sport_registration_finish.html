@@ -1,1 +1,63 @@
 {% extends 'site_base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Finish Sport Registrations{% endblock %}
+
+{% block content %}
+    <div class="container">
+
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="text-center">
+                    <h2>Finish Sport Registration for {{ sport_name }}</h2>
+                    <p>Please fill out any role specific information below.<br>You will be prompted to </p>
+                    <br>
+                    <h4 class="text-muted">{{ remaining_sport_registrations }} sport registration{{ remaining_sport_registrations|pluralize }} remaining</h4>
+                </div>
+            </div>
+        </div>
+
+        <br>
+
+        <div class="row">
+            <div class="col-sm-offset-4 col-sm-4 col-sm-offset-4">
+                <form action="" method="post">
+                    {% csrf_token %}
+
+                    {% if coach_form %}
+                        <h3 class="text-center">{{ sport_name }} Coach</h3>
+                        {{ coach_form | crispy }}
+                        <br>
+                    {% endif %}
+
+                    {% if player_form %}
+                        <h3 class="text-center">{{ sport_name }} Player</h3>
+                        {{ player_form | crispy }}
+                        <br>
+                    {% endif %}
+
+                    {% if manager_form %}
+                        <h3 class="text-center">{{ sport_name }} Manager</h3>
+                        {{ manager_form | crispy }}
+                        <br>
+                    {% endif %}
+
+                    {% if referee_form %}
+                        <h3 class="text-center">{{ sport_name }} Referee</h3>
+                        {{ referee_form | crispy }}
+                        <br>
+                    {% endif %}
+
+                    <br>
+
+                    <div class="text-center">
+                        <button id="next_sport_registration_btn" type="submit" role="button" class="btn btn-success">
+                            {% if remaining_sport_registrations == 1 %}Finish{% else %}Next{% endif %} sport registration
+                        </button>
+                    </div>
+                    <br>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}

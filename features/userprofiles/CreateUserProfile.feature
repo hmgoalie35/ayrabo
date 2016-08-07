@@ -7,6 +7,8 @@ Feature: User profiles
     Given The following confirmed user account exists
       | first_name | last_name | email            | password       | create_userprofile |
       | John       | Doe       | user@example.com | myweakpassword | false              |
+    And The following sport exists "Ice Hockey"
+    And The following sport exists "Baseball"
     And I login with "user@example.com" and "myweakpassword"
 
 # Userprofile does not exist, create profile page
@@ -17,13 +19,13 @@ Feature: User profiles
     And I should see "Please fill out the required information below."
     And I should see "You will be prompted to register for sports on the next page."
 
-  Scenario: Navigate to new sport registration page when userprofile not complete
+  Scenario: Redirected when trying to navigate to new sport registration page when userprofile not complete
     Given I go to the "sport:create_sport_registration" page
     Then I should be on the "profile:create" page
 
-#  Scenario: Navigate to finish sport registration page when userprofile not complete
-#    Given I go to the "" page
-#    Then I should be on the "profile:create" page
+  Scenario: Redirected when trying to navigate to finish sport registration page when userprofile not complete
+    Given I go to the "sport:finish_sport_registration" page
+    Then I should be on the "profile:create" page
 
   Scenario: Fill out with invalid height
     Given I am on the "profile:create" page

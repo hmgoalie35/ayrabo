@@ -19,13 +19,17 @@ from teams.tests.factories.TeamFactory import TeamFactory
 from userprofiles.models import UserProfile, RolesMask
 from .factories.RolesMaskFactory import RolesMaskFactory
 from .factories.UserProfileFactory import UserProfileFactory
+from sports.tests.factories.SportFactory import SportFactory
 
 
 class CreateUserProfileViewTests(TestCase):
     def setUp(self):
         self.email = 'user@example.com'
         self.password = 'myweakpassword'
+        SportFactory(name='Ice Hockey')
+        SportFactory(name='Baseball')
         self.post_data = factory.build(dict, FACTORY_CLASS=UserProfileFactory)
+        del self.post_data['user']
         self.user = UserFactory.create(email=self.email, password=self.password, userprofile=None)
         self.client.login(email=self.email, password=self.password)
 

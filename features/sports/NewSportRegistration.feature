@@ -16,8 +16,12 @@ Feature: Register for a sport
     Given I go to the "home" page
     Then I should be on the "sport:create_sport_registration" page
 
-  Scenario: Redirect to new sport registration page while sport registration DNE
+  Scenario: Redirected when trying to navigate to profile create page when no sport registrations
     Given I go to the "profile:create" page
+    Then I should be on the "sport:create_sport_registration" page
+
+  Scenario: Redirect when trying to navigate to finish sport registration page when no sport registrations exist
+    Given I go to the "sport:finish_sport_registration" page
     Then I should be on the "sport:create_sport_registration" page
 
   Scenario: Informative text displayed to user
@@ -79,9 +83,9 @@ Feature: Register for a sport
     Then I should be on the "sport:finish_sport_registration" page
 
   Scenario: Already registered for all 3 sports
-    Given "user@example.com" is registered for "Ice Hockey" with roles "Player, Coach"
-    And "user@example.com" is registered for "Baseball" with roles "Player, Manager"
-    And "user@example.com" is registered for "Basketball" with roles "Player, Referee"
+    Given "user@example.com" is completely registered for "Ice Hockey" with roles "Player, Coach"
+    And "user@example.com" is completely registered for "Baseball" with roles "Player, Manager"
+    And "user@example.com" is completely registered for "Basketball" with roles "Player, Referee"
     When I go to the "sport:create_sport_registration" page
     Then I should see "You have already registered for all available sports. Check back later to see if any new sports have been added."
     And I should be on the "home" page
@@ -99,8 +103,8 @@ Feature: Register for a sport
     And I should be on the "sport:create_sport_registration" page
 
   Scenario: Already registered for ice hockey and baseball. They should not be options in select box
-    Given "user@example.com" is registered for "Ice Hockey" with roles "Player, Coach"
-    Given "user@example.com" is registered for "Baseball" with roles "Player, Coach"
+    Given "user@example.com" is completely registered for "Ice Hockey" with roles "Player, Coach"
+    Given "user@example.com" is completely registered for "Baseball" with roles "Player, Coach"
     And I am on the "sport:create_sport_registration" page
     Then "add_another_form_btn" should be disabled
     And "id_sportregistration_set-0-sport" should not have the option "Ice Hockey"

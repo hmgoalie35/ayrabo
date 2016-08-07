@@ -15,7 +15,7 @@ from userprofiles.models import UserProfile, RolesMask
 from .forms import CreateUserProfileForm, UpdateUserProfileForm, RolesMaskForm
 
 
-def check_account_registration_completed(request):
+def check_account_and_sport_registration_completed(request):
     """
     This helper function performs the same thing as the middleware, but because the middleware lets the whitelisted
     urls through, we need to do the check again in the actual view.
@@ -25,11 +25,14 @@ def check_account_registration_completed(request):
     # These checks are needed because the middleware allows through any request from the whitelisted urls
     up = UserProfile.objects.filter(user=request.user)
     sport_registrations = SportRegistration.objects.filter(user=request.user)
+    incomplete_sport_registrations = sport_registrations.filter(is_complete=False)
     redirect_url = None
     if not up.exists():
         redirect_url = reverse('profile:create')
     elif not sport_registrations.exists():
         redirect_url = reverse('sport:create_sport_registration')
+    elif incomplete_sport_registrations.exists():
+        redirect_url = reverse('sport:finish_sport_registration')
     # The latter part of this statement prevents redirect loops
     redirect_needed = redirect_url is not None and request.path != redirect_url
     return redirect_url, redirect_needed
@@ -42,13 +45,13 @@ class CreateUserProfileView(LoginRequiredMixin, CreateView):
     form_class = CreateUserProfileForm
 
     def get(self, request, *args, **kwargs):
-        redirect_url, redirect_needed = check_account_registration_completed(request)
+        redirect_url, redirect_needed = check_account_and_sport_registration_completed(request)
         if redirect_needed:
             return redirect(redirect_url)
         return super(CreateUserProfileView, self).get(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
-        redirect_url, redirect_needed = check_account_registration_completed(request)
+        redirect_url, redirect_needed = check_account_and_sport_registration_completed(request)
         if redirect_needed:
             return redirect(redirect_url)
         return super(CreateUserProfileView, self).post(request, *args, **kwargs)
@@ -75,14 +78,14 @@ class SelectRolesView(LoginRequiredMixin, ContextMixin, View):
         return context
 
     def get(self, request, *args, **kwargs):
-        redirect_url, redirect_needed = check_account_registration_completed(request)
+        redirect_url, redirect_needed = check_account_and_sport_registration_completed(request)
         if redirect_needed:
             return redirect(redirect_url)
         context = self.get_context_data(**kwargs)
         return render(request, self.template_name, context)
 
     def post(self, request, *args, **kwargs):
-        redirect_url, redirect_needed = check_account_registration_completed(request)
+        redirect_url, redirect_needed = check_account_and_sport_registration_completed(request)
         if redirect_needed:
             return redirect(redirect_url)
         context = self.get_context_data(**kwargs)
@@ -133,7 +136,7 @@ class FinishUserProfileView(LoginRequiredMixin, ContextMixin, View):
         return context
 
     def get(self, request, *args, **kwargs):
-        redirect_url, redirect_needed = check_account_registration_completed(request)
+        redirect_url, redirect_needed = check_account_and_sport_registration_completed(request)
         if redirect_needed:
             return redirect(redirect_url)
 
@@ -146,7 +149,7 @@ class FinishUserProfileView(LoginRequiredMixin, ContextMixin, View):
         return render(request, self.template_name, context)
 
     def post(self, request, *args, **kwargs):
-        redirect_url, redirect_needed = check_account_registration_completed(request)
+        redirect_url, redirect_needed = check_account_and_sport_registration_completed(request)
         if redirect_needed:
             return redirect(redirect_url)
 
