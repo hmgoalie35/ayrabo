@@ -3,6 +3,11 @@ language: python
 python:
   - "3.4"
 
+before_install:
+  - sudo apt-get -qq update
+  - sudo apt-get install node -y
+  - sudo npm -g install phantomjs-prebuilt
+
 install:
   - pip install -r requirements.txt
 
