@@ -2,6 +2,7 @@ from django import forms
 
 from teams.models import Team
 from . import models
+from escoresheet.utils import set_fields_disabled
 
 
 class HockeyPlayerForm(forms.ModelForm):
@@ -9,9 +10,12 @@ class HockeyPlayerForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         sport = kwargs.pop('sport', None)
+        read_only_fields = kwargs.pop('read_only_fields', None)
         super(HockeyPlayerForm, self).__init__(*args, **kwargs)
         if sport is not None:
             self.fields['team'].queryset = Team.objects.filter(division__league__sport=sport)
+        if read_only_fields is not  None:
+            set_fields_disabled(read_only_fields, self.fields)
 
     jersey_number = forms.IntegerField(min_value=models.HockeyPlayer.MIN_JERSEY_NUMBER,
                                        max_value=models.HockeyPlayer.MAX_JERSEY_NUMBER)
@@ -26,9 +30,12 @@ class BaseballPlayerForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         sport = kwargs.pop('sport', None)
+        read_only_fields = kwargs.pop('read_only_fields', None)
         super(BaseballPlayerForm, self).__init__(*args, **kwargs)
         if sport is not None:
             self.fields['team'].queryset = Team.objects.filter(division__league__sport=sport)
+        if read_only_fields is not None:
+            set_fields_disabled(read_only_fields, self.fields)
 
     jersey_number = forms.IntegerField(min_value=models.BaseballPlayer.MIN_JERSEY_NUMBER,
                                        max_value=models.BaseballPlayer.MAX_JERSEY_NUMBER)
@@ -43,9 +50,12 @@ class BasketballPlayerForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         sport = kwargs.pop('sport', None)
+        read_only_fields = kwargs.pop('read_only_fields', None)
         super(BasketballPlayerForm, self).__init__(*args, **kwargs)
         if sport is not None:
             self.fields['team'].queryset = Team.objects.filter(division__league__sport=sport)
+        if read_only_fields is not None:
+            set_fields_disabled(read_only_fields, self.fields)
 
     jersey_number = forms.IntegerField(min_value=models.BasketballPlayer.MIN_JERSEY_NUMBER,
                                        max_value=models.BasketballPlayer.MAX_JERSEY_NUMBER)
