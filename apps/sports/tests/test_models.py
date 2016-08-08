@@ -3,8 +3,15 @@ from django.test import TestCase
 from django.utils.text import slugify
 
 from accounts.tests.factories.UserFactory import UserFactory
+from coaches.tests.factories.CoachFactory import CoachFactory
+from divisions.tests.factories.DivisionFactory import DivisionFactory
 from escoresheet.testing_utils import is_queryset_in_alphabetical_order
+from leagues.tests.factories.LeagueFactory import LeagueFactory
+from managers.tests.factories.ManagerFactory import ManagerFactory
+from players.tests.factories.PlayerFactory import HockeyPlayerFactory
+from referees.tests.factories.RefereeFactory import RefereeFactory
 from sports.models import Sport, SportRegistration
+from teams.tests.factories.TeamFactory import TeamFactory
 from .factories.SportFactory import SportFactory
 from .factories.SportRegistrationFactory import SportRegistrationFactory
 
@@ -108,3 +115,65 @@ class SportRegistrationModelTests(TestCase):
         with self.assertRaises(IntegrityError,
                                msg='UNIQUE constraint failed: userprofiles_rolesmask.user_id, userprofiles_rolesmask.sport_id'):
             SportRegistrationFactory(user=user, sport=sport)
+
+    def test_get_related_role_objects_all_roles(self):
+        user = UserFactory(email='testing@example.com')
+        sport = SportFactory(name='Ice Hockey')
+        league = LeagueFactory(full_name='Long Island Amateur Hockey League', sport=sport)
+        division = DivisionFactory(name='Midget Minor AA', league=league)
+        team = TeamFactory(name='Green Machine Icecats', division=division)
+        sr = SportRegistrationFactory(user=user, sport=sport)
+        sr.set_roles(SportRegistration.ROLES)
+        manager = ManagerFactory(user=user, team=team)
+        player = HockeyPlayerFactory(user=user, team=team, sport=sport)
+        coach = CoachFactory(user=user, team=team)
+        referee = RefereeFactory(user=user, league=league)
+        result = sr.get_related_role_objects()
+        self.assertEqual({'Player': player, 'Coach': coach, 'Manager': manager, 'Referee': referee}, result)
+
+    def test_get_related_role_objects_3_roles(self):
+        user = UserFactory(email='testing@example.com')
+        sport = SportFactory(name='Ice Hockey')
+        league = LeagueFactory(full_name='Long Island Amateur Hockey League', sport=sport)
+        division = DivisionFactory(name='Midget Minor AA', league=league)
+        team = TeamFactory(name='Green Machine Icecats', division=division)
+        sr = SportRegistrationFactory(user=user, sport=sport)
+        sr.set_roles(['Player', 'Coach', 'Referee'])
+        player = HockeyPlayerFactory(user=user, team=team, sport=sport)
+        coach = CoachFactory(user=user, team=team)
+        referee = RefereeFactory(user=user, league=league)
+        result = sr.get_related_role_objects()
+        self.assertEqual({'Player': player, 'Coach': coach, 'Referee': referee}, result)
+
+    def test_get_related_role_objects_2_roles(self):
+        user = UserFactory(email='testing@example.com')
+        sport = SportFactory(name='Ice Hockey')
+        league = LeagueFactory(full_name='Long Island Amateur Hockey League', sport=sport)
+        division = DivisionFactory(name='Midget Minor AA', league=league)
+        team = TeamFactory(name='Green Machine Icecats', division=division)
+        sr = SportRegistrationFactory(user=user, sport=sport)
+        sr.set_roles(['Player', 'Coach'])
+        player = HockeyPlayerFactory(user=user, team=team, sport=sport)
+        coach = CoachFactory(user=user, team=team)
+        result = sr.get_related_role_objects()
+        self.assertEqual({'Player': player, 'Coach': coach}, result)
+
+    def test_get_related_role_objects_1_role(self):
+        user = UserFactory(email='testing@example.com')
+        sport = SportFactory(name='Ice Hockey')
+        league = LeagueFactory(full_name='Long Island Amateur Hockey League', sport=sport)
+        division = DivisionFactory(name='Midget Minor AA', league=league)
+        team = TeamFactory(name='Green Machine Icecats', division=division)
+        sr = SportRegistrationFactory(user=user, sport=sport)
+        sr.set_roles(['Manager'])
+        manager = ManagerFactory(user=user, team=team)
+        result = sr.get_related_role_objects()
+        self.assertEqual({'Manager': manager}, result)
+
+    def test_get_related_role_objects_no_roles(self):
+        user = UserFactory(email='testing@example.com')
+        sport = SportFactory(name='Ice Hockey')
+        sr = SportRegistrationFactory(user=user, sport=sport)
+        sr.set_roles([])
+        result = sr.get_related_role_objects()
+        self.assertEqual({}, result)

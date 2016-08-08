@@ -169,7 +169,7 @@ class CreateSportRegistrationView(LoginRequiredMixin, ContextMixin, generic.View
         context = self.get_context_data(**kwargs)
         if context.get('user_registered_for_all_sports'):
             messages.info(request, self.already_registered_msg)
-            return redirect(reverse('home'))
+            return redirect(request.META.get('HTTP_REFERER', '/'))
         return render(request, self.template_name, context)
 
     def post(self, request, *args, **kwargs):
