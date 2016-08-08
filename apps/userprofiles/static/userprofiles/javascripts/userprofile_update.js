@@ -12,5 +12,6 @@ $(function () {
         event.preventDefault();
         event.stopPropagation();
         window.location.href = $(this).attr('href');
+        return false;
     });
 });

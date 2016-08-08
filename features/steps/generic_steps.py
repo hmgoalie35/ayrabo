@@ -171,8 +171,20 @@ def step_impl(context, element, prefix):
 @step('I should be on the page for "(?P<model_class>.*)" and "(?P<data>.*)"')
 def step_impl(context, model_class, data):
     split_data = data.split(' ')
-    user = split_data[0]
-    field = split_data[1] + ' ' + split_data[2]
-    if model_class == 'SportRegistration':
-        sr = SportRegistration.objects.get(user=user, name=field)
+    user = split_data[0].strip()
+    sport_name = split_data[1].strip() + ' ' + split_data[2].strip()
+    if model_class == 'sports.SportRegistration':
+        sr = SportRegistration.objects.get(user__email=user, sport__name=sport_name)
         context.test.assertEqual(context.get_url(sr.get_absolute_url()), context.driver.current_url)
+
+
+
+# TODO make this dynamic
+@step('I am on the page for "(?P<model_class>.*)" and "(?P<data>.*)"')
+def step_impl(context, model_class, data):
+    split_data = data.split(' ')
+    user = split_data[0].strip()
+    sport_name = split_data[1].strip() + ' ' + split_data[2].strip()
+    if model_class == 'sports.SportRegistration':
+        sr = SportRegistration.objects.get(user__email=user, sport__name=sport_name)
+        context.driver.get(context.get_url(sr.get_absolute_url()))

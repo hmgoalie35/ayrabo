@@ -7,10 +7,9 @@ use_step_matcher('re')
 
 def before_all(context):
     context.driver = webdriver.PhantomJS()
-    # context.driver = webdriver.Firefox()
-    # context.driver = webdriver.Chrome(executable_path=os.path.join(settings.BASE_DIR, 'selenium_drivers', 'chromedriver-linux'))
     context.driver.maximize_window()
     context.url_kwargs = {}
+    # context.fixtures = ['dev_only.json']
 
 
 def after_all(context):

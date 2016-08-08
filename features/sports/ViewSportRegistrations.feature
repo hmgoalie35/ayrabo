@@ -42,7 +42,7 @@ Feature: View what sports I am currently registered for
     And I should see "Referee"
     And I should see "Manager"
 
-  Scenario: Navigate to edit sport registration page
+  Scenario: Navigate to update sport registration page
     Given I am on the "profile:update" page
     When I press "My Sport Registrations"
     And I press "edit-" with kwargs "Ice Hockey"

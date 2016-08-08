@@ -1,9 +1,9 @@
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
-from django.core.urlresolvers import reverse, reverse_lazy
+from django.core.urlresolvers import reverse
 from django.forms import inlineformset_factory, BaseInlineFormSet
-from django.shortcuts import redirect, render
+from django.shortcuts import redirect, render, get_object_or_404
 from django.views import generic
 from django.views.generic.base import ContextMixin
 
@@ -14,8 +14,6 @@ from referees import forms as referee_forms
 from userprofiles.views import check_account_and_sport_registration_completed
 from .forms import CreateSportRegistrationForm
 from .models import SportRegistration, Sport
-from django.contrib.messages.views import SuccessMessageMixin
-from django.shortcuts import get_object_or_404
 
 
 class FinishSportRegistrationView(LoginRequiredMixin, ContextMixin, generic.View):
@@ -196,13 +194,91 @@ class CreateSportRegistrationView(LoginRequiredMixin, ContextMixin, generic.View
         return render(request, self.template_name, context)
 
 
-class UpdateSportRegistrationView(LoginRequiredMixin, SuccessMessageMixin, generic.UpdateView):
-    model = SportRegistration
-    # form_class = UpdateUserProfileForm
+class UpdateSportRegistrationView(LoginRequiredMixin, ContextMixin, generic.View):
     template_name = 'sports/sport_registration_update.html'
-    success_url = reverse_lazy('profile:update')
-    context_object_name = 'sport_registration'
-    fields = ['sport']
+    sport_player_form_mappings = {
+        'Ice Hockey': player_forms.HockeyPlayerForm,
+        'Baseball': player_forms.BaseballPlayerForm,
+        'Basketball': player_forms.BasketballPlayerForm
+    }
 
-    def get_success_message(self, cleaned_data):
-        return '{sport} sport registration successfully updated'.format(sport=self.object.name)
+    def get_context_data(self, **kwargs):
+        context = super(UpdateSportRegistrationView, self).get_context_data(**kwargs)
+        sr = get_object_or_404(SportRegistration, pk=kwargs.get('pk', None))
+        context['sport_registration'] = sr
+        related_objects = sr.get_related_role_objects()
+        context['player_read_only_fields'] = ['team']
+        context['coach_read_only_fields'] = ['team']
+        context['manager_read_only_fields'] = ['team']
+        context['referee_read_only_fields'] = ['league']
+        for role, role_obj in related_objects.items():
+            if role == 'Player':
+                context['player_form'] = self.sport_player_form_mappings[sr.sport.name](self.request.POST or None,
+                                                                                        instance=role_obj,
+                                                                                        read_only_fields=context.get(
+                                                                                                'player_read_only_fields'))
+            elif role == 'Coach':
+                context['coach_form'] = coach_forms.CoachForm(self.request.POST or None, instance=role_obj,
+                                                              read_only_fields=context.get('coach_read_only_fields'))
+            elif role == 'Manager':
+                context['manager_form'] = manager_forms.ManagerForm(self.request.POST or None, instance=role_obj,
+                                                                    read_only_fields=context.get(
+                                                                            'manager_read_only_fields'))
+            elif role == 'Referee':
+                context['referee_form'] = referee_forms.RefereeForm(self.request.POST or None, instance=role_obj,
+                                                                    read_only_fields=context.get(
+                                                                            'referee_read_only_fields'))
+        return context
+
+    def get(self, request, *args, **kwargs):
+        context = self.get_context_data(**kwargs)
+        return render(request, self.template_name, context)
+
+    def post(self, request, *args, **kwargs):
+        context = self.get_context_data(**kwargs)
+        # Forms that were submitted are added to this list. Only check the forms in this list for validity
+        forms_that_were_submitted = []
+        # If a form was submitted and is_valid is True, the corresponding value will be set to True
+        is_form_valid = {}
+
+        coach_form = context.get('coach_form', None)
+        player_form = context.get('player_form', None)
+        manager_form = context.get('manager_form', None)
+        referee_form = context.get('referee_form', None)
+
+        if coach_form is not None and coach_form.changed_data != context.get('coach_read_only_fields', []):
+            forms_that_were_submitted.append(coach_form)
+            is_form_valid[coach_form] = coach_form.is_valid()
+
+        if manager_form is not None and manager_form.changed_data != context.get('manager_read_only_fields', []):
+            forms_that_were_submitted.append(manager_form)
+            is_form_valid[manager_form] = manager_form.is_valid()
+
+        if referee_form is not None and referee_form.changed_data != context.get('referee_read_only_fields', []):
+            forms_that_were_submitted.append(referee_form)
+            is_form_valid[referee_form] = referee_form.is_valid()
+
+        if player_form is not None and player_form.changed_data != context.get('player_read_only_fields', []):
+            forms_that_were_submitted.append(player_form)
+            is_form_valid[player_form] = False
+            if player_form.is_valid():
+                is_form_valid[player_form] = True
+
+        if len(forms_that_were_submitted) == 0:
+            return render(request, self.template_name, context)
+
+        # Check to see if all of the forms that were submitted are valid.
+        # If there is a non valid form that was submitted, redisplay the form with errors
+        for submitted_form in forms_that_were_submitted:
+            if not is_form_valid[submitted_form]:
+                return render(request, self.template_name, context)
+
+        # Need to make sure all submitted forms were valid before saving them, otherwise will have a bug where
+        # submitting a valid form for coach will create the object but any other invalid form will throw an error. When
+        # the user tries to resubmit the forms then will have integrity error because coach object was already created
+        for form, is_valid in is_form_valid.items():
+            if is_valid:
+                form.save()
+        messages.success(request, 'Sport registration for {sport} successfully updated.'.format(
+                sport=context['sport_registration'].sport.name))
+        return redirect(reverse('profile:update'))
