@@ -14,7 +14,7 @@ Feature: Sport: used to create structure for the whole website
     And I am on the "admin:login" page
     And I fill in "id_username" with "user@example.com"
     And I fill in "id_password" with "myweakpassword"
-    And I press "#login-form > div.submit-row > input[type="submit"]"
+    And I press "#login-form > div.submit-row > input[type='submit']"
 
 
   Scenario: Make sure sport is registered with admin panel

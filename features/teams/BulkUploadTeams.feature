@@ -16,7 +16,7 @@ Feature: Bulk upload teams from csv
     Given I am on the "admin:login" page
     And I fill in "id_username" with "user@example.com"
     And I fill in "id_password" with "myweakpassword"
-    And I press "#login-form > div.submit-row > input[type="submit"]"
+    And I press "#login-form > div.submit-row > input[type='submit']"
     And I am on the "admin:teams_team_changelist" page
     When I press "bulk_upload_teams_btn"
     Then I should be on the "bulk_upload_teams" page
@@ -25,7 +25,7 @@ Feature: Bulk upload teams from csv
     Given I am on the "admin:login" page
     And I fill in "id_username" with "user@example.com"
     And I fill in "id_password" with "myweakpassword"
-    And I press "#login-form > div.submit-row > input[type="submit"]"
+    And I press "#login-form > div.submit-row > input[type='submit']"
     And I am on the "admin:teams_team_changelist" page
     Then I should see "Download Example .csv"
 
@@ -42,7 +42,7 @@ Feature: Bulk upload teams from csv
     Given I am on the "admin:login" page
     And I fill in "id_username" with "user@example.com"
     And I fill in "id_password" with "myweakpassword"
-    And I press "#login-form > div.submit-row > input[type="submit"]"
+    And I press "#login-form > div.submit-row > input[type='submit']"
     And I am on the "bulk_upload_teams" page
     And The following division exists "Midget Minor AA"
     When I upload "valid_team_csv_formatting.csv" into "id_file"
@@ -53,7 +53,7 @@ Feature: Bulk upload teams from csv
     Given I am on the "admin:login" page
     And I fill in "id_username" with "user@example.com"
     And I fill in "id_password" with "myweakpassword"
-    And I press "#login-form > div.submit-row > input[type="submit"]"
+    And I press "#login-form > div.submit-row > input[type='submit']"
     And I am on the "bulk_upload_teams" page
     When I upload "division_dne.csv" into "id_file"
     And I press "bulk_upload_submit_btn"
