@@ -58,24 +58,24 @@
                                 </div>
                             </div>
                             <div class="panel-body">
-                                <a href="{% url 'sport:create_sport_registration' %}"
+                                <a id="register_for_sport_btn" href="{% url 'sport:create_sport_registration' %}"
                                    class="btn btn-default btn-sm pull-right">Register for a sport</a>
                                 <br><br>
                                 {% if data %}
                                     <ul class="list-group">
-                                        {% for sport, data_dict in data.items %}
-                                            <li class="list-group-item more-sport-info" data-target="#{{ sport.slug }}" data-toggle="collapse">
-                                                {{ sport.name }}:
+                                        {% for sport_registration, data_dict in data.items %}
+                                            <li id="list-item-{{ data_dict.sport.slug }}" class="list-group-item more-sport-info" data-target="#{{ data_dict.sport.slug }}" data-toggle="collapse">
+                                                {{ data_dict.sport.name }}:
                                                 {% for role in data_dict.roles %}
                                                     <span class="label label-default">{{ role }}</span>
                                                 {% empty %}
-                                                    <div class="alert alert-warning" role="alert">You do not have any roles configured for {{ sport.name }}. Please add some roles by selecting the dropdown and then "Edit".</div>
+                                                    <div class="alert alert-warning" role="alert">You do not have any roles configured for {{ data_dict.sport.name }}. Please add some roles by selecting the dropdown and then "Edit".</div>
                                                 {% endfor %}
 
                                                 <span class="pull-right more-sport-info-fa-icon fa fa-caret-square-o-down"></span>
-                                                <a href="#" class="pull-right margin-between-fa">Edit Registration</a>
+                                                <a name="edit_registration_link" id="edit-{{ sport_registration.id }}" href="{% url 'sport:update_sport_registration' sport_registration.pk %}" class="pull-right margin-between-fa">Edit Registration</a>
                                             </li>
-                                            <div class="collapse" id="{{ sport.slug }}">
+                                            <div class="collapse" id="{{ data_dict.sport.slug }}">
                                                 <div class="list-group-item">
                                                 {% if data_dict.related_objects %}
                                                     {% for role, object in data_dict.related_objects.items %}
@@ -104,5 +104,5 @@
 {% endblock %}
 
 {% block extra_js %}
-    <script src="{% static 'userprofiles/javascripts/toggle_caret.js' %}"></script>
+    <script src="{% static 'userprofiles/javascripts/userprofile_update.js' %}"></script>
 {% endblock %}

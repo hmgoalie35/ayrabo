@@ -1,7 +1,7 @@
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
-from django.core.urlresolvers import reverse
+from django.core.urlresolvers import reverse, reverse_lazy
 from django.forms import inlineformset_factory, BaseInlineFormSet
 from django.shortcuts import redirect, render
 from django.views import generic
@@ -14,6 +14,8 @@ from referees import forms as referee_forms
 from userprofiles.views import check_account_and_sport_registration_completed
 from .forms import CreateSportRegistrationForm
 from .models import SportRegistration, Sport
+from django.contrib.messages.views import SuccessMessageMixin
+from django.shortcuts import get_object_or_404
 
 
 class FinishSportRegistrationView(LoginRequiredMixin, ContextMixin, generic.View):
@@ -192,3 +194,15 @@ class CreateSportRegistrationView(LoginRequiredMixin, ContextMixin, generic.View
             return redirect(reverse('sport:finish_sport_registration'))
 
         return render(request, self.template_name, context)
+
+
+class UpdateSportRegistrationView(LoginRequiredMixin, SuccessMessageMixin, generic.UpdateView):
+    model = SportRegistration
+    # form_class = UpdateUserProfileForm
+    template_name = 'sports/sport_registration_update.html'
+    success_url = reverse_lazy('profile:update')
+    context_object_name = 'sport_registration'
+    fields = ['sport']
+
+    def get_success_message(self, cleaned_data):
+        return '{sport} sport registration successfully updated'.format(sport=self.object.name)

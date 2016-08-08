@@ -20,6 +20,7 @@ def step_impl(context, username_or_email, is_complete, sport_name, roles):
     else:
         sr = SportRegistrationFactory(user=user, sport__name=sport_name, is_complete=complete)
     sr.set_roles(roles_list)
+    context.url_kwargs.update({sr.sport.name: sr.pk})
 
 
 @step('The sport registration for "(?P<username_or_email>.*)" and "(?P<sport_name>.*)" is complete')

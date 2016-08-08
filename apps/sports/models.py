@@ -5,6 +5,7 @@ import coaches as coaches_app
 import players as players_app
 import referees as referees_app
 import managers as managers_app
+from django.core.urlresolvers import reverse
 
 
 class Sport(models.Model):
@@ -49,6 +50,9 @@ class SportRegistration(models.Model):
         unique_together = (
             ('user', 'sport'),
         )
+
+    def get_absolute_url(self):
+        return reverse('sport:update_sport_registration', kwargs={'pk': self.pk})
 
     def set_roles(self, roles, append=False):
         """

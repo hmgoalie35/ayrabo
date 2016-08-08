@@ -1,3 +1,4 @@
+from django.core.urlresolvers import reverse
 from django.db.utils import IntegrityError
 from django.test import TestCase
 from django.utils.text import slugify
@@ -58,6 +59,11 @@ class SportRegistrationModelTests(TestCase):
     def test_to_string(self):
         sr = SportRegistrationFactory()
         self.assertEqual(str(sr), '{email} - {sport}'.format(email=sr.user.email, sport=sr.sport.name))
+
+    def test_absolute_url(self):
+        ice_hockey = SportRegistrationFactory(sport__name='Ice Hockey')
+        self.assertEqual(ice_hockey.get_absolute_url(),
+                         reverse('sport:update_sport_registration', kwargs={'pk': ice_hockey.pk}))
 
     def test_current_available_roles(self):
         self.assertListEqual(SportRegistration.ROLES, ['Player', 'Coach', 'Referee', 'Manager'])
@@ -129,7 +135,7 @@ class SportRegistrationModelTests(TestCase):
         coach = CoachFactory(user=user, team=team)
         referee = RefereeFactory(user=user, league=league)
         result = sr.get_related_role_objects()
-        self.assertEqual({'Player': player, 'Coach': coach, 'Manager': manager, 'Referee': referee}, result)
+        self.assertDictEqual({'Player': player, 'Coach': coach, 'Manager': manager, 'Referee': referee}, result)
 
     def test_get_related_role_objects_3_roles(self):
         user = UserFactory(email='testing@example.com')
@@ -143,7 +149,7 @@ class SportRegistrationModelTests(TestCase):
         coach = CoachFactory(user=user, team=team)
         referee = RefereeFactory(user=user, league=league)
         result = sr.get_related_role_objects()
-        self.assertEqual({'Player': player, 'Coach': coach, 'Referee': referee}, result)
+        self.assertDictEqual({'Player': player, 'Coach': coach, 'Referee': referee}, result)
 
     def test_get_related_role_objects_2_roles(self):
         user = UserFactory(email='testing@example.com')
@@ -156,7 +162,7 @@ class SportRegistrationModelTests(TestCase):
         player = HockeyPlayerFactory(user=user, team=team, sport=sport)
         coach = CoachFactory(user=user, team=team)
         result = sr.get_related_role_objects()
-        self.assertEqual({'Player': player, 'Coach': coach}, result)
+        self.assertDictEqual({'Player': player, 'Coach': coach}, result)
 
     def test_get_related_role_objects_1_role(self):
         user = UserFactory(email='testing@example.com')
@@ -168,7 +174,7 @@ class SportRegistrationModelTests(TestCase):
         sr.set_roles(['Manager'])
         manager = ManagerFactory(user=user, team=team)
         result = sr.get_related_role_objects()
-        self.assertEqual({'Manager': manager}, result)
+        self.assertDictEqual({'Manager': manager}, result)
 
     def test_get_related_role_objects_no_roles(self):
         user = UserFactory(email='testing@example.com')
@@ -176,4 +182,4 @@ class SportRegistrationModelTests(TestCase):
         sr = SportRegistrationFactory(user=user, sport=sport)
         sr.set_roles([])
         result = sr.get_related_role_objects()
-        self.assertEqual({}, result)
+        self.assertDictEqual({}, result)

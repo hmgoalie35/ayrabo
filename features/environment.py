@@ -10,6 +10,7 @@ def before_all(context):
     # context.driver = webdriver.Firefox()
     # context.driver = webdriver.Chrome(executable_path=os.path.join(settings.BASE_DIR, 'selenium_drivers', 'chromedriver-linux'))
     context.driver.maximize_window()
+    context.url_kwargs = {}
 
 
 def after_all(context):
