@@ -151,8 +151,9 @@ class UpdateUserProfileViewTests(TestCase):
         referee = RefereeFactory(user=user, league=league)
         response = self.client.get(reverse('profile:update'))
         result = {
-            self.sport:
-                {'roles': ['Player', 'Coach', 'Referee', 'Manager'],
+            sr:
+                {'sport': sr.sport,
+                 'roles': ['Player', 'Coach', 'Referee', 'Manager'],
                  'related_objects':
                      {'Player': player,
                       'Coach': coach,
