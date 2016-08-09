@@ -456,7 +456,8 @@ class UpdateSportRegistrationViewTests(TestCase):
         self.sr_2 = SportRegistrationFactory(user=self.user, sport=self.baseball, is_complete=True, roles_mask=15)
 
         self.coach_post_data = {'user': self.user, 'team': self.team, 'position': 'Head Coach'}
-        self.player_post_data = {'user': self.user, 'team': self.team, 'jersey_number': 23, 'handedness': 'Right', 'position': 'G', 'sport': self.ice_hockey}
+        self.player_post_data = {'user': self.user, 'team': self.team, 'jersey_number': 23, 'handedness': 'Right',
+                                 'position': 'G', 'sport': self.ice_hockey}
         self.referee_post_data = {'user': self.user, 'league': self.league}
         self.manager_post_data = {'user': self.user, 'team': self.team}
 
@@ -474,6 +475,14 @@ class UpdateSportRegistrationViewTests(TestCase):
         response = self.client.get(self.url)
         result_url = '%s?next=%s' % (reverse('account_login'), self.url)
         self.assertRedirects(response, result_url)
+
+    def test_get_not_object_owner(self):
+        self.client.logout()
+        other_user = UserFactory(email='otheruser@example.com', password=self.password)
+        SportRegistrationFactory(user=other_user, sport=self.ice_hockey, is_complete=True)
+        self.client.login(email=other_user.email, password=self.password)
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 404)
 
     def test_renders_correct_template(self):
         response = self.client.get(self.url)
@@ -500,6 +509,14 @@ class UpdateSportRegistrationViewTests(TestCase):
         response = self.client.post(self.url, data={}, follow=True)
         result_url = '%s?next=%s' % (reverse('account_login'), self.url)
         self.assertRedirects(response, result_url)
+
+    def test_post_not_object_owner(self):
+        self.client.logout()
+        other_user = UserFactory(email='otheruser@example.com', password=self.password)
+        SportRegistrationFactory(user=other_user, sport=self.ice_hockey, is_complete=True)
+        self.client.login(email=other_user.email, password=self.password)
+        response = self.client.post(self.url, data={}, follow=True)
+        self.assertEqual(response.status_code, 404)
 
     def test_post_changed_forms(self):
         del self.coach_post_data['user']
@@ -529,7 +546,8 @@ class UpdateSportRegistrationViewTests(TestCase):
         response = self.client.post(self.url, data=post_data, follow=True)
 
         self.assertRedirects(response, reverse('profile:update'))
-        self.assertIn('Sport registration for {sport} successfully updated.'.format(sport=self.ice_hockey.name), get_messages(response))
+        self.assertIn('Sport registration for {sport} successfully updated.'.format(sport=self.ice_hockey.name),
+                      get_messages(response))
 
     def test_post_unchanged_forms(self):
         del self.coach_post_data['user']
