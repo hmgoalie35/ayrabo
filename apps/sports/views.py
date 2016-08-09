@@ -5,6 +5,7 @@ from django.core.urlresolvers import reverse
 from django.forms import inlineformset_factory, BaseInlineFormSet
 from django.shortcuts import redirect, render, get_object_or_404
 from django.views import generic
+from django.http import Http404
 from django.views.generic.base import ContextMixin
 
 from coaches import forms as coach_forms
@@ -205,6 +206,9 @@ class UpdateSportRegistrationView(LoginRequiredMixin, ContextMixin, generic.View
     def get_context_data(self, **kwargs):
         context = super(UpdateSportRegistrationView, self).get_context_data(**kwargs)
         sr = get_object_or_404(SportRegistration, pk=kwargs.get('pk', None))
+        if sr.user != self.request.user:
+            context['not_obj_owner'] = True
+            return context
         context['sport_registration'] = sr
         related_objects = sr.get_related_role_objects()
         context['player_read_only_fields'] = ['team']
@@ -232,10 +236,14 @@ class UpdateSportRegistrationView(LoginRequiredMixin, ContextMixin, generic.View
 
     def get(self, request, *args, **kwargs):
         context = self.get_context_data(**kwargs)
+        if context.get('not_obj_owner'):
+            raise Http404
         return render(request, self.template_name, context)
 
     def post(self, request, *args, **kwargs):
         context = self.get_context_data(**kwargs)
+        if context.get('not_obj_owner'):
+            raise Http404
         # Forms that were submitted are added to this list. Only check the forms in this list for validity
         forms_that_were_submitted = []
         # If a form was submitted and is_valid is True, the corresponding value will be set to True
