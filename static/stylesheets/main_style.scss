@@ -41,24 +41,47 @@ body {
   margin: 0 auto;
 }
 
-
 .asteriskField {
   color: red;
 }
 
-div.alert.alert-block.alert-danger > ul > li{
+div.alert.alert-block.alert-danger > ul > li {
   list-style: none;
 }
 
-.btn-back{
+.btn-back {
   color: white;
-  background: #8b8b8b;
+  background: #8B8B8B;
   &:hover {
     color: white;
     background: #686868;
   }
 }
 
-#div_id_birthday > .controls{
+#div_id_birthday > .controls {
   margin-top: 5px;
+}
+
+.nav-tab-link-color {
+  color: #999999;
+  &:hover {
+    color: black;
+  }
+}
+
+.more-sport-info {
+  cursor: pointer;
+
+  &:hover{
+    background-color: #F5F5F5;
+  }
+}
+
+.more-sport-info-fa-icon{
+  color: black;
+  margin-top:3px;
+}
+
+.margin-between-fa{
+  margin-right: 5px;
 }

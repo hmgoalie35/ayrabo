@@ -14,7 +14,7 @@ Feature: League: used to organize a sport (i.e. Ice Hockey -> NHL, AHL, LIAHL, e
     And I am on the "admin:login" page
     And I fill in "id_username" with "user@example.com"
     And I fill in "id_password" with "myweakpassword"
-    And I press "#login-form > div.submit-row > input[type="submit"]"
+    And I press "#login-form > div.submit-row > input[type='submit']"
     
   Scenario: Make sure league is registered with admin panel
     When I press "Leagues"

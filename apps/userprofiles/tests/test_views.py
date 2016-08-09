@@ -3,9 +3,16 @@ from django.core.urlresolvers import reverse
 from django.test import TestCase
 
 from accounts.tests.factories.UserFactory import UserFactory
+from coaches.tests.factories.CoachFactory import CoachFactory
+from divisions.tests.factories.DivisionFactory import DivisionFactory
 from escoresheet.testing_utils import get_messages
+from leagues.tests.factories.LeagueFactory import LeagueFactory
+from managers.tests.factories.ManagerFactory import ManagerFactory
+from players.tests.factories.PlayerFactory import HockeyPlayerFactory
+from referees.tests.factories.RefereeFactory import RefereeFactory
 from sports.tests.factories.SportFactory import SportFactory
 from sports.tests.factories.SportRegistrationFactory import SportRegistrationFactory
+from teams.tests.factories.TeamFactory import TeamFactory
 from userprofiles.models import UserProfile
 from .factories.UserProfileFactory import UserProfileFactory
 
@@ -110,7 +117,8 @@ class UpdateUserProfileViewTests(TestCase):
         self.post_data = factory.build(dict, FACTORY_CLASS=UserProfileFactory)
 
         self.user = UserFactory.create(email=self.email, password=self.password)
-        SportRegistrationFactory(user=self.user, sport__name='Ice Hockey', is_complete=True)
+        self.sport = SportFactory(name='Ice Hockey')
+        SportRegistrationFactory(user=self.user, sport=self.sport, is_complete=True)
         self.client.login(email=self.email, password=self.password)
 
     # GET
@@ -127,6 +135,31 @@ class UpdateUserProfileViewTests(TestCase):
     def test_200_status_code(self):
         response = self.client.get(reverse('profile:update'))
         self.assertEqual(response.status_code, 200)
+
+    def test_context_populated(self):
+        self.client.logout()
+        user = UserFactory(email='testing@example.com', password=self.password)
+        self.client.login(email='testing@example.com', password=self.password)
+        league = LeagueFactory(full_name='Long Island Amateur Hockey League', sport=self.sport)
+        division = DivisionFactory(name='Midget Minor AA', league=league)
+        team = TeamFactory(name='Green Machine Icecats', division=division)
+        sr = SportRegistrationFactory(user=user, sport=self.sport)
+        sr.set_roles(['Player', 'Coach', 'Manager', 'Referee'])
+        manager = ManagerFactory(user=user, team=team)
+        player = HockeyPlayerFactory(user=user, team=team, sport=self.sport)
+        coach = CoachFactory(user=user, team=team)
+        referee = RefereeFactory(user=user, league=league)
+        response = self.client.get(reverse('profile:update'))
+        result = {
+            sr:
+                {'sport': sr.sport,
+                 'roles': ['Player', 'Coach', 'Referee', 'Manager'],
+                 'related_objects':
+                     {'Player': player,
+                      'Coach': coach,
+                      'Manager': manager,
+                      'Referee': referee}}}
+        self.assertDictEqual(response.context['data'], result)
 
     # POST
     # No need to test invalid values for height, weight, etc. That is done above (the forms are almost identical)

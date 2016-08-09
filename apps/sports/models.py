@@ -1,6 +1,11 @@
 from django.db import models
 from django.utils.text import slugify
 from django.contrib.auth.models import User
+import coaches as coaches_app
+import players as players_app
+import referees as referees_app
+import managers as managers_app
+from django.core.urlresolvers import reverse
 
 
 class Sport(models.Model):
@@ -46,6 +51,9 @@ class SportRegistration(models.Model):
             ('user', 'sport'),
         )
 
+    def get_absolute_url(self):
+        return reverse('sport:update_sport_registration', kwargs={'pk': self.pk})
+
     def set_roles(self, roles, append=False):
         """
         Given a list of roles (taken from ROLES) creates a mask (int) that represents the roles currently valid for this
@@ -83,6 +91,38 @@ class SportRegistration(models.Model):
         :return: True if the user has the current role, False otherwise
         """
         return role.title() in self.roles or role in self.roles
+
+    def get_related_role_objects(self):
+        """
+        This function iterates through all of the roles for the sport registration and retrieves the appropriate
+        object that goes with the role. i.e. Roles Coach and Manager are set, so this function will fetch the Coach
+        and Manager objects for the given user and sport
+        :return: A dictionary where the keys are the role (Player, Coach, etc.) and the value is the associated object
+        """
+
+        obj_role_mappings = {}
+        roles = self.roles
+        user = self.user
+        for role in roles:
+            if role == 'Player':
+                sport_name = self.sport.name
+                if 'Hockey' in sport_name:
+                    players = players_app.models.HockeyPlayer.objects.filter(user=user, sport=self.sport).select_related('team')
+                elif sport_name == 'Basketball':
+                    players = players_app.models.BasketballPlayer.objects.filter(user=user, sport=self.sport).select_related('team')
+                elif sport_name == 'Baseball':
+                    players = players_app.models.BaseballPlayer.objects.filter(user=user, sport=self.sport).select_related('team')
+                obj_role_mappings['Player'] = players.first()
+            elif role == 'Coach':
+                coaches = coaches_app.models.Coach.objects.filter(user=user, team__division__league__sport=self.sport).select_related('team')
+                obj_role_mappings['Coach'] = coaches.first()
+            elif role == 'Manager':
+                managers = managers_app.models.Manager.objects.filter(user=user, team__division__league__sport=self.sport).select_related('team')
+                obj_role_mappings['Manager'] = managers.first()
+            elif role == 'Referee':
+                referees = referees_app.models.Referee.objects.filter(user=user, league__sport=self.sport).select_related('league')
+                obj_role_mappings['Referee'] = referees.first()
+        return obj_role_mappings
 
     def __str__(self):
         return '{email} - {sport}'.format(email=self.user.email, sport=self.sport.name)

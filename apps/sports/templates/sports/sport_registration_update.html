@@ -1,0 +1,71 @@
+{% extends 'site_base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Update Sport Registration{% endblock %}
+
+{% block content %}
+    <div class="container">
+
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="text-center">
+                    <h2>Update Sport Registration for {{ sport_registration.sport }}</h2>
+                    <br>
+                    <h4>Current Roles</h4>
+                    <p>
+                        {% for role in sport_registration.roles %}
+                            <span class="label label-default">{{ role }}</span>
+                        {% empty %}
+                            N/A
+                        {% endfor %}
+                    </p>
+                    <br>
+                    <h4>Changing your team or league is not currently supported.</h4>
+                    <h4>If you have any questions or issues please <a href="{% url 'contact_us' %}">contact us</a>.</h4>
+                </div>
+            </div>
+        </div>
+
+        <br>
+
+        <div class="row">
+            <div class="col-sm-offset-4 col-sm-4 col-sm-offset-4">
+                <form action="" method="post">
+                    {% csrf_token %}
+
+                    {% if player_form %}
+                        <h3 class="text-center">{{ sport_registration.sport }} Player</h3>
+                        {{ player_form | crispy }}
+                        <br>
+                    {% endif %}
+
+                    {% if coach_form %}
+                        <h3 class="text-center">{{ sport_registration.sport }} Coach</h3>
+                        {{ coach_form | crispy }}
+                        <br>
+                    {% endif %}
+
+                    {% if referee_form %}
+                        <h3 class="text-center">{{ sport_registration.sport }} Referee</h3>
+                        {{ referee_form | crispy }}
+                        <br>
+                    {% endif %}
+
+                    {% if manager_form %}
+                        <h3 class="text-center">{{ sport_registration.sport }} Manager</h3>
+                        {{ manager_form | crispy }}
+                        <br>
+                    {% endif %}
+
+                    <br>
+
+                    <div class="text-center">
+                        <input id="update_sport_registration_btn" type="submit" value="Update sport registration"
+                               class="btn btn-success">
+                    </div>
+                    <br>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}

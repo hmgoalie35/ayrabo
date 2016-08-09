@@ -1,43 +1,108 @@
 {% extends 'site_base.html' %}
-{% load crispy_forms_tags %}
-{% load i18n %}
+{% load crispy_forms_tags static %}
 
 {% block title %}Update Profile{% endblock %}
 
 
 {% block content %}
     <div class="container">
-
         <div class="row">
-            <div class="col-sm-12">
-                <div class="text-center">
-                    <h2>{% trans 'Account Details' %}</h2>
+            <div class="col-sm-offset-3 col-sm-6">
+                <br><br>
+                <ul class="nav nav-tabs nav-justified" role="tablist">
+                    <li role="presentation" class="active"><a href="#my_account" role="tab" data-toggle="tab"
+                                               class="nav-tab-link-color"><i class="fa fa-user"></i>&nbsp;My Account</a>
+                    </li>
+                    <li role="presentation"><a href="#my_sport_registrations" role="tab" data-toggle="tab"
+                                                              class="nav-tab-link-color"><i class="fa fa-list"></i>&nbsp;My Sport Registrations</a>
+                    </li>
+                </ul>
+
+                <div class="tab-content">
+                    <div role="tabpanel" class="tab-pane active" id="my_account">
+                        <br>
+                        <div class="panel panel-primary">
+                            <div class="panel-heading">
+                                <div class="text-center">
+                                    <h1 class="panel-title">Account Information</h1>
+                                </div>
+                            </div>
+                            <div class="panel-body">
+                                <h4>Name: {{ user.get_full_name }}</h4>
+                                <h4>Email: {{ user.email }}</h4>
+                                <h4>Gender: {{ userprofile.gender | title }}</h4>
+                                <h4>Birthday: {{ userprofile.birthday }}</h4>
+                                <a id="change_password_link" href="{% url 'account_change_password' %}">Change Password</a>
+                                <br><br>
+                                <form action="" method="post">
+                                    {% csrf_token %}
+                                    {{ form | crispy }}
+                                    <br>
+                                    <div class="text-center">
+                                        <input id="update_userprofile_btn" class="btn btn-success" type="submit"
+                                               value="Update profile">
+                                    </div>
+                                    <br>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div role="tabpanel" class="tab-pane" id="my_sport_registrations">
+                        <br>
+                        <div class="panel panel-primary">
+                            <div class="panel-heading">
+                                <div class="text-center">
+                                    <h1 class="panel-title">Manage Sport Registrations</h1>
+                                </div>
+                            </div>
+                            <div class="panel-body">
+                                <a id="register_for_sport_btn" href="{% url 'sport:create_sport_registration' %}"
+                                   class="btn btn-default btn-sm pull-right">Register for a sport</a>
+                                <br><br>
+                                {% if data %}
+                                    <ul class="list-group">
+                                        {% for sport_registration, data_dict in data.items %}
+                                            <li id="list-item-{{ data_dict.sport.slug }}" class="list-group-item more-sport-info" data-target="#{{ data_dict.sport.slug }}" data-toggle="collapse">
+                                                {{ data_dict.sport.name }}:
+                                                {% for role in data_dict.roles %}
+                                                    <span class="label label-default">{{ role }}</span>
+                                                {% empty %}
+                                                    <div class="alert alert-warning" role="alert">You do not have any roles configured for {{ data_dict.sport.name }}. Please add some roles by selecting the dropdown and then "Edit".</div>
+                                                {% endfor %}
+
+                                                <span class="pull-right more-sport-info-fa-icon fa fa-caret-square-o-down"></span>
+                                                <a name="edit_registration_link" id="edit-{{ sport_registration.id }}" href="{% url 'sport:update_sport_registration' sport_registration.pk %}" class="pull-right margin-between-fa">Edit Registration</a>
+                                            </li>
+                                            <div class="collapse" id="{{ data_dict.sport.slug }}">
+                                                <div class="list-group-item">
+                                                {% if data_dict.related_objects %}
+                                                    {% for role, object in data_dict.related_objects.items %}
+                                                        <strong>{{ role }}:</strong> {% if role == 'Referee' %}{{ object.league }}{% else %}{{ object.team }}{% endif %}
+                                                        <br>
+                                                    {% endfor %}
+                                                {% else %}
+                                                {% endif %}
+                                                </div>
+                                            </div>
+                                        {% endfor %}
+                                    </ul>
+                                {% else %}
+                                    <br>
+                                    <div class="alert alert-warning" role="alert">You are not currently registered for any sports. Press the button above to register for a sport.
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </div>
-
-        <div class="row">
-            <div class="col-sm-offset-4 col-sm-4 col-sm-offset-4">
-
-                <br>
-                <h4>Name: {{ user.get_full_name }}</h4>
-                <h4>Email: {{ user.email }}</h4>
-                <h4>Gender: {{ userprofile.gender | title }}</h4>
-                <h4>Birthday: {{ userprofile.birthday }}</h4>
-                <a id="change_password_link" href="{% url 'account_change_password' %}">Change Password</a>
-                <br>
-                <br>
-
-                <form action="" method="post">
-                    {% csrf_token %}
-                    {{ form | crispy }}
-                    <br>
-                    <div class="text-center">
-                        <input id="update_userprofile_btn" class="btn btn-success" type="submit" value="Update profile">
-                    </div>
-                    <br>
-                </form>
-            </div>
-        </div>
     </div>
+{% endblock %}
+
+{% block extra_js %}
+    <script src="{% static 'userprofiles/javascripts/userprofile_update.js' %}"></script>
 {% endblock %}

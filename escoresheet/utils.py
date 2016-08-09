@@ -17,3 +17,14 @@ def remove_form_placeholders(field_list):
 
 def add_autofocus_to_field(field):
     field.widget.attrs['autofocus'] = 'true'
+
+def set_fields_disabled(read_only_fields, field_list):
+    """
+
+    :param field_list:
+    :return:
+    """
+    for field in read_only_fields:
+        the_field = field_list.get(field, None)
+        if the_field is not None:
+            the_field.disabled = True

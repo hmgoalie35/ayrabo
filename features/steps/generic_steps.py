@@ -8,7 +8,7 @@ from django.db.models import Q
 from selenium.common.exceptions import NoSuchElementException, WebDriverException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.select import Select
-
+from sports.models import SportRegistration
 
 def find_element(context, element_to_find):
     """
@@ -53,17 +53,24 @@ def step_impl(context, element, value):
     the_element.send_keys(value)
 
 
-@step('I press "(?P<element>.*)"')
+@step('I press "(?P<element>[^"]*)"')
 def step_impl(context, element):
     the_element = find_element(context, element)
     the_element.click()
+
+
+@step('I press "(?P<prefix>[^"]*)" with kwargs "(?P<kwargs>[^"]*)"')
+def step_impl(context, prefix, kwargs):
+    element_selector = prefix + str(context.url_kwargs[kwargs])
+    element = find_element(context, element_selector)
+    element.click()
 
 
 @step('I should be on the "(?P<url>.*)" page')
 def step_impl(context, url):
     current_url = context.driver.current_url
     # Check for query params and discard if exist
-    if '?' in context.driver.current_url:
+    if '?' in current_url:
         current_url = current_url.split('?')[0]
     context.test.assertEqual(current_url, context.get_url(url))
 
@@ -158,3 +165,26 @@ def step_impl(context, element, prefix):
     if prefix == 'dis':
         result = not result
     context.test.assertTrue(result)
+
+
+# TODO make this dynamic
+@step('I should be on the page for "(?P<model_class>.*)" and "(?P<data>.*)"')
+def step_impl(context, model_class, data):
+    split_data = data.split(' ')
+    user = split_data[0].strip()
+    sport_name = split_data[1].strip() + ' ' + split_data[2].strip()
+    if model_class == 'sports.SportRegistration':
+        sr = SportRegistration.objects.get(user__email=user, sport__name=sport_name)
+        context.test.assertEqual(context.get_url(sr.get_absolute_url()), context.driver.current_url)
+
+
+
+# TODO make this dynamic
+@step('I am on the page for "(?P<model_class>.*)" and "(?P<data>.*)"')
+def step_impl(context, model_class, data):
+    split_data = data.split(' ')
+    user = split_data[0].strip()
+    sport_name = split_data[1].strip() + ' ' + split_data[2].strip()
+    if model_class == 'sports.SportRegistration':
+        sr = SportRegistration.objects.get(user__email=user, sport__name=sport_name)
+        context.driver.get(context.get_url(sr.get_absolute_url()))
