@@ -36,6 +36,8 @@ class Player(models.Model):
         return self.team.division.name
 
     def clean(self):
+        # hasattr is needed for when the admin panel is used, where an object w/o a user or team may be created by
+        # accident
         if hasattr(self, 'user') and hasattr(self, 'sport'):
             qs = SportRegistration.objects.filter(user=self.user, sport=self.sport)
             if qs.exists() and not qs.first().has_role('Player'):
