@@ -3,7 +3,7 @@ A module that contains useful methods for testing
 """
 from coaches.tests import CoachFactory
 from managers.tests import ManagerFactory
-from players.tests.factories.PlayerFactory import HockeyPlayerFactory
+from players.tests import HockeyPlayerFactory
 from referees.tests.factories.RefereeFactory import RefereeFactory
 
 

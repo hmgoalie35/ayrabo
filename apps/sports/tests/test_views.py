@@ -12,7 +12,7 @@ from managers.models import Manager
 from managers.tests import ManagerFactory
 from players import forms as player_forms
 from players.models import HockeyPlayer
-from players.tests.factories.PlayerFactory import HockeyPlayerFactory
+from players.tests import HockeyPlayerFactory
 from referees.models import Referee
 from referees.tests.factories.RefereeFactory import RefereeFactory
 from sports.models import SportRegistration
