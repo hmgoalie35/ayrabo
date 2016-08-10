@@ -22,7 +22,7 @@ class AccountAndSportRegistrationCompleteMiddleware(object):
 
         # debug_toolbar wasn't working properly because of my custom middleware so let all debug_toolbar
         # requests through
-        if '__debug__' in request.path:
+        if '__debug__' in request.path:  # pragma: no cover
             return None
 
         # Do not apply this middleware to anonymous users, or for any request to a whitelisted url. A redirect

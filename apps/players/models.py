@@ -36,6 +36,8 @@ class Player(models.Model):
         return self.team.division.name
 
     def clean(self):
+        # hasattr is needed for when the admin panel is used, where an object w/o a user or team may be created by
+        # accident
         if hasattr(self, 'user') and hasattr(self, 'sport'):
             qs = SportRegistration.objects.filter(user=self.user, sport=self.sport)
             if qs.exists() and not qs.first().has_role('Player'):
@@ -156,7 +158,7 @@ class BasketballPlayer(Player):
         if hasattr(self, 'team'):
             # If we do not exclude the current user this validation error will always be triggered.
             qs = BasketballPlayer.objects.filter(team=self.team, jersey_number=self.jersey_number).exclude(
-                user=self.user)
+                    user=self.user)
             if qs.exists():
                 error_msg = 'Please choose another number, {jersey_number} is currently unavailable for {team}'.format(
                         jersey_number=self.jersey_number, team=self.team.name)

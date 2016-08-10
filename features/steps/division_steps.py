@@ -1,7 +1,7 @@
 from behave import *
 
-from divisions.tests.factories.DivisionFactory import DivisionFactory
-from leagues.tests.factories.LeagueFactory import LeagueFactory
+from divisions.tests import DivisionFactory
+from leagues.tests import LeagueFactory
 
 
 @step('The following division exists "(?P<division_name>[^"]*)"')

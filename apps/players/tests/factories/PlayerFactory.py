@@ -3,10 +3,10 @@ import random
 import factory
 from factory import django, fuzzy
 
-from accounts.tests.factories.UserFactory import UserFactory
+from accounts.tests import UserFactory
 from players import models
-from sports.tests.factories.SportFactory import SportFactory
-from teams.tests.factories.TeamFactory import TeamFactory
+from sports.tests import SportFactory
+from teams.tests import TeamFactory
 
 
 def generate_jersey_number():

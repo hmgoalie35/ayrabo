@@ -1,9 +1,9 @@
 import factory
 from factory import django
 
-from accounts.tests.factories.UserFactory import UserFactory
+from accounts.tests import UserFactory
 from managers.models import Manager
-from teams.tests.factories.TeamFactory import TeamFactory
+from teams.tests import TeamFactory
 
 
 class ManagerFactory(django.DjangoModelFactory):

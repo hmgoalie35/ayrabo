@@ -1,8 +1,6 @@
-from django.db import models
-from django.db.models.signals import post_save
-from django.dispatch import receiver
-from django.contrib.auth.models import User
 from allauth.account.models import EmailAddress
+from django.contrib.auth.models import User
+
 
 # Not needed as of now, django all auth will create EmailAddress & EmailConfirmation object next time user logs in if user was created
 # via admin panel or via User.objects.create

@@ -19,9 +19,9 @@ Feature: Create coach in the system
     Then I should see "You have successfully completed your profile, you can now access the site"
     And I should be on the "home" page
 
-   Scenario: Submit invalid coach form
-     Given I am on the "sport:finish_sport_registration" page
-     When I select "Head Coach" from "id_coach-position"
-     And I press "next_sport_registration_btn"
-     Then I should be on the "sport:finish_sport_registration" page
-     And "This field is required." should show up 1 time
+  Scenario: Submit invalid coach form
+    Given I am on the "sport:finish_sport_registration" page
+    When I select "Head Coach" from "id_coach-position"
+    And I press "next_sport_registration_btn"
+    Then I should be on the "sport:finish_sport_registration" page
+    And "This field is required." should show up 1 time

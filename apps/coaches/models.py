@@ -26,6 +26,7 @@ class Coach(models.Model):
         unique_together = (('user', 'team'),)
 
     def clean(self):
+        # The hasattr method is needed for when the admin panel is used. A user or team may be omitted by accident.
         if hasattr(self, 'user') and hasattr(self, 'team'):
             sport = self.team.division.league.sport
             qs = SportRegistration.objects.filter(user=self.user, sport=sport)

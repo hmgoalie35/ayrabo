@@ -1,6 +1,6 @@
 from behave import *
 
-from leagues.tests.factories.LeagueFactory import LeagueFactory
+from leagues.tests import LeagueFactory
 
 
 @step('The following league exists "(?P<league_name>[^"]*)"')

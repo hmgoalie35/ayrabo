@@ -17,6 +17,7 @@ class BasketballPlayerAdmin(admin.ModelAdmin):
     list_display = ['id', 'user', 'team', 'position', 'shoots', 'jersey_number', 'created']
     list_display_links = ['user']
 
+
 admin.site.register(models.HockeyPlayer, HockeyPlayerAdmin)
 admin.site.register(models.BaseballPlayer, BaseballPlayerAdmin)
 admin.site.register(models.BasketballPlayer, BasketballPlayerAdmin)

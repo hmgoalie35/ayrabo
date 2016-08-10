@@ -1,9 +1,9 @@
 import factory
 from factory import django
 
-from accounts.tests.factories.UserFactory import UserFactory
+from accounts.tests import UserFactory
 from sports.models import SportRegistration
-from sports.tests.factories.SportFactory import SportFactory
+from sports.tests import SportFactory
 
 
 class SportRegistrationFactory(django.DjangoModelFactory):

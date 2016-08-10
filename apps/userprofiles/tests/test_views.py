@@ -2,17 +2,16 @@ import factory
 from django.core.urlresolvers import reverse
 from django.test import TestCase
 
-from accounts.tests.factories.UserFactory import UserFactory
-from coaches.tests.factories.CoachFactory import CoachFactory
-from divisions.tests.factories.DivisionFactory import DivisionFactory
+from accounts.tests import UserFactory
+from coaches.tests import CoachFactory
+from divisions.tests import DivisionFactory
 from escoresheet.testing_utils import get_messages
-from leagues.tests.factories.LeagueFactory import LeagueFactory
-from managers.tests.factories.ManagerFactory import ManagerFactory
-from players.tests.factories.PlayerFactory import HockeyPlayerFactory
-from referees.tests.factories.RefereeFactory import RefereeFactory
-from sports.tests.factories.SportFactory import SportFactory
-from sports.tests.factories.SportRegistrationFactory import SportRegistrationFactory
-from teams.tests.factories.TeamFactory import TeamFactory
+from leagues.tests import LeagueFactory
+from managers.tests import ManagerFactory
+from players.tests import HockeyPlayerFactory
+from referees.tests import RefereeFactory
+from sports.tests import SportFactory, SportRegistrationFactory
+from teams.tests import TeamFactory
 from userprofiles.models import UserProfile
 from .factories.UserProfileFactory import UserProfileFactory
 

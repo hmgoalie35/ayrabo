@@ -2,11 +2,11 @@ from behave import *
 from django.contrib.auth.models import User
 from django.db.models import Q
 
-from players.tests.factories.PlayerFactory import HockeyPlayerFactory
+from players.tests import HockeyPlayerFactory
 from sports.models import Sport
-from sports.tests.factories.SportFactory import SportFactory
+from sports.tests import SportFactory
 from teams.models import Team
-from teams.tests.factories.TeamFactory import TeamFactory
+from teams.tests import TeamFactory
 
 
 @step('The following player objects? exists?')

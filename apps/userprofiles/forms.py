@@ -13,6 +13,10 @@ MAX_AGE = 100
 
 
 class SelectDateMonthDayYearInitiallyBlankWidget(extras.SelectDateWidget):
+    """
+    A custom date widget that initially populates month, day, year select tags with "Month", "Day", "Year" instead of
+    a valid month, day, year combo.
+    """
     def create_select(self, name, field, value, val, choices, none_value):
         custom_none_value = ()
         if 'year' in field:
@@ -32,6 +36,7 @@ class CreateUserProfileForm(forms.ModelForm):
         self.helper = FormHelper()
         self.helper.layout = Layout(
                 Field('gender'),
+                # This makes the birthday select tags inline
                 Field('birthday', wrapper_class='form-inline'),
                 Field('height'),
                 Field('weight'),

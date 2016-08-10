@@ -3,9 +3,9 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.forms import inlineformset_factory, BaseInlineFormSet
+from django.http import Http404
 from django.shortcuts import redirect, render, get_object_or_404
 from django.views import generic
-from django.http import Http404
 from django.views.generic.base import ContextMixin
 
 from coaches import forms as coach_forms
@@ -254,19 +254,23 @@ class UpdateSportRegistrationView(LoginRequiredMixin, ContextMixin, generic.View
         manager_form = context.get('manager_form', None)
         referee_form = context.get('referee_form', None)
 
-        if coach_form is not None and coach_form.has_changed() and coach_form.changed_data != context.get('coach_read_only_fields', []):
+        if coach_form is not None and coach_form.has_changed() and coach_form.changed_data != context.get(
+                'coach_read_only_fields', []):
             forms_that_were_submitted.append(coach_form)
             is_form_valid[coach_form] = coach_form.is_valid()
 
-        if manager_form is not None and manager_form.has_changed() and manager_form.changed_data != context.get('manager_read_only_fields', []):
+        if manager_form is not None and manager_form.has_changed() and manager_form.changed_data != context.get(
+                'manager_read_only_fields', []):
             forms_that_were_submitted.append(manager_form)
             is_form_valid[manager_form] = manager_form.is_valid()
 
-        if referee_form is not None and referee_form.has_changed() and referee_form.changed_data != context.get('referee_read_only_fields', []):
+        if referee_form is not None and referee_form.has_changed() and referee_form.changed_data != context.get(
+                'referee_read_only_fields', []):
             forms_that_were_submitted.append(referee_form)
             is_form_valid[referee_form] = referee_form.is_valid()
 
-        if player_form is not None and player_form.has_changed() and player_form.changed_data != context.get('player_read_only_fields', []):
+        if player_form is not None and player_form.has_changed() and player_form.changed_data != context.get(
+                'player_read_only_fields', []):
             forms_that_were_submitted.append(player_form)
             is_form_valid[player_form] = False
             if player_form.is_valid():

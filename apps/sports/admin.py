@@ -1,7 +1,6 @@
 from django.contrib import admin
 
-from . import models
-from . import forms
+from . import models, forms
 
 
 class SportAdmin(admin.ModelAdmin):

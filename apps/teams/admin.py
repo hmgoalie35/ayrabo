@@ -14,15 +14,18 @@ class TeamAdmin(admin.ModelAdmin):
 
     def website_link(self, obj):
         return format_html('<a target="_blank" href="{url}">{url}</a>', url=obj.website)
+
     website_link.short_description = 'Website Link'
 
     def league(self, obj):
         league = obj.division.league
         return '{full_name} - {abbr_name}'.format(full_name=league.full_name, abbr_name=league.abbreviated_name)
+
     league.short_description = 'League'
 
     def sport(self, obj):
         return obj.division.league.sport.name
+
     sport.short_description = 'Sport'
 
 

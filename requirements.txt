@@ -8,13 +8,13 @@ Django==1.9.8
 django-allauth==0.25.2
 django-appconf==1.0.2
 django-bower==5.1.0
-django-compressor==2.0
+django-compressor==2.1
 django-coverage==1.2.4
 django-crispy-forms==1.6.0
 django-debug-toolbar==1.5
-django-extensions==1.6.7
+django-extensions==1.7.1
 factory-boy==2.7.0
-fake-factory==0.5.10
+fake-factory==0.6.0
 jsonschema==2.5.1
 libsass==0.11.1
 nodeenv==0.13.6
@@ -30,7 +30,7 @@ pytz==2016.6.1
 PyYAML==3.11
 rcssmin==1.0.6
 redgreenunittest==0.1.1
-requests==2.10.0
+requests==2.11.0
 requests-oauthlib==0.6.2
 rjsmin==1.0.12
 selenium==2.53.6

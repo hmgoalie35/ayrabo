@@ -1,12 +1,12 @@
 import csv
 from io import TextIOWrapper
 
+from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.urlresolvers import reverse_lazy
 from django.db.utils import IntegrityError
 from django.shortcuts import redirect, render
 from django.views.generic import FormView
-from django.contrib import messages
 
 from divisions.models import Division
 from .forms import BulkUploadTeamsForm
@@ -37,7 +37,7 @@ class BulkUploadTeamsView(LoginRequiredMixin, FormView):
             return render(self.request, 'teams/bulk_upload_teams.html', context)
 
         messages.success(self.request, '{successful_teams_created} out of {total_csv_rows} teams successfully created'
-                         .format(successful_teams_created=successful_teams_created, total_csv_rows=total_csv_rows-1))
+                         .format(successful_teams_created=successful_teams_created, total_csv_rows=total_csv_rows - 1))
         return super(BulkUploadTeamsView, self).form_valid(form)
 
     def parse_csv(self, uploaded_file):

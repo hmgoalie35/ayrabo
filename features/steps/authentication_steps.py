@@ -7,7 +7,7 @@ from django.core import mail
 from django.db.models import Q
 from generic_steps import find_element
 
-from userprofiles.tests.factories.UserProfileFactory import UserProfileFactory
+from userprofiles.tests import UserProfileFactory
 
 
 # @TODO use factory

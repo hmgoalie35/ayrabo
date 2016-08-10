@@ -1,8 +1,8 @@
 from django.core.urlresolvers import reverse
 from django.test import TestCase
 
-from accounts.tests.factories.UserFactory import UserFactory
-from sports.tests.factories.SportRegistrationFactory import SportRegistrationFactory
+from accounts.tests import UserFactory
+from sports.tests import SportRegistrationFactory
 
 
 class HomeViewTests(TestCase):

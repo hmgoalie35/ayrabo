@@ -2,7 +2,7 @@ import factory
 from factory import django, fuzzy, post_generation
 
 from divisions.models import Division
-from leagues.tests.factories.LeagueFactory import LeagueFactory
+from leagues.tests import LeagueFactory
 
 
 class DivisionFactory(django.DjangoModelFactory):

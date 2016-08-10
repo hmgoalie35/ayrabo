@@ -1,366 +1,384 @@
 [
-{
+  {
     "model": "sites.site",
     "pk": 1,
     "fields": {
-        "domain": "escoresheet.com",
-        "name": "E-ScoreSheet"
+      "domain": "escoresheet.com",
+      "name": "E-ScoreSheet"
     }
-},
-{
+  },
+  {
     "model": "account.emailconfirmation",
     "pk": 1,
     "fields": {
-        "email_address": 1,
-        "created": "2016-06-28T04:40:09.922Z",
-        "sent": "2016-06-28T04:40:10.053Z",
-        "key": "nlofszplz7dg9q5ptdaladwgweutywrsewmfmmeqkb5avokgpzw27sophn6zigp2"
+      "email_address": 1,
+      "created": "2016-06-28T04:40:09.922Z",
+      "sent": "2016-06-28T04:40:10.053Z",
+      "key": "nlofszplz7dg9q5ptdaladwgweutywrsewmfmmeqkb5avokgpzw27sophn6zigp2"
     }
-},
-{
+  },
+  {
     "model": "sports.sport",
     "pk": 1,
     "fields": {
-        "name": "Ice Hockey",
-        "slug": "ice-hockey",
-        "description": "",
-        "created": "2016-06-28T04:40:02Z"
+      "name": "Ice Hockey",
+      "slug": "ice-hockey",
+      "description": "",
+      "created": "2016-06-28T04:40:02Z"
     }
-},
-{
+  },
+  {
     "model": "sports.sport",
     "pk": 2,
     "fields": {
-        "name": "Baseball",
-        "slug": "baseball",
-        "description": "",
-        "created": "2016-07-31T03:10:56.970Z"
+      "name": "Baseball",
+      "slug": "baseball",
+      "description": "",
+      "created": "2016-07-31T03:10:56.970Z"
     }
-},
-{
+  },
+  {
     "model": "leagues.league",
     "pk": 1,
     "fields": {
-        "full_name": "Long Island Amateur Hockey League",
-        "abbreviated_name": "LIAHL",
-        "slug": "liahl",
-        "sport": 1,
-        "created": "2016-06-28T04:40:02Z"
+      "full_name": "Long Island Amateur Hockey League",
+      "abbreviated_name": "LIAHL",
+      "slug": "liahl",
+      "sport": 1,
+      "created": "2016-06-28T04:40:02Z"
     }
-},
-{
+  },
+  {
     "model": "leagues.league",
     "pk": 2,
     "fields": {
-        "full_name": "National Hockey League",
-        "abbreviated_name": "NHL",
-        "slug": "nhl",
-        "sport": 1,
-        "created": "2016-06-28T04:40:02Z"
+      "full_name": "National Hockey League",
+      "abbreviated_name": "NHL",
+      "slug": "nhl",
+      "sport": 1,
+      "created": "2016-06-28T04:40:02Z"
     }
-},
-{
+  },
+  {
     "model": "leagues.league",
     "pk": 3,
     "fields": {
-        "full_name": "Major League Baseball",
-        "abbreviated_name": "MLB",
-        "slug": "mlb",
-        "sport": 2,
-        "created": "2016-07-31T03:11:31.865Z"
+      "full_name": "Major League Baseball",
+      "abbreviated_name": "MLB",
+      "slug": "mlb",
+      "sport": 2,
+      "created": "2016-07-31T03:11:31.865Z"
     }
-},
-{
+  },
+  {
     "model": "divisions.division",
     "pk": 1,
     "fields": {
-        "name": "Midget Minor AA",
-        "slug": "midget-minor-aa",
-        "league": 1,
-        "created": "2016-06-28T04:40:02Z"
+      "name": "Midget Minor AA",
+      "slug": "midget-minor-aa",
+      "league": 1,
+      "created": "2016-06-28T04:40:02Z"
     }
-},
-{
+  },
+  {
     "model": "divisions.division",
     "pk": 2,
     "fields": {
-        "name": "Pacific Division",
-        "slug": "pacific-division",
-        "league": 2,
-        "created": "2016-06-28T04:40:02Z"
+      "name": "Pacific Division",
+      "slug": "pacific-division",
+      "league": 2,
+      "created": "2016-06-28T04:40:02Z"
     }
-},
-{
+  },
+  {
     "model": "divisions.division",
     "pk": 3,
     "fields": {
-        "name": "Central Division",
-        "slug": "central-division",
-        "league": 2,
-        "created": "2016-06-28T04:40:02Z"
+      "name": "Central Division",
+      "slug": "central-division",
+      "league": 2,
+      "created": "2016-06-28T04:40:02Z"
     }
-},
-{
+  },
+  {
     "model": "divisions.division",
     "pk": 4,
     "fields": {
-        "name": "Metropolitan Division",
-        "slug": "metropolitan-division",
-        "league": 2,
-        "created": "2016-06-28T04:40:02Z"
+      "name": "Metropolitan Division",
+      "slug": "metropolitan-division",
+      "league": 2,
+      "created": "2016-06-28T04:40:02Z"
     }
-},
-{
+  },
+  {
     "model": "divisions.division",
     "pk": 5,
     "fields": {
-        "name": "Atlantic Division",
-        "slug": "atlantic-division",
-        "league": 2,
-        "created": "2016-06-28T04:40:02Z"
+      "name": "Atlantic Division",
+      "slug": "atlantic-division",
+      "league": 2,
+      "created": "2016-06-28T04:40:02Z"
     }
-},
-{
+  },
+  {
     "model": "divisions.division",
     "pk": 6,
     "fields": {
-        "name": "Pee Wee",
-        "slug": "pee-wee",
-        "league": 1,
-        "created": "2016-06-28T04:40:02Z"
+      "name": "Pee Wee",
+      "slug": "pee-wee",
+      "league": 1,
+      "created": "2016-06-28T04:40:02Z"
     }
-},
-{
+  },
+  {
     "model": "divisions.division",
     "pk": 7,
     "fields": {
-        "name": "Mites",
-        "slug": "mites",
-        "league": 1,
-        "created": "2016-06-28T04:40:02Z"
+      "name": "Mites",
+      "slug": "mites",
+      "league": 1,
+      "created": "2016-06-28T04:40:02Z"
     }
-},
-{
+  },
+  {
     "model": "divisions.division",
     "pk": 8,
     "fields": {
-        "name": "American League East",
-        "slug": "american-league-east",
-        "league": 3,
-        "created": "2016-07-31T03:12:53.057Z"
+      "name": "American League East",
+      "slug": "american-league-east",
+      "league": 3,
+      "created": "2016-07-31T03:12:53.057Z"
     }
-},
-{
+  },
+  {
     "model": "divisions.division",
     "pk": 9,
     "fields": {
-        "name": "American League West",
-        "slug": "american-league-west",
-        "league": 3,
-        "created": "2016-07-31T03:13:01.729Z"
+      "name": "American League West",
+      "slug": "american-league-west",
+      "league": 3,
+      "created": "2016-07-31T03:13:01.729Z"
     }
-},
-{
+  },
+  {
     "model": "divisions.division",
     "pk": 10,
     "fields": {
-        "name": "American League Central",
-        "slug": "american-league-central",
-        "league": 3,
-        "created": "2016-07-31T03:13:09.026Z"
+      "name": "American League Central",
+      "slug": "american-league-central",
+      "league": 3,
+      "created": "2016-07-31T03:13:09.026Z"
     }
-},
-{
+  },
+  {
     "model": "divisions.division",
     "pk": 11,
     "fields": {
-        "name": "National League East",
-        "slug": "national-league-east",
-        "league": 3,
-        "created": "2016-07-31T03:13:22.041Z"
+      "name": "National League East",
+      "slug": "national-league-east",
+      "league": 3,
+      "created": "2016-07-31T03:13:22.041Z"
     }
-},
-{
+  },
+  {
     "model": "divisions.division",
     "pk": 12,
     "fields": {
-        "name": "National League West",
-        "slug": "national-league-west",
-        "league": 3,
-        "created": "2016-07-31T03:13:32.679Z"
+      "name": "National League West",
+      "slug": "national-league-west",
+      "league": 3,
+      "created": "2016-07-31T03:13:32.679Z"
     }
-},
-{
+  },
+  {
     "model": "divisions.division",
     "pk": 13,
     "fields": {
-        "name": "National League Central",
-        "slug": "national-league-central",
-        "league": 3,
-        "created": "2016-07-31T03:13:38.689Z"
+      "name": "National League Central",
+      "slug": "national-league-central",
+      "league": 3,
+      "created": "2016-07-31T03:13:38.689Z"
     }
-},
-{
+  },
+  {
     "model": "teams.team",
     "pk": 1,
     "fields": {
-        "name": "Green Machine IceCats",
-        "slug": "green-machine-icecats",
-        "website": "http://www.icecathockey.com",
-        "division": 1,
-        "created": "2016-06-28T04:40:02Z"
+      "name": "Green Machine IceCats",
+      "slug": "green-machine-icecats",
+      "website": "http://www.icecathockey.com",
+      "division": 1,
+      "created": "2016-06-28T04:40:02Z"
     }
-},
-{
+  },
+  {
     "model": "teams.team",
     "pk": 2,
     "fields": {
-        "name": "NY Yankees",
-        "slug": "ny-yankees",
-        "website": "",
-        "division": 8,
-        "created": "2016-07-31T03:14:56.544Z"
+      "name": "NY Yankees",
+      "slug": "ny-yankees",
+      "website": "",
+      "division": 8,
+      "created": "2016-07-31T03:14:56.544Z"
     }
-},
-{
+  },
+  {
     "model": "teams.team",
     "pk": 3,
     "fields": {
-        "name": "Boston Redsox",
-        "slug": "boston-redsox",
-        "website": "",
-        "division": 8,
-        "created": "2016-07-31T03:15:16.326Z"
+      "name": "Boston Redsox",
+      "slug": "boston-redsox",
+      "website": "",
+      "division": 8,
+      "created": "2016-07-31T03:15:16.326Z"
     }
-},
-{
+  },
+  {
     "model": "teams.team",
     "pk": 4,
     "fields": {
-        "name": "Kansas City Royals",
-        "slug": "kansas-city-royals",
-        "website": "",
-        "division": 10,
-        "created": "2016-07-31T03:15:35.434Z"
+      "name": "Kansas City Royals",
+      "slug": "kansas-city-royals",
+      "website": "",
+      "division": 10,
+      "created": "2016-07-31T03:15:35.434Z"
     }
-},
-{
+  },
+  {
     "model": "teams.team",
     "pk": 5,
     "fields": {
-        "name": "Minnesota Twins",
-        "slug": "minnesota-twins",
-        "website": "",
-        "division": 10,
-        "created": "2016-07-31T03:15:53.652Z"
+      "name": "Minnesota Twins",
+      "slug": "minnesota-twins",
+      "website": "",
+      "division": 10,
+      "created": "2016-07-31T03:15:53.652Z"
     }
-},
-{
+  },
+  {
     "model": "auth.user",
     "pk": 1,
     "fields": {
-        "password": "pbkdf2_sha256$24000$L3pYG3HA0sRR$IhkK2b098hM5/ghPb5k9U3mCDXGVkz7r4bSZ/Xhrraw=",
-        "last_login": "2016-08-07T21:26:37.861Z",
-        "is_superuser": true,
-        "username": "h@p.com",
-        "first_name": "Harris",
-        "last_name": "Pittinsky",
-        "email": "h@p.com",
-        "is_staff": true,
-        "is_active": true,
-        "date_joined": "2016-06-28T04:40:02Z",
-        "groups": [],
-        "user_permissions": []
+      "password": "pbkdf2_sha256$24000$L3pYG3HA0sRR$IhkK2b098hM5/ghPb5k9U3mCDXGVkz7r4bSZ/Xhrraw=",
+      "last_login": "2016-08-10T03:22:00.309Z",
+      "is_superuser": true,
+      "username": "h@p.com",
+      "first_name": "Harris",
+      "last_name": "Pittinsky",
+      "email": "h@p.com",
+      "is_staff": true,
+      "is_active": true,
+      "date_joined": "2016-06-28T04:40:02Z",
+      "groups": [],
+      "user_permissions": []
     }
-},
-{
+  },
+  {
     "model": "userprofiles.userprofile",
     "pk": 1,
     "fields": {
-        "user": 1,
-        "gender": "Male",
-        "birthday": "1996-06-28",
-        "height": "5' 7\"",
-        "weight": 130,
-        "language": "en",
-        "timezone": "US/Eastern"
+      "user": 1,
+      "gender": "Male",
+      "birthday": "1996-06-28",
+      "height": "5' 7\"",
+      "weight": 130,
+      "language": "en",
+      "timezone": "US/Eastern"
     }
-},
-{
+  },
+  {
     "model": "coaches.coach",
     "pk": 2,
     "fields": {
-        "user": 1,
-        "position": "Head Coach",
-        "team": 1,
-        "created": "2016-08-07T21:29:11.785Z"
+      "user": 1,
+      "position": "Head Coach",
+      "team": 1,
+      "created": "2016-08-07T21:29:11.785Z"
     }
-},
-{
+  },
+  {
     "model": "coaches.coach",
     "pk": 3,
     "fields": {
-        "user": 1,
-        "position": "Assistant Coach",
-        "team": 3,
-        "created": "2016-08-07T21:29:25.092Z"
+      "user": 1,
+      "position": "Assistant Coach",
+      "team": 3,
+      "created": "2016-08-07T21:29:25.092Z"
     }
-},
-{
+  },
+  {
     "model": "players.hockeyplayer",
     "pk": 1,
     "fields": {
-        "user": 1,
-        "sport": 1,
-        "team": 1,
-        "jersey_number": 55,
-        "created": "2016-08-07T21:29:11.625Z",
-        "position": "LW",
-        "handedness": "Left"
+      "user": 1,
+      "sport": 1,
+      "team": 1,
+      "jersey_number": 55,
+      "created": "2016-08-07T21:29:11.625Z",
+      "position": "LW",
+      "handedness": "Left"
     }
-},
-{
+  },
+  {
     "model": "players.baseballplayer",
     "pk": 1,
     "fields": {
-        "user": 1,
-        "sport": 2,
-        "team": 3,
-        "jersey_number": 55,
-        "created": "2016-08-07T21:29:25.005Z",
-        "position": "CF",
-        "catches": "Left",
-        "bats": "Left"
+      "user": 1,
+      "sport": 2,
+      "team": 3,
+      "jersey_number": 55,
+      "created": "2016-08-07T21:29:25.005Z",
+      "position": "CF",
+      "catches": "Left",
+      "bats": "Left"
     }
-},
-{
+  },
+  {
+    "model": "referees.referee",
+    "pk": 1,
+    "fields": {
+      "user": 1,
+      "league": 2,
+      "created": "2016-08-10T03:41:56.984Z"
+    }
+  },
+  {
+    "model": "managers.manager",
+    "pk": 1,
+    "fields": {
+      "user": 1,
+      "team": 5,
+      "created": "2016-08-10T03:41:45.252Z"
+    }
+  },
+  {
     "model": "sports.sportregistration",
     "pk": 20,
     "fields": {
-        "user": 1,
-        "sport": 1,
-        "roles_mask": 15,
-        "is_complete": true
+      "user": 1,
+      "sport": 1,
+      "roles_mask": 15,
+      "is_complete": true
     }
-},
-{
+  },
+  {
     "model": "sports.sportregistration",
     "pk": 21,
     "fields": {
-        "user": 1,
-        "sport": 2,
-        "roles_mask": 15,
-        "is_complete": true
+      "user": 1,
+      "sport": 2,
+      "roles_mask": 15,
+      "is_complete": true
     }
-},
-{
+  },
+  {
     "model": "account.emailaddress",
     "pk": 1,
     "fields": {
-        "user": 1,
-        "email": "h@p.com",
-        "verified": true,
-        "primary": true
+      "user": 1,
+      "email": "h@p.com",
+      "verified": true,
+      "primary": true
     }
-}
+  }
 ]

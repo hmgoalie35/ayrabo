@@ -8,7 +8,9 @@ from django.db.models import Q
 from selenium.common.exceptions import NoSuchElementException, WebDriverException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.select import Select
+
 from sports.models import SportRegistration
+
 
 def find_element(context, element_to_find):
     """
@@ -139,6 +141,7 @@ def step_impl(context, element, option_text):
             break
     context.test.assertTrue(text_dne)
 
+
 @step('I upload "(?P<file_name>.*)" into "(?P<element>.*)"')
 def step_impl(context, file_name, element):
     the_element = find_element(context, element)
@@ -176,7 +179,6 @@ def step_impl(context, model_class, data):
     if model_class == 'sports.SportRegistration':
         sr = SportRegistration.objects.get(user__email=user, sport__name=sport_name)
         context.test.assertEqual(context.get_url(sr.get_absolute_url()), context.driver.current_url)
-
 
 
 # TODO make this dynamic
