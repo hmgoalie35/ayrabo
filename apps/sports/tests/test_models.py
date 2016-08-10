@@ -4,7 +4,7 @@ from django.test import TestCase
 from django.utils.text import slugify
 
 from accounts.tests import UserFactory
-from coaches.tests.factories.CoachFactory import CoachFactory
+from coaches.tests import CoachFactory
 from divisions.tests.factories.DivisionFactory import DivisionFactory
 from escoresheet.testing_utils import is_queryset_in_alphabetical_order
 from leagues.tests.factories.LeagueFactory import LeagueFactory

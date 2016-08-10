@@ -3,7 +3,7 @@ from django.core.urlresolvers import reverse
 from django.test import TestCase
 
 from accounts.tests import UserFactory
-from coaches.tests.factories.CoachFactory import CoachFactory
+from coaches.tests import CoachFactory
 from divisions.tests.factories.DivisionFactory import DivisionFactory
 from escoresheet.testing_utils import get_messages
 from leagues.tests.factories.LeagueFactory import LeagueFactory

@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 from django.db.models import Q
 
 from coaches.models import Coach
-from coaches.tests.factories.CoachFactory import CoachFactory
+from coaches.tests import CoachFactory
 from teams.models import Team
 from teams.tests.factories.TeamFactory import TeamFactory
 
