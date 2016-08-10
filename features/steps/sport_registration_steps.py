@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 from django.db.models import Q
 
 from sports.models import Sport, SportRegistration
-from sports.tests.factories.SportRegistrationFactory import SportRegistrationFactory
+from sports.tests import SportRegistrationFactory
 
 
 @step(

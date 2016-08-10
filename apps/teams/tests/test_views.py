@@ -7,8 +7,8 @@ from django.test import TransactionTestCase
 from accounts.tests import UserFactory
 from divisions.tests import DivisionFactory
 from escoresheet.testing_utils import get_messages
-from sports.tests.factories.SportFactory import SportFactory
-from sports.tests.factories.SportRegistrationFactory import SportRegistrationFactory
+from sports.tests import SportFactory
+from sports.tests import SportRegistrationFactory
 
 
 class TeamViewTests(TransactionTestCase):

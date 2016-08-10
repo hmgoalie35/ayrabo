@@ -2,7 +2,7 @@ from django.core.urlresolvers import reverse
 from django.test import TestCase
 
 from accounts.tests import UserFactory
-from sports.tests.factories.SportRegistrationFactory import SportRegistrationFactory
+from sports.tests import SportRegistrationFactory
 
 
 class HomeViewTests(TestCase):

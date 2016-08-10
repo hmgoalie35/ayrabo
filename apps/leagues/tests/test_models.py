@@ -4,7 +4,7 @@ from django.utils.text import slugify
 
 from escoresheet.testing_utils import is_queryset_in_alphabetical_order
 from leagues.models import League
-from sports.tests.factories.SportFactory import SportFactory
+from sports.tests import SportFactory
 from .factories.LeagueFactory import LeagueFactory
 
 

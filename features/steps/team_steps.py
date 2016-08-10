@@ -2,7 +2,7 @@ from behave import *
 
 from divisions.tests import DivisionFactory
 from leagues.tests import LeagueFactory
-from sports.tests.factories.SportFactory import SportFactory
+from sports.tests import SportFactory
 from teams.tests.factories.TeamFactory import TeamFactory
 
 

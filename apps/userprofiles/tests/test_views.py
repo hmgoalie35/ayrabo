@@ -10,8 +10,8 @@ from leagues.tests import LeagueFactory
 from managers.tests import ManagerFactory
 from players.tests import HockeyPlayerFactory
 from referees.tests import RefereeFactory
-from sports.tests.factories.SportFactory import SportFactory
-from sports.tests.factories.SportRegistrationFactory import SportRegistrationFactory
+from sports.tests import SportFactory
+from sports.tests import SportRegistrationFactory
 from teams.tests.factories.TeamFactory import TeamFactory
 from userprofiles.models import UserProfile
 from .factories.UserProfileFactory import UserProfileFactory

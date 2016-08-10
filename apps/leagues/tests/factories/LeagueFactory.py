@@ -3,7 +3,7 @@ import factory.fuzzy
 from factory import django, post_generation
 
 from leagues.models import League
-from sports.tests.factories.SportFactory import SportFactory
+from sports.tests import SportFactory
 
 
 class LeagueFactory(django.DjangoModelFactory):

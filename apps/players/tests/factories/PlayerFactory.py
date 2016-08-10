@@ -5,7 +5,7 @@ from factory import django, fuzzy
 
 from accounts.tests import UserFactory
 from players import models
-from sports.tests.factories.SportFactory import SportFactory
+from sports.tests import SportFactory
 from teams.tests.factories.TeamFactory import TeamFactory
 
 

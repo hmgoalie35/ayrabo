@@ -16,8 +16,8 @@ from players.tests import HockeyPlayerFactory
 from referees.models import Referee
 from referees.tests import RefereeFactory
 from sports.models import SportRegistration
-from sports.tests.factories.SportFactory import SportFactory
-from sports.tests.factories.SportRegistrationFactory import SportRegistrationFactory
+from sports.tests import SportFactory
+from sports.tests import SportRegistrationFactory
 from teams.tests.factories.TeamFactory import TeamFactory
 
 
