@@ -123,16 +123,16 @@ class UpdateUserProfileViewTests(TestCase):
     # GET
     def test_get_anonymous_user(self):
         self.client.logout()
-        response = self.client.get(reverse('profile:update'))
-        result_url = '%s?next=%s' % (reverse('account_login'), reverse('profile:update'))
+        response = self.client.get(reverse('account_home'))
+        result_url = '%s?next=%s' % (reverse('account_login'), reverse('account_home'))
         self.assertRedirects(response, result_url)
 
     def test_correct_template(self):
-        response = self.client.get(reverse('profile:update'))
+        response = self.client.get(reverse('account_home'))
         self.assertTemplateUsed(response, 'userprofiles/update.html')
 
     def test_200_status_code(self):
-        response = self.client.get(reverse('profile:update'))
+        response = self.client.get(reverse('account_home'))
         self.assertEqual(response.status_code, 200)
 
     def test_context_populated(self):
@@ -148,7 +148,7 @@ class UpdateUserProfileViewTests(TestCase):
         player = HockeyPlayerFactory(user=user, team=team, sport=self.sport)
         coach = CoachFactory(user=user, team=team)
         referee = RefereeFactory(user=user, league=league)
-        response = self.client.get(reverse('profile:update'))
+        response = self.client.get(reverse('account_home'))
         result = {
             sr:
                 {'sport': sr.sport,
@@ -166,21 +166,21 @@ class UpdateUserProfileViewTests(TestCase):
         self.client.logout()
         self.post_data.pop('gender')
         self.post_data.pop('birthday')
-        response = self.client.post(reverse('profile:update'), data=self.post_data, follow=True)
-        result_url = '%s?next=%s' % (reverse('account_login'), reverse('profile:update'))
+        response = self.client.post(reverse('account_home'), data=self.post_data, follow=True)
+        result_url = '%s?next=%s' % (reverse('account_login'), reverse('account_home'))
         self.assertRedirects(response, result_url)
 
     def test_post_no_changed_data(self):
         self.post_data.pop('gender')
         self.post_data.pop('birthday')
-        response = self.client.post(reverse('profile:update'), data=self.post_data, follow=True)
-        self.assertRedirects(response, reverse('profile:update'))
+        response = self.client.post(reverse('account_home'), data=self.post_data, follow=True)
+        self.assertRedirects(response, reverse('account_home'))
 
     def test_post_changed_data(self):
         # calling the factory will generate random values for all fields
         self.post_data.pop('gender')
         self.post_data.pop('birthday')
-        response = self.client.post(reverse('profile:update'), data=self.post_data, follow=True)
+        response = self.client.post(reverse('account_home'), data=self.post_data, follow=True)
         success_msg = 'Your profile has been updated'
         self.assertIn(success_msg, get_messages(response))
         self.assertTemplateUsed('userprofiles/update.html')
@@ -188,5 +188,5 @@ class UpdateUserProfileViewTests(TestCase):
     def test_userprofile_exists_in_context(self):
         self.post_data.pop('gender')
         self.post_data.pop('birthday')
-        response = self.client.post(reverse('profile:update'), data=self.post_data, follow=True)
+        response = self.client.post(reverse('account_home'), data=self.post_data, follow=True)
         self.assertIn('userprofile', response.context)

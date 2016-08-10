@@ -39,4 +39,4 @@ class PasswordChangeView(LoginRequiredMixin, views.PasswordChangeView):
     """
     Overrides the django-allauth success url to redirect to user's account page.
     """
-    success_url = reverse_lazy('profile:update')
+    success_url = reverse_lazy('account_home')

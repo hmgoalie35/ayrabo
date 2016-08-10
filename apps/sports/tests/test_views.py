@@ -556,7 +556,7 @@ class UpdateSportRegistrationViewTests(TestCase):
 
         response = self.client.post(self.url, data=post_data, follow=True)
 
-        self.assertRedirects(response, reverse('profile:update'))
+        self.assertRedirects(response, reverse('account_home'))
         self.assertIn('Sport registration for {sport} successfully updated.'.format(sport=self.ice_hockey.name),
                       get_messages(response))
 

@@ -51,5 +51,5 @@ Feature: Update sport registration
     When I fill in "id_hockeyplayer-jersey_number" with "22"
     And I select "Assistant Coach" from "id_coach-position"
     And I press "update_sport_registration_btn"
-#    Then I should be on the "profile:update" page
+#    Then I should be on the "account_home" page
     And I should see "Sport registration for Ice Hockey successfully updated."
