@@ -15,6 +15,7 @@ class Referee(models.Model):
         unique_together = (('user', 'league'),)
 
     def clean(self):
+        # hasattr is needed for when the admin panel is used, an object w/o those fields may be created by accident
         if hasattr(self, 'user') and hasattr(self, 'league'):
             sport = self.league.sport
             qs = SportRegistration.objects.filter(user=self.user, sport=sport)
