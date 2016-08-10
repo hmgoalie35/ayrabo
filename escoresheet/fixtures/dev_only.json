@@ -260,7 +260,7 @@
     "pk": 1,
     "fields": {
       "password": "pbkdf2_sha256$24000$L3pYG3HA0sRR$IhkK2b098hM5/ghPb5k9U3mCDXGVkz7r4bSZ/Xhrraw=",
-      "last_login": "2016-08-07T21:26:37.861Z",
+      "last_login": "2016-08-10T03:22:00.309Z",
       "is_superuser": true,
       "username": "h@p.com",
       "first_name": "Harris",
@@ -331,6 +331,24 @@
       "position": "CF",
       "catches": "Left",
       "bats": "Left"
+    }
+  },
+  {
+    "model": "referees.referee",
+    "pk": 1,
+    "fields": {
+      "user": 1,
+      "league": 2,
+      "created": "2016-08-10T03:41:56.984Z"
+    }
+  },
+  {
+    "model": "managers.manager",
+    "pk": 1,
+    "fields": {
+      "user": 1,
+      "team": 5,
+      "created": "2016-08-10T03:41:45.252Z"
     }
   },
   {

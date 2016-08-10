@@ -19,6 +19,11 @@ class SportRegistrationAdminForm(forms.ModelForm):
 
 class CreateSportRegistrationForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
+        """
+        Override the constructor to allow for additional kwargs to be passed in.
+        sport_already_registered_for -- a list of sport ids the current user has already registered for (so they can't)
+        register for that sport again.
+        """
         sports_already_registered_for = kwargs.pop('sports_already_registered_for', None)
         super(CreateSportRegistrationForm, self).__init__(*args, **kwargs)
         if sports_already_registered_for is not None:
