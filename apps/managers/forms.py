@@ -9,6 +9,12 @@ class ManagerForm(forms.ModelForm):
     prefix = 'manager'
 
     def __init__(self, *args, **kwargs):
+        """
+        Override the constructor to allow for custom kwargs to be passed to this form.
+        sport -- The sport to filter teams by
+        read_only_fields -- A list of fields that should be disabled in an HTML form. Note that using this will make
+        django think the form 'has_changed' when it really hasn't.
+        """
         sport = kwargs.pop('sport', None)
         read_only_fields = kwargs.pop('read_only_fields', None)
         super(ManagerForm, self).__init__(*args, **kwargs)

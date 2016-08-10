@@ -15,6 +15,7 @@ class Manager(models.Model):
         unique_together = (('user', 'team'),)
 
     def clean(self):
+        # hasattr is needed for when admin panel is used where an object w/o a user or team could be created.
         if hasattr(self, 'user') and hasattr(self, 'team'):
             sport = self.team.division.league.sport
             qs = SportRegistration.objects.filter(user=self.user, sport=sport)
