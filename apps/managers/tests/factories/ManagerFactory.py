@@ -3,7 +3,7 @@ from factory import django
 
 from accounts.tests import UserFactory
 from managers.models import Manager
-from teams.tests.factories.TeamFactory import TeamFactory
+from teams.tests import TeamFactory
 
 
 class ManagerFactory(django.DjangoModelFactory):

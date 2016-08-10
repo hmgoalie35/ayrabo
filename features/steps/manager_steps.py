@@ -4,7 +4,7 @@ from django.db.models import Q
 
 from managers.tests import ManagerFactory
 from teams.models import Team
-from teams.tests.factories.TeamFactory import TeamFactory
+from teams.tests import TeamFactory
 
 
 @step('The following manager objects? exists?')

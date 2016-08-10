@@ -3,7 +3,7 @@ from behave import *
 from divisions.tests import DivisionFactory
 from leagues.tests import LeagueFactory
 from sports.tests import SportFactory
-from teams.tests.factories.TeamFactory import TeamFactory
+from teams.tests import TeamFactory
 
 
 @step('The following team exists "(?P<team_name>[^"]*)" in division "(?P<division>[^"]*)"')

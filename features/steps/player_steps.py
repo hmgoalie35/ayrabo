@@ -6,7 +6,7 @@ from players.tests import HockeyPlayerFactory
 from sports.models import Sport
 from sports.tests import SportFactory
 from teams.models import Team
-from teams.tests.factories.TeamFactory import TeamFactory
+from teams.tests import TeamFactory
 
 
 @step('The following player objects? exists?')

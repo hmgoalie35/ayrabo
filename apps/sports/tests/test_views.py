@@ -18,7 +18,7 @@ from referees.tests import RefereeFactory
 from sports.models import SportRegistration
 from sports.tests import SportFactory
 from sports.tests import SportRegistrationFactory
-from teams.tests.factories.TeamFactory import TeamFactory
+from teams.tests import TeamFactory
 
 
 class CreateSportRegistrationViewTests(TestCase):

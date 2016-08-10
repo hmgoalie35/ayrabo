@@ -12,7 +12,7 @@ from managers.tests import ManagerFactory
 from players.tests import HockeyPlayerFactory
 from referees.tests import RefereeFactory
 from sports.models import Sport, SportRegistration
-from teams.tests.factories.TeamFactory import TeamFactory
+from teams.tests import TeamFactory
 from .factories.SportFactory import SportFactory
 from .factories.SportRegistrationFactory import SportRegistrationFactory
 

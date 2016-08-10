@@ -4,7 +4,7 @@ from django.test import TestCase
 
 from accounts.tests import UserFactory
 from sports.tests import SportRegistrationFactory
-from teams.tests.factories.TeamFactory import TeamFactory
+from teams.tests import TeamFactory
 from .factories.CoachFactory import CoachFactory
 
 

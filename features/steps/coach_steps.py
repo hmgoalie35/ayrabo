@@ -5,7 +5,7 @@ from django.db.models import Q
 from coaches.models import Coach
 from coaches.tests import CoachFactory
 from teams.models import Team
-from teams.tests.factories.TeamFactory import TeamFactory
+from teams.tests import TeamFactory
 
 
 @step(

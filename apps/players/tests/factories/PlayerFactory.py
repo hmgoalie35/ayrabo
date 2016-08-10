@@ -6,7 +6,7 @@ from factory import django, fuzzy
 from accounts.tests import UserFactory
 from players import models
 from sports.tests import SportFactory
-from teams.tests.factories.TeamFactory import TeamFactory
+from teams.tests import TeamFactory
 
 
 def generate_jersey_number():
