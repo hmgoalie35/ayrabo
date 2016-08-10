@@ -8,6 +8,9 @@ from django.views.generic import View
 
 
 class NewConfirmationEmailView(View):
+    """
+    A view that when POSTed to generates a new confirmation email for the given email address.
+    """
     def post(self, *args, **kwargs):
         email = self.request.POST.get('email', None)
         request_path = self.request.POST.get('request_path', None)
@@ -33,4 +36,7 @@ class NewConfirmationEmailView(View):
 
 
 class PasswordChangeView(LoginRequiredMixin, views.PasswordChangeView):
+    """
+    Overrides the django-allauth success url to redirect to user's account page.
+    """
     success_url = reverse_lazy('profile:update')

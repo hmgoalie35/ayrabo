@@ -33,23 +33,23 @@ class LoginForm(allauth_forms.LoginForm):
 class PasswordResetForm(allauth_forms.ResetPasswordForm):
     def __init__(self, *args, **kwargs):
         super(PasswordResetForm, self).__init__(*args, **kwargs)
-        remove_form_placeholders(self.fields)
+        remove_form_placeholders(self.fields)  # pragma: no cover
 
 
 class PasswordResetFromKeyForm(allauth_forms.ResetPasswordKeyForm):
     def __init__(self, *args, **kwargs):
         super(PasswordResetFromKeyForm, self).__init__(*args, **kwargs)
-        remove_form_placeholders(self.fields)
+        remove_form_placeholders(self.fields)  # pragma: no cover
 
 
 class ChangePasswordForm(allauth_forms.ChangePasswordForm):
     def __init__(self, *args, **kwargs):
         super(ChangePasswordForm, self).__init__(*args, **kwargs)
-        remove_form_placeholders(self.fields)
+        remove_form_placeholders(self.fields)  # pragma: no cover
         add_autofocus_to_field(self.fields['oldpassword'])
 
 
 class AddEmailForm(allauth_forms.AddEmailForm):
     def __init__(self, *args, **kwargs):
         super(AddEmailForm, self).__init__(*args, **kwargs)
-        remove_form_placeholders(self.fields)
+        remove_form_placeholders(self.fields)  # pragma: no cover
