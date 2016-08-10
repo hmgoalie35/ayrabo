@@ -9,7 +9,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="{% url 'home' %}">E-ScoreSheet</a>
+            <a class="navbar-brand" href="{% url 'home' %}">escoresheet</a>
         </div>
         <div id="navbar" class="navbar-collapse collapse" aria-expanded="false">
             <ul class="nav navbar-nav navbar-right">
@@ -23,7 +23,7 @@
                         <ul class="dropdown-menu">
                             <li>
                                 <a id="edit_account_link" href="{% url 'profile:update' %}"><span
-                                        class="fa fa-cog"></span>&nbsp; {{ user.email }}</a>
+                                        class="fa fa-user"></span>&nbsp; {{ user.email }}</a>
                             </li>
 
                             <li class="divider"></li>
@@ -42,7 +42,7 @@
                             <div class="form-group">
                                 <div class="input-group">
                                     <div class="input-group-addon">
-                                        <span class="fa fa-user"></span>
+                                        <span class="fa fa-envelope"></span>
                                     </div>
                                     <input id="id_login_navbar" name="login" type="text"
                                            class="form-control input-sm" placeholder="E-mail"
@@ -52,7 +52,7 @@
                             <div class="form-group">
                                 <div class="input-group">
                                     <div class="input-group-addon">
-                                        <span class="fa fa-lock"></span>
+                                        <span class="fa fa-key"></span>
                                     </div>
                                     <input id="id_password_navbar" name="password" type="password"
                                            class="form-control input-sm" placeholder="Password"
