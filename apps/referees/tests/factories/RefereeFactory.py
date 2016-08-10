@@ -2,7 +2,7 @@ import factory
 from factory import django
 
 from accounts.tests import UserFactory
-from leagues.tests.factories.LeagueFactory import LeagueFactory
+from leagues.tests import LeagueFactory
 from referees.models import Referee
 
 

@@ -6,7 +6,7 @@ from accounts.tests import UserFactory
 from coaches.tests import CoachFactory
 from divisions.tests import DivisionFactory
 from escoresheet.testing_utils import get_messages
-from leagues.tests.factories.LeagueFactory import LeagueFactory
+from leagues.tests import LeagueFactory
 from managers.tests.factories.ManagerFactory import ManagerFactory
 from players.tests.factories.PlayerFactory import HockeyPlayerFactory
 from referees.tests.factories.RefereeFactory import RefereeFactory

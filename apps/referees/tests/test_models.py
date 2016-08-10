@@ -3,7 +3,7 @@ from django.db.utils import IntegrityError
 from django.test import TestCase
 
 from accounts.tests import UserFactory
-from leagues.tests.factories.LeagueFactory import LeagueFactory
+from leagues.tests import LeagueFactory
 from sports.tests.factories.SportRegistrationFactory import SportRegistrationFactory
 from .factories.RefereeFactory import RefereeFactory
 
