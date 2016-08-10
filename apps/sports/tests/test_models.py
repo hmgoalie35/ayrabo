@@ -3,7 +3,7 @@ from django.db.utils import IntegrityError
 from django.test import TestCase
 from django.utils.text import slugify
 
-from accounts.tests.factories.UserFactory import UserFactory
+from accounts.tests import UserFactory
 from coaches.tests.factories.CoachFactory import CoachFactory
 from divisions.tests.factories.DivisionFactory import DivisionFactory
 from escoresheet.testing_utils import is_queryset_in_alphabetical_order

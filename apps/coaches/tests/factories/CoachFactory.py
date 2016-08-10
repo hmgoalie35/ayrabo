@@ -1,7 +1,7 @@
 import factory
 from factory import django, fuzzy
 
-from accounts.tests.factories.UserFactory import UserFactory
+from accounts.tests import UserFactory
 from coaches.models import Coach
 from teams.tests.factories.TeamFactory import TeamFactory
 

@@ -2,7 +2,7 @@ import factory
 from django.core.urlresolvers import reverse
 from django.test import TestCase
 
-from accounts.tests.factories.UserFactory import UserFactory
+from accounts.tests import UserFactory
 from coaches.models import Coach
 from coaches.tests.factories.CoachFactory import CoachFactory
 from divisions.tests.factories.DivisionFactory import DivisionFactory
