@@ -1,7 +1,7 @@
 import factory
 from factory import django, fuzzy, post_generation
 
-from divisions.tests.factories.DivisionFactory import DivisionFactory
+from divisions.tests import DivisionFactory
 from teams.models import Team
 
 

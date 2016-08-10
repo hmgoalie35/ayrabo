@@ -1,6 +1,6 @@
 from behave import *
 
-from divisions.tests.factories.DivisionFactory import DivisionFactory
+from divisions.tests import DivisionFactory
 from leagues.tests.factories.LeagueFactory import LeagueFactory
 
 
