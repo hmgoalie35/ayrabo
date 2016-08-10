@@ -59,7 +59,7 @@ class UpdateUserProfileView(LoginRequiredMixin, SuccessMessageMixin, generic.Upd
     model = UserProfile
     form_class = UpdateUserProfileForm
     template_name = 'userprofiles/update.html'
-    success_url = reverse_lazy('profile:update')
+    success_url = reverse_lazy('account_home')
     success_message = 'Your profile has been updated'
     context_object_name = 'userprofile'
 
@@ -80,4 +80,4 @@ class UpdateUserProfileView(LoginRequiredMixin, SuccessMessageMixin, generic.Upd
         if form.has_changed():
             return super(UpdateUserProfileView, self).form_valid(form)
         else:
-            return redirect(reverse('profile:update'))
+            return redirect(reverse('account_home'))

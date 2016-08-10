@@ -296,4 +296,4 @@ class UpdateSportRegistrationView(LoginRequiredMixin, ContextMixin, generic.View
                 form.save()
         messages.success(request, 'Sport registration for {sport} successfully updated.'.format(
                 sport=context['sport_registration'].sport.name))
-        return redirect(reverse('profile:update'))
+        return redirect(reverse('account_home'))

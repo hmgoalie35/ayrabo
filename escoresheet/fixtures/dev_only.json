@@ -260,7 +260,7 @@
     "pk": 1,
     "fields": {
       "password": "pbkdf2_sha256$24000$L3pYG3HA0sRR$IhkK2b098hM5/ghPb5k9U3mCDXGVkz7r4bSZ/Xhrraw=",
-      "last_login": "2016-08-10T03:22:00.309Z",
+      "last_login": "2016-08-10T17:51:53.203Z",
       "is_superuser": true,
       "username": "h@p.com",
       "first_name": "Harris",
@@ -288,72 +288,90 @@
   },
   {
     "model": "coaches.coach",
-    "pk": 2,
+    "pk": 4,
     "fields": {
       "user": 1,
       "position": "Head Coach",
       "team": 1,
-      "created": "2016-08-07T21:29:11.785Z"
+      "created": "2016-08-10T17:54:50.536Z"
     }
   },
   {
     "model": "coaches.coach",
-    "pk": 3,
+    "pk": 5,
     "fields": {
       "user": 1,
-      "position": "Assistant Coach",
+      "position": "Head Coach",
       "team": 3,
-      "created": "2016-08-07T21:29:25.092Z"
+      "created": "2016-08-10T17:55:11.575Z"
     }
   },
   {
     "model": "players.hockeyplayer",
-    "pk": 1,
+    "pk": 2,
     "fields": {
       "user": 1,
       "sport": 1,
       "team": 1,
-      "jersey_number": 55,
-      "created": "2016-08-07T21:29:11.625Z",
-      "position": "LW",
-      "handedness": "Left"
+      "jersey_number": 23,
+      "created": "2016-08-10T17:54:50.642Z",
+      "position": "G",
+      "handedness": "Right"
     }
   },
   {
     "model": "players.baseballplayer",
-    "pk": 1,
+    "pk": 2,
     "fields": {
       "user": 1,
       "sport": 2,
       "team": 3,
-      "jersey_number": 55,
-      "created": "2016-08-07T21:29:25.005Z",
-      "position": "CF",
+      "jersey_number": 66,
+      "created": "2016-08-10T17:55:11.786Z",
+      "position": "P",
       "catches": "Left",
-      "bats": "Left"
+      "bats": "Right"
     }
   },
   {
     "model": "referees.referee",
-    "pk": 1,
+    "pk": 3,
     "fields": {
       "user": 1,
-      "league": 2,
-      "created": "2016-08-10T03:41:56.984Z"
+      "league": 1,
+      "created": "2016-08-10T17:54:50.458Z"
+    }
+  },
+  {
+    "model": "referees.referee",
+    "pk": 4,
+    "fields": {
+      "user": 1,
+      "league": 3,
+      "created": "2016-08-10T17:55:11.689Z"
     }
   },
   {
     "model": "managers.manager",
-    "pk": 1,
+    "pk": 2,
     "fields": {
       "user": 1,
-      "team": 5,
-      "created": "2016-08-10T03:41:45.252Z"
+      "team": 1,
+      "created": "2016-08-10T17:54:50.728Z"
+    }
+  },
+  {
+    "model": "managers.manager",
+    "pk": 3,
+    "fields": {
+      "user": 1,
+      "team": 3,
+      "created": "2016-08-10T17:55:11.487Z"
     }
   },
   {
     "model": "sports.sportregistration",
-    "pk": 20,
+    "pk": 22,
     "fields": {
       "user": 1,
       "sport": 1,
@@ -363,7 +381,7 @@
   },
   {
     "model": "sports.sportregistration",
-    "pk": 21,
+    "pk": 23,
     "fields": {
       "user": 1,
       "sport": 2,

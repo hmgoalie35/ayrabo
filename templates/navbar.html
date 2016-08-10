@@ -22,7 +22,7 @@
                                 class="caret"></span></a>
                         <ul class="dropdown-menu">
                             <li>
-                                <a id="edit_account_link" href="{% url 'profile:update' %}"><span
+                                <a id="edit_account_link" href="{% url 'account_home' %}"><span
                                         class="fa fa-user"></span>&nbsp; {{ user.email }}</a>
                             </li>
 
@@ -52,7 +52,7 @@
                             <div class="form-group">
                                 <div class="input-group">
                                     <div class="input-group-addon">
-                                        <span class="fa fa-key"></span>
+                                        <span class="fa fa-lock"></span>
                                     </div>
                                     <input id="id_password_navbar" name="password" type="password"
                                            class="form-control input-sm" placeholder="Password"
