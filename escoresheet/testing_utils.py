@@ -4,7 +4,7 @@ A module that contains useful methods for testing
 from coaches.tests import CoachFactory
 from managers.tests import ManagerFactory
 from players.tests import HockeyPlayerFactory
-from referees.tests.factories.RefereeFactory import RefereeFactory
+from referees.tests import RefereeFactory
 
 
 def get_messages(response):

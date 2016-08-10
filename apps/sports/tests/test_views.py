@@ -14,7 +14,7 @@ from players import forms as player_forms
 from players.models import HockeyPlayer
 from players.tests import HockeyPlayerFactory
 from referees.models import Referee
-from referees.tests.factories.RefereeFactory import RefereeFactory
+from referees.tests import RefereeFactory
 from sports.models import SportRegistration
 from sports.tests.factories.SportFactory import SportFactory
 from sports.tests.factories.SportRegistrationFactory import SportRegistrationFactory

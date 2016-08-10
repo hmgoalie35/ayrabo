@@ -4,7 +4,7 @@ from django.db.models import Q
 
 from leagues.models import League
 from leagues.tests import LeagueFactory
-from referees.tests.factories.RefereeFactory import RefereeFactory
+from referees.tests import RefereeFactory
 
 
 @step('The following referee objects? exists?')

@@ -10,7 +10,7 @@ from escoresheet.testing_utils import is_queryset_in_alphabetical_order
 from leagues.tests import LeagueFactory
 from managers.tests import ManagerFactory
 from players.tests import HockeyPlayerFactory
-from referees.tests.factories.RefereeFactory import RefereeFactory
+from referees.tests import RefereeFactory
 from sports.models import Sport, SportRegistration
 from teams.tests.factories.TeamFactory import TeamFactory
 from .factories.SportFactory import SportFactory

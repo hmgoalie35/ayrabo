@@ -9,7 +9,7 @@ from escoresheet.testing_utils import get_messages
 from leagues.tests import LeagueFactory
 from managers.tests import ManagerFactory
 from players.tests import HockeyPlayerFactory
-from referees.tests.factories.RefereeFactory import RefereeFactory
+from referees.tests import RefereeFactory
 from sports.tests.factories.SportFactory import SportFactory
 from sports.tests.factories.SportRegistrationFactory import SportRegistrationFactory
 from teams.tests.factories.TeamFactory import TeamFactory
