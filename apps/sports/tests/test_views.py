@@ -9,7 +9,7 @@ from divisions.tests import DivisionFactory
 from escoresheet.testing_utils import get_messages, create_related_objects
 from leagues.tests import LeagueFactory
 from managers.models import Manager
-from managers.tests.factories.ManagerFactory import ManagerFactory
+from managers.tests import ManagerFactory
 from players import forms as player_forms
 from players.models import HockeyPlayer
 from players.tests.factories.PlayerFactory import HockeyPlayerFactory

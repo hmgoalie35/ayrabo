@@ -8,7 +8,7 @@ from coaches.tests import CoachFactory
 from divisions.tests import DivisionFactory
 from escoresheet.testing_utils import is_queryset_in_alphabetical_order
 from leagues.tests import LeagueFactory
-from managers.tests.factories.ManagerFactory import ManagerFactory
+from managers.tests import ManagerFactory
 from players.tests.factories.PlayerFactory import HockeyPlayerFactory
 from referees.tests.factories.RefereeFactory import RefereeFactory
 from sports.models import Sport, SportRegistration

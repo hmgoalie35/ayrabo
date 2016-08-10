@@ -2,7 +2,7 @@ from behave import *
 from django.contrib.auth.models import User
 from django.db.models import Q
 
-from managers.tests.factories.ManagerFactory import ManagerFactory
+from managers.tests import ManagerFactory
 from teams.models import Team
 from teams.tests.factories.TeamFactory import TeamFactory
 
