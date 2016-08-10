@@ -68,7 +68,8 @@ class UpdateUserProfileView(LoginRequiredMixin, SuccessMessageMixin, generic.Upd
         sport_registrations = SportRegistration.objects.filter(user=self.request.user).select_related('sport')
         data = {}
         for sport_registration in sport_registrations:
-            data[sport_registration] = {'sport': sport_registration.sport, 'roles': sport_registration.roles, 'related_objects': sport_registration.get_related_role_objects()}
+            data[sport_registration] = {'sport': sport_registration.sport, 'roles': sport_registration.roles,
+                                        'related_objects': sport_registration.get_related_role_objects()}
         context['data'] = data
         return context
 

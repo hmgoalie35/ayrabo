@@ -5,6 +5,7 @@ from django.db import models
 from sports.models import Sport, SportRegistration
 from teams.models import Team
 
+
 class Manager(models.Model):
     user = models.ForeignKey(User)
     team = models.ForeignKey(Team)

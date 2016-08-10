@@ -18,4 +18,3 @@ class TeamFactory(django.DjangoModelFactory):
         # division is omitted here because it seems like factory boy sets division_id after this post generation
         # method is called
         self.full_clean(exclude=['slug', 'division'])
-

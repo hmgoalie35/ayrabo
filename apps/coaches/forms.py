@@ -1,8 +1,8 @@
 from django import forms
 
+from escoresheet.utils import set_fields_disabled
 from teams.models import Team
 from .models import Coach
-from escoresheet.utils import set_fields_disabled
 
 
 class CoachForm(forms.ModelForm):

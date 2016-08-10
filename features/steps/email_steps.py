@@ -23,7 +23,7 @@ def step_impl(context, username_or_email, subject):
         assert_correct_recipient(context, email, username_or_email)
         if email.subject == "[%s] %s" % (site.name, subject):
             reset_link = re.search(r'https?://{host}(?P<link>.*)'.format(host=site.domain), str(email.body)).group(
-                'link')
+                    'link')
             reset_link = context.get_url(reset_link)
             context.driver.get(reset_link)
 

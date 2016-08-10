@@ -3,11 +3,11 @@ from django.db.utils import IntegrityError
 from django.test import TestCase
 
 from accounts.tests.factories.UserFactory import UserFactory
-from sports.tests.factories.SportRegistrationFactory import SportRegistrationFactory 
+from sports.tests.factories.SportRegistrationFactory import SportRegistrationFactory
 from .factories.PlayerFactory import HockeyPlayerFactory, BaseballPlayerFactory, BasketballPlayerFactory
 
 
-class PlayesrodelTests(TestCase):
+class PlayerModelTests(TestCase):
     """
     The tests in this class are testing the shared functionality the abstract Player class provides to subclasses.
     Subclasses shouldn't need to test the fields, properties, etc of the Player class as all of that is handled by this
@@ -128,7 +128,8 @@ class BasketballPlayesrodelTests(TestCase):
 
     def test_different_jersey_numbers(self):
         jersey_number = 23
-        another_basketball_player = BasketballPlayerFactory(team=self.basketball_player.team, jersey_number=jersey_number)
+        another_basketball_player = BasketballPlayerFactory(team=self.basketball_player.team,
+                                                            jersey_number=jersey_number)
         self.assertEqual(another_basketball_player.jersey_number, jersey_number)
 
     def test_create_player_user_missing_player_role(self):

@@ -1,8 +1,8 @@
 from django import forms
 
+from escoresheet.utils import set_fields_disabled
 from leagues.models import League
 from .models import Referee
-from escoresheet.utils import set_fields_disabled
 
 
 class RefereeForm(forms.ModelForm):

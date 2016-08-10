@@ -5,8 +5,8 @@ Feature: Bulk upload teams from csv
 
   Background: Staff user exists and is logged into admin panel
     Given The following confirmed user account exists
-      | first_name | last_name | email                  | password       |
-      | John       | Doe       | user@example.com       | myweakpassword |
+      | first_name | last_name | email                 | password       |
+      | John       | Doe       | user@example.com      | myweakpassword |
       | Jane       | Doe       | non_staff@example.com | myweakpassword |
     And "user@example.com" has the following permissions "is_staff is_superuser"
     And "user@example.com" is completely registered for "Ice Hockey" with roles "Coach, Referee"

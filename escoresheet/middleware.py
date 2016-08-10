@@ -1,7 +1,6 @@
 import pytz
 from django.conf import settings
-from django.utils import timezone
-from django.utils import translation
+from django.utils import timezone, translation
 
 
 class TranslationMiddleware(object):

@@ -156,7 +156,7 @@ class BasketballPlayer(Player):
         if hasattr(self, 'team'):
             # If we do not exclude the current user this validation error will always be triggered.
             qs = BasketballPlayer.objects.filter(team=self.team, jersey_number=self.jersey_number).exclude(
-                user=self.user)
+                    user=self.user)
             if qs.exists():
                 error_msg = 'Please choose another number, {jersey_number} is currently unavailable for {team}'.format(
                         jersey_number=self.jersey_number, team=self.team.name)

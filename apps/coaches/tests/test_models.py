@@ -3,9 +3,9 @@ from django.db.utils import IntegrityError
 from django.test import TestCase
 
 from accounts.tests.factories.UserFactory import UserFactory
+from sports.tests.factories.SportRegistrationFactory import SportRegistrationFactory
 from teams.tests.factories.TeamFactory import TeamFactory
 from .factories.CoachFactory import CoachFactory
-from sports.tests.factories.SportRegistrationFactory import SportRegistrationFactory
 
 
 class CoachModelTests(TestCase):

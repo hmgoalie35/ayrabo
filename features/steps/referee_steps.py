@@ -2,9 +2,9 @@ from behave import *
 from django.contrib.auth.models import User
 from django.db.models import Q
 
-from referees.tests.factories.RefereeFactory import RefereeFactory
 from leagues.models import League
 from leagues.tests.factories.LeagueFactory import LeagueFactory
+from referees.tests.factories.RefereeFactory import RefereeFactory
 
 
 @step('The following referee objects? exists?')

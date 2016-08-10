@@ -1,8 +1,8 @@
 from django import forms
 
+from escoresheet.utils import set_fields_disabled
 from teams.models import Team
 from .models import Manager
-from escoresheet.utils import set_fields_disabled
 
 
 class ManagerForm(forms.ModelForm):
