@@ -187,9 +187,12 @@ class CreateSportRegistrationView(LoginRequiredMixin, ContextMixin, generic.View
         formset = context.get('formset')
         if formset.is_valid():
             for form in formset.forms:
-                form.instance.user = request.user
-                form.instance.set_roles(form.cleaned_data.get('roles', []))
-                form.save()
+                # Since I am not using formset.save(), any empty added forms pass validation but fail on .save()
+                # because a sport has not been chosen. So this check makes sure the form actually had data submitted.
+                if form.cleaned_data:
+                    form.instance.user = request.user
+                    form.instance.set_roles(form.cleaned_data.get('roles', []))
+                    form.save()
             return redirect(reverse('sport:finish_sport_registration'))
 
         return render(request, self.template_name, context)

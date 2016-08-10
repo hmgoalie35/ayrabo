@@ -110,3 +110,11 @@ Feature: Register for a sport
     And "id_sportregistration_set-0-sport" should not have the option "Ice Hockey"
     And "id_sportregistration_set-0-sport" should not have the option "Baseball"
 
+  Scenario: Add form but don't fill it out
+    Given I am on the "sport:create_sport_registration" page
+    And I press "add_another_form_btn"
+    When I select "Ice Hockey" from "id_sportregistration_set-0-sport"
+    And I press "id_sportregistration_set-0-roles_1"
+    And I press "id_sportregistration_set-0-roles_2"
+    And I press "sport_registration_next_step_btn"
+    Then I should be on the "sport:finish_sport_registration" page

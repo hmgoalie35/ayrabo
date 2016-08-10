@@ -179,6 +179,18 @@ class CreateSportRegistrationViewTests(TestCase):
         self.assertFormsetError(response, 'formset', 0, 'sport', 'This field is required.')
         self.assertFormsetError(response, 'formset', 1, 'sport', 'This field is required.')
 
+    def test_post_empty_added_form(self):
+        form_data = {
+            'sportregistration_set-0-sport': self.ice_hockey.id,
+            'sportregistration_set-0-roles': ['Player', 'Coach'],
+            'sportregistration_set-1-sport': [''],
+        }
+
+        self.post_data.update(form_data)
+        self.post_data['sportregistration_set-TOTAL_FORMS'] = 2
+        response = self.client.post(self.url, data=self.post_data, follow=True)
+        self.assertRedirects(response, reverse('sport:finish_sport_registration'))
+
 
 class FinishSportRegistrationViewTests(TestCase):
     def setUp(self):
