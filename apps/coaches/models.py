@@ -36,4 +36,4 @@ class Coach(models.Model):
                                 user=self.user.email, sport=sport.name))
 
     def __str__(self):
-        return 'Coach {full_name}'.format(full_name=self.user.get_full_name())
+        return 'Coach {last_name}'.format(last_name=self.user.last_name)
