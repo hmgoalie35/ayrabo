@@ -3,6 +3,7 @@ from django import forms
 from escoresheet.utils import set_fields_disabled
 from teams.models import Team
 from .models import Coach
+from escoresheet.fields import TeamModelChoiceField
 
 
 class CoachForm(forms.ModelForm):
@@ -19,9 +20,11 @@ class CoachForm(forms.ModelForm):
         read_only_fields = kwargs.pop('read_only_fields', None)
         super(CoachForm, self).__init__(*args, **kwargs)
         if sport is not None:
-            self.fields['team'].queryset = Team.objects.filter(division__league__sport=sport)
+            self.fields['team'].queryset = Team.objects.filter(division__league__sport=sport).select_related('division')
         if read_only_fields is not None:
             set_fields_disabled(read_only_fields, self.fields)
+
+    team = TeamModelChoiceField(queryset=Team.objects.all().select_related('division'))
 
     class Meta:
         model = Coach

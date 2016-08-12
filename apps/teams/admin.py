@@ -4,8 +4,9 @@ from django.utils.html import format_html
 from .models import Team
 
 
+@admin.register(Team)
 class TeamAdmin(admin.ModelAdmin):
-    list_display = ['id', 'name', 'slug', 'division', 'league', 'sport', 'website_link']
+    list_display = ['id', 'slug', 'name', 'division', 'league', 'sport', 'website_link']
     list_display_links = ['name']
     # list_filter = ['division__name', 'division__league__full_name', 'division__league__abbreviated_name',
     #                'division__league__sport__name']
@@ -27,6 +28,3 @@ class TeamAdmin(admin.ModelAdmin):
         return obj.division.league.sport.name
 
     sport.short_description = 'Sport'
-
-
-admin.site.register(Team, TeamAdmin)

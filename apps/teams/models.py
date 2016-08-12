@@ -35,4 +35,4 @@ class Team(models.Model):
         )
 
     def __str__(self):
-        return '{division} - {name}'.format(division=self.division.name, name=self.name)
+        return self.name

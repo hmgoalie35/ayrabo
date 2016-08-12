@@ -14,7 +14,7 @@ Feature: Create coach in the system
   Scenario: Submit valid coach form
     Given I am on the "sport:finish_sport_registration" page
     When I select "Head Coach" from "id_coach-position"
-    And I select "Midget Minor AA - Green Machine IceCats" from "id_coach-team"
+    And I select "Green Machine IceCats - Midget Minor AA" from "id_coach-team"
     And I press "next_sport_registration_btn"
     Then I should see "You have successfully completed your profile, you can now access the site"
     And I should be on the "home" page
