@@ -3,6 +3,7 @@ from django.contrib import admin
 from .models import Division
 
 
+@admin.register(Division)
 class DivisionAdmin(admin.ModelAdmin):
     list_display = ['id', 'name', 'slug', 'league', 'sport']
     list_display_links = ['name']
@@ -13,6 +14,3 @@ class DivisionAdmin(admin.ModelAdmin):
         return obj.league.sport
 
     sport.short_description = 'Sport'
-
-
-admin.site.register(Division, DivisionAdmin)
