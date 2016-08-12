@@ -3,6 +3,7 @@ from django.contrib import admin
 from . import models, forms
 
 
+@admin.register(models.Sport)
 class SportAdmin(admin.ModelAdmin):
     list_display = ('id', 'name', 'slug', 'description')
     list_display_links = ['name']
@@ -10,6 +11,7 @@ class SportAdmin(admin.ModelAdmin):
     prepopulated_fields = {'slug': ('name',)}
 
 
+@admin.register(models.SportRegistration)
 class SportRegistrationAdmin(admin.ModelAdmin):
     list_display = ['id', 'user', 'roles_mask', 'roles_mask_to_string', 'is_complete', 'sport']
     list_display_links = ['user']
@@ -29,7 +31,3 @@ class SportRegistrationAdmin(admin.ModelAdmin):
 
     def save_model(self, request, obj, form, change):
         obj.set_roles(form.cleaned_data['roles'])
-
-
-admin.site.register(models.Sport, SportAdmin)
-admin.site.register(models.SportRegistration, SportRegistrationAdmin)

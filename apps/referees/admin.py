@@ -3,6 +3,7 @@ from django.contrib import admin
 from .models import Referee
 
 
+@admin.register(Referee)
 class RefereeAdmin(admin.ModelAdmin):
     list_display = ['id', 'name', 'league', 'sport']
     list_display_links = ['name']
@@ -17,6 +18,3 @@ class RefereeAdmin(admin.ModelAdmin):
         return obj.league.sport
 
     sport.short_description = 'Sport'
-
-
-admin.site.register(Referee, RefereeAdmin)
