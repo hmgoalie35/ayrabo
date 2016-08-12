@@ -13,7 +13,7 @@ Feature: Create player in the system
 
   Scenario: Submit valid player form
     Given I am on the "sport:finish_sport_registration" page
-    When I select "Midget Minor AA - Green Machine IceCats" from "id_hockeyplayer-team"
+    When I select "Green Machine IceCats - Midget Minor AA" from "id_hockeyplayer-team"
     And I fill in "id_hockeyplayer-jersey_number" with "35"
     And I select "G" from "id_hockeyplayer-position"
     And I select "Left" from "id_hockeyplayer-handedness"

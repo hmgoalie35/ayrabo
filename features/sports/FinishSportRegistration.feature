@@ -41,8 +41,8 @@ Feature: Finish sport registration, filling in any coach/manager/player/referee 
     And "user@example.com" is registered for "Basketball" with roles "Coach, Manager"
     And I am on the "sport:finish_sport_registration" page
     When I select "Head Coach" from "id_coach-position"
-    And I select "Midget Minor AA - Green Machine IceCats" from "id_coach-team"
-    And I select "Midget Minor AA - Green Machine IceCats" from "id_manager-team"
+    And I select "Green Machine IceCats - Midget Minor AA" from "id_coach-team"
+    And I select "Green Machine IceCats - Midget Minor AA" from "id_manager-team"
     And I should see "Next sport registration"
     And I press "next_sport_registration_btn"
     Then I should see "1 sport registration remaining"
@@ -64,8 +64,8 @@ Feature: Finish sport registration, filling in any coach/manager/player/referee 
     And "user@example.com" is registered for "Basketball" with roles "Coach, Manager, Referee"
     And I am on the "sport:finish_sport_registration" page
     When I select "Head Coach" from "id_coach-position"
-    And I select "Atlantic Division - Knicks" from "id_coach-team"
-    And I select "Atlantic Division - Knicks" from "id_manager-team"
+    And I select "Knicks - Atlantic Division" from "id_coach-team"
+    And I select "Knicks - Atlantic Division" from "id_manager-team"
     And I select "National Basketball Association" from "id_referee-league"
     And I should see "Finish sport registration"
     And I press "next_sport_registration_btn"
@@ -77,7 +77,7 @@ Feature: Finish sport registration, filling in any coach/manager/player/referee 
     And "user@example.com" is registered for "Basketball" with roles "Coach, Manager, Referee"
     And I am on the "sport:finish_sport_registration" page
     When I select "Head Coach" from "id_coach-position"
-    And I select "Atlantic Division - Knicks" from "id_coach-team"
+    And I select "Knicks - Atlantic Division" from "id_coach-team"
     And I press "next_sport_registration_btn"
     Then I should be on the "sport:finish_sport_registration" page
     And "This field is required." should show up 2 times
@@ -88,12 +88,12 @@ Feature: Finish sport registration, filling in any coach/manager/player/referee 
     And "user@example.com" is registered for "Basketball" with roles "Coach, Manager, Referee, Player"
     And I am on the "sport:finish_sport_registration" page
     When I select "Head Coach" from "id_coach-position"
-    And I select "Atlantic Division - Knicks" from "id_basketballplayer-team"
+    And I select "Knicks - Atlantic Division" from "id_basketballplayer-team"
     And I fill in "id_basketballplayer-jersey_number" with "35"
     And I select "PG" from "id_basketballplayer-position"
     And I select "Left" from "id_basketballplayer-shoots"
-    And I select "Atlantic Division - Knicks" from "id_coach-team"
-    And I select "Atlantic Division - Knicks" from "id_manager-team"
+    And I select "Knicks - Atlantic Division" from "id_coach-team"
+    And I select "Knicks - Atlantic Division" from "id_manager-team"
     And I select "National Basketball Association" from "id_referee-league"
     And I press "next_sport_registration_btn"
     Then I should see "You have successfully completed your profile, you can now access the site"
@@ -104,7 +104,7 @@ Feature: Finish sport registration, filling in any coach/manager/player/referee 
     And "user@example.com" is registered for "Basketball" with roles "Coach, Manager, Referee, Player"
     Given I am on the "sport:finish_sport_registration" page
     When I select "Head Coach" from "id_coach-position"
-    And I select "Atlantic Division - Knicks" from "id_coach-team"
+    And I select "Knicks - Atlantic Division" from "id_coach-team"
     And I press "next_sport_registration_btn"
     Then I should be on the "sport:finish_sport_registration" page
     And "This field is required." should show up 6 times

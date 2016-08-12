@@ -25,4 +25,4 @@ class Manager(models.Model):
                                 user=self.user.email, sport=sport.name))
 
     def __str__(self):
-        return 'Manager {full_name}'.format(full_name=self.user.get_full_name())
+        return 'Manager {last_name}'.format(last_name=self.user.last_name)

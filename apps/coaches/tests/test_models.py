@@ -11,7 +11,7 @@ from .factories.CoachFactory import CoachFactory
 class CoachModelTests(TestCase):
     def test_to_string(self):
         coach = CoachFactory.create()
-        self.assertEqual(str(coach), 'Coach {full_name}'.format(full_name=coach.user.get_full_name()))
+        self.assertEqual(str(coach), 'Coach {last_name}'.format(last_name=coach.user.last_name))
 
     def test_coach_unique_to_team(self):
         user = UserFactory.create()

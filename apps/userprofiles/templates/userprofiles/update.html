@@ -79,7 +79,7 @@
                                                 <div class="list-group-item">
                                                 {% if data_dict.related_objects %}
                                                     {% for role, object in data_dict.related_objects.items %}
-                                                        <strong>{{ role }}:</strong> {% if role == 'Referee' %}{{ object.league }}{% else %}{{ object.team }}{% endif %}
+                                                        <strong>{{ role }}:</strong> {% if role == 'Referee' %}{{ object.league }}{% else %}{{ object.team }} - {{ object.team.division.name }}{% endif %}
                                                         <br>
                                                     {% endfor %}
                                                 {% else %}

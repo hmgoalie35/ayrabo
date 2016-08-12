@@ -44,7 +44,7 @@ class TeamModelTests(TestCase):
 
     def test_to_string(self):
         icecats = TeamFactory.create(name='Green Machine IceCats', division=self.pee_wee_division)
-        self.assertEqual(str(icecats), '{division} - {name}'.format(division=icecats.division.name, name=icecats.name))
+        self.assertEqual(str(icecats), icecats.name)
 
     def test_slug_generation(self):
         icecats = TeamFactory(name='Green Machine IceCats', division=self.pee_wee_division)

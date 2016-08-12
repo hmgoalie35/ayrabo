@@ -13,7 +13,7 @@ Feature: Create manager in the system
 
   Scenario: Submit valid manager form
     Given I am on the "sport:finish_sport_registration" page
-    When I select "Midget Minor AA - Green Machine IceCats" from "id_manager-team"
+    When I select "Green Machine IceCats - Midget Minor AA" from "id_manager-team"
     And I press "next_sport_registration_btn"
     Then I should see "You have successfully completed your profile, you can now access the site"
     And I should be on the "home" page

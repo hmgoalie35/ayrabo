@@ -6,6 +6,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.urlresolvers import reverse_lazy
 from django.db.utils import IntegrityError
 from django.shortcuts import redirect, render
+from django.core.exceptions import ValidationError
 from django.views.generic import FormView
 
 from divisions.models import Division
@@ -60,8 +61,12 @@ class BulkUploadTeamsView(LoginRequiredMixin, FormView):
                         'on line {lineno}'.format(lineno=line_no))
                 return errors, successful_teams_created, line_no
 
+            team_name = team_name.strip()
+            division = division.strip()
+            website = website.strip()
+
             # Make sure the value of the headers aren't empty strings
-            if team_name.strip() == '' or division.strip() == '':
+            if team_name == '' or division == '':
                 errors.append("Team Name and/or Division can't be blank on line {lineno}".format(lineno=line_no))
                 return errors, successful_teams_created, line_no
 
@@ -76,7 +81,11 @@ class BulkUploadTeamsView(LoginRequiredMixin, FormView):
 
             # Attempt to create a team, ignoring duplicates.
             try:
-                Team.objects.create(name=team_name, website=website, division=division_obj)
+                team = Team(name=team_name, website=website, division=division_obj)
+                team.full_clean(exclude=['slug'])
+                team.save()
+                successful_teams_created += 1
+            except ValidationError:
                 successful_teams_created += 1
             except IntegrityError:
                 # Ignore duplicates
