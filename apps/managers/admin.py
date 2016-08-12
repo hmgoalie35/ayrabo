@@ -4,7 +4,7 @@ from .models import Manager
 
 
 class ManagerAdmin(admin.ModelAdmin):
-    list_display = ['id', 'name', 'team', 'league']
+    list_display = ['id', 'name', 'team', 'division', 'league', 'sport']
     list_display_links = ['name']
     search_fields = ['user__email', 'team__name']
 
@@ -13,10 +13,20 @@ class ManagerAdmin(admin.ModelAdmin):
 
     name.short_description = 'Name'
 
+    def division(self, obj):
+        return obj.team.division.name
+
+    division.short_description = 'Division'
+
     def league(self, obj):
         return obj.team.division.league.full_name
 
     league.short_description = 'League'
+
+    def sport(self, obj):
+        return obj.team.division.league.sport
+
+    sport.short_description = 'Sport'
 
 
 admin.site.register(Manager, ManagerAdmin)

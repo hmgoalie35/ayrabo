@@ -11,7 +11,7 @@ from .factories.ManagerFactory import ManagerFactory
 class ManagerModelTests(TestCase):
     def test_to_string(self):
         manager = ManagerFactory()
-        self.assertEqual(str(manager), 'Manager {full_name}'.format(full_name=manager.user.get_full_name()))
+        self.assertEqual(str(manager), 'Manager {last_name}'.format(last_name=manager.user.last_name))
 
     def test_manager_unique_to_team(self):
         user = UserFactory()
