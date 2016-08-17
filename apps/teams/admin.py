@@ -13,6 +13,11 @@ class TeamAdmin(admin.ModelAdmin):
     search_fields = ['name', 'division__name', 'division__league__abbreviated_name', 'division__league__sport__name']
     prepopulated_fields = {'slug': ('name',)}
 
+    # README: Do not add in an inline for Season.teams.through. With inlines, there is no way to validate the season's
+    # division and the team's division. So a staff member could accidentally add a team for basketball to a season
+    # for hockey. The saving in the inline isn't caught by the m2m_changed signal and creating a custom form just for
+    # the admin in overkill.
+
     def website_link(self, obj):
         return format_html('<a target="_blank" href="{url}">{url}</a>', url=obj.website)
 
