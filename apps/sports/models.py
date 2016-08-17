@@ -64,7 +64,7 @@ class SportRegistration(models.Model):
         :param roles: The role(s) to add
         """
 
-        assert type(roles) == list
+        assert isinstance(roles, list)
 
         # & performs an intersection and will omit any roles that are misspelled or DNE
         valid_roles = set(roles) & set(self.ROLES)

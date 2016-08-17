@@ -89,6 +89,7 @@ INSTALLED_APPS = [
     'managers.apps.ManagersConfig',
     'referees.apps.RefereesConfig',
     'players.apps.PlayersConfig',
+    'seasons.apps.SeasonsConfig',
 ]
 
 CRISPY_TEMPLATE_PACK = 'bootstrap3'
@@ -344,8 +345,12 @@ FIXTURE_DIRS = [
 ]
 
 try:
+    # Running in dev mode
     from .local_settings import *
 except ImportError as e:
-    # Testing settings will use production settings and override any needed settings
+    # Running in production mode
+    pass
+finally:
+    # Running in testing mode
     if len(sys.argv) > 1 and ('test' in sys.argv or 'behave' in sys.argv):
         from .testing_settings import *
