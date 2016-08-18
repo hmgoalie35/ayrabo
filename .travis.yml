@@ -8,10 +8,8 @@ python:
 sudo: required
 
 before_install:
-  - sqlite3 -version
   - sudo apt-get -qq update
-  - sudo apt-cache policy sqlite3
-  - sudo apt-get install sqlite3 -y
+  - sudo apt-get install sqlite3=3.11.0 -y
 
 install:
   - pip install -r requirements.txt
@@ -19,13 +17,6 @@ install:
 env:
   global:
     - DJANGO_SETTINGS_MODULE="escoresheet.settings.settings"
-
-#addons:
-#  apt:
-#    sources:
-#      - travis-ci/sqlite3
-#    packages:
-#      - sqlite3
 
 script:
   - sqlite3 -version
