@@ -30,14 +30,18 @@ class AccountAndSportRegistrationCompleteMiddleware(object):
         if request.user.is_authenticated() and request.path not in whitelisted_urls:
             up = UserProfile.objects.filter(user=request.user)
             if not up.exists():
+                request.session['is_user_currently_registering'] = True
                 return redirect(create_profile_url)
             sport_registrations = SportRegistration.objects.filter(user=request.user)
             if not sport_registrations.exists():
+                request.session['is_user_currently_registering'] = True
                 return redirect(create_sport_registration_url)
             incomplete_sport_registrations = sport_registrations.filter(is_complete=False)
             if incomplete_sport_registrations.exists():
+                request.session['is_user_currently_registering'] = True
                 return redirect(finish_sport_registration_url)
             else:
                 # The user's account is "complete" and all sport registrations are complete
+                request.session['is_user_currently_registering'] = False
                 return None
         return None

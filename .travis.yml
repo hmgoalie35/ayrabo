@@ -3,7 +3,7 @@ language: python
 cache: pip
 
 python:
-  - "3.4"
+  - "3.5.2"
 
 install:
   - pip install -r requirements.txt

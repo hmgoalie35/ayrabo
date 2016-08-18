@@ -32,10 +32,11 @@ def check_account_and_sport_registration_completed(request):
     return redirect_url, redirect_needed
 
 
-class CreateUserProfileView(LoginRequiredMixin, generic.CreateView):
+class CreateUserProfileView(LoginRequiredMixin, SuccessMessageMixin, generic.CreateView):
     model = UserProfile
     template_name = 'userprofiles/create.html'
     success_url = reverse_lazy('sport:create_sport_registration')
+    success_message = 'Your profile has been created.'
     form_class = CreateUserProfileForm
 
     def get(self, request, *args, **kwargs):

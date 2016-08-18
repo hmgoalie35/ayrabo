@@ -18,7 +18,8 @@ Feature: Create player in the system
     And I select "G" from "id_hockeyplayer-position"
     And I select "Left" from "id_hockeyplayer-handedness"
     And I press "next_sport_registration_btn"
-    Then I should see "You have successfully completed your profile, you can now access the site"
+    Then I should see "Your profile is now complete, you may now access the site"
+    And I should see "You have finished registering for Ice Hockey."
     And I should be on the "home" page
 
   Scenario: Submit invalid player form
