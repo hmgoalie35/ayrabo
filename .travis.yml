@@ -3,7 +3,15 @@ language: python
 cache: pip
 
 python:
-  - "3.5.2"
+  - "3.5"
+
+sudo: required
+
+before_install:
+  - sqlite3 -version
+  - sudo apt-get -qq update
+  - sudo apt-cache policy sqlite3
+  - sudo apt-get install sqlite3 -y
 
 install:
   - pip install -r requirements.txt
@@ -12,14 +20,15 @@ env:
   global:
     - DJANGO_SETTINGS_MODULE="escoresheet.settings.settings"
 
-addons:
-  apt:
-    sources:
-      - travis-ci/sqlite3
-    packages:
-      - sqlite3
+#addons:
+#  apt:
+#    sources:
+#      - travis-ci/sqlite3
+#    packages:
+#      - sqlite3
 
 script:
+  - sqlite3 -version
   - python manage.py test apps/
   - python manage.py behave features/
 
