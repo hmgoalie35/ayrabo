@@ -12,6 +12,13 @@ env:
   global:
     - DJANGO_SETTINGS_MODULE="escoresheet.settings.settings"
 
+addons:
+  apt:
+    sources:
+      - travis-ci/sqlite3
+    packages:
+      - sqlite3
+
 script:
   - python manage.py test apps/
   - python manage.py behave features/
