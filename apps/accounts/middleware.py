@@ -42,5 +42,6 @@ class AccountAndSportRegistrationCompleteMiddleware(object):
                 return redirect(finish_sport_registration_url)
             else:
                 # The user's account is "complete" and all sport registrations are complete
+                request.session['is_user_currently_registering'] = False
                 return None
         return None

@@ -29,15 +29,14 @@ def check_account_and_sport_registration_completed(request):
         redirect_url = reverse('sport:finish_sport_registration')
     # The latter part of this statement prevents redirect loops
     redirect_needed = redirect_url is not None and request.path != redirect_url
-    if redirect_needed:
-        request.session['is_user_currently_registering'] = True
     return redirect_url, redirect_needed
 
 
-class CreateUserProfileView(LoginRequiredMixin, generic.CreateView):
+class CreateUserProfileView(LoginRequiredMixin, SuccessMessageMixin, generic.CreateView):
     model = UserProfile
     template_name = 'userprofiles/create.html'
     success_url = reverse_lazy('sport:create_sport_registration')
+    success_message = 'Your profile has been created.'
     form_class = CreateUserProfileForm
 
     def get(self, request, *args, **kwargs):
