@@ -29,6 +29,8 @@ def check_account_and_sport_registration_completed(request):
         redirect_url = reverse('sport:finish_sport_registration')
     # The latter part of this statement prevents redirect loops
     redirect_needed = redirect_url is not None and request.path != redirect_url
+    if redirect_needed:
+        request.session['is_user_currently_registering'] = True
     return redirect_url, redirect_needed
 
 

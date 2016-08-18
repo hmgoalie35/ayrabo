@@ -19,7 +19,8 @@ from .models import SportRegistration, Sport
 
 class FinishSportRegistrationView(LoginRequiredMixin, ContextMixin, generic.View):
     template_name = 'sports/sport_registration_finish.html'
-    success_message = 'You have successfully completed your profile, you can now access the site'
+    success_message_account_registration_complete = 'Your profile is now complete, you may now access the site'
+    success_message_sport_registrations_finished = 'You have successfully registered for {sports}.'
     sport_player_form_mappings = {
         'Ice Hockey': player_forms.HockeyPlayerForm,
         'Baseball': player_forms.BaseballPlayerForm,
@@ -36,6 +37,11 @@ class FinishSportRegistrationView(LoginRequiredMixin, ContextMixin, generic.View
             sr = sport_registrations.first()
             context['sport_registration'] = sr
             context['sport_name'] = sr.sport.name
+            if 'sports_registered_for' in self.request.session.keys():
+                if sr.sport.name not in self.request.session.get('sports_registered_for'):
+                    self.request.session.get('sports_registered_for').append(sr.sport.name)
+            else:
+                self.request.session['sports_registered_for'] = [sr.sport.name]
             if sr.has_role('Coach'):
                 context['coach_form'] = coach_forms.CoachForm(self.request.POST or None, sport=sr.sport)
             if sr.has_role('Player'):
@@ -61,7 +67,12 @@ class FinishSportRegistrationView(LoginRequiredMixin, ContextMixin, generic.View
         context = self.get_context_data(**kwargs)
 
         if not context.get('sport_registrations_exist'):
-            messages.success(request, self.success_message)
+            sports_registered_for = request.session.get('sports_registered_for', None)
+            if sports_registered_for:
+                messages.success(request, self.success_message_sport_registrations_finished.format(
+                        sports=', '.join(sports_registered_for)))
+                if request.session.get('is_user_currently_registering', False):
+                    messages.success(request, self.success_message_account_registration_complete)
             return redirect(reverse('home'))
 
         return render(request, self.template_name, context)
@@ -74,7 +85,12 @@ class FinishSportRegistrationView(LoginRequiredMixin, ContextMixin, generic.View
         context = self.get_context_data(**kwargs)
 
         if not context.get('sport_registrations_exist'):
-            messages.success(request, self.success_message)
+            sports_registered_for = request.session.get('sports_registered_for', None)
+            if sports_registered_for:
+                messages.success(request, self.success_message_sport_registrations_finished.format(
+                        sports=', '.join(sports_registered_for)))
+                if request.session.get('is_user_currently_registering', False):
+                    messages.success(request, self.success_message_account_registration_complete)
             return redirect(reverse('home'))
 
         # Forms that were submitted are added to this list. Only check the forms in this list for validity
