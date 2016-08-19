@@ -19,15 +19,14 @@ class RefereeModelTests(TestCase):
 
     def test_referee_unique_to_league(self):
         RefereeFactory(user=self.user, league=self.league)
-        with self.assertRaises(IntegrityError,
-                               msg=' UNIQUE constraint failed: referees_referee.user_id, referees_referee.league_id'):
+        with self.assertRaises(IntegrityError):
             RefereeFactory(user=self.user, league=self.league)
 
     def test_create_referee_user_missing_referee_role(self):
         sr = SportRegistrationFactory(user=self.user, sport=self.league.sport)
         sr.set_roles(['Player'])
         referee = RefereeFactory(user=self.user, league=self.league)
-        with self.assertRaises(ValidationError,
-                               msg='{user} - {sport} might not have a sportregistration object or the sportregistration object does not have the referee role assigned'.format(
-                                       user=self.user.email, sport=self.league.sport.name)):
+        with self.assertRaisesMessage(ValidationError,
+                                      '{user} - {sport} might not have a sportregistration object or the sportregistration object does not have the referee role assigned'.format(
+                                              user=self.user.email, sport=self.league.sport.name)):
             referee.clean()

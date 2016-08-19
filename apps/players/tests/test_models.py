@@ -27,24 +27,22 @@ class PlayerModelTests(TestCase):
         self.assertEqual(self.player.division, self.player.team.division.name)
 
     def test_max_jersey_number(self):
-        with self.assertRaises(ValidationError, msg='Ensure this value is less than or equal to 99.'):
+        with self.assertRaisesMessage(ValidationError, 'Ensure this value is less than or equal to 99.'):
             HockeyPlayerFactory(jersey_number=100).full_clean()
 
     def test_min_jersey_number(self):
-        with self.assertRaises(ValidationError, msg='Ensure this value is greater than or equal to 0.'):
+        with self.assertRaisesMessage(ValidationError, 'Ensure this value is greater than or equal to 0.'):
             HockeyPlayerFactory(jersey_number=-1).full_clean()
 
     def test_to_string(self):
         self.assertEqual(str(self.player), self.player.user.get_full_name())
 
     def test_unique_with_sport(self):
-        with self.assertRaises(IntegrityError,
-                               msg='UNIQUE constraint failed: players_hockeyplayer.user_id, players_hockeyplayer.sport_id'):
+        with self.assertRaises(IntegrityError):
             HockeyPlayerFactory(user=self.player.user, sport=self.player.sport)
 
     def test_unique_with_team(self):
-        with self.assertRaises(IntegrityError,
-                               msg='UNIQUE constraint failed: players_hockeyplayer.user_id, players_hockeyplayer.team_id'):
+        with self.assertRaises(IntegrityError):
             HockeyPlayerFactory(user=self.player.user, team=self.player.team)
 
     def test_create_player_user_missing_player_role(self):
@@ -53,9 +51,9 @@ class PlayerModelTests(TestCase):
         sr = SportRegistrationFactory(user=user, sport=sport)
         sr.set_roles(['Referee'])
         player = HockeyPlayerFactory(user=user, sport=sport, team=self.player.team)
-        with self.assertRaises(ValidationError,
-                               msg='{user} - {sport} might not have a sportregistration object or the sportregistration object does not have the player role assigned'.format(
-                                       user=user.email, sport=sport)):
+        with self.assertRaisesMessage(ValidationError,
+                                      '{user} - {sport} might not have a sportregistration object or the sportregistration object does not have the player role assigned'.format(
+                                              user=user.email, sport=sport)):
             player.clean()
 
 
@@ -67,7 +65,7 @@ class HockeyPlayesrodelTests(TestCase):
     def test_duplicate_jersey_number(self):
         validation_msg = 'Please choose another number, {jersey_number} is currently unavailable for {team}'.format(
                 jersey_number=self.jersey_number, team=self.hockey_player.team)
-        with self.assertRaises(ValidationError, msg=validation_msg):
+        with self.assertRaisesMessage(ValidationError, validation_msg):
             HockeyPlayerFactory(team=self.hockey_player.team, jersey_number=self.jersey_number).full_clean()
 
     def test_different_jersey_numbers(self):
@@ -81,9 +79,9 @@ class HockeyPlayesrodelTests(TestCase):
         sr = SportRegistrationFactory(user=user, sport=sport)
         sr.set_roles(['Referee'])
         player = HockeyPlayerFactory(user=user, sport=sport, team=self.hockey_player.team)
-        with self.assertRaises(ValidationError,
-                               msg='{user} - {sport} might not have a sportregistration object or the sportregistration object does not have the player role assigned'.format(
-                                       user=user.email, sport=sport)):
+        with self.assertRaisesMessage(ValidationError,
+                                      '{user} - {sport} might not have a sportregistration object or the sportregistration object does not have the player role assigned'.format(
+                                              user=user.email, sport=sport)):
             player.clean()
 
 
@@ -95,7 +93,7 @@ class BaseballPlayesrodelTests(TestCase):
     def test_duplicate_jersey_number(self):
         validation_msg = 'Please choose another number, {jersey_number} is currently unavailable for {team}'.format(
                 jersey_number=self.jersey_number, team=self.baseball_player.team)
-        with self.assertRaises(ValidationError, msg=validation_msg):
+        with self.assertRaisesMessage(ValidationError, validation_msg):
             BaseballPlayerFactory(team=self.baseball_player.team, jersey_number=self.jersey_number).full_clean()
 
     def test_different_jersey_numbers(self):
@@ -109,9 +107,9 @@ class BaseballPlayesrodelTests(TestCase):
         sr = SportRegistrationFactory(user=user, sport=sport)
         sr.set_roles(['Referee'])
         player = BaseballPlayerFactory(user=user, sport=sport, team=self.baseball_player.team)
-        with self.assertRaises(ValidationError,
-                               msg='{user} - {sport} might not have a sportregistration object or the sportregistration object does not have the player role assigned'.format(
-                                       user=user.email, sport=sport)):
+        with self.assertRaisesMessage(ValidationError,
+                                      '{user} - {sport} might not have a sportregistration object or the sportregistration object does not have the player role assigned'.format(
+                                              user=user.email, sport=sport)):
             player.clean()
 
 
@@ -123,7 +121,7 @@ class BasketballPlayesrodelTests(TestCase):
     def test_duplicate_jersey_number(self):
         validation_msg = 'Please choose another number, {jersey_number} is currently unavailable for {team}'.format(
                 jersey_number=self.jersey_number, team=self.basketball_player.team)
-        with self.assertRaises(ValidationError, msg=validation_msg):
+        with self.assertRaisesMessage(ValidationError, validation_msg):
             BasketballPlayerFactory(team=self.basketball_player.team, jersey_number=self.jersey_number).full_clean()
 
     def test_different_jersey_numbers(self):
@@ -138,7 +136,7 @@ class BasketballPlayesrodelTests(TestCase):
         sr = SportRegistrationFactory(user=user, sport=sport)
         sr.set_roles(['Referee'])
         player = BasketballPlayerFactory(user=user, sport=sport, team=self.basketball_player.team)
-        with self.assertRaises(ValidationError,
-                               msg='{user} - {sport} might not have a sportregistration object or the sportregistration object does not have the player role assigned'.format(
-                                       user=user.email, sport=sport)):
+        with self.assertRaisesMessage(ValidationError,
+                                      '{user} - {sport} might not have a sportregistration object or the sportregistration object does not have the player role assigned'.format(
+                                              user=user.email, sport=sport)):
             player.clean()

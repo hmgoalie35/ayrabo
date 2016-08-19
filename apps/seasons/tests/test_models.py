@@ -19,30 +19,28 @@ class SeasonModelTests(TestCase):
     def test_end_date_before_start_date(self):
         start_date = datetime.date(2016, 8, 15)
         end_date = start_date + datetime.timedelta(days=-365)
-        with self.assertRaises(ValidationError, msg="The season's end date must be after the season's start date."):
+        with self.assertRaisesMessage(ValidationError, "The season's end date must be after the season's start date."):
             SeasonFactory(start_date=start_date, end_date=end_date).full_clean()
 
     def test_end_date_equal_to_start_date(self):
         start_date = datetime.date(2016, 8, 15)
         end_date = start_date
-        with self.assertRaises(ValidationError, msg="The season's end date must be after the season's start date."):
+        with self.assertRaisesMessage(ValidationError, "The season's end date must be after the season's start date."):
             SeasonFactory(start_date=start_date, end_date=end_date).full_clean()
 
     def test_unique_together_start_date_division(self):
         division = DivisionFactory(name='Mites')
         start_date = datetime.date(2016, 8, 15)
-        SeasonFactory(start_date=start_date, division=division)
-        with self.assertRaises(IntegrityError,
-                               msg='UNIQUE constraint failed: seasons_season.start_date, seasons_season.division_id'):
-            SeasonFactory(start_date=start_date, division=division)
+        SeasonFactory(start_date=start_date, end_date=start_date + datetime.timedelta(days=365), division=division)
+        with self.assertRaises(IntegrityError):
+            SeasonFactory(start_date=start_date, end_date=start_date + datetime.timedelta(days=360), division=division)
 
     def test_unique_together_end_date_division(self):
         division = DivisionFactory(name='Mites')
         end_date = datetime.date(2016, 8, 15)
-        SeasonFactory(end_date=end_date, division=division)
-        with self.assertRaises(IntegrityError,
-                               msg='UNIQUE constraint failed: seasons_season.end_date, seasons_season.division_id'):
-            SeasonFactory(end_date=end_date, division=division)
+        SeasonFactory(start_date=datetime.date(2016, 8, 15), end_date=end_date, division=division)
+        with self.assertRaises(IntegrityError):
+            SeasonFactory(start_date=datetime.date(2016, 9, 23), end_date=end_date, division=division)
 
     def test_unique_for_year(self):
         start_date = datetime.date(2016, 8, 15)

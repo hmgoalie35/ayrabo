@@ -17,8 +17,7 @@ class ManagerModelTests(TestCase):
         user = UserFactory()
         team = TeamFactory(name='Green Machine IceCats')
         ManagerFactory(user=user, team=team)
-        with self.assertRaises(IntegrityError,
-                               msg='UNIQUE constraint failed: managers_manager.user_id, managers_manager.team_id'):
+        with self.assertRaises(IntegrityError):
             ManagerFactory(user=user, team=team)
 
     def test_create_manager_user_missing_manager_role(self):
@@ -27,7 +26,7 @@ class ManagerModelTests(TestCase):
         sr = SportRegistrationFactory(user=user, sport=team.division.league.sport)
         sr.set_roles(['Player', 'Referee'])
         manager = ManagerFactory(user=user, team=team)
-        with self.assertRaises(ValidationError,
-                               msg='{user} - {sport} might not have a sportregistration object or the sportregistration object does not have the manager role assigned'.format(
-                                       user=user.email, sport=team.division.league.sport.name)):
+        with self.assertRaisesMessage(ValidationError,
+                                      '{user} - {sport} might not have a sportregistration object or the sportregistration object does not have the manager role assigned'.format(
+                                              user=user.email, sport=team.division.league.sport.name)):
             manager.clean()
