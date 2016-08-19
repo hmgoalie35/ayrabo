@@ -38,13 +38,11 @@ class PlayerModelTests(TestCase):
         self.assertEqual(str(self.player), self.player.user.get_full_name())
 
     def test_unique_with_sport(self):
-        with self.assertRaisesMessage(IntegrityError,
-                                      'UNIQUE constraint failed: players_hockeyplayer.user_id, players_hockeyplayer.sport_id'):
+        with self.assertRaises(IntegrityError):
             HockeyPlayerFactory(user=self.player.user, sport=self.player.sport)
 
     def test_unique_with_team(self):
-        with self.assertRaisesMessage(IntegrityError,
-                                      'UNIQUE constraint failed: players_hockeyplayer.user_id, players_hockeyplayer.team_id'):
+        with self.assertRaises(IntegrityError):
             HockeyPlayerFactory(user=self.player.user, team=self.player.team)
 
     def test_create_player_user_missing_player_role(self):

@@ -27,7 +27,7 @@ class LeagueModelTests(TestCase):
 
     def test_full_name_unique_with_sport(self):
         LeagueFactory.create(full_name='National Hockey League', sport=self.ice_hockey)
-        with self.assertRaisesMessage(IntegrityError, 'UNIQUE constraint failed: leagues_league.full_name'):
+        with self.assertRaises(IntegrityError):
             LeagueFactory.create(full_name='National Hockey League', sport=self.ice_hockey).full_clean(
                     exclude=['abbreviated_name'])
 
@@ -58,7 +58,6 @@ class LeagueModelTests(TestCase):
 
     def test_slug_unique_with_sport(self):
         LeagueFactory.create(full_name='National Hockey League', sport=self.ice_hockey)
-        with self.assertRaisesMessage(IntegrityError,
-                                      'UNIQUE constraint failed: leagues_league.slug, leagues_league.sport_id'):
+        with self.assertRaises(IntegrityError):
             # Below has the same abbreviated name and slug, so should throw an error
             LeagueFactory(full_name='Notareal Hockey League', sport=self.ice_hockey)

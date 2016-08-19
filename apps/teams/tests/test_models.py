@@ -26,8 +26,7 @@ class TeamModelTests(TestCase):
         Team name must be unique to a division
         """
         TeamFactory.create(name='Green Machine IceCats', division=self.pee_wee_division)
-        with self.assertRaisesMessage(IntegrityError,
-                                      'UNIQUE constraint failed: teams_team.name, teams_team.division_id'):
+        with self.assertRaises(IntegrityError):
             # Try to create a team with the same name and division
             TeamFactory.create(name='Green Machine IceCats', division=self.pee_wee_division)
 
@@ -53,7 +52,6 @@ class TeamModelTests(TestCase):
 
     def test_slug_unique_with_division(self):
         TeamFactory(name='Green Machine IceCats', division=self.pee_wee_division)
-        with self.assertRaisesMessage(IntegrityError,
-                                      'UNIQUE constraint failed: teams_team.slug, teams_team.division_id'):
+        with self.assertRaises(IntegrityError):
             # make sure the team name is not the same as above, or it will fail the uniqueness constraint for name
             TeamFactory(name='green machine iceCats', division=self.pee_wee_division)

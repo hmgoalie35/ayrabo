@@ -17,8 +17,7 @@ class CoachModelTests(TestCase):
         user = UserFactory.create()
         team = TeamFactory(name='Green Machine IceCats')
         CoachFactory.create(user=user, team=team)
-        with self.assertRaisesMessage(IntegrityError,
-                                      'UNIQUE constraint failed: coaches_coach.user_id, coaches_coach.team_id'):
+        with self.assertRaises(IntegrityError):
             CoachFactory.create(user=user, team=team)
 
     def test_create_coach_user_missing_coach_role(self):

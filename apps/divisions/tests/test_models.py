@@ -20,8 +20,7 @@ class DivisionModelTests(TestCase):
     def test_duplicate_division_name_same_league(self):
         liahl = LeagueFactory(full_name='Long Island Amateur Hockey League')
         DivisionFactory(name='Default', league=liahl)
-        with self.assertRaisesMessage(IntegrityError,
-                                      'UNIQUE constraint failed: divisions_division.name, divisions_division.league_id'):
+        with self.assertRaises(IntegrityError):
             DivisionFactory(name='Default', league=liahl)
 
     def test_duplicate_division_name_different_league(self):
@@ -41,6 +40,5 @@ class DivisionModelTests(TestCase):
         liahl = LeagueFactory(full_name='Long Island Amateur Hockey League')
         division_name = 'Midget Minor AA'
         DivisionFactory(name=division_name, league=liahl)
-        with self.assertRaisesMessage(IntegrityError,
-                                      'UNIQUE constraint failed: divisions_division.name, divisions_division.league_id'):
+        with self.assertRaises(IntegrityError):
             DivisionFactory(name=division_name, league=liahl)

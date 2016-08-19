@@ -17,8 +17,7 @@ class ManagerModelTests(TestCase):
         user = UserFactory()
         team = TeamFactory(name='Green Machine IceCats')
         ManagerFactory(user=user, team=team)
-        with self.assertRaisesMessage(IntegrityError,
-                                      'UNIQUE constraint failed: managers_manager.user_id, managers_manager.team_id'):
+        with self.assertRaises(IntegrityError):
             ManagerFactory(user=user, team=team)
 
     def test_create_manager_user_missing_manager_role(self):

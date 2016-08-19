@@ -32,16 +32,14 @@ class SeasonModelTests(TestCase):
         division = DivisionFactory(name='Mites')
         start_date = datetime.date(2016, 8, 15)
         SeasonFactory(start_date=start_date, end_date=start_date + datetime.timedelta(days=365), division=division)
-        with self.assertRaisesMessage(IntegrityError,
-                                      'UNIQUE constraint failed: seasons_season.start_date, seasons_season.division_id'):
+        with self.assertRaises(IntegrityError):
             SeasonFactory(start_date=start_date, end_date=start_date + datetime.timedelta(days=360), division=division)
 
     def test_unique_together_end_date_division(self):
         division = DivisionFactory(name='Mites')
         end_date = datetime.date(2016, 8, 15)
         SeasonFactory(start_date=datetime.date(2016, 8, 15), end_date=end_date, division=division)
-        with self.assertRaisesMessage(IntegrityError,
-                                      'UNIQUE constraint failed: seasons_season.end_date, seasons_season.division_id'):
+        with self.assertRaises(IntegrityError):
             SeasonFactory(start_date=datetime.date(2016, 9, 23), end_date=end_date, division=division)
 
     def test_unique_for_year(self):
