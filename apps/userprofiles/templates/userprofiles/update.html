@@ -33,6 +33,33 @@
                                 <h4>Gender: {{ userprofile.gender | title }}</h4>
                                 <h4>Birthday: {{ userprofile.birthday }}</h4>
                                 <a id="change_password_link" href="{% url 'account_change_password' %}">Change Password</a>
+                                {% if api_token %}
+                                    <br><br>
+                                    <a id="show_token_link" href="#" data-target="#token_modal" data-toggle="modal"><span class="fa fa-eye"></span>&nbsp;API Token</a>
+                                    <div class="modal fade" id="token_modal" tabindex="-1" role="dialog">
+                                        <br><br><br><br><br><br>
+                                        <div class="modal-dialog" role="document">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <button type="button" class="close" data-dismiss="modal"
+                                                            aria-label="Close"><span aria-hidden="true">&times;</span>
+                                                    </button>
+                                                    <h4 class="modal-title">API Token</h4>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <p class="text-danger">You must keep this token secret, otherwise anybody with the token can impersonate you.</p>
+                                                    <strong>{{ api_token }}</strong>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <form class="pull-left" id="revoke_token_form" action="{% url 'revoke_api_token' %}">
+                                                        <button id="revoke_api_token_btn" type="submit" class="btn btn-danger btn-sm">Revoke API Token</button>
+                                                        <span class="text-muted">&nbsp;&nbsp;You will have to manually obtain another token</span>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endif %}
                                 <br><br>
                                 <form action="" method="post">
                                     {% csrf_token %}

@@ -32,16 +32,26 @@
 {% block footer %}
     <footer class="footer">
         <ol class="breadcrumb breadcrumb-footer text-center">
-            {% if 'about' in request.path %}
+
+            {% url 'about_us' as about_us_url %}
+            {% if request.path == about_us_url %}
                 <li class='active'>About</li>
             {% else %}
                 <li><a id='about_us' href='{% url 'about_us' %}'>About</a></li>
             {% endif %}
 
-            {% if 'contact' in request.path %}
+            {% url 'contact_us' as contact_us_url %}
+            {% if request.path == contact_us_url %}
                 <li class='active'>Contact</li>
             {% else %}
                 <li><a id='contact_us' href='{% url 'contact_us' %}'>Contact</a></li>
+            {% endif %}
+
+            {% url 'api_home' as api_home_url %}
+            {% if request.path  == api_home_url %}
+                <li class='active'>API</li>
+            {% else %}
+                <li><a id='api' href='{% url 'api_home' %}'>API</a></li>
             {% endif %}
         </ol>
     </footer>
@@ -52,6 +62,7 @@
     <script src="{% static 'jquery/dist/jquery.min.js' %}"></script>
     <script src="{% static 'bootstrap/dist/js/bootstrap.min.js' %}"></script>
     <script src="{% static 'noty/js/noty/packaged/jquery.noty.packaged.js' %}"></script>
+    <script src="{% static 'javascripts/main.js' %}"></script>
 
     {% block extra_js %}
     {% endblock %}

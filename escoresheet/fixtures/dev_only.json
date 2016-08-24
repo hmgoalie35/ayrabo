@@ -564,8 +564,8 @@
     "model": "teams.team",
     "pk": 20,
     "fields": {
-      "name": "Tampy Bay Lightning",
-      "slug": "tampy-bay-lightning",
+      "name": "Tampa Bay Lightning",
+      "slug": "tampa-bay-lightning",
       "website": "",
       "division": 5,
       "created": "2016-08-11T22:36:42.575Z"

@@ -7,7 +7,9 @@ from django.contrib.auth.models import User
 from django.db.models import Q
 from selenium.common.exceptions import NoSuchElementException, WebDriverException
 from selenium.webdriver.common.by import By
+from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.select import Select
+from selenium.webdriver.support.ui import WebDriverWait
 
 from sports.models import SportRegistration
 
@@ -59,6 +61,23 @@ def step_impl(context, element, value):
 def step_impl(context, element):
     the_element = find_element(context, element)
     the_element.click()
+
+
+@step('I press "(?P<element>[^"]*)" which opens "(?P<modal_id>.*)"')
+def step_impl(context, element, modal_id):
+    """
+    Waits for the given modal to be clickable (i.e. displayed and clickable)
+    """
+    the_element = find_element(context, element)
+    the_element.click()
+    WebDriverWait(context.driver, 10).until(
+            expected_conditions.element_to_be_clickable((By.ID, modal_id)),
+    )
+
+
+@step('I wait for any ajax calls to finish')
+def step_impl(context):
+    WebDriverWait(context.driver, 10).until(lambda driver: driver.execute_script("return jQuery.active === 0"))
 
 
 @step('I press "(?P<prefix>[^"]*)" with kwargs "(?P<kwargs>[^"]*)"')
