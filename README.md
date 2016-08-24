@@ -56,8 +56,8 @@ NOTE: The tests may take a few minutes
 
 ### Running Integration Tests (via selenium, phantomjs)
 1. Make sure you are in the directory where manage.py is
-2. Run `python manage.py behave features/`
-    * You can specify specific files or directories to test i.e. `python manage.py behave features/account/Login.feature`
+2. Run `python manage.py behave`
+    * You can specify specific files to test via regex i.e. `python manage.py behave --include <regex>`
 
 # Functional and Unit Tests
 

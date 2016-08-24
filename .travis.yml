@@ -13,8 +13,8 @@ env:
     - DJANGO_SETTINGS_MODULE="escoresheet.settings.settings"
 
 script:
-  - python manage.py test apps/
-  - python manage.py behave features/
+  - python manage.py test
+  - python manage.py behave
 
 branches:
   only:
