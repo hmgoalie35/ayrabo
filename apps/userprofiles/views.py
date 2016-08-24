@@ -3,6 +3,7 @@ from django.contrib.messages.views import SuccessMessageMixin
 from django.core.urlresolvers import reverse, reverse_lazy
 from django.shortcuts import redirect
 from django.views import generic
+from rest_framework.authtoken.models import Token
 
 from sports.models import SportRegistration
 from userprofiles.models import UserProfile
@@ -72,6 +73,8 @@ class UpdateUserProfileView(LoginRequiredMixin, SuccessMessageMixin, generic.Upd
             data[sport_registration] = {'sport': sport_registration.sport, 'roles': sport_registration.roles,
                                         'related_objects': sport_registration.get_related_role_objects()}
         context['data'] = data
+        api_tokens = Token.objects.filter(user=self.request.user)
+        context['api_token'] = api_tokens.first() if api_tokens.exists() else None
         return context
 
     def get_object(self, queryset=None):

@@ -14,4 +14,25 @@ $(function () {
         window.location.href = $(this).attr('href');
         return false;
     });
+
+
+    $("#revoke_token_form").submit(function (event) {
+        event.preventDefault();
+        event.stopPropagation();
+        var promise = $.ajax({
+            url: $(this).attr("action"),
+            method: 'DELETE'
+        });
+        var onSuccess = function (data, textStatus, jqXHR) {
+            window.location.reload();
+        };
+
+        var onFailure = function (data, textStatus, errorThrown) {
+            alert("Error revoking api token: " + errorThrown + ", please try again in a few moments.");
+        };
+
+        promise.then(onSuccess, onFailure);
+        return false;
+    });
+
 });
