@@ -76,6 +76,9 @@ INSTALLED_APPS = [
     'allauth.socialaccount',
     'behave_django',
     'crispy_forms',
+    'rest_framework',
+    'rest_framework.authtoken',
+    'django_filters',
 
     # custom apps
     'home.apps.HomeConfig',
@@ -90,6 +93,7 @@ INSTALLED_APPS = [
     'referees.apps.RefereesConfig',
     'players.apps.PlayersConfig',
     'seasons.apps.SeasonsConfig',
+    'api.apps.ApiConfig',
 ]
 
 CRISPY_TEMPLATE_PACK = 'bootstrap3'
@@ -343,6 +347,31 @@ TEST_RUNNER = "redgreenunittest.django.runner.RedGreenDiscoverRunner"
 FIXTURE_DIRS = [
     os.path.join(PROJECT_ROOT, 'fixtures')
 ]
+
+API_VERSIONS = ['v1']
+DEFAULT_VERSION = 'v1'
+
+# DRF settings
+REST_FRAMEWORK = {
+    'DEFAULT_VERSIONING_CLASS': 'rest_framework.versioning.NamespaceVersioning',
+    'DEFAULT_VERSION': DEFAULT_VERSION,
+    'ALLOWED_VERSIONS': API_VERSIONS,
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        # For local development, BasicAuthentication is appended to this list in local_settings.py.dev
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.TokenAuthentication',
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',
+    ],
+    'DEFAULT_FILTER_BACKENDS': [
+        'rest_framework.filters.DjangoFilterBackend',
+        'rest_framework.filters.SearchFilter',
+        'rest_framework.filters.OrderingFilter',
+    ],
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 25,
+}
 
 try:
     # Running in dev mode

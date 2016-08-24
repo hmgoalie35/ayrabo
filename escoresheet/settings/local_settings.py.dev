@@ -1,6 +1,6 @@
 import os
 
-from .settings import BASE_DIR
+from .settings import BASE_DIR, REST_FRAMEWORK
 
 DEBUG = True
 
@@ -26,3 +26,6 @@ CACHES = {
 DEBUG_TOOLBAR_CONFIG = {
     'SHOW_COLLAPSED': True,
 }
+
+
+REST_FRAMEWORK['DEFAULT_AUTHENTICATION_CLASSES'].append('rest_framework.authentication.BasicAuthentication')
