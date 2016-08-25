@@ -235,6 +235,9 @@ class UpdateSportRegistrationView(LoginRequiredMixin, ContextMixin, generic.View
             return context
         context['sport_registration'] = sr
         related_objects = sr.get_related_role_objects()
+        context['remaining_roles'] = set(SportRegistration.ROLES) - set(sr.roles)
+        # Used to disable remove role links
+        context['has_one_role'] = len(sr.roles) == 1
         context['player_read_only_fields'] = ['team']
         context['coach_read_only_fields'] = ['team']
         context['manager_read_only_fields'] = ['team']

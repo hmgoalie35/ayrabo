@@ -15,6 +15,7 @@ class SportAdmin(admin.ModelAdmin):
 class SportRegistrationAdmin(admin.ModelAdmin):
     list_display = ['id', 'user', 'roles_mask', 'roles_mask_to_string', 'is_complete', 'sport']
     list_display_links = ['user']
+    search_fields = ['user__email', 'user__first_name', 'user__last_name', 'sport__name']
     form = forms.SportRegistrationAdminForm
     readonly_fields = ['roles_mask']
 

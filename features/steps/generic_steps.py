@@ -2,6 +2,7 @@ import os
 import re
 
 from behave import *
+from django.apps import apps
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.db.models import Q
@@ -10,8 +11,6 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.select import Select
 from selenium.webdriver.support.ui import WebDriverWait
-
-from sports.models import SportRegistration
 
 
 def find_element(context, element_to_find):
@@ -34,6 +33,22 @@ def find_element(context, element_to_find):
     raise NoSuchElementException('{element} does not exist on the page'.format(element=element_to_find))
 
 
+def string_to_kwargs_dict(string):
+    """
+    Given a string of the form "a=b, c=d" returns a dictionary of key-value pairs. i.e {'a': 'b', 'c': 'd'}
+    The purpose is so the return dictionary can be used with ** to pass kwargs to functions.
+    :param string: A string of the form "a=b, c=d"
+    :return: A dictionary of key value pairs. The key is derived from the left side of = and the value is from the right
+    side
+    """
+    ret_val = {}
+    for kwarg in string.split(', '):
+        val = kwarg.strip().split('=')
+        for i in range(len(val) - 1):
+            ret_val[val[i]] = val[i + 1]
+    return ret_val
+
+
 @step('I am on the "(?P<url>.*)" page')
 def step_impl(context, url):
     context.driver.get(context.get_url(url))
@@ -41,8 +56,30 @@ def step_impl(context, url):
 
 @step('I go to the "(?P<url>[^"]*)" page')
 def step_impl(context, url):
-    step = 'given I am on the "{url}" page\n'.format(url=url)
-    context.execute_steps(step)
+    the_step = 'given I am on the "{url}" page\n'.format(url=url)
+    context.execute_steps(the_step)
+
+
+@step('I should be on the page for "(?P<model_class>.*)" and "(?P<kwarg_data>.*)"')
+def step_impl(context, model_class, kwarg_data):
+    if '.' not in model_class:
+        raise Exception('You must specify the model class as <app_name>.<model_class> i.e. "sports.SportRegistration"')
+    cls = apps.get_model(model_class)
+    kwargs = string_to_kwargs_dict(kwarg_data)
+    qs = cls.objects.filter(**kwargs)
+    obj = qs.first()
+    context.test.assertEqual(context.get_url(obj.get_absolute_url()), context.driver.current_url)
+
+
+@step('I am on the page for "(?P<model_class>.*)" and "(?P<kwarg_data>.*)"')
+def step_impl(context, model_class, kwarg_data):
+    if '.' not in model_class:
+        raise Exception('You must specify the model class as <app_name>.<model_class> i.e. "sports.SportRegistration"')
+    cls = apps.get_model(model_class)
+    kwargs = string_to_kwargs_dict(kwarg_data)
+    qs = cls.objects.filter(**kwargs)
+    obj = qs.first()
+    context.driver.get(context.get_url(obj.get_absolute_url()))
 
 
 @step('The current url should contain "(?P<text>.*)"')
@@ -187,25 +224,3 @@ def step_impl(context, element, prefix):
     if prefix == 'dis':
         result = not result
     context.test.assertTrue(result)
-
-
-# TODO make this dynamic
-@step('I should be on the page for "(?P<model_class>.*)" and "(?P<data>.*)"')
-def step_impl(context, model_class, data):
-    split_data = data.split(' ')
-    user = split_data[0].strip()
-    sport_name = split_data[1].strip() + ' ' + split_data[2].strip()
-    if model_class == 'sports.SportRegistration':
-        sr = SportRegistration.objects.get(user__email=user, sport__name=sport_name)
-        context.test.assertEqual(context.get_url(sr.get_absolute_url()), context.driver.current_url)
-
-
-# TODO make this dynamic
-@step('I am on the page for "(?P<model_class>.*)" and "(?P<data>.*)"')
-def step_impl(context, model_class, data):
-    split_data = data.split(' ')
-    user = split_data[0].strip()
-    sport_name = split_data[1].strip() + ' ' + split_data[2].strip()
-    if model_class == 'sports.SportRegistration':
-        sr = SportRegistration.objects.get(user__email=user, sport__name=sport_name)
-        context.driver.get(context.get_url(sr.get_absolute_url()))

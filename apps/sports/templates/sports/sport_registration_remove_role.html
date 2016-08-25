@@ -1,0 +1,25 @@
+{% extends 'site_base.html' %}
+
+{% block title %}Remove {{ role }} role{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="text-center">
+                    <br>
+                    <h1>Remove {{ role }} role from {{ sport_registration.sport }}</h1>
+                    <br>
+                    <h3 class="text-muted">Are you sure?</h3>
+                    <h4>You will no longer have access to {{ role }} specific functionality for {{ sport_registration.sport }}.</h4>
+                    <form action="" method="post">
+                        {% csrf_token %}
+                        <br>
+                        <a href="{% url 'sport:update_sport_registration' sport_registration.pk %}" class="btn btn-default">Cancel</a>
+                        <button type="submit" class="btn btn-danger">Ok</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
