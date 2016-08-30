@@ -15,6 +15,7 @@ from sports.models import Sport, SportRegistration
 from teams.tests import TeamFactory
 from .factories.SportFactory import SportFactory
 from .factories.SportRegistrationFactory import SportRegistrationFactory
+from sports.exceptions import RoleDoesNotExistError, InvalidNumberOfRolesError
 
 
 class SportModelTests(TestCase):
@@ -182,3 +183,38 @@ class SportRegistrationModelTests(TestCase):
         sr.set_roles([])
         result = sr.get_related_role_objects()
         self.assertDictEqual({}, result)
+
+    def test_remove_role_when_role_dne(self):
+        user = UserFactory(email='testing@example.com')
+        sport = SportFactory(name='Ice Hockey')
+        sr = SportRegistrationFactory(user=user, sport=sport)
+        sr.set_roles(['Player', 'Coach'])
+        with self.assertRaises(RoleDoesNotExistError):
+            sr.remove_role('Manager')
+            sr.remove_role('Referee')
+
+    def test_remove_role_when_last_role(self):
+        user = UserFactory(email='testing@example.com')
+        sport = SportFactory(name='Ice Hockey')
+        sr = SportRegistrationFactory(user=user, sport=sport)
+        sr.set_roles(['Player'])
+        with self.assertRaises(InvalidNumberOfRolesError):
+            sr.remove_role('Player')
+
+    def test_remove_role_valid(self):
+        user = UserFactory(email='testing@example.com')
+        sport = SportFactory(name='Ice Hockey')
+        sr = SportRegistrationFactory(user=user, sport=sport)
+        roles = ['Player', 'Coach', 'Referee', 'Manager']
+        sr.set_roles(roles)
+        sr.remove_role('Coach')
+        self.assertEqual(sorted(sr.roles), sorted(list(set(roles) - {'Coach'})))
+
+    def test_remove_role_case_insensitive(self):
+        user = UserFactory(email='testing@example.com')
+        sport = SportFactory(name='Ice Hockey')
+        sr = SportRegistrationFactory(user=user, sport=sport)
+        roles = ['Player', 'Coach', 'Referee', 'Manager']
+        sr.set_roles(roles)
+        sr.remove_role('coach')
+        self.assertEqual(sorted(sr.roles), sorted(list(set(roles) - {'Coach'})))

@@ -3,16 +3,19 @@ from django.core.urlresolvers import reverse
 from django.test import TestCase
 
 from accounts.tests import UserFactory
+from coaches.forms import CoachForm
 from coaches.models import Coach
 from coaches.tests import CoachFactory
 from divisions.tests import DivisionFactory
 from escoresheet.testing_utils import get_messages, create_related_objects
 from leagues.tests import LeagueFactory
+from managers.forms import ManagerForm
 from managers.models import Manager
 from managers.tests import ManagerFactory
 from players import forms as player_forms
 from players.models import HockeyPlayer
 from players.tests import HockeyPlayerFactory
+from referees.forms import RefereeForm
 from referees.models import Referee
 from referees.tests import RefereeFactory
 from sports.models import SportRegistration
@@ -585,3 +588,293 @@ class UpdateSportRegistrationViewTests(TestCase):
         response = self.client.post(self.url, data=post_data, follow=True)
 
         self.assertTemplateUsed(response, 'sports/sport_registration_update.html')
+
+
+class AddSportRegistrationRoleViewTests(TestCase):
+    @classmethod
+    def setUpClass(cls):
+        super(AddSportRegistrationRoleViewTests, cls).setUpClass()
+        cls.ice_hockey = SportFactory(name='Ice Hockey')
+        cls.baseball = SportFactory(name='Baseball')
+        cls.league = LeagueFactory(full_name='Long Island Amateur Hockey League', sport=cls.ice_hockey)
+        cls.division = DivisionFactory(name='Midget Minor AA', league=cls.league)
+        cls.team = TeamFactory(name='Green Machine Icecats', division=cls.division)
+
+    def setUp(self):
+        self.email = 'user@example.com'
+        self.password = 'myweakpassword'
+        self.post_data = None
+        self.user = UserFactory(email=self.email, password=self.password)
+        self.sr = SportRegistrationFactory(user=self.user, sport=self.ice_hockey, is_complete=True, roles_mask=0)
+
+        self.coach_post_data = factory.build(dict, FACTORY_CLASS=CoachFactory)
+        self.coach_post_data['coach-position'] = self.coach_post_data.pop('position')
+        self.manager_post_data = factory.build(dict, FACTORY_CLASS=ManagerFactory)
+        self.referee_post_data = factory.build(dict, FACTORY_CLASS=RefereeFactory)
+        self.hockeyplayer_post_data = factory.build(dict, FACTORY_CLASS=HockeyPlayerFactory)
+        self.referee_post_data['referee-league'] = str(self.league.id)
+        self.coach_post_data['coach-team'] = str(self.team.id)
+        self.manager_post_data['manager-team'] = str(self.team.id)
+
+        self.hockeyplayer_post_data['hockeyplayer-team'] = str(self.team.id)
+        self.hockeyplayer_post_data['hockeyplayer-position'] = self.hockeyplayer_post_data.pop('position')
+        self.hockeyplayer_post_data['hockeyplayer-jersey_number'] = self.hockeyplayer_post_data.pop('jersey_number')
+        self.hockeyplayer_post_data['hockeyplayer-handedness'] = self.hockeyplayer_post_data.pop('handedness')
+
+        del self.coach_post_data['user']
+        del self.manager_post_data['user']
+        del self.referee_post_data['user']
+        del self.hockeyplayer_post_data['user']
+
+        del self.coach_post_data['team']
+        del self.manager_post_data['team']
+        del self.referee_post_data['league']
+        del self.hockeyplayer_post_data['team']
+        del self.hockeyplayer_post_data['sport']
+
+        self.client.login(email=self.email, password=self.password)
+
+    # as a user who does not already have player, coach, etc. objects.
+    # GET
+    def test_get_anonymous_user(self):
+        self.client.logout()
+        url = reverse('sport:add_sport_registration_role', kwargs={'pk': self.sr.pk, 'role': 'player'})
+        response = self.client.get(url)
+        result_url = '%s?next=%s' % (reverse('account_login'), url)
+        self.assertRedirects(response, result_url)
+
+    def test_get_player_role(self):
+        response = self.client.get(
+                reverse('sport:add_sport_registration_role', kwargs={'pk': self.sr.pk, 'role': 'player'}))
+
+        self.assertIsInstance(response.context['form'], player_forms.HockeyPlayerForm)
+        self.assertEqual(response.context['role'], 'player')
+        self.assertEqual(response.context['sport_registration'].id, self.sr.id)
+        self.assertTemplateUsed(response, 'sports/sport_registration_add_role.html')
+
+    def test_get_coach_role(self):
+        response = self.client.get(
+                reverse('sport:add_sport_registration_role', kwargs={'pk': self.sr.pk, 'role': 'coach'}))
+
+        self.assertIsInstance(response.context['form'], CoachForm)
+        self.assertEqual(response.context['role'], 'coach')
+        self.assertEqual(response.context['sport_registration'].id, self.sr.id)
+
+    def test_get_referee_role(self):
+        response = self.client.get(
+                reverse('sport:add_sport_registration_role', kwargs={'pk': self.sr.pk, 'role': 'referee'}))
+
+        self.assertIsInstance(response.context['form'], RefereeForm)
+        self.assertEqual(response.context['role'], 'referee')
+        self.assertEqual(response.context['sport_registration'].id, self.sr.id)
+
+    def test_get_manager_role(self):
+        response = self.client.get(
+                reverse('sport:add_sport_registration_role', kwargs={'pk': self.sr.pk, 'role': 'manager'}))
+
+        self.assertIsInstance(response.context['form'], ManagerForm)
+        self.assertEqual(response.context['role'], 'manager')
+        self.assertEqual(response.context['sport_registration'].id, self.sr.id)
+
+    def test_get_not_object_owner(self):
+        other_user = UserFactory(email='otheruser@example.com', password=self.password)
+        sr = SportRegistrationFactory(user=other_user, sport=self.ice_hockey)
+
+        response = self.client.get(
+                reverse('sport:add_sport_registration_role', kwargs={'pk': sr.pk, 'role': 'manager'}))
+
+        self.assertEqual(response.status_code, 404)
+
+    def test_get_when_sport_registration_already_has_role(self):
+        self.sr.set_roles(['Manager'])
+        response = self.client.get(
+                reverse('sport:add_sport_registration_role', kwargs={'pk': self.sr.pk, 'role': 'manager'}), follow=True)
+
+        self.assertRedirects(response, self.sr.get_absolute_url())
+        self.assertIn('You are already registered as a manager.', get_messages(response))
+
+    # POST
+    def test_post_anonymous_user(self):
+        self.client.logout()
+        url = reverse('sport:add_sport_registration_role', kwargs={'pk': self.sr.pk, 'role': 'player'})
+        response = self.client.post(url, data={}, follow=True)
+        result_url = '%s?next=%s' % (reverse('account_login'), url)
+        self.assertRedirects(response, result_url)
+
+    def test_post_not_object_owner(self):
+        other_user = UserFactory(email='otheruser@example.com', password=self.password)
+        sr = SportRegistrationFactory(user=other_user, sport=self.ice_hockey)
+
+        response = self.client.post(
+                reverse('sport:add_sport_registration_role', kwargs={'pk': sr.pk, 'role': 'manager'}),
+                data=self.manager_post_data, follow=True)
+
+        self.assertEqual(response.status_code, 404)
+
+    def test_post_when_sport_registration_already_has_role(self):
+        self.sr.set_roles(['Manager'])
+        response = self.client.post(
+                reverse('sport:add_sport_registration_role', kwargs={'pk': self.sr.pk, 'role': 'manager'}),
+                data=self.manager_post_data, follow=True)
+        self.assertRedirects(response, self.sr.get_absolute_url())
+        self.assertIn('You are already registered as a manager.', get_messages(response))
+
+    def test_post_player_valid_data(self):
+        self.assertNotIn('Player', SportRegistration.objects.get(user=self.user, sport=self.sr.sport).roles)
+        response = self.client.post(
+                reverse('sport:add_sport_registration_role', kwargs={'pk': self.sr.pk, 'role': 'player'}),
+                data=self.hockeyplayer_post_data, follow=True)
+        self.assertRedirects(response, self.sr.get_absolute_url())
+        self.assertIn('Player role successfully added to Ice Hockey', get_messages(response))
+        self.assertTrue(HockeyPlayer.objects.filter(user=self.user, team=self.team).exists())
+        self.assertIn('Player', SportRegistration.objects.get(user=self.user, sport=self.sr.sport).roles)
+
+    def test_post_coach_valid_data(self):
+        self.assertNotIn('Coach', SportRegistration.objects.get(user=self.user, sport=self.sr.sport).roles)
+        response = self.client.post(
+                reverse('sport:add_sport_registration_role', kwargs={'pk': self.sr.pk, 'role': 'coach'}),
+                data=self.coach_post_data, follow=True)
+        self.assertRedirects(response, self.sr.get_absolute_url())
+        self.assertIn('Coach role successfully added to Ice Hockey', get_messages(response))
+        self.assertTrue(Coach.objects.filter(user=self.user, team=self.team).exists())
+        self.assertIn('Coach', SportRegistration.objects.get(user=self.user, sport=self.sr.sport).roles)
+
+    def test_post_referee_valid_data(self):
+        self.assertNotIn('Referee', SportRegistration.objects.get(user=self.user, sport=self.sr.sport).roles)
+        response = self.client.post(
+                reverse('sport:add_sport_registration_role', kwargs={'pk': self.sr.pk, 'role': 'referee'}),
+                data=self.referee_post_data, follow=True)
+        self.assertRedirects(response, self.sr.get_absolute_url())
+        self.assertIn('Referee role successfully added to Ice Hockey', get_messages(response))
+        self.assertTrue(Referee.objects.filter(user=self.user, league=self.league).exists())
+        self.assertIn('Referee', SportRegistration.objects.get(user=self.user, sport=self.sr.sport).roles)
+
+    def test_post_manager_valid_data(self):
+        self.assertNotIn('Manager', SportRegistration.objects.get(user=self.user, sport=self.sr.sport).roles)
+        response = self.client.post(
+                reverse('sport:add_sport_registration_role', kwargs={'pk': self.sr.pk, 'role': 'manager'}),
+                data=self.manager_post_data, follow=True)
+        self.assertRedirects(response, self.sr.get_absolute_url())
+        self.assertIn('Manager role successfully added to Ice Hockey', get_messages(response))
+        self.assertTrue(Manager.objects.filter(user=self.user, team=self.team).exists())
+        self.assertIn('Manager', SportRegistration.objects.get(user=self.user, sport=self.sr.sport).roles)
+
+    def test_post_invalid_data(self):
+        del self.hockeyplayer_post_data['hockeyplayer-handedness']
+        self.sr.set_roles(['Coach'])
+        self.assertNotIn('Player', SportRegistration.objects.get(user=self.user, sport=self.sr.sport).roles)
+        response = self.client.post(
+                reverse('sport:add_sport_registration_role', kwargs={'pk': self.sr.pk, 'role': 'player'}),
+                data=self.hockeyplayer_post_data)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'sports/sport_registration_add_role.html')
+        self.assertNotIn('Player role successfully added to Ice Hockey', get_messages(response))
+        self.assertFalse(HockeyPlayer.objects.filter(user=self.user, team=self.team).exists())
+        self.assertNotIn('Player', SportRegistration.objects.get(user=self.user, sport=self.sr.sport).roles)
+
+    # as a user who already has player, coach, etc. objects. (the user unregistered for a role
+    # and then re-registered for the role)
+    # GET
+    def test_get_player_obj_exists(self):
+        player_data = {'user': self.user, 'team': self.team, 'jersey_number': 23, 'handedness': 'Right',
+                       'position': 'G', 'sport': self.ice_hockey}
+        player, _, _, _ = create_related_objects(player_args=player_data)
+        response = self.client.get(
+                reverse('sport:add_sport_registration_role', kwargs={'pk': self.sr.pk, 'role': 'player'}))
+        self.assertIsNotNone(response.context['related_role_object'])
+        self.assertEqual(response.context['form'].instance.id, player.id)
+
+    def test_get_coach_obj_exists(self):
+        coach_data = {'user': self.user, 'team': self.team, 'position': 'Head Coach'}
+        _, coach, _, _ = create_related_objects(coach_args=coach_data)
+        response = self.client.get(
+                reverse('sport:add_sport_registration_role', kwargs={'pk': self.sr.pk, 'role': 'coach'}))
+        self.assertIsNotNone(response.context['related_role_object'])
+        self.assertEqual(response.context['form'].instance.id, coach.id)
+
+    def test_get_referee_obj_exists(self):
+        referee_data = {'user': self.user, 'league': self.league}
+        _, _, referee, _ = create_related_objects(referee_args=referee_data)
+        response = self.client.get(
+                reverse('sport:add_sport_registration_role', kwargs={'pk': self.sr.pk, 'role': 'referee'}))
+        self.assertIsNotNone(response.context['related_role_object'])
+        self.assertEqual(response.context['form'].instance.id, referee.id)
+
+    def test_get_manager_obj_exists(self):
+        manager_data = {'user': self.user, 'team': self.team}
+        _, _, _, manager = create_related_objects(manager_args=manager_data)
+        response = self.client.get(
+                reverse('sport:add_sport_registration_role', kwargs={'pk': self.sr.pk, 'role': 'manager'}))
+        self.assertIsNotNone(response.context['related_role_object'])
+        self.assertEqual(response.context['form'].instance.id, manager.id)
+
+    # POST
+    def test_post_player_obj_exists(self):
+        player_data = {'user': self.user, 'team': self.team, 'jersey_number': 23, 'handedness': 'Right',
+                       'position': 'G', 'sport': self.ice_hockey}
+        player, _, _, _ = create_related_objects(player_args=player_data)
+
+        del player_data['user']
+        player_data['hockeyplayer-team'] = player_data.pop('team').id
+        player_data['hockeyplayer-position'] = player_data.pop('position')
+        player_data['hockeyplayer-jersey_number'] = player_data.pop('jersey_number')
+        player_data['hockeyplayer-handedness'] = player_data.pop('handedness')
+
+        response = self.client.post(
+                reverse('sport:add_sport_registration_role', kwargs={'pk': self.sr.pk, 'role': 'player'}),
+                data=player_data, follow=True)
+
+        self.assertRedirects(response, self.sr.get_absolute_url())
+        self.assertIn('Player', SportRegistration.objects.get(user=self.user, sport=self.sr.sport).roles)
+        self.assertIn('{role} role successfully added to {sport}'.format(role='Player', sport=self.ice_hockey),
+                      get_messages(response))
+
+    def test_post_coach_obj_exists(self):
+        coach_data = {'user': self.user, 'team': self.team, 'position': 'Head Coach'}
+        _, coach, _, _ = create_related_objects(coach_args=coach_data)
+
+        del coach_data['user']
+        coach_data['coach-team'] = coach_data.pop('team').id
+        coach_data['coach-position'] = coach_data.pop('position')
+
+        response = self.client.post(
+                reverse('sport:add_sport_registration_role', kwargs={'pk': self.sr.pk, 'role': 'coach'}),
+                data=coach_data, follow=True)
+
+        self.assertRedirects(response, self.sr.get_absolute_url())
+        self.assertIn('Coach', SportRegistration.objects.get(user=self.user, sport=self.sr.sport).roles)
+        self.assertIn('{role} role successfully added to {sport}'.format(role='Coach', sport=self.ice_hockey),
+                      get_messages(response))
+
+    def test_post_referee_obj_exists(self):
+        referee_data = {'user': self.user, 'league': self.league}
+        _, _, referee, _ = create_related_objects(referee_args=referee_data)
+
+        del referee_data['user']
+        referee_data['referee-league'] = referee_data.pop('league').id
+
+        response = self.client.post(
+                reverse('sport:add_sport_registration_role', kwargs={'pk': self.sr.pk, 'role': 'referee'}),
+                data=referee_data, follow=True)
+
+        self.assertRedirects(response, self.sr.get_absolute_url())
+        self.assertIn('Referee', SportRegistration.objects.get(user=self.user, sport=self.sr.sport).roles)
+        self.assertIn('{role} role successfully added to {sport}'.format(role='Referee', sport=self.ice_hockey),
+                      get_messages(response))
+
+    def test_post_manager_obj_exists(self):
+        manager_data = {'user': self.user, 'team': self.team}
+        _, _, _, manager = create_related_objects(manager_args=manager_data)
+
+        del manager_data['user']
+        manager_data['manager-team'] = manager_data.pop('team').id
+
+        response = self.client.post(
+                reverse('sport:add_sport_registration_role', kwargs={'pk': self.sr.pk, 'role': 'manager'}),
+                data=manager_data, follow=True)
+
+        self.assertRedirects(response, self.sr.get_absolute_url())
+        self.assertIn('Manager', SportRegistration.objects.get(user=self.user, sport=self.sr.sport).roles)
+        self.assertIn('{role} role successfully added to {sport}'.format(role='Manager', sport=self.ice_hockey),
+                      get_messages(response))

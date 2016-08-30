@@ -7,5 +7,7 @@ urlpatterns = [
     url(r'^registration/finish/$', views.FinishSportRegistrationView.as_view(), name='finish_sport_registration'),
     url(r'^registration/(?P<pk>\d+)/update/$', views.UpdateSportRegistrationView.as_view(),
         name='update_sport_registration'),
+    url(r'^registration/(?P<pk>\d+)/(?P<role>(coach|player|referee|manager))/add/$',
+        views.AddSportRegistrationRoleView.as_view(), name='add_sport_registration_role'),
 
 ]

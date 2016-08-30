@@ -24,7 +24,7 @@ $(function () {
             method: 'DELETE'
         });
         var onSuccess = function (data, textStatus, jqXHR) {
-            window.location.reload();
+            window.location.reload(true);
         };
 
         var onFailure = function (data, textStatus, errorThrown) {

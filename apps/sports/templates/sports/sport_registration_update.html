@@ -1,5 +1,5 @@
 {% extends 'site_base.html' %}
-{% load crispy_forms_tags %}
+{% load crispy_forms_tags staticfiles %}
 
 {% block title %}Update Sport Registration{% endblock %}
 
@@ -20,6 +20,14 @@
                         {% endfor %}
                     </p>
                     <br>
+                    {% if remaining_roles %}
+                        <h4>Available Roles</h4>
+                        <p class="text-muted">Click a role below to register for it.</p>
+                        {% for role in remaining_roles %}
+                            <a id="add_{{ role|lower }}_role_link" class="btn btn-info btn-xs" href="{% url 'sport:add_sport_registration_role' pk=sport_registration.pk role=role|lower %}">{{ role }}</a>
+                        {% endfor %}
+                        <br><br>
+                    {% endif %}
                     <h4>Changing your team or league is not currently supported.</h4>
                     <h4>If you have any questions or issues please <a href="{% url 'contact_us' %}">contact us</a>.</h4>
                 </div>
@@ -35,25 +43,73 @@
 
                     {% if player_form %}
                         <h3 class="text-center">{{ sport_registration.sport }} Player</h3>
+
+                        {% if has_one_role %}
+                            <div class="pull-right" data-toggle="tooltip" data-placement="top" title="You cannot remove this role, you must have at least one role.">
+                                <span id="remove_player_icon_disabled" class="fa fa-trash trash-delete"></span>
+                            </div>
+                        {% else %}
+                            <div class="pull-right" data-toggle="tooltip" data-placement="top" title="Remove player role">
+                                <a id="remove_player_icon" href="#" data-toggle="modal" data-target="#remove_player_modal"><span class="fa fa-trash trash-delete"></span></a>
+                            </div>
+                        {% endif %}
+
                         {{ player_form | crispy }}
+
                         <br>
                     {% endif %}
 
                     {% if coach_form %}
                         <h3 class="text-center">{{ sport_registration.sport }} Coach</h3>
+
+                        {% if has_one_role %}
+                            <div class="pull-right" data-toggle="tooltip" data-placement="top" title="You cannot remove this role, you must have at least one role.">
+                                <span id="remove_coach_icon_disabled" class="fa fa-trash trash-delete"></span>
+                            </div>
+                        {% else %}
+                            <div class="pull-right" data-toggle="tooltip" data-placement="top" title="Remove coach role">
+                                <a id="remove_coach_icon" href="#" data-toggle="modal" data-target="#remove_coach_modal"><span class="fa fa-trash trash-delete"></span></a>
+                            </div>
+                        {% endif %}
+
                         {{ coach_form | crispy }}
+
                         <br>
                     {% endif %}
 
                     {% if referee_form %}
                         <h3 class="text-center">{{ sport_registration.sport }} Referee</h3>
+
+                        {% if has_one_role %}
+                            <div class="pull-right" data-toggle="tooltip" data-placement="top" title="You cannot remove this role, you must have at least one role.">
+                                <span id="remove_referee_icon_disabled" class="fa fa-trash trash-delete"></span>
+                            </div>
+                        {% else %}
+                            <div class="pull-right" data-toggle="tooltip" data-placement="top" title="Remove referee role">
+                                <a id="remove_referee_icon" href="#" data-toggle="modal" data-target="#remove_referee_modal"><span class="fa fa-trash trash-delete"></span></a>
+                            </div>
+                        {% endif %}
+
                         {{ referee_form | crispy }}
+
                         <br>
                     {% endif %}
 
                     {% if manager_form %}
                         <h3 class="text-center">{{ sport_registration.sport }} Manager</h3>
+
+                        {% if has_one_role %}
+                            <div class="pull-right" data-toggle="tooltip" data-placement="top" title="You cannot remove this role, you must have at least one role.">
+                               <span id="remove_manager_icon_disabled" class="fa fa-trash trash-delete"></span>
+                            </div>
+                        {% else %}
+                            <div class="pull-right" data-toggle="tooltip" data-placement="top" title="Remove manager role">
+                                <a id="remove_manager_icon" href="#" data-toggle="modal" data-target="#remove_manager_modal"><span class="fa fa-trash trash-delete"></span></a>
+                            </div>
+                        {% endif %}
+
                         {{ manager_form | crispy }}
+
                         <br>
                     {% endif %}
 
@@ -64,8 +120,48 @@
                                class="btn btn-success">
                     </div>
                     <br>
+
                 </form>
+
+                {% if not has_one_role %}
+                    {% for role in sport_registration.roles %}
+                        {% with role=role|lower %}
+                            <div class="modal fade" id="remove_{{ role }}_modal" tabindex="-1" role="dialog">
+                                <br><br><br><br><br>
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span></button>
+                                            <h4 class="modal-title">Are you sure?</h4>
+                                        </div>
+                                        <div class="modal-body">
+                                            <div class="text-center">
+                                                <h4>Remove {{ role }} role from {{ sport_registration.sport }}</h4>
+                                                <p>You will no longer have access to {{ role }} specific functionality for {{ sport_registration.sport }}.</p>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel
+                                            </button>
+                                            <button id="remove_{{ role }}_role_btn" name="remove_role_btn"
+                                                    data-url="{% url 'v1:remove_sport_registration_role' pk=sport_registration.pk role=role %}"
+                                                    type="button" class="btn btn-danger">Ok
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endwith %}
+                    {% endfor %}
+                {% endif %}
+
             </div>
         </div>
     </div>
+{% endblock %}
+
+
+{% block extra_js %}
+    <script src="{% static 'sports/javascripts/remove_sport_registration_roles.js' %}"></script>
 {% endblock %}

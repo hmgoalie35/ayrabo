@@ -7,6 +7,7 @@ import coaches as coaches_app
 import managers as managers_app
 import players as players_app
 import referees as referees_app
+from .exceptions import RoleDoesNotExistError, InvalidNumberOfRolesError
 
 
 class Sport(models.Model):
@@ -76,6 +77,23 @@ class SportRegistration(models.Model):
         else:
             self.roles_mask = accumulator
         self.save()
+
+    def remove_role(self, role):
+        """
+        Given a role attempts to remove that role.
+        :raise RoleDoesNotExistError if the sport registration does not have the specified role.
+        :raise InvalidNumberOfRolesError if removing the role would result in the sport registration having no roles.
+        :param role: The role to remove.
+        """
+        if not self.has_role(role):
+            raise RoleDoesNotExistError()
+
+        new_roles = list(set(self.roles) - {role.title()})
+
+        if new_roles:
+            self.set_roles(new_roles)
+        else:
+            raise InvalidNumberOfRolesError()
 
     @property
     def roles(self):

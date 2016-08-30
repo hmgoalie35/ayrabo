@@ -46,13 +46,6 @@
             {% else %}
                 <li><a id='contact_us' href='{% url 'contact_us' %}'>Contact</a></li>
             {% endif %}
-
-            {% url 'api_home' as api_home_url %}
-            {% if request.path  == api_home_url %}
-                <li class='active'>API</li>
-            {% else %}
-                <li><a id='api' href='{% url 'api_home' %}'>API</a></li>
-            {% endif %}
         </ol>
     </footer>
 {% endblock %}

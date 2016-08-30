@@ -85,3 +85,11 @@ div.alert.alert-block.alert-danger > ul > li {
 .margin-between-fa {
   margin-right: 5px;
 }
+
+.trash-delete {
+  cursor: pointer;
+  color: indianred;
+  &:hover {
+    color: darkred;
+  }
+}
