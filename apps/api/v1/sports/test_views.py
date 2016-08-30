@@ -3,8 +3,8 @@ from rest_framework.reverse import reverse
 from rest_framework.test import APITestCase
 
 from accounts.tests import UserFactory
-from sports.tests import SportRegistrationFactory
 from sports.models import SportRegistration
+from sports.tests import SportRegistrationFactory
 
 
 class RemoveSportRegistrationRoleAPIViewTests(APITestCase):
@@ -50,4 +50,6 @@ class RemoveSportRegistrationRoleAPIViewTests(APITestCase):
                 reverse('v1:remove_sport_registration_role', kwargs={'pk': self.sr.pk, 'role': 'player'}))
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertDictEqual({'error': 'You cannot remove the player role, you need to have at least one role.'}, response.data)
+        self.assertDictEqual(
+                {'error': 'You cannot remove the player role. You must be registered for at least one role.'},
+                response.data)

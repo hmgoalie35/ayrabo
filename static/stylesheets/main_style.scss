@@ -87,6 +87,7 @@ div.alert.alert-block.alert-danger > ul > li {
 }
 
 .trash-delete {
+  cursor: pointer;
   color: indianred;
   &:hover {
     color: darkred;

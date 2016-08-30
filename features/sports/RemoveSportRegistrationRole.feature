@@ -31,5 +31,5 @@ Feature: Remove roles from sport registration
     Given "user@example.com" is completely registered for "Ice Hockey" with role "Player"
     And I am on the page for "sports.SportRegistration" and "user__email=user@example.com, sport__name=Ice Hockey"
     When I press "remove_player_icon_disabled"
-    Then "remove_player_modal" should not be visible
+    Then I should not see "Remove player role from Ice Hockey"
     And I should see "Ice Hockey Player"

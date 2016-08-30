@@ -1,0 +1,39 @@
+{% extends 'site_base.html' %}
+{% load crispy_forms_tags an %}
+
+{% block title %}Add {{ role }} role{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="text-center">
+                    <h1>Add {{ role }} role to {{ sport_registration.sport }}</h1>
+                    {% if related_role_object %}
+                        <h3>It seems like you have already registered as {{ sport_registration.sport | an }} {{ sport_registration.sport }} {{ role }}</h3>
+                        <h4>Please confirm the information below is correct before adding the {{ role }} role</h4>
+                        <h4>You will be able to update the information on the update sport registration page</h4>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <br><br>
+
+        <div class="row">
+            <div class="col-sm-offset-4 col-sm-4 col-sm-offset-4">
+
+                <form action="" method="post">
+                    {% csrf_token %}
+                    {{ form | crispy }}
+                    <br>
+                    <div class="text-center">
+                        <a href="{% url 'sport:update_sport_registration' sport_registration.pk %}" class="btn btn-back">Back</a>
+                        <input id="add_role_btn" type="submit" class="btn btn-success" value="Add {{ role }} role">
+                    </div>
+                </form>
+            </div>
+        </div>
+
+    </div>
+{% endblock %}
