@@ -114,7 +114,7 @@ def step_impl(context, element, modal_id):
 
 @step('I wait for any ajax calls to finish')
 def step_impl(context):
-    WebDriverWait(context.driver, 10).until(lambda driver: driver.execute_script("return jQuery.active === 0"))
+    WebDriverWait(context.driver, 30).until(lambda driver: driver.execute_script("return jQuery.active === 0"))
 
 
 @step('I press "(?P<prefix>[^"]*)" with kwargs "(?P<kwargs>[^"]*)"')
