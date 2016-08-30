@@ -15,7 +15,7 @@ from sports.models import Sport, SportRegistration
 from teams.tests import TeamFactory
 from .factories.SportFactory import SportFactory
 from .factories.SportRegistrationFactory import SportRegistrationFactory
-from ..exceptions import RoleDoesNotExistError, InvalidNumberOfRolesError
+from sports.exceptions import RoleDoesNotExistError, InvalidNumberOfRolesError
 
 
 class SportModelTests(TestCase):
