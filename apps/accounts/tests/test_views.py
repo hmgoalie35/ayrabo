@@ -1,4 +1,4 @@
-from allauth.account.models import EmailConfirmation, EmailAddress
+from allauth.account.models import EmailConfirmationHMAC, EmailAddress
 from django.contrib.auth import get_user_model
 from django.core import mail
 from django.core.urlresolvers import reverse
@@ -14,12 +14,13 @@ class NewEmailConfirmationTests(TestCase):
         return self.client.post(reverse('account_new_email_confirmation'), data, follow=True)
 
     def setUp(self):
+        self.email = 'user@example.com'
         # In order to have an email confirmation generated, need to POST to the 'account_register' url/view
         self.client.post(reverse('account_register'),
-                         {'email': 'user@example.com', 'username': 'user@example.com', 'first_name': 'John',
+                         {'email': self.email, 'username': self.email, 'first_name': 'John',
                           'last_name': 'Doe', 'password1': 'myweakpassword', 'password2': 'myweakpassword'})
         self.user = User.objects.first()
-        self.confirmation = EmailConfirmation.objects.get(email_address__email=self.user.email)
+        self.confirmation = EmailConfirmationHMAC(EmailAddress.objects.get(user=self.user))
         # The path that should be redirected to on invalid requests
         self.invalid_request_path = reverse('account_confirm_email', kwargs={'key': self.confirmation.key})
         # The path that should be redirected to on valid requests
