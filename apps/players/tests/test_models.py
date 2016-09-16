@@ -57,7 +57,7 @@ class PlayerModelTests(TestCase):
             player.clean()
 
 
-class HockeyPlayesrodelTests(TestCase):
+class HockeyPlayerModelTests(TestCase):
     def setUp(self):
         self.jersey_number = 35
         self.hockey_player = HockeyPlayerFactory(jersey_number=self.jersey_number)
@@ -85,7 +85,7 @@ class HockeyPlayesrodelTests(TestCase):
             player.clean()
 
 
-class BaseballPlayesrodelTests(TestCase):
+class BaseballPlayerModelTests(TestCase):
     def setUp(self):
         self.jersey_number = 35
         self.baseball_player = BaseballPlayerFactory(jersey_number=self.jersey_number)
@@ -113,7 +113,7 @@ class BaseballPlayesrodelTests(TestCase):
             player.clean()
 
 
-class BasketballPlayesrodelTests(TestCase):
+class BasketballPlayerModelTests(TestCase):
     def setUp(self):
         self.jersey_number = 35
         self.basketball_player = BasketballPlayerFactory(jersey_number=self.jersey_number)
