@@ -30,11 +30,11 @@ class Season(models.Model):
             })
 
     def __str__(self):
-        return '{start_year} - {end_year} Season'.format(start_year=self.start_date.year, end_year=self.end_date.year)
+        return '{start_year}-{end_year} Season'.format(start_year=self.start_date.year, end_year=self.end_date.year)
 
 
 @receiver(m2m_changed, sender=Season.teams.through)
-def validate_divisions(action, instance, pk_set, reverse, **kwargs):
+def validate_season_divisions(action, instance, pk_set, reverse, **kwargs):
     """
     This function validates that teams/seasons being added to the manytomany relationship between the two
     are in the same division, which also means they are in the same league, sport, etc.
@@ -78,3 +78,22 @@ def validate_divisions(action, instance, pk_set, reverse, **kwargs):
         if errors:
             logger.error('. '.join(errors))
             # raise ValidationError(errors)
+
+
+class AbstractSeasonRoster(models.Model):
+    season = models.ForeignKey(Season)
+    team = models.ForeignKey(Team)
+    default = models.BooleanField(default=False, verbose_name='Default Season Roster')
+    created = models.DateTimeField(auto_now_add=True, verbose_name='Created')
+
+    class Meta:
+        abstract = True
+        ordering = ['created']
+        get_latest_by = 'created'
+
+    def __str__(self):
+        return '{team}-{division}: {season}'.format(team=self.team, division=self.team.division, season=self.season)
+
+
+class HockeySeasonRoster(AbstractSeasonRoster):
+    players = models.ManyToManyField('players.HockeyPlayer')
