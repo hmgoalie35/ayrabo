@@ -19,7 +19,7 @@ class TeamAdmin(admin.ModelAdmin):
     # the admin in overkill.
 
     def website_link(self, obj):
-        return format_html('<a target="_blank" href="{url}">{url}</a>', url=obj.website)
+        return format_html('<a target="_blank" href="{url}">{url}</a>', url=obj.website) if obj.website else None
 
     website_link.short_description = 'Website Link'
 

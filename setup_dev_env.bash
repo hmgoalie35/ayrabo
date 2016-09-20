@@ -51,7 +51,7 @@ cd escoresheet/settings/ && ln -s local_settings.py.dev local_settings.py ; cd .
 if grep -q django.db.backends.sqlite3 escoresheet/settings/local_settings.py ; then
     echo "Detected local sqlite3 database, running initial migrations and loading test data"
     python manage.py migrate
-    python manage.py loaddata dev_only
+    python manage.py loaddata dev_fixtures
 fi
 
 echo "Running tests..."
