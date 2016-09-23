@@ -20,7 +20,7 @@ sudo npm -g install phantomjs-prebuilt bower yuglify
 echo "Installing global pip packages"
 sudo pip install virtualenvwrapper
 
-echo "Adding env vars for virtualenvwrapper"
+echo "Configuring svirtualenvwrapper"
 if [ $SHELL == "/bin/bash" ] ; then
     echo "export WORKON_HOME=$HOME/.virtualenvs" >> ~/.bashrc
     echo "export PROJECT_HOME=$HOME/Development" >> ~/.bashrc
@@ -31,13 +31,15 @@ elif [ $SHELL == "/bin/zsh" ] ; then
     echo "export PROJECT_HOME=$HOME/Development" >> ~/.zshrc
     echo "source /usr/local/bin/virtualenvwrapper.sh" >> ~/.zshrc
     source ~/.zshrc
+else
+    echo "The shell you are using needs to be added to the if elif else chain in this file"
+    exit 1
 fi
 
 echo "Creating virtualenv"
 source /usr/local/bin/virtualenvwrapper.sh
 mkvirtualenv escoresheet -p `which python3`
 workon escoresheet
-
 
 echo "Installing project pip packages"
 pip install -r requirements.txt
@@ -56,13 +58,13 @@ fi
 
 echo "Running tests..."
 
-python manage.py test apps/
+python manage.py test
 
 if [ $? -ne 0 ] ; then
     echo "Error running unit/functional tests"
 fi
 
-python manage.py behave features/
+python manage.py behave
 
 if [ $? -ne 0 ] ; then
     echo "Error running integration tests"
