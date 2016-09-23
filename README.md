@@ -1,9 +1,11 @@
 # escoresheet
 Sport scoresheets for the digital age
 
-Dev: [![Build Status](https://travis-ci.com/hmgoalie35/escoresheet.svg?token=6sJZQMC4LpsRyFkHBeAL&branch=dev)](https://travis-ci.com/hmgoalie35/escoresheet)
+Dev: [![Build Status](https://travis-ci.org/hmgoalie35/escoresheet.svg?branch=dev)](https://travis-ci.org/hmgoalie35/escoresheet)
 
-Prod: [![Build Status](https://travis-ci.com/hmgoalie35/escoresheet.svg?token=6sJZQMC4LpsRyFkHBeAL&branch=master)](https://travis-ci.com/hmgoalie35/escoresheet)
+Prod: [![Build Status](https://travis-ci.org/hmgoalie35/escoresheet.svg?branch=master)](https://travis-ci.org/hmgoalie35/escoresheet)
+
+A license has been intentionally excluded. See http://choosealicense.com/no-license/ for more information.
 
 # Apt Dependencies
 
@@ -14,7 +16,7 @@ Prod: [![Build Status](https://travis-ci.com/hmgoalie35/escoresheet.svg?token=6s
 # Pip Packages (to be installed globally)
 * virtualenv or virtualenvwrapper (virtualenvwrapper recommended)
 
-# Npm Packages
+# Npm Packages (to be installed globally)
 * bower
 * phantomjs-prebuilt
 * yuglify (prod only)
@@ -38,6 +40,7 @@ You can either follow the instructions below or run setup_dev_env.bash (which in
     * yuglify is only for prod but for consistency install it anyway
     * You will likely need to run as root
 7. `cd escoresheet/settings/ && ln -s local_settings.py.dev local_settings.py ; cd ../../`
+    * This allows development settings to override production settings.
 
 Only do the following if you are using your own local sqlite database or if the database is brand new
 
