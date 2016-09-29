@@ -28,20 +28,31 @@ class AccountAndSportRegistrationCompleteMiddleware(object):
         # Do not apply this middleware to anonymous users, or for any request to a whitelisted url. A redirect
         # loop would occur if we didn't whitelist certain urls.
         if request.user.is_authenticated() and request.path not in whitelisted_urls:
+
             up = UserProfile.objects.filter(user=request.user)
             if not up.exists():
                 request.session['is_user_currently_registering'] = True
                 return redirect(create_profile_url)
+
             sport_registrations = SportRegistration.objects.filter(user=request.user)
             if not sport_registrations.exists():
                 request.session['is_user_currently_registering'] = True
                 return redirect(create_sport_registration_url)
+
             incomplete_sport_registrations = sport_registrations.filter(is_complete=False)
             if incomplete_sport_registrations.exists():
                 request.session['is_user_currently_registering'] = True
                 return redirect(finish_sport_registration_url)
-            else:
-                # The user's account is "complete" and all sport registrations are complete
-                request.session['is_user_currently_registering'] = False
-                return None
+
+            # At this point the user's account is "complete" and all sport registrations are complete
+            request.session['is_user_currently_registering'] = False
+
+            complete_sport_registrations = sport_registrations.filter(is_complete=True)
+            user_roles = []
+            for sport_reg in complete_sport_registrations:
+                for role in sport_reg.roles:
+                    user_roles.append(role) if role not in user_roles else None
+            request.session['user_roles'] = user_roles
+            return None
+
         return None

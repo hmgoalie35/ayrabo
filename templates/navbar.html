@@ -14,8 +14,65 @@
         <div id="navbar" class="navbar-collapse collapse" aria-expanded="false">
             <ul class="nav navbar-nav navbar-right">
                 {% if user.is_authenticated %}
+
+                    {% if 'Player' in request.session.user_roles %}
+                        <li>
+                            <a id="player_menu" href="#" class="dropdown-toggle" data-toggle="dropdown"
+                               role="button"
+                               aria-haspopup="true" aria-expanded="false">Players<span
+                                    class="caret"></span></a>
+                            <ul class="dropdown-menu">
+                                <li>
+                                    <a href="#">There are currently no actions here</a>
+                                </li>
+                            </ul>
+                        </li>
+                    {% endif %}
+
+                    {% if 'Coach' in request.session.user_roles %}
+                        <li>
+                            <a id="coach_menu" href="#" class="dropdown-toggle" data-toggle="dropdown"
+                               role="button"
+                               aria-haspopup="true" aria-expanded="false">Coaches<span
+                                    class="caret"></span></a>
+                            <ul class="dropdown-menu">
+                                <li>
+                                    <a href="#">There are currently no actions here</a>
+                                </li>
+                            </ul>
+                        </li>
+                    {% endif %}
+
+                    {% if 'Referee' in request.session.user_roles %}
+                        <li>
+                            <a id="referee_menu" href="#" class="dropdown-toggle" data-toggle="dropdown"
+                               role="button"
+                               aria-haspopup="true" aria-expanded="false">Referees<span
+                                    class="caret"></span></a>
+                            <ul class="dropdown-menu">
+                                <li>
+                                    <a href="#">There are currently no actions here</a>
+                                </li>
+                            </ul>
+                        </li>
+                    {% endif %}
+
+                    {% if 'Manager' in request.session.user_roles %}
+                        <li>
+                            <a id="manager_menu" href="#" class="dropdown-toggle" data-toggle="dropdown"
+                               role="button"
+                               aria-haspopup="true" aria-expanded="false">Managers<span
+                                    class="caret"></span></a>
+                            <ul class="dropdown-menu">
+                                <li>
+                                    <a href="#">Create season roster</a>
+                                </li>
+                            </ul>
+                        </li>
+                    {% endif %}
+
                     <!-- Account dropdown -->
-                    <li>
+                    <li class="vertical-line-left">
                         <a id="account_menu" href="#" class="dropdown-toggle" data-toggle="dropdown"
                            role="button"
                            aria-haspopup="true" aria-expanded="false">Account<span
@@ -23,14 +80,14 @@
                         <ul class="dropdown-menu">
                             <li>
                                 <a id="edit_account_link" href="{% url 'account_home' %}"><span
-                                        class="fa fa-user"></span>&nbsp; {{ user.email }}</a>
+                                        class="fa fa-fw fa-user"></span>{{ user.email }}</a>
                             </li>
 
                             <li class="divider"></li>
 
                             <li>
                                 <a id="logout_btn_acct_menu" href="{% url 'account_logout' %}"><span
-                                        class="fa fa-power-off"></span>&nbsp;Logout</a>
+                                        class="fa fa-fw fa-power-off"></span>Logout</a>
                             </li>
 
                         </ul>

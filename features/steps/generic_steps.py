@@ -11,6 +11,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.select import Select
 from selenium.webdriver.support.ui import WebDriverWait
+from django.core.urlresolvers import reverse
 
 
 def find_element(context, element_to_find):
@@ -71,6 +72,23 @@ def step_impl(context, model_class, kwarg_data):
     context.test.assertEqual(context.get_url(obj.get_absolute_url()), context.driver.current_url)
 
 
+@step('I should be on the "(?P<model_class>[^"]*)" "(?P<model_kwargs>[^"]*)" "(?P<url_or_url_name>[^"]*)" page with url kwargs "(?P<url_kwargs>[^"]*)"')
+def step_impl(context, model_class, model_kwargs, url_or_url_name, url_kwargs):
+    cls = apps.get_model(model_class)
+    model_kwargs_dict = string_to_kwargs_dict(model_kwargs)
+    url_kwargs_dict = string_to_kwargs_dict(url_kwargs)
+    qs = cls.objects.filter(**model_kwargs_dict)
+    obj = qs.first()
+    url_kwargs_dict['pk'] = int(url_kwargs_dict.get('pk').format(pk=obj.pk))
+
+    if 'add_sport_registration_role' in url_or_url_name:
+        url = reverse(url_or_url_name, kwargs=url_kwargs_dict)
+    else:
+        url = reverse(url_or_url_name)
+
+    context.test.assertEqual(context.get_url(url), context.driver.current_url)
+
+
 @step('I am on the page for "(?P<model_class>.*)" and "(?P<kwarg_data>.*)"')
 def step_impl(context, model_class, kwarg_data):
     if '.' not in model_class:
@@ -80,6 +98,23 @@ def step_impl(context, model_class, kwarg_data):
     qs = cls.objects.filter(**kwargs)
     obj = qs.first()
     context.driver.get(context.get_url(obj.get_absolute_url()))
+
+
+@step('I am on the "(?P<model_class>[^"]*)" "(?P<model_kwargs>[^"]*)" "(?P<url_or_url_name>[^"]*)" page with url kwargs "(?P<url_kwargs>[^"]*)"')
+def step_impl(context, model_class, model_kwargs, url_or_url_name, url_kwargs):
+    cls = apps.get_model(model_class)
+    model_kwargs_dict = string_to_kwargs_dict(model_kwargs)
+    url_kwargs_dict = string_to_kwargs_dict(url_kwargs)
+    qs = cls.objects.filter(**model_kwargs_dict)
+    obj = qs.first()
+    url_kwargs_dict['pk'] = int(url_kwargs_dict.get('pk').format(pk=obj.pk))
+
+    if 'add_sport_registration_role' in url_or_url_name:
+        url = reverse(url_or_url_name, kwargs=url_kwargs_dict)
+    else:
+        url = reverse(url_or_url_name)
+
+    context.driver.get(context.get_url(url))
 
 
 @step('The current url should contain "(?P<text>.*)"')
