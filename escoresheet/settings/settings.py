@@ -302,11 +302,10 @@ BOWER_COMPONENTS_ROOT = os.path.join(BASE_DIR, '', 'static')
 BOWER_INSTALLED_APPS = [
     'animate.css#3.5.2',
     'bootstrap#3.3.7',
-    'chosen#1.6.1',
-    'chosen-bootstrap#1.1.0',
     'font-awesome#4.6.3',
     'jquery#2.2.4',
-    'noty#2.3.8'
+    'noty#2.3.8',
+    'bootstrap-select'
 ]
 
 # Django compressor related
