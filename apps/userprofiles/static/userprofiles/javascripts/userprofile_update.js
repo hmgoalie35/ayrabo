@@ -1,6 +1,9 @@
 $(function () {
     "use strict";
 
+    $("#id_language").enableSelect2();
+    $("#id_timezone").enableSelect2();
+
     $(".more-sport-info").click(function () {
         var $elem = $(this).find("span.more-sport-info-fa-icon");
         $elem.toggleClass("fa-caret-square-o-down");

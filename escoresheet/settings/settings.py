@@ -305,7 +305,8 @@ BOWER_INSTALLED_APPS = [
     'font-awesome#4.6.3',
     'jquery#2.2.4',
     'noty#2.3.8',
-    'bootstrap-select'
+    'select2',
+    'select2-bootstrap-theme'
 ]
 
 # Django compressor related

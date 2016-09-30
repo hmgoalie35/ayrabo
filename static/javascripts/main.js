@@ -34,8 +34,21 @@ $(function () {
         }
     });
 
-    $.isMobileDevice = function(){
+    $.isMobileDevice = function () {
         return (/android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(navigator.userAgent.toLowerCase()));
     };
 
+    $.fn.enableSelect2 = function () {
+        var options = {
+            theme: "bootstrap"
+            // placeholder: placeholder,
+            // allowClear: true
+        };
+
+        // Show browser's default select box when on mobile
+        if (!$.isMobileDevice()) {
+            this.select2(options);
+        }
+        return this;
+    };
 });
