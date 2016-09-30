@@ -61,3 +61,11 @@
         </div>
     </div>
 {% endblock %}
+
+{% block extra_js %}
+    <script>
+        $(function () {
+            $(".select.form-control[name$='team']").enableSelect2();
+        });
+    </script>
+{% endblock %}
