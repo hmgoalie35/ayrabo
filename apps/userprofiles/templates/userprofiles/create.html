@@ -27,3 +27,13 @@
         </div>
     </div>
 {% endblock %}
+
+
+{% block extra_js %}
+    <script>
+        $(function () {
+            $("#id_language").enableSelect2();
+            $("#id_timezone").enableSelect2();
+        });
+    </script>
+{% endblock %}
