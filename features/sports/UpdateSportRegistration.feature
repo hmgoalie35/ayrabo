@@ -19,11 +19,11 @@ Feature: Update sport registration
       | username_or_email | position   | team                  |
       | user@example.com  | Head Coach | Green Machine IceCats |
     And The following referee object exists
-      | username_or_email | position   | league                            |
-      | user@example.com  | Head Coach | Long Island Amateur Hockey League |
+      | username_or_email | league                            |
+      | user@example.com  | Long Island Amateur Hockey League |
     And The following manager object exists
-      | username_or_email | position   | team                  |
-      | user@example.com  | Head Coach | Green Machine IceCats |
+      | username_or_email | team                  |
+      | user@example.com  | Green Machine IceCats |
     And I login with "user@example.com" and "myweakpassword"
 
   Scenario: Informative text displayed to user
