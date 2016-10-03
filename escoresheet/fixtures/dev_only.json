@@ -3149,7 +3149,7 @@
     "model": "seasons.season",
     "pk": 1,
     "fields": {
-      "division": 7,
+      "league": 1,
       "start_date": "2016-08-17",
       "end_date": "2017-08-17",
       "teams": [
