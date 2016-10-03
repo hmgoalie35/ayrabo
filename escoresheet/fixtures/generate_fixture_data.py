@@ -110,7 +110,7 @@ def create_hierarchy():
                 print(' ' * 4, division, d_created)
                 start_date = datetime.date(year=2016, month=9, day=19)
                 end_date = start_date + datetime.timedelta(days=365)
-                season, season_created = Season.objects.get_or_create(division=division, start_date=start_date,
+                season, season_created = Season.objects.get_or_create(league=league, start_date=start_date,
                                                                       end_date=end_date)
                 print(' ' * 6, season, season_created)
                 for team_name in teams:
@@ -178,7 +178,7 @@ def create_users():
                                                             jersey_number=(i % 22) + 1,
                                                             position=position,
                                                             handedness='Right')
-        hsr = HockeySeasonRoster.objects.get(season=Season.objects.get(division__name=MM_AA), team=teams[team_index])
+        hsr = HockeySeasonRoster.objects.get(season=Season.objects.get(league__full_name=LIAHL), team=teams[team_index])
 
         hsr.players.add(hp)
 

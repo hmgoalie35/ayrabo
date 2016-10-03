@@ -11,7 +11,7 @@ logger = logging.getLogger()
 
 
 class Season(models.Model):
-    division = models.ForeignKey('divisions.Division', unique_for_year='start_date')
+    league = models.ForeignKey('leagues.League', unique_for_year='start_date')
     teams = models.ManyToManyField(Team)
     start_date = models.DateField(verbose_name='Start Date')
     end_date = models.DateField(verbose_name='End Date')
@@ -19,8 +19,8 @@ class Season(models.Model):
     class Meta:
         ordering = ['-end_date', '-start_date']
         unique_together = (
-            ('start_date', 'division'),
-            ('end_date', 'division'),
+            ('start_date', 'league'),
+            ('end_date', 'league'),
         )
 
     def clean(self):
@@ -34,12 +34,12 @@ class Season(models.Model):
 
 
 @receiver(m2m_changed, sender=Season.teams.through)
-def validate_season_divisions(action, instance, pk_set, reverse, **kwargs):
+def validate_leagues(action, instance, pk_set, reverse, **kwargs):
     """
     This function validates that teams/seasons being added to the manytomany relationship between the two
-    are in the same division, which also means they are in the same league, sport, etc.
+    are in the same league, which also means they are in the same sport.
     This function does not raise a validation error, it simply removes the pks from pk_set if the pks aren't in the
-    same division as instance so those pks are never added to the relationship by the RelatedManager
+    same league as instance so those pks are never added to the relationship by the RelatedManager
     A validation error is not raised because it would have to be caught, which is possible in the views, but the admin
     would break.
 
@@ -56,11 +56,11 @@ def validate_season_divisions(action, instance, pk_set, reverse, **kwargs):
         if reverse:
             # i.e. team_obj.season_set.add(season_obj), so pk_set contains pks for season objects
             cls = Season
-            error_msg = 'The {0} specified ({1} - pk={2}) is not configured for {3} - {4}'
+            error_msg = 'The {0} specified ({1} - pk={2}) is not configured for {3}'
         else:
             # i.e. season_obj.teams.add(team_obj), so pk_set contains pks for team objects
             cls = Team
-            error_msg = 'The {0} specified ({1} - pk={2}) does not belong to {3} - {4}'
+            error_msg = 'The {0} specified ({1} - pk={2}) does not belong to {3}'
 
         errors = []
         pks = pk_set.copy()
@@ -68,11 +68,16 @@ def validate_season_divisions(action, instance, pk_set, reverse, **kwargs):
             qs = cls.objects.filter(pk=pk)
             if qs.exists():
                 obj = qs.first()
-                if obj.division_id != instance.division_id:
+                if reverse and obj.league_id != instance.division.league_id:
                     # Remove the pk from the set so it is not added
                     pk_set.remove(pk)
-                    errors.append(error_msg.format(cls.__name__.lower(), str(obj), obj.pk, instance.division,
-                                                   instance.division.league.full_name))
+                    errors.append(
+                            error_msg.format(cls.__name__.lower(), str(obj), obj.pk,
+                                             instance.division.league.full_name))
+                elif not reverse and obj.division.league_id != instance.league_id:
+                    # Remove the pk from the set so it is not added
+                    pk_set.remove(pk)
+                    errors.append(error_msg.format(cls.__name__.lower(), str(obj), obj.pk, instance.league.full_name))
             else:
                 logger.error('{cls} with pk {pk} does not exist'.format(cls=cls.__name__, pk=pk))
         if errors:
