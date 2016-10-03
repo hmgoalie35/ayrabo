@@ -3,7 +3,7 @@ import datetime
 import factory
 from factory import django, post_generation
 
-from divisions.tests import DivisionFactory
+from leagues.tests import LeagueFactory
 from seasons.models import Season
 
 
@@ -13,7 +13,7 @@ class SeasonFactory(django.DjangoModelFactory):
 
     start_date = factory.LazyFunction(datetime.date.today)
     end_date = factory.LazyAttribute(lambda obj: obj.start_date + datetime.timedelta(days=365))
-    division = factory.SubFactory(DivisionFactory)
+    league = factory.SubFactory(LeagueFactory)
 
     @post_generation
     def teams(self, create, extracted, **kwargs):
