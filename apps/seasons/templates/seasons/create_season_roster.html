@@ -57,7 +57,7 @@
 {% block extra_js %}
     <script>
         $(function () {
-            $(".selectmultiple.form-control[name$='players']").enableSelect2({multiple: true, closeOnSelect: false});
+            $(".selectmultiple.form-control[name$='players']").enableBootstrapSelect({header: "Select players"});
         });
     </script>
 {% endblock %}

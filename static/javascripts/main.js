@@ -38,19 +38,24 @@ $(function () {
         return (/android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(navigator.userAgent.toLowerCase()));
     };
 
-    $.fn.enableSelect2 = function (user_options) {
-        var defaults = {
-            theme: "bootstrap"
-            // placeholder: placeholder,
-            // allowClear: true
+    $.fn.enableBootstrapSelect = function (option_overrides) {
+        var options = {
+            header: "Select an option",
+            iconBase: "fa",
+            tickIcon: "fa-check",
+            showTick: true,
+            liveSearch: true,
+            liveSearchNormalize: true,
+            liveSearchPlaceholder: "Search",
+            noneSelectedText: "---------",
+            selectedTextFormat: "count > 2",
+            mobile: $.isMobileDevice(),
+            dropupAuto: true
         };
 
-        var options = $.extend(defaults, user_options);
+        $.extend(options, option_overrides);
+        this.selectpicker(options);
 
-        // Show browser's default select box when on mobile
-        if (!$.isMobileDevice()) {
-            this.select2(options);
-        }
         return this;
     };
 });

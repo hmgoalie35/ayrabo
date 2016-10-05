@@ -104,22 +104,26 @@ def create_hierarchy():
                                                              abbreviated_name=abbreviated_name,
                                                              slug=slugify(abbreviated_name))
             print(' ' * 2, league, l_created)
+
+            start_date = datetime.date(year=2016, month=9, day=19)
+            end_date = start_date + datetime.timedelta(days=365)
+            season, season_created = Season.objects.get_or_create(league=league, start_date=start_date,
+                                                                  end_date=end_date)
+            print(' ' * 4, season, season_created)
+
             for division_name, teams in divisions.items():
                 division, d_created = Division.objects.get_or_create(league=league, name=division_name,
                                                                      slug=slugify(division_name))
-                print(' ' * 4, division, d_created)
-                start_date = datetime.date(year=2016, month=9, day=19)
-                end_date = start_date + datetime.timedelta(days=365)
-                season, season_created = Season.objects.get_or_create(league=league, start_date=start_date,
-                                                                      end_date=end_date)
-                print(' ' * 6, season, season_created)
+                print(' ' * 6, division, d_created)
+
                 for team_name in teams:
                     team, t_created = Team.objects.get_or_create(name=team_name, division=division,
                                                                  slug=slugify(team_name), website='')
                     season.teams.add(team)
-                    hsr, hsr_created = HockeySeasonRoster.objects.get_or_create(season=season, team=team)
-                    print(' ' * 8, hsr, hsr_created)
-                    print(' ' * 10, team, t_created)
+                    if 'Hockey' in sport_name:
+                        hsr, hsr_created = HockeySeasonRoster.objects.get_or_create(season=season, team=team)
+                        print(' ' * 8, hsr, hsr_created)
+                        print(' ' * 10, team, t_created)
         print('\n')
 
 

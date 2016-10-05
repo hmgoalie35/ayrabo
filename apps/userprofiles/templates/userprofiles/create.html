@@ -32,8 +32,8 @@
 {% block extra_js %}
     <script>
         $(function () {
-            $("#id_language").enableSelect2();
-            $("#id_timezone").enableSelect2();
+            $("#id_language").enableBootstrapSelect({header: "Select a language"});
+            $("#id_timezone").enableBootstrapSelect({header: "Select a timezone"});
         });
     </script>
 {% endblock %}
