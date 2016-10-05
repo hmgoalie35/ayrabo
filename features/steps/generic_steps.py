@@ -5,13 +5,13 @@ from behave import *
 from django.apps import apps
 from django.conf import settings
 from django.contrib.auth.models import User
+from django.core.urlresolvers import reverse
 from django.db.models import Q
 from selenium.common.exceptions import NoSuchElementException, WebDriverException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.select import Select
 from selenium.webdriver.support.ui import WebDriverWait
-from django.core.urlresolvers import reverse
 
 
 def find_element(context, element_to_find):
@@ -79,9 +79,12 @@ def step_impl(context, model_class, model_kwargs, url_or_url_name, url_kwargs):
     url_kwargs_dict = string_to_kwargs_dict(url_kwargs)
     qs = cls.objects.filter(**model_kwargs_dict)
     obj = qs.first()
-    url_kwargs_dict['pk'] = int(url_kwargs_dict.get('pk').format(pk=obj.pk))
+    if 'create_season_roster_team_param' in url_or_url_name:
+        url_kwargs_dict['team_pk'] = int(url_kwargs_dict.get('team_pk').format(pk=obj.pk))
+    else:
+        url_kwargs_dict['pk'] = int(url_kwargs_dict.get('pk').format(pk=obj.pk))
 
-    if 'add_sport_registration_role' in url_or_url_name:
+    if 'add_sport_registration_role' or 'create_season_roster_team_param' in url_or_url_name:
         url = reverse(url_or_url_name, kwargs=url_kwargs_dict)
     else:
         url = reverse(url_or_url_name)
@@ -107,9 +110,12 @@ def step_impl(context, model_class, model_kwargs, url_or_url_name, url_kwargs):
     url_kwargs_dict = string_to_kwargs_dict(url_kwargs)
     qs = cls.objects.filter(**model_kwargs_dict)
     obj = qs.first()
-    url_kwargs_dict['pk'] = int(url_kwargs_dict.get('pk').format(pk=obj.pk))
+    if 'create_season_roster_team_param' in url_or_url_name:
+        url_kwargs_dict['team_pk'] = int(url_kwargs_dict.get('team_pk').format(pk=obj.pk))
+    else:
+        url_kwargs_dict['pk'] = int(url_kwargs_dict.get('pk').format(pk=obj.pk))
 
-    if 'add_sport_registration_role' in url_or_url_name:
+    if 'add_sport_registration_role' or 'create_season_roster_team_param' in url_or_url_name:
         url = reverse(url_or_url_name, kwargs=url_kwargs_dict)
     else:
         url = reverse(url_or_url_name)
@@ -219,6 +225,13 @@ def step_impl(context, select_option, element):
     if not success:
         raise NoSuchElementException(
                 'Cannot locate {select_option} by value, visible text or index'.format(select_option=select_option))
+
+
+@step('I select (?P<num_selections>\d+) [a-zA-Z]+ from "(?P<element>[^"]*)"')
+def step_impl(context, num_selections, element):
+    the_element = Select(find_element(context, element))
+    for i in range(0, int(num_selections)):
+        the_element.select_by_index(i)
 
 
 @step('"(?P<element>.*)" should not have the option "(?P<option_text>.*)"')

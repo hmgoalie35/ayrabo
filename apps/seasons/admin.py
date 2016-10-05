@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-# from .forms import SeasonAdminForm, HockeySeasonRosterAdminForm
+from .forms import SeasonAdminForm, HockeySeasonRosterAdminForm
 from .models import Season, HockeySeasonRoster
 
 
@@ -10,7 +10,7 @@ class SeasonAdmin(admin.ModelAdmin):
     list_display_links = ['season']
     search_fields = ['id', 'start_date', 'end_date']
     filter_horizontal = ['teams']
-    # form = SeasonAdminForm
+    form = SeasonAdminForm
 
     def season(self, obj):
         return str(obj)
@@ -29,7 +29,7 @@ class HockeySeasonRosterAdmin(admin.ModelAdmin):
     list_display_links = ['season']
     search_fields = ['team__name', 'season__start_date', 'season__end_date']
     filter_horizontal = ['players']
-    # form = HockeySeasonRosterAdminForm
+    form = HockeySeasonRosterAdminForm
 
     def division(self, obj):
         return obj.team.division

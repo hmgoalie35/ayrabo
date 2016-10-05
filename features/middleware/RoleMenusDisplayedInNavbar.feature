@@ -14,30 +14,39 @@ Feature: Role specific functionality
     Given "user@example.com" is completely registered for "Ice Hockey" with role "Player"
     And I go to the "home" page
     Then I should see "Players"
-    And "player_menu" should be visible
+    And I should not see "Coaches"
+    And I should not see "Referees"
+    And I should not see "Managers"
 
   Scenario: Coaches menu is displayed in navbar when user has coach role
     Given "user@example.com" is completely registered for "Ice Hockey" with role "Coach"
     And I go to the "home" page
     Then I should see "Coaches"
-    And "coach_menu" should be visible
+    And I should not see "Players"
+    And I should not see "Referees"
+    And I should not see "Managers"
 
   Scenario: Referees menu is displayed in navbar when user has referee role
     Given "user@example.com" is completely registered for "Ice Hockey" with role "Referee"
     And I go to the "home" page
     Then I should see "Referees"
-    And "referee_menu" should be visible
+    And I should not see "Coaches"
+    And I should not see "Players"
+    And I should not see "Managers"
 
   Scenario: Managers menu is displayed in navbar when user has manager role
     Given "user@example.com" is completely registered for "Ice Hockey" with role "Manager"
     And I go to the "home" page
     Then I should see "Managers"
-    And "manager_menu" should be visible
+    And I should not see "Coaches"
+    And I should not see "Referees"
+    And I should not see "Players"
 
   Scenario: Multiple roles, multiple menus should be visible
     Given "user@example.com" is completely registered for "Ice Hockey" with role "Player, Manager"
     And I go to the "home" page
     Then I should see "Players"
-    And "player_menu" should be visible
     And I should see "Managers"
-    And "manager_menu" should be visible
+    Then I should see "Players"
+    And I should not see "Coaches"
+    And I should not see "Referees"

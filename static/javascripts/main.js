@@ -38,12 +38,14 @@ $(function () {
         return (/android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(navigator.userAgent.toLowerCase()));
     };
 
-    $.fn.enableSelect2 = function () {
-        var options = {
+    $.fn.enableSelect2 = function (user_options) {
+        var defaults = {
             theme: "bootstrap"
             // placeholder: placeholder,
             // allowClear: true
         };
+
+        var options = $.extend(defaults, user_options);
 
         // Show browser's default select box when on mobile
         if (!$.isMobileDevice()) {

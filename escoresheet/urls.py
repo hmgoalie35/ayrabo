@@ -17,4 +17,6 @@ urlpatterns = [
     url(r'^profile/', include('userprofiles.urls', namespace='profile')),
     url(r'^sport/', include('sports.urls', namespace='sport')),
     url(r'^api/', include('api.urls')),
+    url(r'^season', include('seasons.urls', namespace='season')),
+
 ]

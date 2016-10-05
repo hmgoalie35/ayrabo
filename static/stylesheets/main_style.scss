@@ -1,3 +1,5 @@
+@import "variables";
+
 html {
   position: relative;
   min-height: 100%;
@@ -92,18 +94,18 @@ div.alert.alert-block.alert-danger > ul > li {
 
 .vertical-line-left {
   @media (min-width: 768px) {
-    border-left: 1px solid lightgray;
+    border-left: $vertical-line;
   }
   @media(max-width: 767px) {
-    border-top: 1px solid lightgray;
+    border-top: $vertical-line;
   }
 }
 
 .vertical-line-right {
   @media (min-width: 768px) {
-    border-left: 1px solid lightgray;
+    border-left: $vertical-line;
   }
   @media(max-width: 767px) {
-    border-top: 1px solid lightgray;
+    border-top: $vertical-line;
   }
 }
