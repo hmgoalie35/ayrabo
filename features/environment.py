@@ -9,7 +9,7 @@ def before_all(context):
     context.driver = webdriver.PhantomJS()
     context.driver.maximize_window()
     context.url_kwargs = {}
-    # context.fixtures = ['dev_only.json']
+    # context.fixtures = ['dev_fixtures.json']
 
 
 def after_all(context):

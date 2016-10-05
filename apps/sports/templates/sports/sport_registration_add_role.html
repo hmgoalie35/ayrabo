@@ -41,7 +41,7 @@
 {% block extra_js %}
     <script>
         $(function () {
-            $(".select.form-control[name$='team']").enableSelect2();
+            $(".select.form-control[name$='team']").enableBootstrapSelect({header: "Select a team"});
         });
     </script>
 {% endblock %}

@@ -6,16 +6,16 @@ from django.test import TestCase
 
 from divisions.tests import DivisionFactory
 from leagues.tests import LeagueFactory
-from seasons.models import Season
+from seasons.models import Season, HockeySeasonRoster
 from teams.tests import TeamFactory
-from . import SeasonFactory
+from . import SeasonFactory, HockeySeasonRosterFactory
 
 
 class SeasonModelTests(TestCase):
     def test_to_string(self):
         season = SeasonFactory()
-        self.assertEqual(str(season), '{start_year} - {end_year} Season'.format(start_year=season.start_date.year,
-                                                                                end_year=season.end_date.year))
+        self.assertEqual(str(season), '{start_year}-{end_year} Season'.format(start_year=season.start_date.year,
+                                                                              end_year=season.end_date.year))
 
     def test_end_date_before_start_date(self):
         start_date = datetime.date(2016, 8, 15)
@@ -123,3 +123,43 @@ class SeasonTeamM2MSignalTests(TestCase):
     def test_invalid_pks(self):
         self.liahl_season.teams.add(88)
         self.assertListEqual([], list(self.liahl_season.teams.all()))
+
+
+class AbstractSeasonRosterModelTests(TestCase):
+    """
+    We can't create an instance of AbstractSeasonRosterFactory so just default to the hockey factory
+    """
+
+    def test_to_string(self):
+        season_roster = HockeySeasonRosterFactory()
+        self.assertEqual(str(season_roster), '{team}-{division}: {season}'.format(team=season_roster.team,
+                                                                                  division=season_roster.team.division,
+                                                                                  season=season_roster.season))
+
+    def test_roster_default_false(self):
+        season_roster = HockeySeasonRosterFactory()
+        self.assertFalse(season_roster.default)
+
+    def test_default_ordering(self):
+        rosters = []
+        start_time = datetime.datetime.now()
+        for i in range(5):
+            rosters.append(HockeySeasonRosterFactory(created=start_time + datetime.timedelta(hours=i * 10)))
+
+        self.assertListEqual(rosters, list(HockeySeasonRoster.objects.all()))
+
+    def test_get_latest(self):
+        rosters = []
+        start_time = datetime.datetime.now()
+        for i in range(5):
+            rosters.append(HockeySeasonRosterFactory(created=start_time + datetime.timedelta(hours=i * 10)))
+
+        latest_obj = rosters[len(rosters) - 1]
+        self.assertEqual(latest_obj.pk, HockeySeasonRoster.objects.latest().pk)
+
+
+class HockeySeasonRosterModelTests(TestCase):
+    """
+    Currently don't need any unit tests for this model
+    """
+    pass

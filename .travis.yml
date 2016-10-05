@@ -13,7 +13,7 @@ env:
     - DJANGO_SETTINGS_MODULE="escoresheet.settings.settings"
 
 script:
-  - python manage.py test
+  - python manage.py test --parallel
   - python manage.py behave
 
 branches:

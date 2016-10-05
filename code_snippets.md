@@ -10,8 +10,8 @@
 
 * Update pip packages `pip freeze --local | grep -v '^\-e' | cut -d = -f 1  | xargs -n1 pip install -U`
 
-* `./manage.py dumpdata sites account sports leagues divisions teams auth.user userprofiles coaches players referees managers seasons authtoken --indent=4 -o escoresheet/fixtures/dev_only.json`
-    * Outputs all data in the db to dev_only.json file
+* `./manage.py dumpdata sites account sports leagues divisions teams auth.user userprofiles coaches players referees managers seasons authtoken --indent=4 -o escoresheet/fixtures/dev_fixtures.json`
+    * Outputs all data in the db to dev_fixtures.json file
     * Add more apps to the command as new apps are added
 
 * The bootstrap-chosen bower package requires bootstrap's sass because it references bootstrap less variables. My solution is to just compile it myself with sass using the bootstrap-sass repo. Use the following commands
@@ -24,4 +24,4 @@
     
     Turns out the chosen-bootstrap bower package (completely different from bootstrap-chosen above) is much better
 
-* `./manage.py reset_db && ./manage.py migrate && ./manage.py loaddata dev_only`
+* `./manage.py reset_db && ./manage.py migrate && ./manage.py loaddata dev_fixtures`

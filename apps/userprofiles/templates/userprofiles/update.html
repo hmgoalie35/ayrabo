@@ -1,5 +1,5 @@
 {% extends 'site_base.html' %}
-{% load crispy_forms_tags static %}
+{% load crispy_forms_tags staticfiles %}
 
 {% block title %}Update Profile{% endblock %}
 
@@ -99,8 +99,8 @@
                                                     <div class="alert alert-warning" role="alert">You do not have any roles configured for {{ data_dict.sport.name }}. Please add some roles by selecting the dropdown and then "Edit".</div>
                                                 {% endfor %}
 
-                                                <span class="pull-right more-sport-info-fa-icon fa fa-caret-square-o-down"></span>
-                                                <a name="edit_registration_link" id="edit-{{ sport_registration.id }}" href="{% url 'sport:update_sport_registration' sport_registration.pk %}" class="pull-right margin-between-fa">Edit Registration</a>
+                                                <span class="pull-right more-sport-info-fa-icon fa fa-fw fa-caret-square-o-down"></span>
+                                                <a name="edit_registration_link" id="edit-{{ sport_registration.id }}" href="{% url 'sport:update_sport_registration' sport_registration.pk %}" class="pull-right ">Edit Registration</a>
                                             </li>
                                             <div class="collapse" id="{{ data_dict.sport.slug }}">
                                                 <div class="list-group-item">

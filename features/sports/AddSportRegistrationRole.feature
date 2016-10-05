@@ -16,29 +16,29 @@ Feature: Add roles to a sport registration
     Given "user@example.com" is completely registered for "Ice Hockey" with role "Coach"
     And I am on the page for "sports.SportRegistration" and "user__email=user@example.com, sport__name=Ice Hockey"
     When I press "add_player_role_link"
-    Then I should be on the "/sport/registration/19/player/add/" page
+    Then I should be on the "sports.SportRegistration" "user__email=user@example.com, sport__name=Ice Hockey" "sport:add_sport_registration_role" page with url kwargs "pk={pk}, role=player"
 
   Scenario: Navigate to add coach role page
     Given "user@example.com" is completely registered for "Ice Hockey" with role "Player, Referee"
     And I am on the page for "sports.SportRegistration" and "user__email=user@example.com, sport__name=Ice Hockey"
     When I press "add_coach_role_link"
-    Then I should be on the "/sport/registration/20/coach/add/" page
+    Then I should be on the "sports.SportRegistration" "user__email=user@example.com, sport__name=Ice Hockey" "sport:add_sport_registration_role" page with url kwargs "pk={pk}, role=coach"
 
   Scenario: Navigate to add referee role page
     Given "user@example.com" is completely registered for "Ice Hockey" with role "Player, Coach, Manager"
     And I am on the page for "sports.SportRegistration" and "user__email=user@example.com, sport__name=Ice Hockey"
     When I press "add_referee_role_link"
-    Then I should be on the "/sport/registration/21/referee/add/" page
+    Then I should be on the "sports.SportRegistration" "user__email=user@example.com, sport__name=Ice Hockey" "sport:add_sport_registration_role" page with url kwargs "pk={pk}, role=referee"
 
   Scenario: Navigate to add manager role page
     Given "user@example.com" is completely registered for "Ice Hockey" with role "Player"
     And I am on the page for "sports.SportRegistration" and "user__email=user@example.com, sport__name=Ice Hockey"
     When I press "add_manager_role_link"
-    Then I should be on the "/sport/registration/22/manager/add/" page
+    Then I should be on the "sports.SportRegistration" "user__email=user@example.com, sport__name=Ice Hockey" "sport:add_sport_registration_role" page with url kwargs "pk={pk}, role=manager"
 
   Scenario: Add player role, object dne
     Given "user@example.com" is completely registered for "Ice Hockey" with role "Coach"
-    And I am on the "/sport/registration/23/player/add/" page
+    And I am on the "sports.SportRegistration" "user__email=user@example.com, sport__name=Ice Hockey" "sport:add_sport_registration_role" page with url kwargs "pk={pk}, role=player"
     And I select "Green Machine IceCats - Midget Minor AA" from "id_hockeyplayer-team"
     And I fill in "id_hockeyplayer-jersey_number" with "35"
     And I select "LW" from "id_hockeyplayer-position"
@@ -49,7 +49,7 @@ Feature: Add roles to a sport registration
 
   Scenario: Add coach role, object dne
     Given "user@example.com" is completely registered for "Ice Hockey" with roles "Player, Referee"
-    And I am on the "/sport/registration/24/coach/add/" page
+    And I am on the "sports.SportRegistration" "user__email=user@example.com, sport__name=Ice Hockey" "sport:add_sport_registration_role" page with url kwargs "pk={pk}, role=coach"
     And I select "Head Coach" from "id_coach-position"
     And I select "Green Machine IceCats - Midget Minor AA" from "id_coach-team"
     And I press "add_role_btn"
@@ -58,7 +58,7 @@ Feature: Add roles to a sport registration
 
   Scenario: Add referee role, object dne
     Given "user@example.com" is completely registered for "Ice Hockey" with role "Coach"
-    And I am on the "/sport/registration/25/referee/add/" page
+    And I am on the "sports.SportRegistration" "user__email=user@example.com, sport__name=Ice Hockey" "sport:add_sport_registration_role" page with url kwargs "pk={pk}, role=referee"
     And I select "Long Island Amateur Hockey League" from "id_referee-league"
     And I press "add_role_btn"
     Then I should be on the page for "sports.SportRegistration" and "user__email=user@example.com, sport__name=Ice Hockey"
@@ -66,7 +66,7 @@ Feature: Add roles to a sport registration
 
   Scenario: Add manager role, object dne
     Given "user@example.com" is completely registered for "Ice Hockey" with role "Player, Coach"
-    And I am on the "/sport/registration/26/manager/add/" page
+    And I am on the "sports.SportRegistration" "user__email=user@example.com, sport__name=Ice Hockey" "sport:add_sport_registration_role" page with url kwargs "pk={pk}, role=manager"
     And I select "Green Machine IceCats - Midget Minor AA" from "id_manager-team"
     And I press "add_role_btn"
     Then I should be on the page for "sports.SportRegistration" and "user__email=user@example.com, sport__name=Ice Hockey"
@@ -78,7 +78,7 @@ Feature: Add roles to a sport registration
     And The following player object exists
       | username_or_email | sport      | team                  | jersey_number | position | handedness |
       | user@example.com  | Ice Hockey | Green Machine IceCats | 35            | G        | Left       |
-    And I go to the "/sport/registration/27/player/add/" page
+    And I am on the "sports.SportRegistration" "user__email=user@example.com, sport__name=Ice Hockey" "sport:add_sport_registration_role" page with url kwargs "pk={pk}, role=player"
     Then I should see "It seems like you have already registered as an Ice Hockey player"
     And I should see "Please confirm the information below is correct before adding the player role"
     And I should see "You will be able to update the information on the update sport registration page"
@@ -92,7 +92,7 @@ Feature: Add roles to a sport registration
     And The following player object exists
       | username_or_email | sport      | team                  | jersey_number | position | handedness |
       | user@example.com  | Ice Hockey | Green Machine IceCats | 35            | G        | Left       |
-    And I go to the "/sport/registration/28/player/add/" page
+    And I am on the "sports.SportRegistration" "user__email=user@example.com, sport__name=Ice Hockey" "sport:add_sport_registration_role" page with url kwargs "pk={pk}, role=player"
     When I press "add_role_btn"
     Then I should be on the page for "sports.SportRegistration" and "user__email=user@example.com, sport__name=Ice Hockey"
     And I should see "Player role successfully added to Ice Hockey"
@@ -102,7 +102,7 @@ Feature: Add roles to a sport registration
     And The following coach object exists
       | username_or_email | position   | team                  |
       | user@example.com  | Head Coach | Green Machine IceCats |
-    And I go to the "/sport/registration/29/coach/add/" page
+    And I am on the "sports.SportRegistration" "user__email=user@example.com, sport__name=Ice Hockey" "sport:add_sport_registration_role" page with url kwargs "pk={pk}, role=coach"
     When I press "add_role_btn"
     Then I should be on the page for "sports.SportRegistration" and "user__email=user@example.com, sport__name=Ice Hockey"
     And I should see "Coach role successfully added to Ice Hockey"
@@ -110,9 +110,9 @@ Feature: Add roles to a sport registration
   Scenario: Add referee role, object exists
     Given "user@example.com" is completely registered for "Ice Hockey" with role "Coach"
     And The following referee object exists
-      | username_or_email | position   | league                            |
-      | user@example.com  | Head Coach | Long Island Amateur Hockey League |
-    And I go to the "/sport/registration/30/referee/add/" page
+      | username_or_email | league                            |
+      | user@example.com  | Long Island Amateur Hockey League |
+    And I am on the "sports.SportRegistration" "user__email=user@example.com, sport__name=Ice Hockey" "sport:add_sport_registration_role" page with url kwargs "pk={pk}, role=referee"
     And I press "add_role_btn"
     Then I should be on the page for "sports.SportRegistration" and "user__email=user@example.com, sport__name=Ice Hockey"
     And I should see "Referee role successfully added to Ice Hockey"
@@ -120,9 +120,9 @@ Feature: Add roles to a sport registration
   Scenario: Add manager role, object exists
     Given "user@example.com" is completely registered for "Ice Hockey" with role "Player, Coach"
     And The following manager object exists
-      | username_or_email | position   | team                  |
-      | user@example.com  | Head Coach | Green Machine IceCats |
-    And I go to the "/sport/registration/31/manager/add/" page
+      | username_or_email | team                  |
+      | user@example.com  | Green Machine IceCats |
+    And I am on the "sports.SportRegistration" "user__email=user@example.com, sport__name=Ice Hockey" "sport:add_sport_registration_role" page with url kwargs "pk={pk}, role=manager"
     And I press "add_role_btn"
     Then I should be on the page for "sports.SportRegistration" and "user__email=user@example.com, sport__name=Ice Hockey"
     And I should see "Manager role successfully added to Ice Hockey"

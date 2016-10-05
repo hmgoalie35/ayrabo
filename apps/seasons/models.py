@@ -30,7 +30,7 @@ class Season(models.Model):
             })
 
     def __str__(self):
-        return '{start_year} - {end_year} Season'.format(start_year=self.start_date.year, end_year=self.end_date.year)
+        return '{start_year}-{end_year} Season'.format(start_year=self.start_date.year, end_year=self.end_date.year)
 
 
 @receiver(m2m_changed, sender=Season.teams.through)
@@ -72,7 +72,8 @@ def validate_leagues(action, instance, pk_set, reverse, **kwargs):
                     # Remove the pk from the set so it is not added
                     pk_set.remove(pk)
                     errors.append(
-                        error_msg.format(cls.__name__.lower(), str(obj), obj.pk, instance.division.league.full_name))
+                            error_msg.format(cls.__name__.lower(), str(obj), obj.pk,
+                                             instance.division.league.full_name))
                 elif not reverse and obj.division.league_id != instance.league_id:
                     # Remove the pk from the set so it is not added
                     pk_set.remove(pk)
@@ -82,3 +83,22 @@ def validate_leagues(action, instance, pk_set, reverse, **kwargs):
         if errors:
             logger.error('. '.join(errors))
             # raise ValidationError(errors)
+
+
+class AbstractSeasonRoster(models.Model):
+    season = models.ForeignKey(Season)
+    team = models.ForeignKey(Team)
+    default = models.BooleanField(default=False, verbose_name='Default Season Roster')
+    created = models.DateTimeField(auto_now_add=True, verbose_name='Created')
+
+    class Meta:
+        abstract = True
+        ordering = ['created']
+        get_latest_by = 'created'
+
+    def __str__(self):
+        return '{team}-{division}: {season}'.format(team=self.team, division=self.team.division, season=self.season)
+
+
+class HockeySeasonRoster(AbstractSeasonRoster):
+    players = models.ManyToManyField('players.HockeyPlayer')

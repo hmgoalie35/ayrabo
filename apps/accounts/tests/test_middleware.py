@@ -1,8 +1,11 @@
+from unittest.mock import Mock
+
 from django.core.urlresolvers import reverse
 from django.test import TestCase
 
 from accounts.tests import UserFactory
 from sports.tests import SportFactory, SportRegistrationFactory
+from ..middleware import AccountAndSportRegistrationCompleteMiddleware
 
 
 class AccountAndSportRegistrationCompleteMiddlewareTests(TestCase):
@@ -102,3 +105,47 @@ class AccountAndSportRegistrationCompleteMiddlewareTests(TestCase):
         response = self.client.get(reverse('home'))
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'home/authenticated_home.html')
+
+
+class MiddlewareAddsRolesToSessionTests(TestCase):
+    """
+    This tests to make sure the middleware is adding the user roles to the session correctly
+    """
+
+    @classmethod
+    def setUpClass(cls):
+        super(MiddlewareAddsRolesToSessionTests, cls).setUpClass()
+        cls.user = UserFactory(email='user@example.com', password='myweakpassword')
+        cls.ice_hockey = SportFactory(name='Ice Hockey')
+        cls.baseball = SportFactory(name='Baseball')
+
+    def setUp(self):
+        self.middleware = AccountAndSportRegistrationCompleteMiddleware()
+        self.hockey_sr = SportRegistrationFactory(user=self.user, sport=self.ice_hockey, is_complete=True)
+        self.baseball_sr = SportRegistrationFactory(user=self.user, sport=self.baseball, is_complete=True)
+        self.request = Mock()
+        self.request.user = self.user
+        self.request.user.is_authenticated = Mock(return_value=True)
+        self.request.path = '/'
+        self.request.session = {}
+
+    def test_single_sport_registration(self):
+        self.hockey_sr.set_roles(['Player', 'Coach'])
+        self.middleware.process_request(self.request)
+        self.assertListEqual(['Player', 'Coach'], self.request.session.get('user_roles'))
+
+    def test_multiple_sport_registrations(self):
+        """
+        This tests that all roles from all sport registrations are added to the session
+        """
+        self.hockey_sr.set_roles(['Referee'])
+        self.baseball_sr.set_roles(['Manager'])
+        self.middleware.process_request(self.request)
+        self.assertListEqual(['Referee', 'Manager'], self.request.session.get('user_roles'))
+
+    def test_same_role_not_duplicated(self):
+        self.hockey_sr.set_roles(['Player', 'Coach', 'Referee'])
+        self.baseball_sr.set_roles(['Coach', 'Manager'])
+        self.middleware.process_request(self.request)
+
+        self.assertEqual(self.request.session.get('user_roles').count('Coach'), 1)

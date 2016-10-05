@@ -36,7 +36,7 @@ You can either follow the instructions below or run setup_dev_env.bash (which in
 
 *This project uses pre-commit, whenever you commit files a few optimizers, code checkers, etc. will be run to check the committed files for any errors/potential bugs*
 
-1. Clone the repo and cd in it
+1. Clone the repo and cd into it
 2. Make sure the dependencies above are installed
 3. ```mkvirtualenv escoresheet -p `which python3` ```
     * Swap `mkvirtualenv` with `virtualenv` if you use virtualenv
@@ -52,11 +52,12 @@ You can either follow the instructions below or run setup_dev_env.bash (which in
 Only do the following if you are using your own local sqlite database or if the database is brand new
 
 1. Apply migrations with `python manage.py migrate`
-2. Load useful development related data with `python manage.py loaddata dev_only`
-    * dev_only is a json fixture file located in escoresheet/fixtures/
+2. Load useful development related data with `python manage.py loaddata dev_fixtures`
+    * dev_fixtures is a json fixture file located in escoresheet/fixtures/
 
 
 Lastly, run unit/functional/integration tests to make sure everything is setup correctly (see below)
+
 NOTE: The tests may take a few minutes
 
 # Integration Tests
