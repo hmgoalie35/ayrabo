@@ -1,0 +1,114 @@
+{% extends 'site_base.html' %}
+
+{% block title %}Manager Home{% endblock %}
+
+{% block content %}
+    <div class="container">
+
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="text-center">
+                    <h1>Team List</h1>
+                    <h4 class="text-muted">Showing all teams you are a manager for</h4>
+                </div>
+            </div>
+        </div>
+
+        <br>
+
+        <div class="row">
+            <div class="col-sm-offset-1 col-sm-10 col-sm-offset-1">
+                <div class="text-center">
+                    {% if teams %}
+
+                        <div class="table-responsive">
+                            <table class="table table-borderless">
+
+                                <thead>
+                                <tr class="text-left">
+                                    <th>Team</th>
+                                    <th>Division</th>
+                                    <th>League</th>
+                                    <th>Sport</th>
+                                    <th></th>
+                                </tr>
+
+                                <tr class="table-row-spacer">
+                                    <th colspan="5"></th>
+                                </tr>
+
+                                </thead>
+
+                                <tbody>
+                                {% for team in teams %}
+
+                                    <tr class="text-left table-row-extra-padding">
+                                        <td>{{ team.name }}</td>
+                                        <td>{{ team.division }}</td>
+                                        <td>{{ team.division.league }}</td>
+                                        <td>{{ team.division.league.sport }}</td>
+                                        <td>
+                                            <a id="{{ team.slug }}_manage_link" href="#team-{{ team.id }}" role="button"
+                                               data-toggle="collapse">Manage<span
+                                                    class="fa fa-fw fa-caret-down"></span></a>
+                                        </td>
+                                    </tr>
+
+                                    <tr class="table-row-collapsible">
+                                        <td colspan="5">
+                                            <div class="collapse" id="team-{{ team.id }}">
+                                                <div class="panel panel-default table-row-panel">
+                                                    <div class="panel-body">
+
+                                                        <div class="pull-left">
+                                                            <p><strong>Season Rosters</strong></p>
+                                                            <div class="btn-group btn-group-sm">
+                                                                <a id="{{ team.slug }}_create_season_roster_btn"
+                                                                   href="#" class="btn btn-success"><span
+                                                                        class="fa fa-plus"></span></a>
+                                                                <a id="{{ team.slug }}_update_season_roster_btn"
+                                                                   href="#" class="btn btn-primary"><span
+                                                                        class="fa fa-list"></span></a>
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </td>
+                                    </tr>
+
+                                    {% if not forloop.last %}
+                                        <tr class="table-row-spacer">
+                                            <td colspan="5"></td>
+                                        </tr>
+                                    {% endif %}
+
+                                {% endfor %}
+                                </tbody>
+
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="alert alert-warning">
+                            <h4>You are not registered as a manager for any teams</h4>
+                        </div>
+                    {% endif %}
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+{% endblock %}
+
+{##}
+{#<div class="btn-group btn-group-sm" role="group">#}
+{#    <a class="btn btn-success"#}
+{#       href="{% url 'season:create_season_roster_team_param' team_pk=team.pk %}"><span#}
+{#            class="fa fa-plus"></span></a>#}
+{#    <a class="btn btn-primary"#}
+{#       href="{% url 'season:create_season_roster_team_param' team_pk=team.pk %}"><span#}
+{#            class="fa fa-edit"></span></a>#}
+{#</div>#}

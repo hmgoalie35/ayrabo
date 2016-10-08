@@ -18,5 +18,6 @@ urlpatterns = [
     url(r'^sport/', include('sports.urls', namespace='sport')),
     url(r'^api/', include('api.urls')),
     url(r'^season', include('seasons.urls', namespace='season')),
+    url(r'^managers/', include('managers.urls', namespace='manager')),
 
 ]

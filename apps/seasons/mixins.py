@@ -19,5 +19,6 @@ class UserHasRolesMixin(object):
                 return redirect(reverse('home'))
         else:
             raise ImproperlyConfigured(
-                    'The value of roles_to_check must be in {}'.format(SportRegistration.ROLES))
+                    'The value of roles_to_check must be specified on the view class, or you have specified values not in {}'.format(
+                        SportRegistration.ROLES))
         return super(UserHasRolesMixin, self).dispatch(request, *args, **kwargs)

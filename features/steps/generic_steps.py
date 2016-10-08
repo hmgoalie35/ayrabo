@@ -253,16 +253,16 @@ def step_impl(context, file_name, element):
     the_element.send_keys(file_path)
 
 
-@step('"(?P<element>.*)" should be visible')
-def step_impl(context, element):
+@step('"(?P<element>.*)" should (?P<negate>not )?be visible')
+def step_impl(context, element, negate):
     the_element = find_element(context, element)
-    context.test.assertTrue(the_element.is_displayed())
-
-
-@step('"(?P<element>.*)" should not be visible')
-def step_impl(context, element):
-    the_element = find_element(context, element)
-    context.test.assertFalse(the_element.is_displayed())
+    WebDriverWait(context.driver, 10).until(
+            expected_conditions.visibility_of_element_located((By.ID, element)),
+    )
+    is_displayed = the_element.is_displayed()
+    if negate:
+        is_displayed = not is_displayed
+    context.test.assertTrue(is_displayed)
 
 
 @step('"(?P<element>.*)" should be (?P<prefix>dis|en)abled')
