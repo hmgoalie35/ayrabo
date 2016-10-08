@@ -15,10 +15,10 @@ from teams.models import Team
 from userprofiles.models import UserProfile
 from userprofiles.tests.factories.UserProfileFactory import generate_height
 
-s = Site.objects.first()
-s.domain = 'escoresheet.com'
-s.name = s.domain
-s.save()
+site = Site.objects.first()
+site.domain = 'escoresheet.com'
+site.name = site.domain
+site.save()
 
 fake = Faker()
 

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 if [ `uname` != "Linux" ]; then
     echo "This install script is only meant for linux"

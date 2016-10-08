@@ -6,16 +6,16 @@ from django.utils.text import slugify
 from accounts.tests import UserFactory
 from coaches.tests import CoachFactory
 from divisions.tests import DivisionFactory
-from escoresheet.testing_utils import is_queryset_in_alphabetical_order
+from escoresheet.utils.testing_utils import is_queryset_in_alphabetical_order
 from leagues.tests import LeagueFactory
 from managers.tests import ManagerFactory
 from players.tests import HockeyPlayerFactory
 from referees.tests import RefereeFactory
+from sports.exceptions import RoleDoesNotExistError, InvalidNumberOfRolesError
 from sports.models import Sport, SportRegistration
 from teams.tests import TeamFactory
 from .factories.SportFactory import SportFactory
 from .factories.SportRegistrationFactory import SportRegistrationFactory
-from sports.exceptions import RoleDoesNotExistError, InvalidNumberOfRolesError
 
 
 class SportModelTests(TestCase):

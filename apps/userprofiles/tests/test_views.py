@@ -5,7 +5,7 @@ from django.test import TestCase
 from accounts.tests import UserFactory
 from coaches.tests import CoachFactory
 from divisions.tests import DivisionFactory
-from escoresheet.testing_utils import get_messages
+from escoresheet.utils.testing_utils import get_messages
 from leagues.tests import LeagueFactory
 from managers.tests import ManagerFactory
 from players.tests import HockeyPlayerFactory

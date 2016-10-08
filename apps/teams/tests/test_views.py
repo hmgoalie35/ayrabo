@@ -6,7 +6,7 @@ from django.test import TransactionTestCase
 
 from accounts.tests import UserFactory
 from divisions.tests import DivisionFactory
-from escoresheet.testing_utils import get_messages
+from escoresheet.utils.testing_utils import get_messages
 from sports.tests import SportFactory, SportRegistrationFactory
 
 

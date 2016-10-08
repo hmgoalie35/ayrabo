@@ -2,7 +2,7 @@ from django.db.utils import IntegrityError
 from django.test import TestCase
 from django.utils.text import slugify
 
-from escoresheet.testing_utils import is_queryset_in_alphabetical_order
+from escoresheet.utils.testing_utils import is_queryset_in_alphabetical_order
 from leagues.models import League
 from sports.tests import SportFactory
 from .factories.LeagueFactory import LeagueFactory
