@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-if [ `uname` != "Linux" ]; then
+if [ $(uname) != "Linux" ]; then
     echo "This install script is only meant for linux"
     exit 0
 fi
@@ -20,7 +20,7 @@ sudo npm -g install phantomjs-prebuilt bower yuglify
 echo "Installing global pip packages"
 sudo pip install virtualenvwrapper
 
-echo "Configuring svirtualenvwrapper"
+echo "Configuring virtualenvwrapper"
 if [ $SHELL == "/bin/bash" ] ; then
     echo "export WORKON_HOME=$HOME/.virtualenvs" >> ~/.bashrc
     echo "export PROJECT_HOME=$HOME/Development" >> ~/.bashrc
@@ -58,7 +58,7 @@ fi
 
 echo "Running tests..."
 
-python manage.py test
+python manage.py test --parallel
 
 if [ $? -ne 0 ] ; then
     echo "Error running unit/functional tests"
