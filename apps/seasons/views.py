@@ -42,7 +42,7 @@ class CreateSeasonRosterView(LoginRequiredMixin, UserHasRolesMixin, ContextMixin
         context['form'] = SPORT_FORM_MAPPINGS[sport_name](self.request.POST or None,
                                                           initial={'team': team.pk},
                                                           read_only_fields=['team'],
-                                                          league=team.division.league.full_name)
+                                                          league=team.division.league.full_name, team=team)
         return context
 
     def get(self, request, *args, **kwargs):

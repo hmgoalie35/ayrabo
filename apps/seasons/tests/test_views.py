@@ -32,6 +32,7 @@ class CreateSeasonRosterViewTests(TestCase):
         self.hockey_sr.set_roles(['Manager'])
         self.hockey_manager = ManagerFactory(user=self.user, team=self.icecats)
 
+        self.hockey_players = HockeyPlayerFactory.create_batch(5, sport=self.ice_hockey, team=self.icecats)
         self.url = reverse('team:create_season_roster', kwargs={'team_pk': self.icecats.pk})
         self.client.login(email=self.email, password=self.password)
 
@@ -88,6 +89,15 @@ class CreateSeasonRosterViewTests(TestCase):
         self.assertNotIn(team, form.fields['team'].queryset)
         self.assertNotIn(player, form.fields['players'].queryset)
 
+    def test_form_players_qs_are_of_same_team(self):
+        li_edge = TeamFactory(name='Long Island Edge', division=self.mm_aa)
+        # Players in same league and division but different teams should not be available for selection in the form.
+        HockeyPlayerFactory.create_batch(5, sport=self.ice_hockey, team=li_edge)
+        response = self.client.get(self.url)
+        form = response.context['form']
+        form_player_qs = form.fields['players'].queryset
+        self.assertListEqual(list(form_player_qs), self.hockey_players)
+
     # POST
     def test_post_redirects_if_no_manager_role(self):
         self.hockey_sr.set_roles(['Player', 'Coach'])
@@ -110,8 +120,7 @@ class CreateSeasonRosterViewTests(TestCase):
     # This is only testing hockey season rosters
     # TODO add in tests for other sports as they become available
     def test_post_valid_hockeyseasonroster_form_data(self):
-        hockey_players = HockeyPlayerFactory.create_batch(5, sport=self.ice_hockey, team=self.icecats)
-        post_data = {'season': [self.liahl_season.pk], 'players': [player.pk for player in hockey_players]}
+        post_data = {'season': [self.liahl_season.pk], 'players': [player.pk for player in self.hockey_players]}
         response = self.client.post(
                 reverse('team:create_season_roster', kwargs={'team_pk': self.icecats.pk}),
                 data=post_data,
