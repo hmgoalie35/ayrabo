@@ -36,7 +36,7 @@ Feature: View what sports I am currently registered for
     Given I am on the "account_home" page
     When I press "My Sport Registrations"
     And I press "list-item-ice-hockey"
-#    Then "ice-hockey" should be visible
+    Then "ice-hockey" should be visible
     Then I should see "Player"
     And I should see "Coach"
     And I should see "Referee"

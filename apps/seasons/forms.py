@@ -56,6 +56,7 @@ class CreateHockeySeasonRosterForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         league = kwargs.pop('league', None)
         read_only_fields = kwargs.pop('read_only_fields', None)
+        team = kwargs.pop('team', None)
 
         super(CreateHockeySeasonRosterForm, self).__init__(*args, **kwargs)
 
@@ -69,8 +70,8 @@ class CreateHockeySeasonRosterForm(forms.ModelForm):
             self.fields['team'].queryset = Team.objects.filter(
                     division__league__full_name=league).select_related('division')
 
-            self.fields['players'].queryset = HockeyPlayer.objects.filter(
-                    team__division__league__full_name=league).select_related('user')
+        if team:
+            self.fields['players'].queryset = HockeyPlayer.objects.filter(team=team).select_related('user')
 
     season = SeasonModelChoiceField(queryset=Season.objects.all().select_related('division'))
     players = forms.ModelMultipleChoiceField(queryset=HockeyPlayer.objects.all().select_related('user'))

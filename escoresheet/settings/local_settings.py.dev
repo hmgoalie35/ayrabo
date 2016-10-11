@@ -22,6 +22,7 @@ CACHES['default'] = {
 
 DEBUG_TOOLBAR_CONFIG = {
     'SHOW_COLLAPSED': True,
+    # Make djdt use the copy of jQuery loaded on every page
     'JQUERY_URL': None
 }
 

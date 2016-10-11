@@ -30,6 +30,7 @@ exclude_lines =
     import .*
 
 ignore_errors = True
+show_missing = True
 
 [html]
 directory = coverage
