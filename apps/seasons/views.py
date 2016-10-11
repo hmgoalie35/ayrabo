@@ -23,36 +23,26 @@ class CreateSeasonRosterView(LoginRequiredMixin, UserHasRolesMixin, ContextMixin
 
     def get_context_data(self, **kwargs):
         context = super(CreateSeasonRosterView, self).get_context_data(**kwargs)
-        team_pk = kwargs.get('team_pk', None)
-        context['team'] = None
+        team = get_object_or_404(Team, pk=kwargs.get('team_pk', None))
+
         # A user has many manager objects, with each manager object being tied to a team
-        manager_objects = Manager.objects.filter(user=self.request.user).select_related('team',
-                                                                                        'team__division__league__sport')
+        manager_objects = Manager.objects.filter(user=self.request.user).select_related('team', 'team__division__league__sport')
         teams_managed = [manager.team for manager in manager_objects]
-        if team_pk:
-            team = get_object_or_404(Team, pk=team_pk)
-            if team not in teams_managed:
-                raise Http404
+        if team not in teams_managed:
+            raise Http404
 
-            context['team'] = team
-            sport_name = team.division.league.sport.name
+        sport_name = team.division.league.sport.name
 
-            if sport_name not in SPORT_FORM_MAPPINGS:
-                raise Exception(
-                        'Form class for {sport} has not been configured yet, please add it to SPORT_FORM_MAPPINGS'.format(
-                                sport=sport_name))
+        if sport_name not in SPORT_FORM_MAPPINGS:
+            raise Exception(
+                    'Form class for {sport} has not been configured yet, please add it to SPORT_FORM_MAPPINGS'.format(
+                            sport=sport_name))
 
-            context['form'] = SPORT_FORM_MAPPINGS[sport_name](self.request.POST or None,
-                                                              initial={'team': team.pk},
-                                                              read_only_fields=['team'],
-                                                              league=team.division.league.full_name)
-        else:
-            sport_team_mappings = {}
-            for team in teams_managed:
-                sport_name = team.division.league.sport.name
-                if sport_name not in sport_team_mappings.keys():
-                    sport_team_mappings[sport_name] = team
-            context['sport_team_mappings'] = sport_team_mappings
+        context['team'] = team
+        context['form'] = SPORT_FORM_MAPPINGS[sport_name](self.request.POST or None,
+                                                          initial={'team': team.pk},
+                                                          read_only_fields=['team'],
+                                                          league=team.division.league.full_name)
         return context
 
     def get(self, request, *args, **kwargs):

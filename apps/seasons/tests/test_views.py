@@ -21,10 +21,6 @@ class CreateSeasonRosterViewTests(TestCase):
         cls.liahl = LeagueFactory(full_name='Long Island Amateur Hockey League', sport=cls.ice_hockey)
         cls.mm_aa = DivisionFactory(name='Midget Minor AA', league=cls.liahl)
         cls.icecats = TeamFactory(name='Green Machine Icecats', division=cls.mm_aa)
-        cls.baseball = SportFactory(name='Baseball')
-        cls.mlb = LeagueFactory(full_name='Major League Baseball', sport=cls.baseball)
-        cls.ale = DivisionFactory(name='American League East', league=cls.mlb)
-        cls.yankees = TeamFactory(name='New York Yankees', division=cls.ale)
         cls.liahl_season = SeasonFactory(league=cls.liahl)
 
     def setUp(self):
@@ -36,19 +32,14 @@ class CreateSeasonRosterViewTests(TestCase):
         self.hockey_sr.set_roles(['Manager'])
         self.hockey_manager = ManagerFactory(user=self.user, team=self.icecats)
 
-        self.baseball_sr = SportRegistrationFactory(user=self.user, sport=self.baseball, is_complete=True, roles_mask=0)
-        self.baseball_sr.set_roles(['Manager'])
-        self.baseball_manager = ManagerFactory(user=self.user, team=self.yankees)
-
-        self.url = reverse('season:create_season_roster')
+        self.url = reverse('team:create_season_roster', kwargs={'team_pk': self.icecats.pk})
         self.client.login(email=self.email, password=self.password)
 
     # GET
     def test_get_anonymous(self):
         self.client.logout()
-        url = reverse('season:create_season_roster')
-        response = self.client.get(url)
-        result_url = '%s?next=%s' % (reverse('account_login'), url)
+        response = self.client.get(self.url)
+        result_url = '%s?next=%s' % (reverse('account_login'), self.url)
         self.assertRedirects(response, result_url)
 
     def test_correct_template(self):
@@ -57,35 +48,64 @@ class CreateSeasonRosterViewTests(TestCase):
 
     def test_get_redirects_if_no_manager_role(self):
         self.hockey_sr.set_roles(['Player', 'Coach'])
-        self.baseball_sr.set_roles(['Referee'])
+        # self.baseball_sr.set_roles(['Referee'])
         response = self.client.get(self.url, follow=True)
         self.assertRedirects(response, reverse('home'))
         self.assertIn('You do not have permission to perform this action.', get_messages(response))
 
-    # GET no team_pk in url
-    def test_get_no_team_pk_in_url(self):
-        response = self.client.get(self.url)
-        self.assertIsNone(response.context['team'])
-        expected = {
-            'Ice Hockey': self.icecats,
-            'Baseball': self.yankees
-        }
-        self.assertDictEqual(response.context['sport_team_mappings'], expected)
-
-    # GET team_pk in url
-    def test_get_user_not_teams_manager(self):
-        team = TeamFactory(name='Fake Team')
-        response = self.client.get(reverse('season:create_season_roster_team_param', kwargs={'team_pk': team.pk}))
+    def test_get_invalid_team_pk(self):
+        response = self.client.get(reverse('team:create_season_roster', kwargs={'team_pk': 1000}))
         self.assertEqual(response.status_code, 404)
 
-    def test_get_team_pk_in_url(self):
-        response = self.client.get(
-                reverse('season:create_season_roster_team_param', kwargs={'team_pk': self.icecats.pk}))
+    def test_get_user_not_team_manager(self):
+        team = TeamFactory(division=self.mm_aa)
+        response = self.client.get(reverse('team:create_season_roster', kwargs={'team_pk': team.pk}))
+        self.assertEqual(response.status_code, 404)
 
-        self.assertEqual(response.context['team'].pk, self.icecats.pk)
-        form = response.context['form']
-        self.assertDictEqual(form.initial, {'team': self.icecats.pk})
+    def test_get_context_populated(self):
+        response = self.client.get(self.url)
+        context = response.context
+        self.assertEqual(context['team'].pk, self.icecats.pk)
+        form = context['form']
+        # Make sure team field is disabled
         self.assertTrue(form.fields['team'].disabled)
+        # Make sure initial team is populated
+        self.assertDictEqual(form.initial, {'team': self.icecats.pk})
+
+    def test_form_season_team_players_querysets(self):
+        """
+        This is testing the form excludes seasons, teams and players that are in a different league than icecats
+        """
+        # This object will have a different league than self.icecats
+        season = SeasonFactory()
+        team = TeamFactory()
+        player = HockeyPlayerFactory(sport=self.ice_hockey, team=team)
+        response = self.client.get(
+                reverse('team:create_season_roster', kwargs={'team_pk': self.icecats.pk}))
+
+        form = response.context['form']
+        self.assertNotIn(season, form.fields['season'].queryset)
+        self.assertNotIn(team, form.fields['team'].queryset)
+        self.assertNotIn(player, form.fields['players'].queryset)
+
+    # POST
+    def test_post_redirects_if_no_manager_role(self):
+        self.hockey_sr.set_roles(['Player', 'Coach'])
+        # self.baseball_sr.set_roles(['Referee'])
+        response = self.client.post(self.url, data={}, follow=True)
+        self.assertRedirects(response, reverse('home'))
+        self.assertIn('You do not have permission to perform this action.', get_messages(response))
+
+    def test_post_invalid_team_pk(self):
+        response = self.client.post(reverse('team:create_season_roster', kwargs={'team_pk': 1000}), data={},
+                                    follow=True)
+        self.assertEqual(response.status_code, 404)
+
+    def test_post_user_not_team_manager(self):
+        team = TeamFactory(division=self.mm_aa)
+        response = self.client.post(reverse('team:create_season_roster', kwargs={'team_pk': team.pk}), data={},
+                                    follow=True)
+        self.assertEqual(response.status_code, 404)
 
     # This is only testing hockey season rosters
     # TODO add in tests for other sports as they become available
@@ -93,7 +113,7 @@ class CreateSeasonRosterViewTests(TestCase):
         hockey_players = HockeyPlayerFactory.create_batch(5, sport=self.ice_hockey, team=self.icecats)
         post_data = {'season': [self.liahl_season.pk], 'players': [player.pk for player in hockey_players]}
         response = self.client.post(
-                reverse('season:create_season_roster_team_param', kwargs={'team_pk': self.icecats.pk}),
+                reverse('team:create_season_roster', kwargs={'team_pk': self.icecats.pk}),
                 data=post_data,
                 follow=True)
         self.assertIn('Season roster created for {team}'.format(team=self.icecats), get_messages(response))
@@ -102,19 +122,6 @@ class CreateSeasonRosterViewTests(TestCase):
 
     def test_post_invalid_hockeyseasonroster_form_data(self):
         response = self.client.post(
-                reverse('season:create_season_roster_team_param', kwargs={'team_pk': self.icecats.pk}),
+                reverse('team:create_season_roster', kwargs={'team_pk': self.icecats.pk}),
                 data={'season': None, 'players': []})
         self.assertFormError(response, 'form', 'players', 'This field is required.')
-
-    def test_season_team_player_querysets_include_objects_of_same_league(self):
-        # This object will have a different league than self.icecats
-        season = SeasonFactory()
-        team = TeamFactory()
-        player = HockeyPlayerFactory(sport=self.ice_hockey, team=team)
-        response = self.client.get(
-                reverse('season:create_season_roster_team_param', kwargs={'team_pk': self.icecats.pk}))
-
-        form = response.context['form']
-        self.assertNotIn(season, form.fields['season'].queryset)
-        self.assertNotIn(team, form.fields['team'].queryset)
-        self.assertNotIn(player, form.fields['players'].queryset)

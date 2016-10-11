@@ -79,17 +79,14 @@ def step_impl(context, model_class, model_kwargs, url_or_url_name, url_kwargs):
     url_kwargs_dict = string_to_kwargs_dict(url_kwargs)
     qs = cls.objects.filter(**model_kwargs_dict)
     obj = qs.first()
-    if 'create_season_roster_team_param' in url_or_url_name:
-        url_kwargs_dict['team_pk'] = int(url_kwargs_dict.get('team_pk').format(pk=obj.pk))
-    else:
-        url_kwargs_dict['pk'] = int(url_kwargs_dict.get('pk').format(pk=obj.pk))
 
-    if 'add_sport_registration_role' or 'create_season_roster_team_param' in url_or_url_name:
-        url = reverse(url_or_url_name, kwargs=url_kwargs_dict)
-    else:
-        url = reverse(url_or_url_name)
+    for key, val in url_kwargs_dict.items():
+        try:
+            url_kwargs_dict[key] = getattr(obj, val)
+        except AttributeError as e:
+            print(e)
 
-    context.test.assertEqual(context.get_url(url), context.driver.current_url)
+    context.test.assertEqual(context.get_url(url_or_url_name, **url_kwargs_dict), context.driver.current_url)
 
 
 @step('I am on the page for "(?P<model_class>.*)" and "(?P<kwarg_data>.*)"')
@@ -110,17 +107,29 @@ def step_impl(context, model_class, model_kwargs, url_or_url_name, url_kwargs):
     url_kwargs_dict = string_to_kwargs_dict(url_kwargs)
     qs = cls.objects.filter(**model_kwargs_dict)
     obj = qs.first()
-    if 'create_season_roster_team_param' in url_or_url_name:
-        url_kwargs_dict['team_pk'] = int(url_kwargs_dict.get('team_pk').format(pk=obj.pk))
-    else:
-        url_kwargs_dict['pk'] = int(url_kwargs_dict.get('pk').format(pk=obj.pk))
+    for key, val in url_kwargs_dict.items():
+        try:
+            url_kwargs_dict[key] = getattr(obj, val)
+        except AttributeError as e:
+            print(e)
 
-    if 'add_sport_registration_role' or 'create_season_roster_team_param' in url_or_url_name:
-        url = reverse(url_or_url_name, kwargs=url_kwargs_dict)
-    else:
-        url = reverse(url_or_url_name)
+    context.driver.get(context.get_url(url_or_url_name, **url_kwargs_dict))
 
-    context.driver.get(context.get_url(url))
+
+@step('I go to the "(?P<model_class>[^"]*)" "(?P<model_kwargs>[^"]*)" "(?P<url_or_url_name>[^"]*)" page with url kwargs "(?P<url_kwargs>[^"]*)"')
+def step_impl(context, model_class, model_kwargs, url_or_url_name, url_kwargs):
+    cls = apps.get_model(model_class)
+    model_kwargs_dict = string_to_kwargs_dict(model_kwargs)
+    url_kwargs_dict = string_to_kwargs_dict(url_kwargs)
+    qs = cls.objects.filter(**model_kwargs_dict)
+    obj = qs.first()
+    for key, val in url_kwargs_dict.items():
+        try:
+            url_kwargs_dict[key] = getattr(obj, val)
+        except AttributeError as e:
+            print(e)
+
+    context.driver.get(context.get_url(url_or_url_name, **url_kwargs_dict))
 
 
 @step('The current url should contain "(?P<text>.*)"')
@@ -272,3 +281,8 @@ def step_impl(context, element, prefix):
     if prefix == 'dis':
         result = not result
     context.test.assertTrue(result)
+
+
+@step('I wait for "(?P<element>[^"]*)" to be visible')
+def step_impl(context, element):
+    WebDriverWait(context.driver, 10).until(expected_conditions.visibility_of_element_located((By.ID, element)))

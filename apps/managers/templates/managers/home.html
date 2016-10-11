@@ -64,7 +64,8 @@
                                                             <p><strong>Season Rosters</strong></p>
                                                             <div class="btn-group btn-group-sm">
                                                                 <a id="{{ team.slug }}_create_season_roster_btn"
-                                                                   href="#" class="btn btn-success"><span
+                                                                   href="{% url 'team:create_season_roster' team.pk %}"
+                                                                   class="btn btn-success"><span
                                                                         class="fa fa-plus"></span></a>
                                                                 <a id="{{ team.slug }}_update_season_roster_btn"
                                                                    href="#" class="btn btn-primary"><span
@@ -102,13 +103,3 @@
 
     </div>
 {% endblock %}
-
-{##}
-{#<div class="btn-group btn-group-sm" role="group">#}
-{#    <a class="btn btn-success"#}
-{#       href="{% url 'season:create_season_roster_team_param' team_pk=team.pk %}"><span#}
-{#            class="fa fa-plus"></span></a>#}
-{#    <a class="btn btn-primary"#}
-{#       href="{% url 'season:create_season_roster_team_param' team_pk=team.pk %}"><span#}
-{#            class="fa fa-edit"></span></a>#}
-{#</div>#}

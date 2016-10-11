@@ -13,7 +13,7 @@ Feature: Create season rosters
 
   Scenario Outline: Can't create season roster w/o manager role
     Given "user@example.com" is completely registered for "Ice Hockey" with role "<role>"
-    When I go to the "season:create_season_roster" page
+    When I go to the "teams.Team" "" "team:create_season_roster" page with url kwargs "team_pk=pk"
     Then I should be on the "home" page
     And I should see "You do not have permission to perform this action."
 
@@ -23,34 +23,16 @@ Feature: Create season rosters
       | Coach   |
       | Referee |
 
-  Scenario: User navigates to create season roster page and is shown what teams they are a manager for
+  Scenario: Create season roster for green machine icecats
     Given "user@example.com" is completely registered for "Ice Hockey" with role "Manager"
-    Given "user@example.com" is completely registered for "Baseball" with role "Manager"
     And The following manager objects exist
       | username_or_email | team                  |
       | user@example.com  | Green Machine IceCats |
-      | user@example.com  | New York Yankees      |
-    And I am on the "home" page
-    When I press "manager_menu"
-    And I press "create_season_roster"
-    Then I should be on the "season:create_season_roster" page
-    And I should see "You are a manager for the following teams"
-    And I should see "Click a team name below to create a season roster"
-    And I should see "Ice Hockey"
-    And I should see "Green Machine IceCats"
-    And I should see "Baseball"
-    And I should see "New York Yankees"
-
-  Scenario: Navigate to create season roster page with team_pk in url
-    Given "user@example.com" is completely registered for "Ice Hockey" with role "Manager"
-    Given "user@example.com" is completely registered for "Baseball" with role "Manager"
-    And The following manager objects exist
-      | username_or_email | team                  |
-      | user@example.com  | Green Machine IceCats |
-      | user@example.com  | New York Yankees      |
-    And I am on the "season:create_season_roster" page
-    When I press "Green Machine IceCats"
-    Then I should be on the "teams.Team" "" "season:create_season_roster_team_param" page with url kwargs "team_pk={pk}"
+    And I am on the "manager:home" page
+    When I press "green-machine-icecats_manage_link"
+    And I wait for "green-machine-icecats_create_season_roster_btn" to be visible
+    And I press "green-machine-icecats_create_season_roster_btn"
+    Then I should be on the "teams.Team" "" "team:create_season_roster" page with url kwargs "team_pk=pk"
     And I should see "Create Season Roster for Green Machine IceCats"
 
   Scenario: Submit valid ice hockey create season roster form
@@ -68,7 +50,7 @@ Feature: Create season rosters
       | test3@example.com | Ice Hockey | Green Machine IceCats |
       | test4@example.com | Ice Hockey | Green Machine IceCats |
       | test5@example.com | Ice Hockey | Green Machine IceCats |
-    Given I am on the "teams.Team" "" "season:create_season_roster_team_param" page with url kwargs "team_pk={pk}"
+    Given I am on the "teams.Team" "" "team:create_season_roster" page with url kwargs "team_pk=pk"
     And I select "Long Island Amateur Hockey League: 2016 - 2017 Season" from "id_season"
     And I select 5 players from "id_players"
     And I press "create_season_roster_btn"
@@ -90,9 +72,9 @@ Feature: Create season rosters
       | test3@example.com | Ice Hockey | Green Machine IceCats |
       | test4@example.com | Ice Hockey | Green Machine IceCats |
       | test5@example.com | Ice Hockey | Green Machine IceCats |
-    Given I am on the "teams.Team" "" "season:create_season_roster_team_param" page with url kwargs "team_pk={pk}"
+    Given I am on the "teams.Team" "" "team:create_season_roster" page with url kwargs "team_pk=pk"
     And I press "create_season_roster_btn"
     Then "This field is required." should show up 2 times
-    And I should be on the "teams.Team" "" "season:create_season_roster_team_param" page with url kwargs "team_pk={pk}"
+    And I should be on the "teams.Team" "" "team:create_season_roster" page with url kwargs "team_pk=pk"
 
       # TODO add in tests for BaseballSeasonRoster, etc.
