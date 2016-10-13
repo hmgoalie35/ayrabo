@@ -1,0 +1,76 @@
+{% extends 'site_base.html' %}
+
+{% block title %}List Season Rosters{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="text-center">
+                    <h1>Season Rosters for {{ team }}</h1>
+                </div>
+            </div>
+        </div>
+
+        <br>
+
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="text-center">
+                    {% if season_rosters %}
+                        <div class="table-responsive">
+                            <table class="table table-borderless">
+                                <thead>
+
+                                <tr class="text-left">
+                                    <th>Season</th>
+                                    <th>Team</th>
+                                    <th>Created</th>
+                                    <th>Default</th>
+                                    <th></th>
+                                </tr>
+
+                                <tr class="table-row-spacer">
+                                    <th colspan="5"></th>
+                                </tr>
+
+                                </thead>
+
+                                <tbody>
+                                {% for season_roster in season_rosters %}
+                                    <tr class="text-left table-row-extra-padding">
+                                        <td>{{ season_roster.season }}</td>
+                                        <td>{{ season_roster.team }}</td>
+                                        <td>{{ season_roster.created }}</td>
+                                        <td>
+                                            {% if season_roster.default %}
+                                                <span class="fa fa-check fa-green-check"></span>
+                                            {% else %}
+                                                <span class="fa fa-close fa-red-x"></span>
+                                            {% endif %}
+                                        </td>
+                                        <td><a id="update_{{ season_roster.pk }}_link" href="#" title="Update season roster"><span class="fa fa-lg fa-pencil"></span></a></td>
+                                    </tr>
+
+                                    {% if not forloop.last %}
+                                        <tr class="table-row-spacer">
+                                            <td colspan="5"></td>
+                                        </tr>
+                                    {% endif %}
+
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+
+                    {% else %}
+                        <div class="alert alert-warning">A season roster has not been created for this team yet. You can create a season roster <a class="alert-link" href="{% url 'team:create_season_roster' team.pk %}">here.</a>
+                        </div>
+                    {% endif %}
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+{% endblock %}

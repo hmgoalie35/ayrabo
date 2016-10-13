@@ -40,6 +40,6 @@ Feature: Manager home page
     When I press "green-machine-icecats_manage_link"
     And I press "new-york-yankees_manage_link"
     Then "green-machine-icecats_create_season_roster_btn" should be visible
-    And "green-machine-icecats_update_season_roster_btn" should be visible
+    And "green-machine-icecats_list_season_rosters_btn" should be visible
     And "new-york-yankees_create_season_roster_btn" should be visible
-    And "new-york-yankees_update_season_roster_btn" should be visible
+    And "new-york-yankees_list_season_rosters_btn" should be visible

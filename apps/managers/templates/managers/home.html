@@ -67,8 +67,8 @@
                                                                    href="{% url 'team:create_season_roster' team.pk %}"
                                                                    class="btn btn-success"><span
                                                                         class="fa fa-plus"></span></a>
-                                                                <a id="{{ team.slug }}_update_season_roster_btn"
-                                                                   href="#" class="btn btn-primary"><span
+                                                                <a id="{{ team.slug }}_list_season_rosters_btn"
+                                                                   href="{% url 'team:list_season_roster' team.pk %}" class="btn btn-primary"><span
                                                                         class="fa fa-list"></span></a>
                                                             </div>
                                                         </div>

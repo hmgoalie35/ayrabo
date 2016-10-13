@@ -10,9 +10,14 @@ from managers.models import Manager
 from teams.models import Team
 from .forms import CreateHockeySeasonRosterForm
 from .mixins import UserHasRolesMixin
+from .models import HockeySeasonRoster
 
 SPORT_FORM_MAPPINGS = {
     'Ice Hockey': CreateHockeySeasonRosterForm
+}
+
+SPORT_MODEL_MAPPINGS = {
+    'Ice Hockey': HockeySeasonRoster
 }
 
 
@@ -26,7 +31,8 @@ class CreateSeasonRosterView(LoginRequiredMixin, UserHasRolesMixin, ContextMixin
         team = get_object_or_404(Team, pk=kwargs.get('team_pk', None))
 
         # A user has many manager objects, with each manager object being tied to a team
-        manager_objects = Manager.objects.filter(user=self.request.user).select_related('team', 'team__division__league__sport')
+        manager_objects = Manager.objects.filter(user=self.request.user).select_related('team',
+                                                                                        'team__division__league__sport')
         teams_managed = [manager.team for manager in manager_objects]
         if team not in teams_managed:
             raise Http404
@@ -57,3 +63,25 @@ class CreateSeasonRosterView(LoginRequiredMixin, UserHasRolesMixin, ContextMixin
             messages.success(request, 'Season roster created for {team}'.format(team=context.get('team')))
             return redirect(reverse('home'))
         return render(request, self.template_name, context)
+
+
+class ListSeasonRosterView(LoginRequiredMixin, UserHasRolesMixin, generic.TemplateView):
+    roles_to_check = ['Manager']
+    template_name = 'seasons/list_season_roster.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(ListSeasonRosterView, self).get_context_data(**kwargs)
+
+        team = get_object_or_404(Team, pk=kwargs.get('team_pk', None))
+
+        # Can also do Manager.objects.filter(user=self.request.user, team=team)
+        is_user_manager_for_team = team.manager_set.filter(user=self.request.user).exists()
+        if not is_user_manager_for_team:
+            raise Http404
+
+        sport_name = team.division.league.sport.name
+        season_rosters = SPORT_MODEL_MAPPINGS[sport_name].objects.order_by('-created').filter(team=team).select_related('season', 'team')
+        context['season_rosters'] = season_rosters
+        context['team'] = team
+
+        return context
