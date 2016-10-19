@@ -79,3 +79,17 @@ class CreateHockeySeasonRosterForm(forms.ModelForm):
     class Meta:
         model = HockeySeasonRoster
         fields = ['team', 'season', 'players', 'default']
+
+
+class UpdateHockeySeasonRosterForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        team = kwargs.pop('team', None)
+        super(UpdateHockeySeasonRosterForm, self).__init__(*args, **kwargs)
+        if team:
+            self.fields['players'].queryset = HockeyPlayer.objects.filter(team=team).select_related('user')
+
+    players = forms.ModelMultipleChoiceField(queryset=HockeyPlayer.objects.all().select_related('user'))
+
+    class Meta:
+        model = HockeySeasonRoster
+        fields = ['players', 'default']

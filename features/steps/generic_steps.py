@@ -100,6 +100,17 @@ def step_impl(context, model_class, kwarg_data):
     context.driver.get(context.get_url(obj.get_absolute_url()))
 
 
+@step('I go to the page for "(?P<model_class>.*)" and "(?P<kwarg_data>.*)"')
+def step_impl(context, model_class, kwarg_data):
+    if '.' not in model_class:
+        raise Exception('You must specify the model class as <app_name>.<model_class> i.e. "sports.SportRegistration"')
+    cls = apps.get_model(model_class)
+    kwargs = string_to_kwargs_dict(kwarg_data)
+    qs = cls.objects.filter(**kwargs)
+    obj = qs.first()
+    context.driver.get(context.get_url(obj.get_absolute_url()))
+
+
 @step('I am on the "(?P<model_class>[^"]*)" "(?P<model_kwargs>[^"]*)" "(?P<url_or_url_name>[^"]*)" page with url kwargs "(?P<url_kwargs>[^"]*)"')
 def step_impl(context, model_class, model_kwargs, url_or_url_name, url_kwargs):
     cls = apps.get_model(model_class)
@@ -205,24 +216,33 @@ def step_impl(context, text, num):
     context.test.assertEqual(int(num), num_matches)
 
 
-@step('I select "(?P<select_option>[^"]*)" from "(?P<element>[^"]*)"')
-def step_impl(context, select_option, element):
+@step('I (?P<deselect>de)?select "(?P<select_option>[^"]*)" from "(?P<element>[^"]*)"')
+def step_impl(context, deselect, select_option, element):
     success = False
     the_element = Select(find_element(context, element))
     try:
-        the_element.select_by_value(select_option)
+        if deselect:
+            the_element.deselect_by_value(select_option)
+        else:
+            the_element.select_by_value(select_option)
         success = True
     except NoSuchElementException:
         pass
 
     try:
-        the_element.select_by_visible_text(select_option)
+        if deselect:
+            the_element.deselect_by_visible_text(select_option)
+        else:
+            the_element.select_by_visible_text(select_option)
         success = True
     except NoSuchElementException:
         pass
 
     try:
-        the_element.select_by_index(int(select_option))
+        if deselect:
+            the_element.deselect_by_index(int(select_option))
+        else:
+            the_element.select_by_index(int(select_option))
         success = True
     except TypeError:
         pass
