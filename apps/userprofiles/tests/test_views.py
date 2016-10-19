@@ -36,7 +36,7 @@ class CreateUserProfileViewTests(TestCase):
 
     def test_correct_template(self):
         response = self.client.get(reverse('profile:create'))
-        self.assertTemplateUsed(response, 'userprofiles/create.html')
+        self.assertTemplateUsed(response, 'userprofiles/userprofile_create.html')
 
     def test_200_status_code(self):
         response = self.client.get(reverse('profile:create'))
@@ -129,7 +129,7 @@ class UpdateUserProfileViewTests(TestCase):
 
     def test_correct_template(self):
         response = self.client.get(reverse('account_home'))
-        self.assertTemplateUsed(response, 'userprofiles/update.html')
+        self.assertTemplateUsed(response, 'userprofiles/userprofile_update.html')
 
     def test_200_status_code(self):
         response = self.client.get(reverse('account_home'))
@@ -183,7 +183,7 @@ class UpdateUserProfileViewTests(TestCase):
         response = self.client.post(reverse('account_home'), data=self.post_data, follow=True)
         success_msg = 'Your profile has been updated'
         self.assertIn(success_msg, get_messages(response))
-        self.assertTemplateUsed('userprofiles/update.html')
+        self.assertTemplateUsed('userprofiles/userprofile_update.html')
 
     def test_userprofile_exists_in_context(self):
         self.post_data.pop('gender')

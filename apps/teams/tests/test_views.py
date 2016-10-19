@@ -34,7 +34,7 @@ class TeamViewTests(TransactionTestCase):
         response = self.client.get(reverse('bulk_upload_teams'))
 
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'teams/bulk_upload_teams.html')
+        self.assertTemplateUsed(response, 'teams/team_bulk_upload.html')
 
     def test_get_context_has_form(self):
         response = self.client.get(reverse('bulk_upload_teams'))
@@ -60,7 +60,7 @@ class TeamViewTests(TransactionTestCase):
                     'on line 1', response.context['errors'])
 
             self.assertIn('errors', response.context)
-            self.assertTemplateUsed(response, 'teams/bulk_upload_teams.html')
+            self.assertTemplateUsed(response, 'teams/team_bulk_upload.html')
 
     def test_post_team_name_empty(self):
         with open(os.path.join(self.test_file_path, 'team_name_empty.csv')) as the_file:

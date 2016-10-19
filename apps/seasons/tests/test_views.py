@@ -45,7 +45,7 @@ class CreateSeasonRosterViewTests(TestCase):
 
     def test_correct_template(self):
         response = self.client.get(self.url)
-        self.assertTemplateUsed(response, 'seasons/create_season_roster.html')
+        self.assertTemplateUsed(response, 'seasons/season_roster_create.html')
 
     def test_get_redirects_if_no_manager_role(self):
         self.hockey_sr.set_roles(['Player', 'Coach'])
@@ -168,7 +168,7 @@ class ListSeasonRosterViewTests(TestCase):
 
     def test_correct_template(self):
         response = self.client.get(self.url)
-        self.assertTemplateUsed(response, 'seasons/list_season_roster.html')
+        self.assertTemplateUsed(response, 'seasons/season_roster_list.html')
 
     def test_get_redirects_if_no_manager_role(self):
         self.hockey_sr.set_roles(['Player', 'Coach'])
@@ -229,7 +229,7 @@ class UpdateSeasonRosterViewTests(TestCase):
 
     def test_correct_template(self):
         response = self.client.get(self.url)
-        self.assertTemplateUsed(response, 'seasons/update_season_roster.html')
+        self.assertTemplateUsed(response, 'seasons/season_roster_update.html')
 
     def test_get_redirects_if_no_manager_role(self):
         self.hockey_sr.set_roles(['Player', 'Coach'])
@@ -300,4 +300,4 @@ class UpdateSeasonRosterViewTests(TestCase):
         }
         response = self.client.post(self.url, data=post_data, follow=True)
         self.assertFormError(response, 'form', 'players', 'This field is required.')
-        self.assertTemplateUsed(response, 'seasons/update_season_roster.html')
+        self.assertTemplateUsed(response, 'seasons/season_roster_update.html')

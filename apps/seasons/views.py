@@ -26,7 +26,7 @@ SPORT_MODEL_MAPPINGS = {
 
 
 class CreateSeasonRosterView(LoginRequiredMixin, UserHasRolesMixin, ContextMixin, generic.View):
-    template_name = 'seasons/create_season_roster.html'
+    template_name = 'seasons/season_roster_create.html'
     roles_to_check = ['Manager']
     user_has_no_role_msg = 'You do not have permission to perform this action.'
 
@@ -71,7 +71,7 @@ class CreateSeasonRosterView(LoginRequiredMixin, UserHasRolesMixin, ContextMixin
 
 class ListSeasonRosterView(LoginRequiredMixin, UserHasRolesMixin, generic.TemplateView):
     roles_to_check = ['Manager']
-    template_name = 'seasons/list_season_roster.html'
+    template_name = 'seasons/season_roster_list.html'
 
     def get_context_data(self, **kwargs):
         context = super(ListSeasonRosterView, self).get_context_data(**kwargs)
@@ -94,7 +94,7 @@ class ListSeasonRosterView(LoginRequiredMixin, UserHasRolesMixin, generic.Templa
 
 class UpdateSeasonRosterView(LoginRequiredMixin, UserHasRolesMixin, ContextMixin, generic.View):
     roles_to_check = ['Manager']
-    template_name = 'seasons/update_season_roster.html'
+    template_name = 'seasons/season_roster_update.html'
 
     def get_context_data(self, **kwargs):
         context = super(UpdateSeasonRosterView, self).get_context_data(**kwargs)

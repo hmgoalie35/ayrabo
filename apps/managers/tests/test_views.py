@@ -3,7 +3,7 @@ from django.test import TestCase
 
 from accounts.tests import UserFactory
 from divisions.tests import DivisionFactory
-from escoresheet.testing_utils import get_messages
+from escoresheet.utils import get_messages
 from leagues.tests import LeagueFactory
 from managers.tests import ManagerFactory
 from seasons.tests import SeasonFactory
@@ -50,7 +50,7 @@ class ManagerHomeViewTests(TestCase):
 
     def test_correct_template(self):
         response = self.client.get(self.url)
-        self.assertTemplateUsed(response, 'managers/home.html')
+        self.assertTemplateUsed(response, 'managers/manager_home.html')
 
     def test_get_redirects_if_no_manager_role(self):
         self.hockey_sr.set_roles(['Player', 'Coach'])

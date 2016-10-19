@@ -6,7 +6,7 @@ from seasons.mixins import UserHasRolesMixin
 
 
 class ManagerHomeView(LoginRequiredMixin, UserHasRolesMixin, generic.TemplateView):
-    template_name = 'managers/home.html'
+    template_name = 'managers/manager_home.html'
     roles_to_check = ['Manager']
 
     def get_context_data(self, **kwargs):
