@@ -1,5 +1,5 @@
 [behave]
-stdout_capture=true
+stdout_capture=false
 stderr_capture=true
 show_skipped=false
 logging_level=CRITICAL

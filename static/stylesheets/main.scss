@@ -128,7 +128,7 @@ table.table.table-borderless {
       padding: 0;
       // Color the collapsible div (panel)
       div {
-        background: #f5f5f5;
+        background: #F5F5F5;
       }
     }
 
@@ -162,4 +162,12 @@ table.table.table-borderless {
 // Remove extra margin bootstrap's panels have
 .table-row-panel {
   margin-bottom: 0;
+}
+
+.fa-green-check {
+  color: green;
+}
+
+.fa-red-x {
+  color: red;
 }

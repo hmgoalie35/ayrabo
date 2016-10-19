@@ -4,6 +4,7 @@ from django.core.validators import ValidationError
 from django.db import models
 from django.db.models.signals import m2m_changed
 from django.dispatch import receiver
+from django.core.urlresolvers import reverse
 
 from teams.models import Team
 
@@ -95,6 +96,9 @@ class AbstractSeasonRoster(models.Model):
         abstract = True
         ordering = ['created']
         get_latest_by = 'created'
+
+    def get_absolute_url(self):
+        return reverse('team:update_season_roster', kwargs={'team_pk': self.team.pk, 'pk': self.pk})
 
     def __str__(self):
         return '{team}-{division}: {season}'.format(team=self.team, division=self.team.division, season=self.season)
