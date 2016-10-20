@@ -8,6 +8,7 @@ from teams.models import Team
 class TeamFactory(django.DjangoModelFactory):
     class Meta:
         model = Team
+        django_get_or_create = ('name',)
 
     name = fuzzy.FuzzyText(length=32)
     website = 'https://www.google.com'

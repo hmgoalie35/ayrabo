@@ -46,4 +46,4 @@ Feature: View what sports I am currently registered for
     Given I am on the "account_home" page
     When I press "My Sport Registrations"
     And I press "edit-" with kwargs "Ice Hockey"
-    Then I should be on the page for "sports.SportRegistration" and "user@example.com Ice Hockey"
+    Then I should be on the absolute url page for "sports.SportRegistration" and "user@example.com Ice Hockey"

@@ -5,13 +5,13 @@ from behave import *
 from django.apps import apps
 from django.conf import settings
 from django.contrib.auth.models import User
-from django.core.urlresolvers import reverse
-from django.db.models import Q
 from selenium.common.exceptions import NoSuchElementException, WebDriverException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.select import Select
 from selenium.webdriver.support.ui import WebDriverWait
+
+from escoresheet.utils import get_user
 
 
 def find_element(context, element_to_find):
@@ -50,36 +50,111 @@ def string_to_kwargs_dict(string):
     return ret_val
 
 
-@step('I am on the "(?P<url>.*)" page')
+def navigate_to_page(context, url, url_kwargs=None):
+    """
+    Navigates to url. Prepends the hostname and port. Url can be a url name, etc.
+    :param context: The context for the current step definition
+    :param url_kwargs: Any kwargs needed to successfully reverse the url
+    :param url: The url to navigate to
+    """
+    if url_kwargs is None:
+        url_kwargs = {}
+    context.driver.get(context.get_url(url, **url_kwargs))
+
+
+def get_model_object(model_class, model_kwargs):
+    """
+    Given a model class name and any kwargs to filter by, return the first object in the resulting queryset
+    :param model_class: The model to retrieve
+    :param model_kwargs: Any kwargs the could be passed to the filter() function for the given model
+    :return: An object of type model_class
+    """
+    if '.' not in model_class:
+        raise Exception('You must specify the model class as <app_name>.<model_class> i.e. "sports.SportRegistration"')
+    cls = apps.get_model(model_class)
+    kwargs = string_to_kwargs_dict(model_kwargs)
+    qs = cls.objects.filter(**kwargs)
+    return qs.first()
+
+
+"""
+
+Page navigation and testing correct page
+
+"""
+
+
+@step('I am on the "(?P<url>[^"]*)" page')
 def step_impl(context, url):
-    context.driver.get(context.get_url(url))
+    navigate_to_page(context, url)
 
 
 @step('I go to the "(?P<url>[^"]*)" page')
 def step_impl(context, url):
-    the_step = 'given I am on the "{url}" page\n'.format(url=url)
-    context.execute_steps(the_step)
+    navigate_to_page(context, url)
 
 
-@step('I should be on the page for "(?P<model_class>.*)" and "(?P<kwarg_data>.*)"')
+@step('I should be on the "(?P<url>.*)" page')
+def step_impl(context, url):
+    current_url = context.driver.current_url
+    # Check for query params and discard if exist
+    if '?' in current_url:
+        current_url = current_url.split('?')[0]
+    context.test.assertEqual(current_url, context.get_url(url))
+
+
+@step('I am on the absolute url page for "(?P<model_class>.*)" and "(?P<kwarg_data>.*)"')
 def step_impl(context, model_class, kwarg_data):
-    if '.' not in model_class:
-        raise Exception('You must specify the model class as <app_name>.<model_class> i.e. "sports.SportRegistration"')
-    cls = apps.get_model(model_class)
-    kwargs = string_to_kwargs_dict(kwarg_data)
-    qs = cls.objects.filter(**kwargs)
-    obj = qs.first()
-    context.test.assertEqual(context.get_url(obj.get_absolute_url()), context.driver.current_url)
+    obj = get_model_object(model_class, kwarg_data)
+    navigate_to_page(context, obj.get_absolute_url())
 
 
-@step('I should be on the "(?P<model_class>[^"]*)" "(?P<model_kwargs>[^"]*)" "(?P<url_or_url_name>[^"]*)" page with url kwargs "(?P<url_kwargs>[^"]*)"')
+@step('I go to the absolute url page for "(?P<model_class>.*)" and "(?P<kwarg_data>.*)"')
+def step_impl(context, model_class, kwarg_data):
+    obj = get_model_object(model_class, kwarg_data)
+    navigate_to_page(context, obj.get_absolute_url())
+
+
+@step('I should be on the absolute url page for "(?P<model_class>.*)" and "(?P<kwarg_data>.*)"')
+def step_impl(context, model_class, kwarg_data):
+    obj = get_model_object(model_class, kwarg_data)
+    url_to_check = context.get_url(obj.get_absolute_url())
+    context.test.assertEqual(url_to_check, context.driver.current_url)
+
+
+@step(
+        'I am on the "(?P<model_class>[^"]*)" "(?P<model_kwargs>[^"]*)" "(?P<url_or_url_name>[^"]*)" page with url kwargs "(?P<url_kwargs>[^"]*)"')
 def step_impl(context, model_class, model_kwargs, url_or_url_name, url_kwargs):
-    cls = apps.get_model(model_class)
-    model_kwargs_dict = string_to_kwargs_dict(model_kwargs)
     url_kwargs_dict = string_to_kwargs_dict(url_kwargs)
-    qs = cls.objects.filter(**model_kwargs_dict)
-    obj = qs.first()
+    obj = get_model_object(model_class, model_kwargs)
+    for key, val in url_kwargs_dict.items():
+        try:
+            url_kwargs_dict[key] = getattr(obj, val)
+        except AttributeError as e:
+            print(e)
 
+    navigate_to_page(context, url_or_url_name, url_kwargs_dict)
+
+
+@step(
+        'I go to the "(?P<model_class>[^"]*)" "(?P<model_kwargs>[^"]*)" "(?P<url_or_url_name>[^"]*)" page with url kwargs "(?P<url_kwargs>[^"]*)"')
+def step_impl(context, model_class, model_kwargs, url_or_url_name, url_kwargs):
+    url_kwargs_dict = string_to_kwargs_dict(url_kwargs)
+    obj = get_model_object(model_class, model_kwargs)
+    for key, val in url_kwargs_dict.items():
+        try:
+            url_kwargs_dict[key] = getattr(obj, val)
+        except AttributeError as e:
+            print(e)
+
+    navigate_to_page(context, url_or_url_name, url_kwargs_dict)
+
+
+@step(
+        'I should be on the "(?P<model_class>[^"]*)" "(?P<model_kwargs>[^"]*)" "(?P<url_or_url_name>[^"]*)" page with url kwargs "(?P<url_kwargs>[^"]*)"')
+def step_impl(context, model_class, model_kwargs, url_or_url_name, url_kwargs):
+    url_kwargs_dict = string_to_kwargs_dict(url_kwargs)
+    obj = get_model_object(model_class, model_kwargs)
     for key, val in url_kwargs_dict.items():
         try:
             url_kwargs_dict[key] = getattr(obj, val)
@@ -87,60 +162,6 @@ def step_impl(context, model_class, model_kwargs, url_or_url_name, url_kwargs):
             print(e)
 
     context.test.assertEqual(context.get_url(url_or_url_name, **url_kwargs_dict), context.driver.current_url)
-
-
-@step('I am on the page for "(?P<model_class>.*)" and "(?P<kwarg_data>.*)"')
-def step_impl(context, model_class, kwarg_data):
-    if '.' not in model_class:
-        raise Exception('You must specify the model class as <app_name>.<model_class> i.e. "sports.SportRegistration"')
-    cls = apps.get_model(model_class)
-    kwargs = string_to_kwargs_dict(kwarg_data)
-    qs = cls.objects.filter(**kwargs)
-    obj = qs.first()
-    context.driver.get(context.get_url(obj.get_absolute_url()))
-
-
-@step('I go to the page for "(?P<model_class>.*)" and "(?P<kwarg_data>.*)"')
-def step_impl(context, model_class, kwarg_data):
-    if '.' not in model_class:
-        raise Exception('You must specify the model class as <app_name>.<model_class> i.e. "sports.SportRegistration"')
-    cls = apps.get_model(model_class)
-    kwargs = string_to_kwargs_dict(kwarg_data)
-    qs = cls.objects.filter(**kwargs)
-    obj = qs.first()
-    context.driver.get(context.get_url(obj.get_absolute_url()))
-
-
-@step('I am on the "(?P<model_class>[^"]*)" "(?P<model_kwargs>[^"]*)" "(?P<url_or_url_name>[^"]*)" page with url kwargs "(?P<url_kwargs>[^"]*)"')
-def step_impl(context, model_class, model_kwargs, url_or_url_name, url_kwargs):
-    cls = apps.get_model(model_class)
-    model_kwargs_dict = string_to_kwargs_dict(model_kwargs)
-    url_kwargs_dict = string_to_kwargs_dict(url_kwargs)
-    qs = cls.objects.filter(**model_kwargs_dict)
-    obj = qs.first()
-    for key, val in url_kwargs_dict.items():
-        try:
-            url_kwargs_dict[key] = getattr(obj, val)
-        except AttributeError as e:
-            print(e)
-
-    context.driver.get(context.get_url(url_or_url_name, **url_kwargs_dict))
-
-
-@step('I go to the "(?P<model_class>[^"]*)" "(?P<model_kwargs>[^"]*)" "(?P<url_or_url_name>[^"]*)" page with url kwargs "(?P<url_kwargs>[^"]*)"')
-def step_impl(context, model_class, model_kwargs, url_or_url_name, url_kwargs):
-    cls = apps.get_model(model_class)
-    model_kwargs_dict = string_to_kwargs_dict(model_kwargs)
-    url_kwargs_dict = string_to_kwargs_dict(url_kwargs)
-    qs = cls.objects.filter(**model_kwargs_dict)
-    obj = qs.first()
-    for key, val in url_kwargs_dict.items():
-        try:
-            url_kwargs_dict[key] = getattr(obj, val)
-        except AttributeError as e:
-            print(e)
-
-    context.driver.get(context.get_url(url_or_url_name, **url_kwargs_dict))
 
 
 @step('The current url should contain "(?P<text>.*)"')
@@ -185,15 +206,6 @@ def step_impl(context, prefix, kwargs):
     element.click()
 
 
-@step('I should be on the "(?P<url>.*)" page')
-def step_impl(context, url):
-    current_url = context.driver.current_url
-    # Check for query params and discard if exist
-    if '?' in current_url:
-        current_url = current_url.split('?')[0]
-    context.test.assertEqual(current_url, context.get_url(url))
-
-
 @step('I should see "(?P<text>.*)"')
 def step_impl(context, text):
     context.test.assertIn(text, str(context.driver.page_source))
@@ -206,10 +218,10 @@ def step_impl(context, text):
 
 @step('A user account should exist for "(?P<username_or_email>.*)"')
 def step_impl(context, username_or_email):
-    context.test.assertIsInstance(User.objects.get(Q(username=username_or_email) | Q(email=username_or_email)), User)
+    context.test.assertIsInstance(get_user(username_or_email), User)
 
 
-@step('"(?P<text>.*)" should show up (?P<num>.*) times?')
+@step('"(?P<text>.*)" should show up (?P<num>\d+) times?')
 def step_impl(context, text, num):
     # findall returns a list of all matches
     num_matches = len(re.findall(text, context.driver.page_source))

@@ -2,13 +2,12 @@ import re
 
 from allauth.account.models import EmailAddress
 from behave import *
-from django.contrib.auth.models import User
 from django.core import mail
 from django.db.models import Q
 from generic_steps import find_element
-from escoresheet.utils import get_user
 
 from accounts.tests import UserFactory, EmailAddressFactory
+from escoresheet.utils import get_user
 from userprofiles.tests import UserProfileFactory
 
 
@@ -162,8 +161,7 @@ def step_impl(context, username_or_email, permissions):
     valid_permissions = ['is_staff', 'is_superuser']
     permissions = permissions.split(' ')
     for permission in permissions:
-        user = User.objects.get(
-                Q(email=username_or_email) | Q(username=username_or_email))
+        user = get_user(username_or_email)
         if permission == 'is_staff':
             user.is_staff = True
         elif permission == 'is_superuser':

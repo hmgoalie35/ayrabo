@@ -4,9 +4,7 @@ from django.db.models import Q
 
 from accounts.tests import UserFactory
 from players.tests import HockeyPlayerFactory
-from sports.models import Sport
 from sports.tests import SportFactory
-from teams.models import Team
 from teams.tests import TeamFactory
 
 
@@ -22,22 +20,20 @@ def step_impl(context):
         else:
             user = UserFactory(username=username_or_email, email=username_or_email)
 
-        sport = data.get('sport', None)
-        team = data.get('team', None)
+        sport_name = data.get('sport', None)
+        team_name = data.get('team', None)
         jersey_number = data.get('jersey_number', None)
-        teams = Team.objects.filter(name=team)
-        if teams.exists():
-            team = teams.first()
-        else:
-            team = TeamFactory(name=team)
+        team = TeamFactory(name=team_name)
 
-        sports = Sport.objects.filter(name=sport)
-        if sports.exists():
-            sport_obj = sports.first()
-        else:
-            sport_obj = SportFactory(name=sport)
+        sport = SportFactory(name=sport_name)
 
-        if jersey_number is None:
-            HockeyPlayerFactory(user=user, sport=sport_obj, team=team)
-        else:
-            HockeyPlayerFactory(user=user, sport=sport_obj, team=team, jersey_number=jersey_number)
+        kwargs = {
+            'user': user,
+            'sport': sport,
+            'team': team
+        }
+
+        if jersey_number is not None:
+            kwargs['jersey_number'] = jersey_number
+
+        HockeyPlayerFactory(**kwargs)

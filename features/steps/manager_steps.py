@@ -2,7 +2,6 @@ from behave import *
 
 from escoresheet.utils import get_user
 from managers.tests import ManagerFactory
-from teams.models import Team
 from teams.tests import TeamFactory
 
 
@@ -13,10 +12,6 @@ def step_impl(context):
 
         username_or_email = data.get('username_or_email')
         user = get_user(username_or_email)
-        team = data.get('team', None)
-        teams = Team.objects.filter(name=team)
-        if teams.exists():
-            team = teams.first()
-        else:
-            team = TeamFactory(name=team)
+        team_name = data.get('team', None)
+        team = TeamFactory(name=team_name)
         ManagerFactory(user=user, team=team)

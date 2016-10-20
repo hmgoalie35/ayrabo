@@ -8,8 +8,8 @@ from teams.tests import TeamFactory
 
 @step('The following team exists "(?P<team_name>[^"]*)" in division "(?P<division>[^"]*)"')
 def step_impl(context, team_name, division):
-    div = DivisionFactory.create(name=division)
-    TeamFactory.create(name=team_name, division=div)
+    div = DivisionFactory(name=division)
+    TeamFactory(name=team_name, division=div)
 
 
 @step(
