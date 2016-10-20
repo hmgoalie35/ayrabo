@@ -1,10 +1,17 @@
 """
 A module that contains useful methods for testing
 """
+from django.contrib.auth.models import User
+from django.db.models import Q
+
 from coaches.tests import CoachFactory
 from managers.tests import ManagerFactory
 from players.tests import HockeyPlayerFactory
 from referees.tests import RefereeFactory
+
+
+def get_user(username_or_email):
+    return User.objects.get(Q(email=username_or_email) | Q(username=username_or_email))
 
 
 def get_messages(response):

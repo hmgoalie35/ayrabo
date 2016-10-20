@@ -16,6 +16,6 @@ class UserFactory(DjangoModelFactory):
     last_name = factory.LazyFunction(fake.last_name_male)
     # username and email must be the same
     email = factory.sequence(lambda x: 'user{x}@example.com'.format(x=x))
-    username = email
+    username = factory.LazyAttribute(lambda obj: obj.email)
     password = PostGenerationMethodCall('set_password', 'myweakpassword')
     userprofile = factory.RelatedFactory('userprofiles.tests.factories.UserProfileFactory.UserProfileFactory', 'user')
