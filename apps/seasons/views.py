@@ -6,10 +6,10 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.views import generic
 from django.views.generic.base import ContextMixin
 
+from escoresheet.utils import UserHasRolesMixin
 from managers.models import Manager
 from teams.models import Team
 from .forms import CreateHockeySeasonRosterForm, UpdateHockeySeasonRosterForm
-from .mixins import UserHasRolesMixin
 from .models import HockeySeasonRoster
 
 SPORT_CREATE_FORM_MAPPINGS = {

@@ -8,11 +8,11 @@ from sports.models import Sport, SportRegistration
 from teams.models import Team
 
 
-class Player(models.Model):
+class AbstractPlayer(models.Model):
     """
     An abstract base class used to represent a Player. It contains fields common to all players.
-    Sub classes shall add custom fields for their specific sport.
-    Because every sport has different positions, terms for handedness, etc, player models must be created for every sport.
+    Sub classes shall add custom fields for their specific sport because every sport has different positions, terms for
+    handedness, etc, player models must be created for every sport.
     """
 
     MIN_JERSEY_NUMBER = 0
@@ -56,7 +56,7 @@ class Player(models.Model):
         return self.user.get_full_name()
 
 
-class HockeyPlayer(Player):
+class HockeyPlayer(AbstractPlayer):
     """
     A model representing a hockey player.
     """
@@ -92,7 +92,7 @@ class HockeyPlayer(Player):
                     'jersey_number': _(error_msg)})
 
 
-class BaseballPlayer(Player):
+class BaseballPlayer(AbstractPlayer):
     """
     A model representing a baseball player
     """
@@ -136,7 +136,7 @@ class BaseballPlayer(Player):
                     'jersey_number': _(error_msg)})
 
 
-class BasketballPlayer(Player):
+class BasketballPlayer(AbstractPlayer):
     POSITIONS = (
         ('PG', 'Point Guard'),
         ('SG', 'Shooting Guard'),

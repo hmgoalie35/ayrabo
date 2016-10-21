@@ -63,7 +63,7 @@ NOTE: The tests may take a few minutes
 # Integration Tests
 
 ### Writing Integration Tests
-  * TODO
+  * See [Writing Integration Tests](https://github.com/hmgoalie35/escoresheet/wiki/Writing-Integration-Tests)
 
 ### Running Integration Tests (via selenium, phantomjs)
 1. Make sure you are in the directory where manage.py is
@@ -73,9 +73,13 @@ NOTE: The tests may take a few minutes
 # Functional and Unit Tests
 
 ### Writing Functional and Unit Tests
-  * TODO
+  * See [Writing Unit & Functional Tests](https://github.com/hmgoalie35/escoresheet/wiki/Writing-Unit-&-Functional-Tests)
 
 ### Running Functional and Unit Tests
 1. Make sure you are in the directory where manage.py is
 2. Run `python manage.py test`
     * You can specify specific test files or test classes for an app i.e. `python manage.py test userprofiles.tests.test_models.UserProfileModelTests`
+
+# Running tests with coverage
+* `coverage run manage.py test && coverage html`
+* `coverage run manage.py behave && coverage html`

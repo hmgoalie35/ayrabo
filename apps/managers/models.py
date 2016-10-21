@@ -7,6 +7,10 @@ from teams.models import Team
 
 
 class Manager(models.Model):
+    """
+    Represents a manager in the system. A user can have many manager objects related to them provided each manager object is for a different team.
+    TLDR; A user can be a manager for multiple teams and a new manager object is created for each team.
+    """
     user = models.ForeignKey(User)
     team = models.ForeignKey(Team)
     created = models.DateTimeField(auto_now_add=True, verbose_name='Created')

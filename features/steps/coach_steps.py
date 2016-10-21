@@ -3,6 +3,7 @@ from behave import *
 from coaches.models import Coach
 from coaches.tests import CoachFactory
 from escoresheet.utils import get_user
+from teams.models import Team
 from teams.tests import TeamFactory
 
 
@@ -20,8 +21,13 @@ def step_impl(context):
 
         username_or_email = data.get('username_or_email')
         user = get_user(username_or_email)
-        team_name = data.get('team', None)
+        team = data.get('team', None)
         position = data.get('position', None)
 
-        team = TeamFactory(name=team_name)
+        teams = Team.objects.filter(name=team)
+
+        if teams.exists():
+            team = teams.first()
+        else:
+            team = TeamFactory(name=team)
         CoachFactory(user=user, team=team, position=position)

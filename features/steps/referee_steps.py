@@ -1,6 +1,7 @@
 from behave import *
 
 from escoresheet.utils import get_user
+from leagues.models import League
 from leagues.tests import LeagueFactory
 from referees.tests import RefereeFactory
 
@@ -13,5 +14,10 @@ def step_impl(context):
         user = get_user(username_or_email)
         league = data.get('league', None)
 
-        league = LeagueFactory(full_name=league)
+        leagues = League.objects.filter(full_name=league)
+
+        if leagues.exists():
+            league = leagues.first()
+        else:
+            league = LeagueFactory(full_name=league)
         RefereeFactory(user=user, league=league)

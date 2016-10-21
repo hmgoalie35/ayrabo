@@ -7,6 +7,10 @@ from sports.models import SportRegistration
 
 
 class Referee(models.Model):
+    """
+    Represents a referee in the system. A user can have many Coach objects related to them provided each referee object is for a different league.
+    TLDR; A user can be a referee for multiple leagues and a new referee object is created for each league.
+    """
     user = models.ForeignKey(User)
     league = models.ForeignKey(League)
     created = models.DateTimeField(auto_now_add=True, verbose_name='Created')

@@ -11,6 +11,9 @@ from .exceptions import RoleDoesNotExistError, InvalidNumberOfRolesError
 
 
 class Sport(models.Model):
+    """
+    Represents a sport. This is the top of the hierarchy.
+    """
     name = models.CharField(max_length=255, unique=True,
                             error_messages={'unique': 'Sport with this name already exists (case-insensitive)'})
     slug = models.SlugField(unique=True)
