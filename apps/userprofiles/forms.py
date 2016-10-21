@@ -3,31 +3,13 @@ import datetime
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Field, Submit, Div, HTML
 from django import forms
-from django.forms import extras
 from django.utils.translation import ugettext_lazy as _
 
+from escoresheet.utils import SelectDateMonthDayYearInitiallyBlankWidget
 from .models import UserProfile
 
 YEAR_DIFFERENCE = 20
 MAX_AGE = 100
-
-
-class SelectDateMonthDayYearInitiallyBlankWidget(extras.SelectDateWidget):
-    """
-    A custom date widget that initially populates month, day, year select tags with "Month", "Day", "Year" instead of
-    a valid month, day, year combo.
-    """
-    def create_select(self, name, field, value, val, choices, none_value):
-        custom_none_value = ()
-        if 'year' in field:
-            custom_none_value = (0, 'Year')
-        elif 'month' in field:
-            custom_none_value = (0, 'Month')
-        elif 'day' in field:
-            custom_none_value = (0, 'Day')
-        choices.insert(0, custom_none_value)
-        return super(SelectDateMonthDayYearInitiallyBlankWidget, self).create_select(name, field, value, val, choices,
-                                                                                     none_value)
 
 
 class CreateUserProfileForm(forms.ModelForm):
