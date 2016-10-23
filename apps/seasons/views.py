@@ -35,39 +35,6 @@ def email_admins_sport_not_configured(sport_name, view_cls):
                              sport=sport_name, page=view_cls.request.path, cls=view_cls.__class__.__name__))
 
 
-def get_create_form_for_sport(sport_name):
-    """
-    Gets the correct create season roster form class for the specified sport
-
-    :param sport_name: The sport to get the season roster form for
-
-    :return: The create season roster form class if the sport is a valid key and None otherwise
-    """
-    return SPORT_CREATE_FORM_MAPPINGS[sport_name] if sport_name in SPORT_CREATE_FORM_MAPPINGS.keys() else None
-
-
-def get_update_form_for_sport(sport_name):
-    """
-    Gets the correct update season roster form class for the specified sport
-
-    :param sport_name: The sport to get the season roster form for
-
-    :return: The update season roster form class if the sport is a valid key and None otherwise
-    """
-    return SPORT_UPDATE_FORM_MAPPINGS[sport_name] if sport_name in SPORT_UPDATE_FORM_MAPPINGS.keys() else None
-
-
-def get_model_for_sport(sport_name):
-    """
-    Gets the correct season roster model class for the specified sport
-
-    :param sport_name: The sport to get the season roster model for
-
-    :return: The season roster model class if the sport is a valid key and None otherwise
-    """
-    return SPORT_MODEL_MAPPINGS[sport_name] if sport_name in SPORT_MODEL_MAPPINGS.keys() else None
-
-
 class CreateSeasonRosterView(LoginRequiredMixin, UserHasRolesMixin, ContextMixin, generic.View):
     template_name = 'seasons/season_roster_create.html'
     roles_to_check = ['Manager']
@@ -86,7 +53,7 @@ class CreateSeasonRosterView(LoginRequiredMixin, UserHasRolesMixin, ContextMixin
 
         sport_name = team.division.league.sport.name
 
-        form_cls = get_create_form_for_sport(sport_name)
+        form_cls = SPORT_CREATE_FORM_MAPPINGS.get(sport_name)
         form = None
         if form_cls:
             form = form_cls(self.request.POST or None, initial={'team': team.pk}, read_only_fields=['team'],
@@ -134,7 +101,7 @@ class ListSeasonRosterView(LoginRequiredMixin, UserHasRolesMixin, generic.Templa
             raise Http404
 
         sport_name = team.division.league.sport.name
-        season_roster_cls = get_model_for_sport(sport_name)
+        season_roster_cls = SPORT_MODEL_MAPPINGS.get(sport_name)
         season_rosters = None
         if season_roster_cls:
             season_rosters = season_roster_cls.objects.order_by('-created').filter(team=team).select_related(
@@ -167,7 +134,7 @@ class UpdateSeasonRosterView(LoginRequiredMixin, UserHasRolesMixin, ContextMixin
 
         sport_name = team.division.league.sport.name
 
-        season_roster_cls = get_model_for_sport(sport_name)
+        season_roster_cls = SPORT_MODEL_MAPPINGS.get(sport_name)
         season_roster = None
         if season_roster_cls:
             season_roster = get_object_or_404(season_roster_cls, pk=kwargs.get('pk', None))
@@ -180,7 +147,7 @@ class UpdateSeasonRosterView(LoginRequiredMixin, UserHasRolesMixin, ContextMixin
         if season_roster.team_id != team.id:
             raise Http404
 
-        form_cls = get_update_form_for_sport(sport_name)
+        form_cls = SPORT_UPDATE_FORM_MAPPINGS.get(sport_name)
         form = None
         if form_cls:
             form = form_cls(self.request.POST or None, instance=season_roster, team=team)

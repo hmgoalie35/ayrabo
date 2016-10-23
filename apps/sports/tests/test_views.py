@@ -1,4 +1,5 @@
 import factory
+from django.core import mail
 from django.core.urlresolvers import reverse
 from django.test import TestCase
 
@@ -252,6 +253,20 @@ class FinishSportRegistrationViewTests(TestCase):
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
 
+    def test_get_sport_not_configured(self):
+        self.sr.is_complete = True
+        self.sr.save()
+        self.sr_2.is_complete = True
+        self.sr_2.save()
+        sr = SportRegistrationFactory(user=self.user, is_complete=False)
+        sr.set_roles(['Player'])
+        response = self.client.get(self.url, follow=True)
+        self.assertTemplateUsed(response, 'message.html')
+        msg = "{sport} hasn't been configured correctly in our system. If you believe this is an error please contact us.".format(
+                sport=sr.sport.name)
+        self.assertEqual(response.context['message'], msg)
+        self.assertEqual(len(mail.outbox), 1)
+
     def test_coach_form_in_context(self):
         """
         Only coach role
@@ -316,6 +331,20 @@ class FinishSportRegistrationViewTests(TestCase):
         self.sr_2.save()
         response = self.client.post(self.url, data=self.coach_post_data, follow=True)
         self.assertRedirects(response, reverse('home'))
+
+    def test_post_sport_not_configured(self):
+        self.sr.is_complete = True
+        self.sr.save()
+        self.sr_2.is_complete = True
+        self.sr_2.save()
+        sr = SportRegistrationFactory(user=self.user, is_complete=False)
+        sr.set_roles(['Player'])
+        response = self.client.post(self.url, data={}, follow=True)
+        self.assertTemplateUsed(response, 'message.html')
+        msg = "{sport} hasn't been configured correctly in our system. If you believe this is an error please contact us.".format(
+                sport=sr.sport.name)
+        self.assertEqual(response.context['message'], msg)
+        self.assertEqual(len(mail.outbox), 1)
 
     def test_post_valid_coach_form_data(self):
         response = self.client.post(self.url, data=self.coach_post_data, follow=True)
@@ -517,6 +546,16 @@ class UpdateSportRegistrationViewTests(TestCase):
         self.assertIsNotNone(response.context['referee_form'])
         self.assertIsNotNone(response.context['manager_form'])
 
+    def test_get_sport_not_configured(self):
+        sr = SportRegistrationFactory(user=self.user)
+        sr.set_roles(['Player'])
+        response = self.client.get(reverse('sport:update_sport_registration', kwargs={'pk': sr.pk}))
+        self.assertTemplateUsed(response, 'message.html')
+        msg = "{sport} hasn't been configured correctly in our system. If you believe this is an error please contact us.".format(
+                sport=sr.sport.name)
+        self.assertEqual(response.context['message'], msg)
+        self.assertEqual(len(mail.outbox), 1)
+
     # POST
     def test_post_anonymous_user(self):
         self.client.logout()
@@ -531,6 +570,17 @@ class UpdateSportRegistrationViewTests(TestCase):
         self.client.login(email=other_user.email, password=self.password)
         response = self.client.post(self.url, data={}, follow=True)
         self.assertEqual(response.status_code, 404)
+
+    def test_post_sport_not_configured(self):
+        sr = SportRegistrationFactory(user=self.user)
+        sr.set_roles(['Player'])
+        response = self.client.post(reverse('sport:update_sport_registration', kwargs={'pk': sr.pk}), data={},
+                                    follow=True)
+        self.assertTemplateUsed(response, 'message.html')
+        msg = "{sport} hasn't been configured correctly in our system. If you believe this is an error please contact us.".format(
+                sport=sr.sport.name)
+        self.assertEqual(response.context['message'], msg)
+        self.assertEqual(len(mail.outbox), 1)
 
     def test_post_changed_forms(self):
         del self.coach_post_data['user']
