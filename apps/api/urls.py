@@ -3,7 +3,7 @@ from rest_framework.authtoken.views import obtain_auth_token
 from . import views
 
 urlpatterns = [
-    # url(r'^$', views.APIHomeView.as_view(), name='api_home'),
+    url(r'^$', views.APIHomeView.as_view(), name='api_home'),
 
     url('^auth/', include('rest_framework.urls', namespace='rest_framework')),
     url('^token/obtain/$', obtain_auth_token, name='obtain_api_token'),
