@@ -11,6 +11,9 @@ from .exceptions import RoleDoesNotExistError, InvalidNumberOfRolesError
 
 
 class Sport(models.Model):
+    """
+    Represents a sport. This is the top of the hierarchy.
+    """
     name = models.CharField(max_length=255, unique=True,
                             error_messages={'unique': 'Sport with this name already exists (case-insensitive)'})
     slug = models.SlugField(unique=True)
@@ -116,6 +119,7 @@ class SportRegistration(models.Model):
         This function iterates through all of the roles for the sport registration and retrieves the appropriate
         object that goes with the role. i.e. Roles Coach and Manager are set, so this function will fetch the Coach
         and Manager objects for the given user and sport
+
         :return: A dictionary where the keys are the role (Player, Coach, etc.) and the value is the associated object
         """
 
@@ -125,6 +129,7 @@ class SportRegistration(models.Model):
         for role in roles:
             if role == 'Player':
                 sport_name = self.sport.name
+                players = None
                 if 'Hockey' in sport_name:
                     players = players_app.models.HockeyPlayer.objects.filter(user=user,
                                                                              sport=self.sport).select_related('team',
@@ -137,7 +142,10 @@ class SportRegistration(models.Model):
                     players = players_app.models.BaseballPlayer.objects.filter(user=user,
                                                                                sport=self.sport).select_related('team',
                                                                                                                 'team__division')
-                obj_role_mappings['Player'] = players.first()
+                if players is not None:
+                    obj_role_mappings['Player'] = players.first()
+                else:
+                    obj_role_mappings['Player'] = players
             elif role == 'Coach':
                 coaches = coaches_app.models.Coach.objects.filter(user=user,
                                                                   team__division__league__sport=self.sport).select_related(

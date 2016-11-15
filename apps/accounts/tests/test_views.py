@@ -4,7 +4,7 @@ from django.core import mail
 from django.core.urlresolvers import reverse
 from django.test import TestCase
 
-from escoresheet.testing_utils import get_messages
+from escoresheet.utils.testing_utils import get_messages
 
 User = get_user_model()
 

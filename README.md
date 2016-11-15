@@ -32,7 +32,7 @@ A license has been intentionally excluded. See http://choosealicense.com/no-lice
 
 # Installation
 
-You can either follow the instructions below or run setup_dev_env.bash (which installs necessary packages and runs the commands below)
+You can either follow the instructions below or run setup_dev_env.sh (which installs necessary packages and runs the commands below)
 
 *This project uses pre-commit, whenever you commit files a few optimizers, code checkers, etc. will be run to check the committed files for any errors/potential bugs*
 
@@ -58,12 +58,15 @@ Only do the following if you are using your own local sqlite database or if the 
 
 Lastly, run unit/functional/integration tests to make sure everything is setup correctly (see below)
 
+
+* `bash run_tests.sh` will run all tests
+
 NOTE: The tests may take a few minutes
 
 # Integration Tests
 
 ### Writing Integration Tests
-  * TODO
+  * See [Writing Integration Tests](https://github.com/hmgoalie35/escoresheet/wiki/Writing-Integration-Tests)
 
 ### Running Integration Tests (via selenium, phantomjs)
 1. Make sure you are in the directory where manage.py is
@@ -73,9 +76,13 @@ NOTE: The tests may take a few minutes
 # Functional and Unit Tests
 
 ### Writing Functional and Unit Tests
-  * TODO
+  * See [Writing Unit & Functional Tests](https://github.com/hmgoalie35/escoresheet/wiki/Writing-Unit-&-Functional-Tests)
 
 ### Running Functional and Unit Tests
 1. Make sure you are in the directory where manage.py is
 2. Run `python manage.py test`
     * You can specify specific test files or test classes for an app i.e. `python manage.py test userprofiles.tests.test_models.UserProfileModelTests`
+
+# Running tests with coverage
+* `coverage run manage.py test && coverage html`
+* `coverage run manage.py behave && coverage html`

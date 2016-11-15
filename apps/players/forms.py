@@ -1,9 +1,8 @@
 from django import forms
 
-from escoresheet.utils import set_fields_disabled
+from escoresheet.utils import set_fields_disabled, TeamModelChoiceField
 from teams.models import Team
 from . import models
-from escoresheet.fields import TeamModelChoiceField
 
 
 class HockeyPlayerForm(forms.ModelForm):

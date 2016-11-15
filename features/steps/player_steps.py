@@ -25,6 +25,7 @@ def step_impl(context):
         sport = data.get('sport', None)
         team = data.get('team', None)
         jersey_number = data.get('jersey_number', None)
+
         teams = Team.objects.filter(name=team)
         if teams.exists():
             team = teams.first()
@@ -37,7 +38,13 @@ def step_impl(context):
         else:
             sport_obj = SportFactory(name=sport)
 
-        if jersey_number is None:
-            HockeyPlayerFactory(user=user, sport=sport_obj, team=team)
-        else:
-            HockeyPlayerFactory(user=user, sport=sport_obj, team=team, jersey_number=jersey_number)
+        kwargs = {
+            'user': user,
+            'sport': sport_obj,
+            'team': team
+        }
+
+        if jersey_number is not None:
+            kwargs['jersey_number'] = jersey_number
+
+        HockeyPlayerFactory(**kwargs)

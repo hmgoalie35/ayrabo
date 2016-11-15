@@ -12,6 +12,10 @@ logger = logging.getLogger()
 
 
 class Season(models.Model):
+    """
+    Represents a season which is used to organize games, etc. under. A league has many seasons. A season has many teams
+    and a team has many seasons.
+    """
     league = models.ForeignKey('leagues.League', unique_for_year='start_date')
     teams = models.ManyToManyField(Team)
     start_date = models.DateField(verbose_name='Start Date')
@@ -87,6 +91,12 @@ def validate_leagues(action, instance, pk_set, reverse, **kwargs):
 
 
 class AbstractSeasonRoster(models.Model):
+    """
+    Abstract base class used to represent a season roster. A season roster keeps tabs on all players for a team. This is
+    different from a game roster because a game roster may not include all players in the season roster due to players
+    being scratched, hurt, etc.
+    Multiple season rosters can be created for a season/team.
+    """
     season = models.ForeignKey(Season)
     team = models.ForeignKey(Team)
     default = models.BooleanField(default=False, verbose_name='Default Season Roster')
@@ -105,4 +115,7 @@ class AbstractSeasonRoster(models.Model):
 
 
 class HockeySeasonRoster(AbstractSeasonRoster):
+    """
+    Season roster for hockey
+    """
     players = models.ManyToManyField('players.HockeyPlayer')

@@ -15,7 +15,7 @@ def generate_jersey_number():
 
 class PlayerFactory(django.DjangoModelFactory):
     class Meta:
-        model = models.Player
+        model = models.AbstractPlayer
         abstract = True
 
     user = factory.SubFactory(UserFactory)

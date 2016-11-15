@@ -7,6 +7,10 @@ from teams.models import Team
 
 
 class Coach(models.Model):
+    """
+    Represents a coach in the system. A user can have many Coach objects related to them provided each coach object is for a different team.
+    TLDR; A user can be a coach for multiple teams and a new coach object is created for each team.
+    """
     HEAD_COACH = 'Head Coach'
     ASSISTANT_COACH = 'Assistant Coach'
 

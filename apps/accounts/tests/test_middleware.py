@@ -24,7 +24,7 @@ class AccountAndSportRegistrationCompleteMiddlewareTests(TestCase):
         response = self.client.get(reverse('home'))
         self.assertTemplateUsed(response, 'home/anonymous_home.html')
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateNotUsed(response, 'userprofiles/create.html')
+        self.assertTemplateNotUsed(response, 'userprofiles/userprofile_create.html')
         self.assertTemplateNotUsed(response, 'sports/sport_registration_create.html')
 
     # Testing whitelisted urls
@@ -35,7 +35,7 @@ class AccountAndSportRegistrationCompleteMiddlewareTests(TestCase):
         self.client.login(email=self.user_without_profile.email, password=self.password)
         response = self.client.get(reverse('profile:create'))
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'userprofiles/create.html')
+        self.assertTemplateUsed(response, 'userprofiles/userprofile_create.html')
 
     def test_no_redirect_loop_create_sport_registration_url(self):
         """
@@ -64,7 +64,7 @@ class AccountAndSportRegistrationCompleteMiddlewareTests(TestCase):
         self.client.login(email=self.user_without_profile.email, password=self.password)
         response = self.client.get(reverse('account_logout'))
         self.assertTemplateUsed(response, 'account/logout.html')
-        self.assertTemplateNotUsed(response, 'userprofiles/create.html')
+        self.assertTemplateNotUsed(response, 'userprofiles/userprofile_create.html')
         self.assertTemplateNotUsed(response, 'sports/sport_registration_create.html')
         self.assertEqual(response.status_code, 200)
 

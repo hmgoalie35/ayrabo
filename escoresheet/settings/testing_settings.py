@@ -1,7 +1,6 @@
 import logging
-import os
 
-from django.conf import settings
+from .settings import CACHES
 
 # Django automatically sets DEBUG = False when running tests
 
@@ -15,19 +14,10 @@ SESSION_COOKIE_SECURE = False
 SECURE_SSL_REDIRECT = False
 SECURE_PROXY_SSL_HEADER = None
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(settings.BASE_DIR, 'test_db.sqlite3'),
-    }
-}
-
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
-CACHES = {
-    'default': {
-        'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
-    }
+CACHES['default'] = {
+    'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
 }
 
 PASSWORD_HASHERS = [

@@ -3,7 +3,7 @@ from django.test import TestCase
 from django.utils.text import slugify
 
 from divisions.models import Division
-from escoresheet.testing_utils import is_queryset_in_alphabetical_order
+from escoresheet.utils.testing_utils import is_queryset_in_alphabetical_order
 from leagues.tests import LeagueFactory
 from .factories.DivisionFactory import DivisionFactory
 

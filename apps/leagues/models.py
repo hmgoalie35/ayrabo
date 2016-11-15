@@ -5,6 +5,9 @@ from sports.models import Sport
 
 
 class League(models.Model):
+    """
+    Represents a league. A sport has many leagues and a league has many divisions.
+    """
     full_name = models.CharField(max_length=255, verbose_name='Full Name',
                                  error_messages={'unique': 'League with this name already exists'})
     abbreviated_name = models.CharField(max_length=32, verbose_name='Abbreviated Name')

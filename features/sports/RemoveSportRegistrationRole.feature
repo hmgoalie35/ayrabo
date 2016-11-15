@@ -12,7 +12,7 @@ Feature: Remove roles from sport registration
 
   Scenario: Modal prompts user to confirm action
     Given "user@example.com" is completely registered for "Ice Hockey" with roles "Player, Coach, Referee, Manager"
-    And I am on the page for "sports.SportRegistration" and "user__email=user@example.com, sport__name=Ice Hockey"
+    And I am on the absolute url page for "sports.SportRegistration" and "user__email=user@example.com, sport__name=Ice Hockey"
     When I press "remove_player_icon"
     Then I should see "Are you sure?"
     And I should see "Remove player role from Ice Hockey"
@@ -20,16 +20,16 @@ Feature: Remove roles from sport registration
 
   Scenario: Remove a role, user has all roles
     Given "user@example.com" is completely registered for "Ice Hockey" with roles "Player, Coach, Referee, Manager"
-    And I am on the page for "sports.SportRegistration" and "user__email=user@example.com, sport__name=Ice Hockey"
+    And I am on the absolute url page for "sports.SportRegistration" and "user__email=user@example.com, sport__name=Ice Hockey"
     And I press "remove_player_icon" which opens "remove_player_modal"
     And I press "remove_player_role_btn"
     And I wait for any ajax calls to finish
-    Then I should be on the page for "sports.SportRegistration" and "user__email=user@example.com, sport__name=Ice Hockey"
+    Then I should be on the absolute url page for "sports.SportRegistration" and "user__email=user@example.com, sport__name=Ice Hockey"
     And I should not see "Ice Hockey Player"
 
   Scenario: Remove a role when only one role left
     Given "user@example.com" is completely registered for "Ice Hockey" with role "Player"
-    And I am on the page for "sports.SportRegistration" and "user__email=user@example.com, sport__name=Ice Hockey"
+    And I am on the absolute url page for "sports.SportRegistration" and "user__email=user@example.com, sport__name=Ice Hockey"
     When I press "remove_player_icon_disabled"
     Then I should not see "Remove player role from Ice Hockey"
     And I should see "Ice Hockey Player"

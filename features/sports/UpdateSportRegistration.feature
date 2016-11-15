@@ -27,7 +27,7 @@ Feature: Update sport registration
     And I login with "user@example.com" and "myweakpassword"
 
   Scenario: Informative text displayed to user
-    Given I am on the page for "sports.SportRegistration" and "user@example.com Ice Hockey"
+    Given I am on the absolute url page for "sports.SportRegistration" and "user@example.com Ice Hockey"
     Then I should see "Update Sport Registration for Ice Hockey"
     And I should see "Current Roles"
     And I should see "Ice Hockey Player"
@@ -41,13 +41,13 @@ Feature: Update sport registration
     And "id_manager-team" should be disabled
 
   Scenario: Submit unchanged form
-    Given I am on the page for "sports.SportRegistration" and "user@example.com Ice Hockey"
+    Given I am on the absolute url page for "sports.SportRegistration" and "user@example.com Ice Hockey"
     When I press "update_sport_registration_btn"
-    Then I should be on the page for "sports.SportRegistration" and "user@example.com Ice Hockey"
+    Then I should be on the absolute url page for "sports.SportRegistration" and "user@example.com Ice Hockey"
     And I should not see "Sport registration for Ice Hockey successfully updated."
 
   Scenario: Submit changed form
-    Given I am on the page for "sports.SportRegistration" and "user@example.com Ice Hockey"
+    Given I am on the absolute url page for "sports.SportRegistration" and "user@example.com Ice Hockey"
     When I fill in "id_hockeyplayer-jersey_number" with "22"
     And I select "Assistant Coach" from "id_coach-position"
     And I press "update_sport_registration_btn"

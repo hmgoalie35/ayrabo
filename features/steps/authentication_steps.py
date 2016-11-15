@@ -2,32 +2,32 @@ import re
 
 from allauth.account.models import EmailAddress
 from behave import *
-from django.contrib.auth.models import User
 from django.core import mail
 from django.db.models import Q
 from generic_steps import find_element
 
+from accounts.tests import UserFactory, EmailAddressFactory
+from escoresheet.utils import get_user
 from userprofiles.tests import UserProfileFactory
 
 
-# @TODO use factory
-def create_unconfirmed_account(context, user_data, create_userprofile):
-    # Doing User.objects.create() will not work because django all auth doesn't know you created a user obj, so need to
-    # manually POST to the signup page
-    context.test.client.post(context.get_url('account_register'), data=user_data)
+def create_unconfirmed_account(user_data, create_userprofile):
+    # Need to add in userprofile kwarg to prevent the userfactory from creating a userprofile
+    user_data['userprofile'] = None
+    user = UserFactory(**user_data)
+    email = EmailAddressFactory(user=user, email=user_data['email'], verified=False, primary=False)
+    email.send_confirmation()
+
     if create_userprofile:
-        UserProfileFactory.create(user=User.objects.get(email=user_data['email']))
+        UserProfileFactory(user=user)
 
 
 def confirm_account(context, username_or_email, method='manual'):
     # When method is email, check the mail box and follow the link, otherwise programatically confirm the email address.
     if method == 'email_link':
         email_body = mail.outbox[0].body
-        # Django's test client's host is testserver, but we need it to be the current host selenium is using
-        # So remove testserver and add in the current host that is being used
-        confirmation_link = re.search(r'https?://testserver(?P<link>.*)', str(email_body)).group(
-                'link')
-        confirmation_link = context.get_url(confirmation_link)
+
+        confirmation_link = re.search(r'(?P<link>https?://.+/)', str(email_body)).group('link')
         context.driver.get(confirmation_link)
         confirm_btn = find_element(context, 'confirm_email_btn')
         confirm_btn.click()
@@ -91,12 +91,10 @@ Account management
 def step_impl(context, account_type):
     for row in context.table:
         user_data = dict(row.as_dict())
-        user_data['password1'] = user_data['password']
-        user_data['password2'] = user_data['password']
-        user_data.pop('password')
         username_or_email = user_data['email']
         create_userprofile = user_data.get('create_userprofile', 'true') in ['True', 'true']
-        create_unconfirmed_account(context, user_data, create_userprofile)
+        user_data.pop('create_userprofile') if 'create_userprofile' in user_data.keys() else None
+        create_unconfirmed_account(user_data, create_userprofile)
         if account_type == 'confirmed':
             confirm_account(context, username_or_email)
 
@@ -114,7 +112,7 @@ def step_impl(context):
 
 @step('The following userprofile exists for "(?P<username_or_email>.*)"')
 def step_impl(context, username_or_email):
-    user = User.objects.get(Q(email=username_or_email) | Q(username=username_or_email))
+    user = get_user(username_or_email)
     for row in context.table:
         userprofile_data = dict(row.as_dict())
         UserProfileFactory.create(user=user, **userprofile_data)
@@ -163,8 +161,7 @@ def step_impl(context, username_or_email, permissions):
     valid_permissions = ['is_staff', 'is_superuser']
     permissions = permissions.split(' ')
     for permission in permissions:
-        user = User.objects.get(
-                Q(email=username_or_email) | Q(username=username_or_email))
+        user = get_user(username_or_email)
         if permission == 'is_staff':
             user.is_staff = True
         elif permission == 'is_superuser':

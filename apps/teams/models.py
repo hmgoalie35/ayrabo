@@ -5,6 +5,9 @@ from divisions.models import Division
 
 
 class Team(models.Model):
+    """
+    Represents a team. A division has many teams.
+    """
     name = models.CharField(max_length=255, verbose_name='Name')
     slug = models.SlugField(verbose_name='Slug')
     website = models.URLField(max_length=255, verbose_name='Website', null=True, blank=True,

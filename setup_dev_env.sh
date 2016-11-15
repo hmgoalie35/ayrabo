@@ -1,26 +1,31 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-if [ `uname` != "Linux" ]; then
+if [ $(uname) != "Linux" ]; then
     echo "This install script is only meant for linux"
     exit 0
 fi
 
-echo "Updating/upgrading apt packages"
+
+print_step () {
+    printf "\n\n>>> $1\n\n"
+}
+
+print_step "Updating/upgrading apt packages"
 sudo apt-get update && sudo apt-get upgrade -y && sudo apt-get autoremove -y
 
-echo "Fetching nodejs"
+print_step "Fetching nodejs"
 curl -sL https://deb.nodesource.com/setup_6.x | sudo -E bash -
 
-echo "Installing apt packages"
+print_step "Installing apt packages"
 sudo apt-get install python3-pip python-pip nodejs -y
 
-echo "Installing npm packages"
+print_step "Installing npm packages"
 sudo npm -g install phantomjs-prebuilt bower yuglify
 
-echo "Installing global pip packages"
+print_step "Installing global pip packages"
 sudo pip install virtualenvwrapper
 
-echo "Configuring svirtualenvwrapper"
+print_step "Configuring virtualenvwrapper"
 if [ $SHELL == "/bin/bash" ] ; then
     echo "export WORKON_HOME=$HOME/.virtualenvs" >> ~/.bashrc
     echo "export PROJECT_HOME=$HOME/Development" >> ~/.bashrc
@@ -36,38 +41,28 @@ else
     exit 1
 fi
 
-echo "Creating virtualenv"
+print_step "Creating virtualenv"
 source /usr/local/bin/virtualenvwrapper.sh
 mkvirtualenv escoresheet -p `which python3`
 workon escoresheet
 
-echo "Installing project pip packages"
+print_step "Installing project pip packages"
 pip install -r requirements.txt
 
-echo "Installing pre-commit"
+print_step "Installing pre-commit"
 pre-commit install
 
-echo "Symlinking local_settings file"
+print_step "Symlinking local_settings file"
 cd escoresheet/settings/ && ln -s local_settings.py.dev local_settings.py ; cd ../../
 
 if grep -q django.db.backends.sqlite3 escoresheet/settings/local_settings.py ; then
-    echo "Detected local sqlite3 database, running initial migrations and loading test data"
+    print_step "Detected local sqlite3 database, running initial migrations and loading test data"
     python manage.py migrate
     python manage.py loaddata dev_fixtures
 fi
 
-echo "Running tests..."
+print_step "Running tests..."
 
-python manage.py test
+bash run_tests.sh
 
-if [ $? -ne 0 ] ; then
-    echo "Error running unit/functional tests"
-fi
-
-python manage.py behave
-
-if [ $? -ne 0 ] ; then
-    echo "Error running integration tests"
-fi
-
-echo "Done"
+print_step "Done"

@@ -14,12 +14,13 @@ import os
 import sys
 
 import pytz
+from django.core.urlresolvers import reverse_lazy
 
 SITE_ID = 1
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+ESCORESHEET_MODULE_ROOT = os.path.join(BASE_DIR, 'escoresheet')
 
 # Custom django apps are in apps/ directory, so add it to path
 sys.path.append(os.path.join(BASE_DIR, 'apps'))
@@ -27,7 +28,7 @@ sys.path.append(os.path.join(BASE_DIR, 'apps'))
 ADMINS = [('Harris', 'hpittin1@binghamton.edu'), ]
 MANAGERS = ADMINS
 
-# @TODO add caching (redis or memcached)
+# TODO add caching (redis or memcached)
 CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
@@ -38,14 +39,10 @@ CSRF_COOKIE_SECURE = True
 SECURE_SSL_REDIRECT = True
 SESSION_COOKIE_SECURE = True
 
-# @TODO See warning on https://docs.djangoproject.com/en/1.9/ref/settings/#secure-proxy-ssl-header. Need to have proxy strip X-Forwarded-Proto header
-# and then set it myself so nobody can spoof the header
+# TODO See warning on https://docs.djangoproject.com/en/1.9/ref/settings/#secure-proxy-ssl-header. Need to have proxy strip X-Forwarded-Proto header and then set it myself so nobody can spoof the header
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/1.9/howto/deployment/checklist/
-
-# @TODO regenerate new key, export as env var on servers
+# TODO regenerate new key, export as env var on servers
 # SECURITY WARNING: keep the secret key used in production secret!
 DEV_KEY = '9(31c+k9q8p++7a46ite17(@a3os_*)gg@+yqn4_5isb^v5=tr'
 SECRET_KEY = os.environ.get('SECRET_KEY', DEV_KEY)
@@ -57,7 +54,7 @@ ALLOWED_HOSTS = ['*']
 
 # Application definition
 
-# @TODO move dev/test only dependencies to correct settings files, requirements files
+# TODO move dev/test only dependencies to correct settings files, requirements files
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -100,6 +97,7 @@ INSTALLED_APPS = [
 CRISPY_TEMPLATE_PACK = 'bootstrap3'
 
 MIDDLEWARE_CLASSES = [
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.locale.LocaleMiddleware',
@@ -141,6 +139,7 @@ WSGI_APPLICATION = 'escoresheet.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/1.9/ref/settings/#databases
 
+# TODO setup postgres, see if postgres can read username, etc. from file
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -186,8 +185,8 @@ USE_L10N = True
 
 USE_TZ = True
 
-# @TODO look into rotating file handler
-# @TODO add in other needed loggers to files and add in any useful django custom logger formatters, etc.
+# TODO look into rotating file handler
+# TODO add in other needed loggers to files and add in any useful django custom logger formatters, etc.
 # https://docs.python.org/3.4/library/logging.handlers.html
 # https://docs.djangoproject.com/en/1.9/topics/logging/#django-s-logging-extensions
 
@@ -265,11 +264,14 @@ LOGGING = {
 }
 
 # Email address admins/managers receive mail from
+# TODO change this
 SERVER_EMAIL = 'root@localhost'
 
 # Email address regular users receive mail from
+# TODO change this
 DEFAULT_FROM_EMAIL = 'webmaster@localhost'
 
+# TODO configure this for prod
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'localhost'
 EMAIL_HOST_USER = ''
@@ -284,8 +286,13 @@ EMAIL_SSL_KEYFILE = None
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.9/howto/static-files/
 
+# Http requests to STATIC_URL should be mapped to STATIC_ROOT
+
+# The actual uri staticfiles are served from (localhost:8000/static/)
 STATIC_URL = '/static/'
+# The folder on the filesystem staticfiles are stored
 STATIC_ROOT = os.path.join(BASE_DIR, 'production_static')
+# Location to find extra static files (Django automatically looks in static/ subdirectories of all apps)
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 STATICFILES_FINDERS = ['django.contrib.staticfiles.finders.FileSystemFinder',
                        'django.contrib.staticfiles.finders.AppDirectoriesFinder',
@@ -298,7 +305,6 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # Django bower related
 BOWER_COMPONENTS_ROOT = os.path.join(BASE_DIR, '', 'static')
-# Remember to delete any unnecessary folders/files bower downloads
 BOWER_INSTALLED_APPS = [
     'animate.css#3.5.2',
     'bootstrap#3.3.7',
@@ -309,6 +315,7 @@ BOWER_INSTALLED_APPS = [
 ]
 
 # Django compressor related
+# TODO add in other minifiers, etc. for scss, css, js
 COMPRESS_PRECOMPILERS = [('text/scss', 'sassc {infile} {outfile}')]
 COMPRESS_CSS_FILTERS = ['compressor.filters.css_default.CssAbsoluteFilter',
                         'compressor.filters.yuglify.YUglifyCSSFilter']
@@ -319,6 +326,7 @@ COMPRESS_ROOT = STATICFILES_DIRS[0]
 # User account related
 
 # Django all auth
+# TODO look at django all auth settings again to see if missing any settings
 ACCOUNT_AUTHENTICATION_METHOD = 'email'
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_USERNAME_REQUIRED = False
@@ -331,21 +339,20 @@ ACCOUNT_FORMS = {
     'change_password': 'accounts.forms.ChangePasswordForm',
     'add_email': 'accounts.forms.AddEmailForm'
 }
-# ACCOUNT_SIGNUP_FORM_CLASS = 'home.forms.SignupForm'
 ACCOUNT_USERNAME_MIN_LENGTH = 1
 ACCOUNT_PASSWORD_MIN_LENGTH = 8
 ACCOUNT_SESSION_REMEMBER = False
 ACCOUNT_USER_DISPLAY = lambda user: user.email
 
 # Django auth settings
-LOGIN_URL = '/account/login/'
-LOGIN_REDIRECT_URL = '/'
-LOGOUT_URL = '/account/logout/'
+LOGIN_URL = reverse_lazy('account_login')
+LOGIN_REDIRECT_URL = reverse_lazy('home')
+LOGOUT_URL = reverse_lazy('account_logout')
 
-TEST_RUNNER = "redgreenunittest.django.runner.RedGreenDiscoverRunner"
+TEST_RUNNER = 'redgreenunittest.django.runner.RedGreenDiscoverRunner'
 
 FIXTURE_DIRS = [
-    os.path.join(PROJECT_ROOT, 'fixtures')
+    os.path.join(ESCORESHEET_MODULE_ROOT, 'fixtures')
 ]
 
 API_VERSIONS = ['v1']
@@ -372,6 +379,8 @@ REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 25,
 }
+
+# TODO run through Django settings docs again to see if missing any settings
 
 try:
     # Running in dev mode

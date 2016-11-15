@@ -21,7 +21,7 @@ Feature: Update season roster
     And The following manager object exists
       | username_or_email | team                  |
       | user@example.com  | Green Machine IceCats |
-    When I go to the page for "seasons.HockeySeasonRoster" and "team__name=Green Machine IceCats"
+    When I go to the absolute url page for "seasons.HockeySeasonRoster" and "team__name=Green Machine IceCats"
     Then I should be on the "home" page
     And I should see "You do not have permission to perform this action."
 
@@ -38,14 +38,14 @@ Feature: Update season roster
       | user@example.com  | Green Machine IceCats |
     And I am on the "teams.Team" "" "team:list_season_roster" page with url kwargs "team_pk=pk"
     When I press "update_link"
-    Then I should be on the page for "seasons.HockeySeasonRoster" and "team__name=Green Machine IceCats"
+    Then I should be on the absolute url page for "seasons.HockeySeasonRoster" and "team__name=Green Machine IceCats"
 
   Scenario: Submit unchanged form
     Given "user@example.com" is completely registered for "Ice Hockey" with role "Manager"
     And The following manager object exists
       | username_or_email | team                  |
       | user@example.com  | Green Machine IceCats |
-    And I am on the page for "seasons.HockeySeasonRoster" and "team__name=Green Machine IceCats"
+    And I am on the absolute url page for "seasons.HockeySeasonRoster" and "team__name=Green Machine IceCats"
     When I press "update_season_roster_btn"
     Then I should be on the "teams.Team" "" "team:list_season_roster" page with url kwargs "team_pk=pk"
     And I should not see "Season roster for Green Machine IceCats successfully updated."
@@ -55,7 +55,7 @@ Feature: Update season roster
     And The following manager object exists
       | username_or_email | team                  |
       | user@example.com  | Green Machine IceCats |
-    And I am on the page for "seasons.HockeySeasonRoster" and "team__name=Green Machine IceCats"
+    And I am on the absolute url page for "seasons.HockeySeasonRoster" and "team__name=Green Machine IceCats"
     When I press "id_default"
     And I press "update_season_roster_btn"
     Then I should be on the "teams.Team" "" "team:list_season_roster" page with url kwargs "team_pk=pk"
@@ -66,9 +66,9 @@ Feature: Update season roster
     And The following manager object exists
       | username_or_email | team                  |
       | user@example.com  | Green Machine IceCats |
-    And I am on the page for "seasons.HockeySeasonRoster" and "team__name=Green Machine IceCats"
+    And I am on the absolute url page for "seasons.HockeySeasonRoster" and "team__name=Green Machine IceCats"
     And I deselect "John Doe" from "id_players"
     And I deselect "Lee Doe" from "id_players"
     And I press "update_season_roster_btn"
-    Then I should be on the page for "seasons.HockeySeasonRoster" and "team__name=Green Machine IceCats"
+    Then I should be on the absolute url page for "seasons.HockeySeasonRoster" and "team__name=Green Machine IceCats"
     And "This field is required." should show up 1 time

@@ -37,4 +37,4 @@ Feature: Resend account confirmation
     And "testing@example.com" is completely registered for "Ice Hockey" with roles "Coach, Referee"
     And I login with "testing@example.com" and "myweakpassword"
     When I go to the "/account/confirm-email/invalidkey/" page
-    Then I should see "You have already authenticated your e-mail address"
+    Then I should see "You have already confirmed your e-mail address"

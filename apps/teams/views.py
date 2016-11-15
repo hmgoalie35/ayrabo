@@ -16,7 +16,7 @@ from .models import Team
 
 class BulkUploadTeamsView(LoginRequiredMixin, FormView):
     form_class = BulkUploadTeamsForm
-    template_name = 'teams/bulk_upload_teams.html'
+    template_name = 'teams/team_bulk_upload.html'
     success_url = reverse_lazy('bulk_upload_teams')
 
     def get(self, *args, **kwargs):
@@ -35,7 +35,7 @@ class BulkUploadTeamsView(LoginRequiredMixin, FormView):
         if len(errors) > 0:
             context = self.get_context_data()
             context['errors'] = errors
-            return render(self.request, 'teams/bulk_upload_teams.html', context)
+            return render(self.request, 'teams/team_bulk_upload.html', context)
 
         messages.success(self.request, '{successful_teams_created} out of {total_csv_rows} teams successfully created'
                          .format(successful_teams_created=successful_teams_created, total_csv_rows=total_csv_rows - 1))

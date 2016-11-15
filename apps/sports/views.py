@@ -16,6 +16,7 @@ from players import forms as player_forms
 from players.models import HockeyPlayer, BasketballPlayer, BaseballPlayer
 from referees import forms as referee_forms
 from referees.models import Referee
+from seasons.views import email_admins_sport_not_configured
 from userprofiles.views import check_account_and_sport_registration_completed
 from .forms import CreateSportRegistrationForm
 from .models import SportRegistration, Sport
@@ -25,6 +26,8 @@ SPORT_PLAYER_FORM_MAPPINGS = {
     'Baseball': player_forms.BaseballPlayerForm,
     'Basketball': player_forms.BasketballPlayerForm
 }
+
+SPORT_NOT_CONFIGURED_MSG = "{sport} hasn't been configured correctly in our system. If you believe this is an error please contact us."
 
 
 class FinishSportRegistrationView(LoginRequiredMixin, ContextMixin, generic.View):
@@ -50,14 +53,11 @@ class FinishSportRegistrationView(LoginRequiredMixin, ContextMixin, generic.View
             if sr.has_role('Coach'):
                 context['coach_form'] = coach_forms.CoachForm(self.request.POST or None, sport=sr.sport)
             if sr.has_role('Player'):
-                # Devs have to manually add in the form class to the SPORT_PLAYER_FORM_MAPPINGS dictionary
-                # This is because each sport has a different player model, there is no generic player model
-                if sr.sport.name not in SPORT_PLAYER_FORM_MAPPINGS:
-                    raise Exception(
-                            "Form class for a {sport} player hasn't been configured yet, add it to SPORT_PLAYER_FORM_MAPPINGS".format(
-                                    sport=sr.sport.name))
-                context['player_form'] = SPORT_PLAYER_FORM_MAPPINGS[sr.sport.name](self.request.POST or None,
-                                                                                   sport=sr.sport)
+                form_cls = SPORT_PLAYER_FORM_MAPPINGS.get(sr.sport.name)
+                player_form = None
+                if form_cls:
+                    player_form = form_cls(self.request.POST or None, sport=sr.sport)
+                context['player_form'] = player_form
             if sr.has_role('Manager'):
                 context['manager_form'] = manager_forms.ManagerForm(self.request.POST or None, sport=sr.sport)
             if sr.has_role('Referee'):
@@ -70,6 +70,11 @@ class FinishSportRegistrationView(LoginRequiredMixin, ContextMixin, generic.View
             return redirect(redirect_url)
 
         context = self.get_context_data(**kwargs)
+        sr = context.get('sport_registration')
+        if sr and sr.has_role('Player') and context.get('player_form') is None:
+            sport_name = context.get('sport_name')
+            email_admins_sport_not_configured(sport_name, self)
+            return render(request, 'message.html', {'message': SPORT_NOT_CONFIGURED_MSG.format(sport=sport_name)})
 
         if not context.get('sport_registrations_exist'):
             sports_registered_for = request.session.get('sports_registered_for', None)
@@ -88,6 +93,12 @@ class FinishSportRegistrationView(LoginRequiredMixin, ContextMixin, generic.View
             return redirect(redirect_url)
 
         context = self.get_context_data(**kwargs)
+
+        sr = context.get('sport_registration')
+        if sr and sr.has_role('Player') and context.get('player_form') is None:
+            sport_name = context.get('sport_name')
+            email_admins_sport_not_configured(sport_name, self)
+            return render(request, 'message.html', {'message': SPORT_NOT_CONFIGURED_MSG.format(sport=sport_name)})
 
         if not context.get('sport_registrations_exist'):
             sports_registered_for = request.session.get('sports_registered_for', None)
@@ -244,10 +255,12 @@ class UpdateSportRegistrationView(LoginRequiredMixin, ContextMixin, generic.View
         context['referee_read_only_fields'] = ['league']
         for role, role_obj in related_objects.items():
             if role == 'Player':
-                context['player_form'] = SPORT_PLAYER_FORM_MAPPINGS[sr.sport.name](self.request.POST or None,
-                                                                                   instance=role_obj,
-                                                                                   read_only_fields=context.get(
-                                                                                           'player_read_only_fields'))
+                form_cls = SPORT_PLAYER_FORM_MAPPINGS.get(sr.sport.name)
+                player_form = None
+                if form_cls:
+                    player_form = form_cls(self.request.POST or None, instance=role_obj,
+                                           read_only_fields=context.get('player_read_only_fields'))
+                context['player_form'] = player_form
             elif role == 'Coach':
                 context['coach_form'] = coach_forms.CoachForm(self.request.POST or None, instance=role_obj,
                                                               read_only_fields=context.get('coach_read_only_fields'))
@@ -265,12 +278,26 @@ class UpdateSportRegistrationView(LoginRequiredMixin, ContextMixin, generic.View
         context = self.get_context_data(**kwargs)
         if context.get('not_obj_owner'):
             raise Http404
+
+        sr = context.get('sport_registration')
+        sport_name = sr.sport.name
+        if sr and sr.has_role('Player') and context.get('player_form') is None:
+            email_admins_sport_not_configured(sport_name, self)
+            return render(request, 'message.html', {'message': SPORT_NOT_CONFIGURED_MSG.format(sport=sport_name)})
+
         return render(request, self.template_name, context)
 
     def post(self, request, *args, **kwargs):
         context = self.get_context_data(**kwargs)
         if context.get('not_obj_owner'):
             raise Http404
+
+        sr = context.get('sport_registration')
+        sport_name = sr.sport.name
+        if sr and sr.has_role('Player') and context.get('player_form') is None:
+            email_admins_sport_not_configured(sport_name, self)
+            return render(request, 'message.html', {'message': SPORT_NOT_CONFIGURED_MSG.format(sport=sport_name)})
+
         # Forms that were submitted are added to this list. Only check the forms in this list for validity
         forms_that_were_submitted = []
         # If a form was submitted and is_valid is True, the corresponding value will be set to True
