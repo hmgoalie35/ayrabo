@@ -32,7 +32,7 @@ A license has been intentionally excluded. See http://choosealicense.com/no-lice
 
 # Installation
 
-You can either follow the instructions below or run setup_dev_env.bash (which installs necessary packages and runs the commands below)
+You can either follow the instructions below or run setup_dev_env.sh (which installs necessary packages and runs the commands below)
 
 *This project uses pre-commit, whenever you commit files a few optimizers, code checkers, etc. will be run to check the committed files for any errors/potential bugs*
 
@@ -57,6 +57,9 @@ Only do the following if you are using your own local sqlite database or if the 
 
 
 Lastly, run unit/functional/integration tests to make sure everything is setup correctly (see below)
+
+
+* `bash run_tests.sh` will run all tests
 
 NOTE: The tests may take a few minutes
 
