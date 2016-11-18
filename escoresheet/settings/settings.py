@@ -21,6 +21,7 @@ SITE_ID = 1
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 ESCORESHEET_MODULE_ROOT = os.path.join(BASE_DIR, 'escoresheet')
+NODE_MODULES_ROOT = os.path.join(BASE_DIR, 'node_modules')
 
 # Custom django apps are in apps/ directory, so add it to path
 sys.path.append(os.path.join(BASE_DIR, 'apps'))
@@ -305,6 +306,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # Django bower related
 BOWER_COMPONENTS_ROOT = os.path.join(BASE_DIR, '', 'static')
+BOWER_PATH = os.path.join(NODE_MODULES_ROOT, 'bower/bin/bower')
 BOWER_INSTALLED_APPS = [
     'animate.css#3.5.2',
     'bootstrap#3.3.7',
@@ -315,10 +317,11 @@ BOWER_INSTALLED_APPS = [
 ]
 
 # Django compressor related
-# TODO add in other minifiers, etc. for scss, css, js
+# TODO add in other minifiers, etc. for scss, css, js. Look into settings for yuglify
 COMPRESS_PRECOMPILERS = [('text/scss', 'sassc {infile} {outfile}')]
 COMPRESS_CSS_FILTERS = ['compressor.filters.css_default.CssAbsoluteFilter',
                         'compressor.filters.yuglify.YUglifyCSSFilter']
+COMPRESS_YUGLIFY_BINARY = os.path.join(NODE_MODULES_ROOT, 'yuglify/bin/yuglify')
 COMPRESS_JS_FILTERS = ['compressor.filters.yuglify.YUglifyJSFilter']
 
 COMPRESS_ROOT = STATICFILES_DIRS[0]

@@ -20,7 +20,7 @@ print_step "Installing apt packages"
 sudo apt-get install python3-pip python-pip nodejs -y
 
 print_step "Installing npm packages"
-sudo npm -g install phantomjs-prebuilt bower yuglify
+npm install
 
 print_step "Installing global pip packages"
 sudo pip install virtualenvwrapper

@@ -83,3 +83,6 @@ celerybeat-schedule
 # virtualenv
 venv/
 ENV/
+
+# Node js dependencies
+node_modules/

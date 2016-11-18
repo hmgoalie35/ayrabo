@@ -1,0 +1,18 @@
+{
+  "name": "escoresheet",
+  "version": "0.0.1",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hmgoalie35/escoresheet.git"
+  },
+  "license": "UNLICENSED",
+  "author": "Harris Pittinsky",
+  "private": true,
+  "devDependencies": {
+    "phantomjs-prebuilt": "^2.1.13"
+  },
+  "dependencies": {
+    "yuglify": "^0.1.4",
+    "bower": "^1.8.0"
+  }
+}
