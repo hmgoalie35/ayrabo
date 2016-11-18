@@ -23,7 +23,7 @@ A license has been intentionally excluded. See http://choosealicense.com/no-lice
 # Pip Packages (to be installed globally)
 * virtualenv or virtualenvwrapper (virtualenvwrapper recommended)
 
-# Npm Packages (to be installed globally)
+# Npm Packages (to be installed locally)
 * bower
 * phantomjs-prebuilt
 * yuglify (prod only)
@@ -38,15 +38,16 @@ You can either follow the instructions below or run setup_dev_env.sh (which inst
 
 1. Clone the repo and cd into it
 2. Make sure the dependencies above are installed
-3. ```mkvirtualenv escoresheet -p `which python3` ```
+3. Run `npm install`
+4. ```mkvirtualenv escoresheet -p `which python3` ```
     * Swap `mkvirtualenv` with `virtualenv` if you use virtualenv
     * You can replace escoresheet with the name of the virtualenv you want to create
-4. Make sure your virtual environment is activated, then run `pip install -r requirements.txt`
-5. Run `pre-commit install` to install pre-commit.
-6. `sudo npm -g install phantomjs-prebuilt bower yuglify`
+5. Make sure your virtual environment is activated, then run `pip install -r requirements.txt`
+6. Run `pre-commit install` to install pre-commit.
+7. `sudo npm -g install phantomjs-prebuilt bower yuglify`
     * yuglify is only for prod but for consistency install it anyway
     * You will likely need to run as root
-7. `cd escoresheet/settings/ && ln -s local_settings.py.dev local_settings.py ; cd ../../`
+8. `cd escoresheet/settings/ && ln -s local_settings.py.dev local_settings.py ; cd ../../`
     * This allows development settings to override production settings.
 
 Only do the following if you are using your own local sqlite database or if the database is brand new
