@@ -9,9 +9,13 @@ if [ -e venv ]; then
     source venv/bin/activate
 fi
 
-# TODO run with coverage (parallel mode)
 print_step "Running unit/functional tests"
-./manage.py test --parallel --failfast
+coverage run manage.py test --parallel --failfast
+coverage combine && coverage report
+
+# TODO Run coverage for behave also?
+#coverage erase
 
 print_step "Running integration tests"
-./manage.py behave
+coverage run manage.py behave
+

@@ -2,7 +2,7 @@
 
 ### Testing Related
 
-* `coverage run manage.py test && coverage html`
+* `coverage run manage.py test --parallel && coverage combine && coverage html`
     * Determines coverage for unit and functional tests
 
 ### Misc.
