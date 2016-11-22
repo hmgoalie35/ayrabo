@@ -4,7 +4,6 @@ from django import forms
 from escoresheet.utils import remove_form_placeholders, add_autofocus_to_field
 
 
-# @TODO set up hooks so that User.objects.create() does the necessary stuff for django all auth to work (create EmailAddress, EmailConfirmation, etc.)
 class SignupForm(allauth_forms.SignupForm):
     first_name = forms.CharField(widget=forms.TextInput(attrs={'autofocus': 'true'}))
     last_name = forms.CharField()
@@ -19,37 +18,37 @@ class SignupForm(allauth_forms.SignupForm):
 
     def clean(self):
         super(SignupForm, self).clean()
-        if self.cleaned_data.get('email', None) is not None:
+        if 'email' in self.cleaned_data.keys():
             # Make the username the same as the email
             self.cleaned_data['username'] = self.cleaned_data['email']
 
 
 class LoginForm(allauth_forms.LoginForm):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs):  # pragma: no cover
         super(LoginForm, self).__init__(*args, **kwargs)
         remove_form_placeholders(self.fields)
 
 
 class PasswordResetForm(allauth_forms.ResetPasswordForm):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs):  # pragma: no cover
         super(PasswordResetForm, self).__init__(*args, **kwargs)
-        remove_form_placeholders(self.fields)  # pragma: no cover
+        remove_form_placeholders(self.fields)
 
 
 class PasswordResetFromKeyForm(allauth_forms.ResetPasswordKeyForm):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs):  # pragma: no cover
         super(PasswordResetFromKeyForm, self).__init__(*args, **kwargs)
-        remove_form_placeholders(self.fields)  # pragma: no cover
+        remove_form_placeholders(self.fields)
 
 
 class ChangePasswordForm(allauth_forms.ChangePasswordForm):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs):  # pragma: no cover
         super(ChangePasswordForm, self).__init__(*args, **kwargs)
-        remove_form_placeholders(self.fields)  # pragma: no cover
+        remove_form_placeholders(self.fields)
         add_autofocus_to_field(self.fields['oldpassword'])
 
 
 class AddEmailForm(allauth_forms.AddEmailForm):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs):  # pragma: no cover
         super(AddEmailForm, self).__init__(*args, **kwargs)
-        remove_form_placeholders(self.fields)  # pragma: no cover
+        remove_form_placeholders(self.fields)

@@ -7,7 +7,7 @@ class V1View(APIView):
     V1 of the API
     """
 
-    def get(self, request, *args, **kwargs):
+    def get(self, request, *args, **kwargs):  # pragma: no cover
         context = {
             'info': 'This will eventually have all endpoints for v1 listed out...'
         }
