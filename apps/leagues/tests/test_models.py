@@ -2,7 +2,6 @@ from django.db.utils import IntegrityError
 from django.test import TestCase
 from django.utils.text import slugify
 
-from escoresheet.utils.testing_utils import is_queryset_in_alphabetical_order
 from leagues.models import League
 from sports.tests import SportFactory
 from .factories.LeagueFactory import LeagueFactory
@@ -13,8 +12,10 @@ class LeagueModelTests(TestCase):
         self.ice_hockey = SportFactory.create(name='Ice Hockey')
 
     def test_default_ordering(self):
-        LeagueFactory.create_batch(5)
-        self.assertTrue(is_queryset_in_alphabetical_order(League.objects.all(), 'full_name'))
+        liahl = LeagueFactory(full_name='Long Island Amateur Hockey League')
+        nhl = LeagueFactory(full_name='National Hockey League')
+        expected = [liahl, nhl]
+        self.assertListEqual(list(League.objects.all()), expected)
 
     def test_to_string(self):
         nhl = LeagueFactory.create(full_name='National Hockey League', sport=self.ice_hockey)

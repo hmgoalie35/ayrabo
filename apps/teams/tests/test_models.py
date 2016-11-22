@@ -3,7 +3,6 @@ from django.test import TestCase
 from django.utils.text import slugify
 
 from divisions.tests import DivisionFactory
-from escoresheet.utils.testing_utils import is_queryset_in_alphabetical_order
 from leagues.tests import LeagueFactory
 from sports.tests import SportFactory
 from teams.models import Team
@@ -17,8 +16,11 @@ class TeamModelTests(TestCase):
         self.pee_wee_division = DivisionFactory.create(name='Pee Wee AA', league=self.liahl)
 
     def test_default_ordering(self):
-        TeamFactory.create_batch(5)
-        self.assertTrue(is_queryset_in_alphabetical_order(Team.objects.all(), 'name'))
+        green_machine = TeamFactory(name='Green Machine IceCats')
+        aviator = TeamFactory(name='Aviator Gulls')
+        rebels = TeamFactory(name='Rebels')
+        expected = [aviator, green_machine, rebels]
+        self.assertListEqual(list(Team.objects.all()), expected)
 
     def test_name_unique_to_division_raises_error(self):
         """

@@ -7,6 +7,11 @@ from sports.models import SportRegistration
 
 
 class UserHasRolesMixin(object):
+    """
+    A mixin that makes sure the current user has the appropriate roles.
+
+    i.e. That a user who is a coach actually has the coach role.
+    """
     roles_to_check = []
     user_has_no_role_msg = 'You do not have permission to perform this action.'
 

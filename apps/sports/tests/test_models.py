@@ -6,7 +6,6 @@ from django.utils.text import slugify
 from accounts.tests import UserFactory
 from coaches.tests import CoachFactory
 from divisions.tests import DivisionFactory
-from escoresheet.utils.testing_utils import is_queryset_in_alphabetical_order
 from leagues.tests import LeagueFactory
 from managers.tests import ManagerFactory
 from players.tests import HockeyPlayerFactory
@@ -37,8 +36,11 @@ class SportModelTests(TestCase):
         self.assertEqual(ice_hockey.slug, slugify(ice_hockey.name))
 
     def test_default_ordering(self):
-        SportFactory.create_batch(5)
-        self.assertTrue(is_queryset_in_alphabetical_order(Sport.objects.all(), 'name'))
+        ice_hockey = SportFactory(name='Ice Hockey')
+        soccer = SportFactory(name='Soccer')
+        baseball = SportFactory(name='Baseball')
+        expected = [baseball, ice_hockey, soccer]
+        self.assertListEqual(list(Sport.objects.all()), expected)
 
     def test_to_string(self):
         sport = SportFactory.build(name='Ice Hockey')
@@ -50,13 +52,6 @@ class SportModelTests(TestCase):
 
 
 class SportRegistrationModelTests(TestCase):
-    def test_default_ordering(self):
-        SportRegistrationFactory(sport__name='Ice Hockey')
-        SportRegistrationFactory(sport__name='Soccer')
-        SportRegistrationFactory(sport__name='Tennis')
-        self.assertTrue(is_queryset_in_alphabetical_order(SportRegistration.objects.all(), 'sport', fk='name'))
-        self.assertTrue(is_queryset_in_alphabetical_order(SportRegistration.objects.all(), 'user', fk='email'))
-
     def test_to_string(self):
         sr = SportRegistrationFactory()
         self.assertEqual(str(sr), '{email} - {sport}'.format(email=sr.user.email, sport=sr.sport.name))
