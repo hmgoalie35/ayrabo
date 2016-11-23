@@ -1,13 +1,13 @@
 from django.db.utils import IntegrityError
-from django.test import TestCase
 from django.utils.text import slugify
 
+from escoresheet.utils import BaseTestCase
 from leagues.models import League
 from sports.tests import SportFactory
 from .factories.LeagueFactory import LeagueFactory
 
 
-class LeagueModelTests(TestCase):
+class LeagueModelTests(BaseTestCase):
     def setUp(self):
         self.ice_hockey = SportFactory.create(name='Ice Hockey')
 

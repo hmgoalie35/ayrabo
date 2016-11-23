@@ -1,13 +1,13 @@
 from django.db.utils import IntegrityError
-from django.test import TestCase
 from django.utils.text import slugify
 
 from divisions.models import Division
+from escoresheet.utils import BaseTestCase
 from leagues.tests import LeagueFactory
 from .factories.DivisionFactory import DivisionFactory
 
 
-class DivisionModelTests(TestCase):
+class DivisionModelTests(BaseTestCase):
     def test_default_ordering(self):
         mm = DivisionFactory(name='Midget Minor')
         mites = DivisionFactory(name='Mites')

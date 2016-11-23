@@ -1,11 +1,11 @@
 from django.urls import reverse
 from django.db.utils import IntegrityError
-from django.test import TestCase
 from django.utils.text import slugify
 
 from accounts.tests import UserFactory
 from coaches.tests import CoachFactory
 from divisions.tests import DivisionFactory
+from escoresheet.utils import BaseTestCase
 from leagues.tests import LeagueFactory
 from managers.tests import ManagerFactory
 from players.tests import HockeyPlayerFactory
@@ -17,7 +17,7 @@ from .factories.SportFactory import SportFactory
 from .factories.SportRegistrationFactory import SportRegistrationFactory
 
 
-class SportModelTests(TestCase):
+class SportModelTests(BaseTestCase):
     # Slugs are auto generated from the name attribute, so the uniqueness of slugs makes sure names are also
     # unique for case insensitive ice Hockey and Ice Hockey will pass the uniqueness of the name field,
     # but won't pass uniqueness of slug field
@@ -52,7 +52,7 @@ class SportModelTests(TestCase):
         self.assertEqual(sport.name, 'Ice Hockey')
 
 
-class SportRegistrationModelTests(TestCase):
+class SportRegistrationModelTests(BaseTestCase):
     def test_to_string(self):
         sr = SportRegistrationFactory()
         self.assertEqual(str(sr), '{email} - {sport}'.format(email=sr.user.email, sport=sr.sport.name))

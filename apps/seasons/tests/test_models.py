@@ -3,16 +3,16 @@ import datetime
 from django.core.exceptions import ValidationError
 from django.urls import reverse
 from django.db import IntegrityError
-from django.test import TestCase
 
 from divisions.tests import DivisionFactory
+from escoresheet.utils import BaseTestCase
 from leagues.tests import LeagueFactory
 from seasons.models import Season, HockeySeasonRoster
 from teams.tests import TeamFactory
 from . import SeasonFactory, HockeySeasonRosterFactory
 
 
-class SeasonModelTests(TestCase):
+class SeasonModelTests(BaseTestCase):
     def test_to_string(self):
         season = SeasonFactory()
         self.assertEqual(str(season), '{start_year}-{end_year} Season'.format(start_year=season.start_date.year,
@@ -65,7 +65,7 @@ class SeasonModelTests(TestCase):
         self.assertListEqual(list(reversed(seasons)), list(Season.objects.all()))
 
 
-class SeasonTeamM2MSignalTests(TestCase):
+class SeasonTeamM2MSignalTests(BaseTestCase):
     def setUp(self):
         self.liahl = LeagueFactory(full_name='Long Island Amateur Hockey League')
         self.nhl = LeagueFactory(full_name='National Hockey League')
@@ -126,7 +126,7 @@ class SeasonTeamM2MSignalTests(TestCase):
         self.assertListEqual([], list(self.liahl_season.teams.all()))
 
 
-class AbstractSeasonRosterModelTests(TestCase):
+class AbstractSeasonRosterModelTests(BaseTestCase):
     """
     We can't create an instance of AbstractSeasonRosterFactory so just default to the hockey factory
     """
@@ -165,7 +165,7 @@ class AbstractSeasonRosterModelTests(TestCase):
                                                                            'pk': season_roster.pk}))
 
 
-class HockeySeasonRosterModelTests(TestCase):
+class HockeySeasonRosterModelTests(BaseTestCase):
     """
     Currently don't need any unit tests for this model
     """

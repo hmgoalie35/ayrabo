@@ -1,11 +1,10 @@
 import factory
 from django.urls import reverse
-from django.test import TestCase
 
 from accounts.tests import UserFactory
 from coaches.tests import CoachFactory
 from divisions.tests import DivisionFactory
-from escoresheet.utils.testing_utils import get_messages
+from escoresheet.utils import BaseTestCase
 from leagues.tests import LeagueFactory
 from managers.tests import ManagerFactory
 from players.tests import HockeyPlayerFactory
@@ -16,7 +15,7 @@ from userprofiles.models import UserProfile
 from .factories.UserProfileFactory import UserProfileFactory
 
 
-class CreateUserProfileViewTests(TestCase):
+class CreateUserProfileViewTests(BaseTestCase):
     def setUp(self):
         self.email = 'user@example.com'
         self.password = 'myweakpassword'
@@ -108,7 +107,7 @@ class CreateUserProfileViewTests(TestCase):
             self.assertFormError(response, 'form', 'weight', 'Enter a whole number.')
 
 
-class UpdateUserProfileViewTests(TestCase):
+class UpdateUserProfileViewTests(BaseTestCase):
     def setUp(self):
         self.email = 'user@example.com'
         self.password = 'myweakpassword'
@@ -182,7 +181,7 @@ class UpdateUserProfileViewTests(TestCase):
         self.post_data.pop('birthday')
         response = self.client.post(reverse('account_home'), data=self.post_data, follow=True)
         success_msg = 'Your profile has been updated'
-        self.assertIn(success_msg, get_messages(response))
+        self.assertHasMessage(response, success_msg)
         self.assertTemplateUsed('userprofiles/userprofile_update.html')
 
     def test_userprofile_exists_in_context(self):

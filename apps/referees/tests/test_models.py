@@ -1,14 +1,14 @@
 from django.core.validators import ValidationError
 from django.db.utils import IntegrityError
-from django.test import TestCase
 
 from accounts.tests import UserFactory
+from escoresheet.utils import BaseTestCase
 from leagues.tests import LeagueFactory
 from sports.tests import SportRegistrationFactory
 from .factories.RefereeFactory import RefereeFactory
 
 
-class RefereeModelTests(TestCase):
+class RefereeModelTests(BaseTestCase):
     def setUp(self):
         self.user = UserFactory()
         self.league = LeagueFactory(full_name='Long Island Amateur Hockey League')

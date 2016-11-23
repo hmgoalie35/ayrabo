@@ -17,5 +17,5 @@ coverage combine && coverage report
 #coverage erase
 
 print_step "Running integration tests"
-coverage run manage.py behave
+python manage.py behave
 

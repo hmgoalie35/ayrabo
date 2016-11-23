@@ -1,14 +1,14 @@
 from django.core.validators import ValidationError
 from django.db.utils import IntegrityError
-from django.test import TestCase
 
 from accounts.tests import UserFactory
+from escoresheet.utils import BaseTestCase
 from sports.tests import SportRegistrationFactory
 from teams.tests import TeamFactory
 from .factories.CoachFactory import CoachFactory
 
 
-class CoachModelTests(TestCase):
+class CoachModelTests(BaseTestCase):
     def test_to_string(self):
         coach = CoachFactory.create()
         self.assertEqual(str(coach), 'Coach {last_name}'.format(last_name=coach.user.last_name))
