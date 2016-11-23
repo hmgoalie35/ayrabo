@@ -4,3 +4,4 @@
     -   id: check-merge-conflict
     -   id: debug-statements
     -   id: requirements-txt-fixer
+    -   id: flake8

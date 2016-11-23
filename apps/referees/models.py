@@ -8,7 +8,8 @@ from sports.models import SportRegistration
 
 class Referee(models.Model):
     """
-    Represents a referee in the system. A user can have many Coach objects related to them provided each referee object is for a different league.
+    Represents a referee in the system. A user can have many Coach objects related to them provided each referee object
+    is for a different league.
     TLDR; A user can be a referee for multiple leagues and a new referee object is created for each league.
     """
     user = models.ForeignKey(User)
@@ -25,8 +26,10 @@ class Referee(models.Model):
             qs = SportRegistration.objects.filter(user=self.user, sport=sport)
             if qs.exists() and not qs.first().has_role('Referee'):
                 raise ValidationError(
-                        '{user} - {sport} might not have a sportregistration object or the sportregistration object does not have the referee role assigned'.format(
-                                user=self.user.email, sport=sport.name))
+                        '{user} - {sport} might not have a sportregistration object or the sportregistration '
+                        'object does not have the referee role assigned'.format(
+                                user=self.user.email, sport=sport.name)
+                )
 
     def __str__(self):
         return 'Referee {full_name}'.format(full_name=self.user.get_full_name())

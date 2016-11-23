@@ -130,7 +130,7 @@ def step_impl(context):
 
 
 @step(
-        'I login with "(?P<username_or_email>[^"]*)" and "(?P<password>[^"]*)"\s?(?P<optional>via "(?P<login_method>[^"]*)")?')
+        'I login with "(?P<username_or_email>[^"]*)" and "(?P<password>[^"]*)"\s?(?P<optional>via "(?P<login_method>[^"]*)")?') # noqa
 def step_impl(context, username_or_email, password, optional, login_method):
     login(context, username_or_email, password, login_method)
 

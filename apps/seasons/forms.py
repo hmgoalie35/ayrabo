@@ -57,6 +57,7 @@ class CreateHockeySeasonRosterForm(forms.ModelForm):
     Form for creating a hockey season roster that optimizes db access through select_related and excludes any
     seasons, teams, players that belong to different leagues or divisions
     """
+
     def __init__(self, *args, **kwargs):
         league = kwargs.pop('league', None)
         read_only_fields = kwargs.pop('read_only_fields', None)
@@ -90,6 +91,7 @@ class UpdateHockeySeasonRosterForm(forms.ModelForm):
     Form for updating a hockey season roster that optimizes db access and excludes any players belonging to different
     teams
     """
+
     def __init__(self, *args, **kwargs):
         team = kwargs.pop('team', None)
         super(UpdateHockeySeasonRosterForm, self).__init__(*args, **kwargs)

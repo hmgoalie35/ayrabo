@@ -26,7 +26,8 @@ class ManagerModelTests(TestCase):
         sr = SportRegistrationFactory(user=user, sport=team.division.league.sport)
         sr.set_roles(['Player', 'Referee'])
         manager = ManagerFactory(user=user, team=team)
-        with self.assertRaisesMessage(ValidationError,
-                                      '{user} - {sport} might not have a sportregistration object or the sportregistration object does not have the manager role assigned'.format(
-                                              user=user.email, sport=team.division.league.sport.name)):
+        with self.assertRaisesMessage(ValidationError, '{user} - {sport} might not have a sportregistration object or '
+                                                       'the sportregistration object does not have the '
+                                                       'manager role assigned'.format(
+                user=user.email, sport=team.division.league.sport.name)):
             manager.clean()

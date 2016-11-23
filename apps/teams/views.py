@@ -3,10 +3,10 @@ from io import TextIOWrapper
 
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.urls import reverse_lazy
+from django.core.exceptions import ValidationError
+from django.core.urlresolvers import reverse_lazy
 from django.db.utils import IntegrityError
 from django.shortcuts import redirect, render
-from django.core.exceptions import ValidationError
 from django.views.generic import FormView
 
 from divisions.models import Division

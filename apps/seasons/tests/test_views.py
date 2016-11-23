@@ -69,8 +69,8 @@ class CreateSeasonRosterViewTests(TestCase):
         ManagerFactory(team=team, user=self.user)
         response = self.client.get(reverse('team:create_season_roster', kwargs={'team_pk': team.pk}), follow=True)
         self.assertTemplateUsed(response, 'message.html')
-        msg = "{sport} hasn't been configured correctly in our system. If you believe this is an error please contact us.".format(
-                sport=team.division.league.sport.name)
+        msg = "{sport} hasn't been configured correctly in our system. " \
+              "If you believe this is an error please contact us.".format(sport=team.division.league.sport.name)
         self.assertEqual(response.context['message'], msg)
         self.assertEqual(len(mail.outbox), 1)
 
@@ -123,8 +123,8 @@ class CreateSeasonRosterViewTests(TestCase):
         response = self.client.post(reverse('team:create_season_roster', kwargs={'team_pk': team.pk}), data={},
                                     follow=True)
         self.assertTemplateUsed(response, 'message.html')
-        msg = "{sport} hasn't been configured correctly in our system. If you believe this is an error please contact us.".format(
-                sport=team.division.league.sport.name)
+        msg = "{sport} hasn't been configured correctly in our system. " \
+              "If you believe this is an error please contact us.".format(sport=team.division.league.sport.name)
         self.assertEqual(response.context['message'], msg)
         self.assertEqual(len(mail.outbox), 1)
 
@@ -203,8 +203,8 @@ class ListSeasonRosterViewTests(TestCase):
         ManagerFactory(team=team, user=self.user)
         response = self.client.get(reverse('team:list_season_roster', kwargs={'team_pk': team.pk}), follow=True)
         self.assertTemplateUsed(response, 'message.html')
-        msg = "{sport} hasn't been configured correctly in our system. If you believe this is an error please contact us.".format(
-                sport=team.division.league.sport.name)
+        msg = "{sport} hasn't been configured correctly in our system. " \
+              "If you believe this is an error please contact us.".format(sport=team.division.league.sport.name)
         self.assertEqual(response.context['message'], msg)
         self.assertEqual(len(mail.outbox), 1)
 
@@ -275,8 +275,8 @@ class UpdateSeasonRosterViewTests(TestCase):
         response = self.client.get(
             reverse('team:update_season_roster', kwargs={'team_pk': team.pk, 'pk': self.season_roster.pk}), follow=True)
         self.assertTemplateUsed(response, 'message.html')
-        msg = "{sport} hasn't been configured correctly in our system. If you believe this is an error please contact us.".format(
-                sport=team.division.league.sport.name)
+        msg = "{sport} hasn't been configured correctly in our system. " \
+              "If you believe this is an error please contact us.".format(sport=team.division.league.sport.name)
         self.assertEqual(response.context['message'], msg)
         self.assertEqual(len(mail.outbox), 1)
 
@@ -322,8 +322,8 @@ class UpdateSeasonRosterViewTests(TestCase):
             reverse('team:update_season_roster', kwargs={'team_pk': team.pk, 'pk': self.season_roster.pk}), data={},
             follow=True)
         self.assertTemplateUsed(response, 'message.html')
-        msg = "{sport} hasn't been configured correctly in our system. If you believe this is an error please contact us.".format(
-                sport=team.division.league.sport.name)
+        msg = "{sport} hasn't been configured correctly in our system. " \
+              "If you believe this is an error please contact us.".format(sport=team.division.league.sport.name)
         self.assertEqual(response.context['message'], msg)
         self.assertEqual(len(mail.outbox), 1)
 

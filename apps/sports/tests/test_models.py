@@ -18,8 +18,9 @@ from .factories.SportRegistrationFactory import SportRegistrationFactory
 
 
 class SportModelTests(TestCase):
-    # Slugs are auto generated from the name attribute, so the uniqueness of slugs makes sure names are also unique for case insensitive
-    # ice Hockey and Ice Hockey will pass the uniqueness of the name field, but won't pass uniqueness of slug field
+    # Slugs are auto generated from the name attribute, so the uniqueness of slugs makes sure names are also
+    # unique for case insensitive ice Hockey and Ice Hockey will pass the uniqueness of the name field,
+    # but won't pass uniqueness of slug field
     def test_unique_names_case_sensitive(self):
         SportFactory.create(name='Ice Hockey')
         with self.assertRaises(IntegrityError):

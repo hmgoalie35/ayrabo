@@ -8,10 +8,10 @@ from userprofiles.models import UserProfile
 
 class AccountAndSportRegistrationCompleteMiddleware(MiddlewareMixin):
     """
-    This middleware makes sure the user has a profile, has at least one sport registration and has no sport registrations
-    that are not complete. Any requests to the urls in whitelisted_urls are allowed to pass through because a redirect
-    loop would occur otherwise. It is the job of the view for the whitelisted_urls to make sure user's can't go from
-    create_profile_url to create_sport_registration_url, etc.
+    This middleware makes sure the user has a profile, has at least one sport registration and has no sport
+    registrations that are not complete. Any requests to the urls in whitelisted_urls are allowed to pass through
+    because a redirect loop would occur otherwise. It is the job of the view for the whitelisted_urls to make sure
+    user's can't go from create_profile_url to create_sport_registration_url, etc.
     """
 
     def process_request(self, request):

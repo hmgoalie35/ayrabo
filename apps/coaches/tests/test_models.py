@@ -27,6 +27,7 @@ class CoachModelTests(TestCase):
         sr.set_roles(['Player', 'Referee'])
         coach = CoachFactory.create(user=user, team=team)
         with self.assertRaisesMessage(ValidationError,
-                                      '{user} - {sport} might not have a sportregistration object or the sportregistration object does not have the coach role assigned'.format(
+                                      '{user} - {sport} might not have a sportregistration object or the '
+                                      'sportregistration object does not have the coach role assigned'.format(
                                               user=user.email, sport=team.division.league.sport.name)):
             coach.clean()

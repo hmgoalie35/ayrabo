@@ -66,9 +66,8 @@ class CreateSportRegistrationViewTests(TestCase):
         SportRegistrationFactory(sport=self.baseball, user=self.user, is_complete=True)
         SportRegistrationFactory(sport=self.basketball, user=self.user, is_complete=True)
         response = self.client.get(self.url, follow=True)
-        self.assertIn(
-                'You have already registered for all available sports. Check back later to see if any new sports have been added.',
-                get_messages(response))
+        self.assertIn('You have already registered for all available sports. '
+                      'Check back later to see if any new sports have been added.', get_messages(response))
         self.assertRedirects(response, reverse('home'))
 
     def test_form_only_displays_sports_not_registered_for(self):
@@ -97,9 +96,8 @@ class CreateSportRegistrationViewTests(TestCase):
         SportRegistrationFactory(sport=self.baseball, user=self.user, is_complete=True)
         SportRegistrationFactory(sport=self.basketball, user=self.user, is_complete=True)
         response = self.client.post(self.url, data=self.post_data, follow=True)
-        self.assertIn(
-                'You have already registered for all available sports. Check back later to see if any new sports have been added.',
-                get_messages(response))
+        self.assertIn('You have already registered for all available sports. '
+                      'Check back later to see if any new sports have been added.', get_messages(response))
         self.assertRedirects(response, reverse('home'))
 
     def test_valid_post_one_form(self):
@@ -159,8 +157,8 @@ class CreateSportRegistrationViewTests(TestCase):
         self.post_data['sportregistration_set-TOTAL_FORMS'] = 2
         response = self.client.post(self.url, data=self.post_data, follow=True)
         self.assertFormsetError(response, 'formset', 1, 'sport',
-                                'Only one form can have {sport} selected. Choose another sport, or the "---------" value.'.format(
-                                        sport=self.ice_hockey))
+                                'Only one form can have {sport} selected. '
+                                'Choose another sport, or the "---------" value.'.format(sport=self.ice_hockey))
 
     def test_post_one_invalid_form(self):
         form_data = {
@@ -262,8 +260,8 @@ class FinishSportRegistrationViewTests(TestCase):
         sr.set_roles(['Player'])
         response = self.client.get(self.url, follow=True)
         self.assertTemplateUsed(response, 'message.html')
-        msg = "{sport} hasn't been configured correctly in our system. If you believe this is an error please contact us.".format(
-                sport=sr.sport.name)
+        msg = "{sport} hasn't been configured correctly in our system. " \
+              "If you believe this is an error please contact us.".format(sport=sr.sport.name)
         self.assertEqual(response.context['message'], msg)
         self.assertEqual(len(mail.outbox), 1)
 
@@ -341,8 +339,8 @@ class FinishSportRegistrationViewTests(TestCase):
         sr.set_roles(['Player'])
         response = self.client.post(self.url, data={}, follow=True)
         self.assertTemplateUsed(response, 'message.html')
-        msg = "{sport} hasn't been configured correctly in our system. If you believe this is an error please contact us.".format(
-                sport=sr.sport.name)
+        msg = "{sport} hasn't been configured correctly in our system. " \
+              "If you believe this is an error please contact us.".format(sport=sr.sport.name)
         self.assertEqual(response.context['message'], msg)
         self.assertEqual(len(mail.outbox), 1)
 
@@ -551,8 +549,8 @@ class UpdateSportRegistrationViewTests(TestCase):
         sr.set_roles(['Player'])
         response = self.client.get(reverse('sport:update_sport_registration', kwargs={'pk': sr.pk}))
         self.assertTemplateUsed(response, 'message.html')
-        msg = "{sport} hasn't been configured correctly in our system. If you believe this is an error please contact us.".format(
-                sport=sr.sport.name)
+        msg = "{sport} hasn't been configured correctly in our system. " \
+              "If you believe this is an error please contact us.".format(sport=sr.sport.name)
         self.assertEqual(response.context['message'], msg)
         self.assertEqual(len(mail.outbox), 1)
 
@@ -577,8 +575,8 @@ class UpdateSportRegistrationViewTests(TestCase):
         response = self.client.post(reverse('sport:update_sport_registration', kwargs={'pk': sr.pk}), data={},
                                     follow=True)
         self.assertTemplateUsed(response, 'message.html')
-        msg = "{sport} hasn't been configured correctly in our system. If you believe this is an error please contact us.".format(
-                sport=sr.sport.name)
+        msg = "{sport} hasn't been configured correctly in our system. " \
+              "If you believe this is an error please contact us.".format(sport=sr.sport.name)
         self.assertEqual(response.context['message'], msg)
         self.assertEqual(len(mail.outbox), 1)
 

@@ -13,7 +13,7 @@ def step_impl(context, team_name, division):
 
 
 @step(
-        'The following team exists "(?P<team_name>.*)" in division "(?P<division_name>.*)" in league "(?P<league_name>.*)" in sport "(?P<sport_name>.*)"')
+        'The following team exists "(?P<team_name>.*)" in division "(?P<division_name>.*)" in league "(?P<league_name>.*)" in sport "(?P<sport_name>.*)"') # noqa
 def step_impl(context, team_name, division_name, league_name, sport_name):
     sport = SportFactory(name=sport_name)
     league = LeagueFactory(full_name=league_name, sport=sport)

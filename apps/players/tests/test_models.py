@@ -51,9 +51,9 @@ class PlayerModelTests(TestCase):
         sr = SportRegistrationFactory(user=user, sport=sport)
         sr.set_roles(['Referee'])
         player = HockeyPlayerFactory(user=user, sport=sport, team=self.player.team)
-        with self.assertRaisesMessage(ValidationError,
-                                      '{user} - {sport} might not have a sportregistration object or the sportregistration object does not have the player role assigned'.format(
-                                              user=user.email, sport=sport)):
+        with self.assertRaisesMessage(ValidationError, '{user} - {sport} might not have a sportregistration object or '
+                                                       'the sportregistration object does not have the '
+                                                       'player role assigned'.format(user=user.email, sport=sport)):
             player.clean()
 
 
@@ -79,9 +79,9 @@ class HockeyPlayerModelTests(TestCase):
         sr = SportRegistrationFactory(user=user, sport=sport)
         sr.set_roles(['Referee'])
         player = HockeyPlayerFactory(user=user, sport=sport, team=self.hockey_player.team)
-        with self.assertRaisesMessage(ValidationError,
-                                      '{user} - {sport} might not have a sportregistration object or the sportregistration object does not have the player role assigned'.format(
-                                              user=user.email, sport=sport)):
+        with self.assertRaisesMessage(ValidationError, '{user} - {sport} might not have a sportregistration object or '
+                                                       'the sportregistration object does not have the '
+                                                       'player role assigned'.format(user=user.email, sport=sport)):
             player.clean()
 
 
@@ -107,9 +107,9 @@ class BaseballPlayerModelTests(TestCase):
         sr = SportRegistrationFactory(user=user, sport=sport)
         sr.set_roles(['Referee'])
         player = BaseballPlayerFactory(user=user, sport=sport, team=self.baseball_player.team)
-        with self.assertRaisesMessage(ValidationError,
-                                      '{user} - {sport} might not have a sportregistration object or the sportregistration object does not have the player role assigned'.format(
-                                              user=user.email, sport=sport)):
+        with self.assertRaisesMessage(ValidationError, '{user} - {sport} might not have a sportregistration object or '
+                                                       'the sportregistration object does not have the '
+                                                       'player role assigned'.format(user=user.email, sport=sport)):
             player.clean()
 
 
@@ -136,7 +136,7 @@ class BasketballPlayerModelTests(TestCase):
         sr = SportRegistrationFactory(user=user, sport=sport)
         sr.set_roles(['Referee'])
         player = BasketballPlayerFactory(user=user, sport=sport, team=self.basketball_player.team)
-        with self.assertRaisesMessage(ValidationError,
-                                      '{user} - {sport} might not have a sportregistration object or the sportregistration object does not have the player role assigned'.format(
-                                              user=user.email, sport=sport)):
+        with self.assertRaisesMessage(ValidationError, '{user} - {sport} might not have a sportregistration object or '
+                                                       'the sportregistration object does not have the '
+                                                       'player role assigned'.format(user=user.email, sport=sport)):
             player.clean()

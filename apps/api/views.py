@@ -11,7 +11,7 @@ from rest_framework.views import APIView
 
 class APIHomeView(APIView):
     """
-    The home page for the API. It contains documentation on how to use the API as well as links to specific api versions.
+    The home page for the API. It contains documentation on how to use the API as well as links to specific api versions
     The links to the api versions contain all endpoints for that version.
 
     The reason this view inherits from APIView and not django's TemplateView is so the browsable api provided by drf

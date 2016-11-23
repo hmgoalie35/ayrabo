@@ -27,6 +27,7 @@ class RefereeModelTests(TestCase):
         sr.set_roles(['Player'])
         referee = RefereeFactory(user=self.user, league=self.league)
         with self.assertRaisesMessage(ValidationError,
-                                      '{user} - {sport} might not have a sportregistration object or the sportregistration object does not have the referee role assigned'.format(
+                                      '{user} - {sport} might not have a sportregistration object or the '
+                                      'sportregistration object does not have the referee role assigned'.format(
                                               user=self.user.email, sport=self.league.sport.name)):
             referee.clean()

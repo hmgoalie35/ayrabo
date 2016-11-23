@@ -8,7 +8,7 @@ from teams.tests import TeamFactory
 
 
 @step(
-        'A coach object should exist for "(?P<username_or_email>.*)" for division "(?P<division>.*)" and team "(?P<team>.*)"')
+        'A coach object should exist for "(?P<username_or_email>.*)" for division "(?P<division>.*)" and team "(?P<team>.*)"') # noqa
 def step_impl(context, username_or_email, division, team):
     coach = Coach.objects.get(user=get_user(username_or_email))
     context.test.assertEqual(str(coach.team), '{division} - {team}'.format(division=division, team=team))
