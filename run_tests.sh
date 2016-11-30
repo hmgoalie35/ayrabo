@@ -5,8 +5,11 @@ print_step () {
 }
 
 # Need to activate the virtualenv when running tests locally
-if [ -e ~/.virtualenvs/escoresheet/bin/activate ]; then
-    source ~/.virtualenvs/escoresheet/bin/activate
+if [ -e venv ]; then
+    source venv/bin/activate
+else
+    echo "Failed to activate virtualenv"
+    exit 1
 fi
 
 # TODO run with coverage (parallel mode)

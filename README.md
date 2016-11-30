@@ -14,55 +14,18 @@ Right now the MVP I am aiming for is completely web browser based, and a compute
 
 A license has been intentionally excluded. See http://choosealicense.com/no-license/ for more information.
 
-# Apt Dependencies
-
-* python3-pip
-* python-pip
-* nodejs
-
-# Pip Packages (to be installed globally)
-* virtualenv or virtualenvwrapper (virtualenvwrapper recommended)
-
-# Npm Packages (to be installed locally)
-* bower
-* phantomjs-prebuilt
-* yuglify (prod only)
-
 *nix system recommended, Linux VM will also suffice
 
 # Installation
 
-You can either follow the instructions below or run setup_dev_env.sh (which installs necessary packages and runs the commands below)
+See the `setup_dev_env.sh` file for packages that will be installed, etc.
 
 *This project uses pre-commit, whenever you commit files a few optimizers, code checkers, etc. will be run to check the committed files for any errors/potential bugs*
 
-1. Clone the repo and cd into it
-2. Make sure the dependencies above are installed
-3. Run `npm install`
-4. ```mkvirtualenv escoresheet -p `which python3` ```
-    * Swap `mkvirtualenv` with `virtualenv` if you use virtualenv
-    * You can replace escoresheet with the name of the virtualenv you want to create
-5. Make sure your virtual environment is activated, then run `pip install -r requirements.txt`
-6. Run `pre-commit install` to install pre-commit.
-7. `sudo npm -g install phantomjs-prebuilt bower yuglify`
-    * yuglify is only for prod but for consistency install it anyway
-    * You will likely need to run as root
-8. `cd escoresheet/settings/ && ln -s local_settings.py.dev local_settings.py ; cd ../../`
-    * This allows development settings to override production settings.
-
-Only do the following if you are using your own local sqlite database or if the database is brand new
-
-1. Apply migrations with `python manage.py migrate`
-2. Load useful development related data with `python manage.py loaddata dev_fixtures`
-    * dev_fixtures is a json fixture file located in escoresheet/fixtures/
-
-
-Lastly, run unit/functional/integration tests to make sure everything is setup correctly (see below)
-
-
-* `bash run_tests.sh` will run all tests
-
-NOTE: The tests may take a few minutes
+1. Clone the repo
+2. Run `bash setup_dev_env.sh`
+    * This will install everything for you.
+3. The last part of the above script runs the test suite, it might take a few minutes
 
 # Integration Tests
 
