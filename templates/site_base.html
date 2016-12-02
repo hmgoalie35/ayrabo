@@ -13,11 +13,10 @@
     <![endif]-->
 
     {% compress css %}
-        <link rel="stylesheet" href="{% static 'bootstrap/dist/css/bootstrap.min.css' %}">
+        <link rel="stylesheet" type="text/scss" href="{% static 'stylesheets/main.scss' %}">
         <link rel="stylesheet" href="{% static 'font-awesome/css/font-awesome.min.css' %}">
         <link rel="stylesheet" href="{% static 'animate.css/animate.min.css' %}">
         <link rel="stylesheet" href="{% static 'bootstrap-select/dist/css/bootstrap-select.min.css' %}">
-        <link rel="stylesheet" type="text/scss" href="{% static 'stylesheets/main.scss' %}">
 
         {% block extra_style %}
         {% endblock %}
@@ -58,7 +57,7 @@
 {% compress js %}
 
     <script src="{% static 'jquery/dist/jquery.min.js' %}"></script>
-    <script src="{% static 'bootstrap/dist/js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'bootstrap-sass/assets/javascripts/bootstrap.min.js' %}"></script>
     <script src="{% static 'noty/js/noty/packaged/jquery.noty.packaged.js' %}"></script>
     <script src="{% static 'bootstrap-select/dist/js/bootstrap-select.min.js' %}"></script>
     <script src="{% static 'javascripts/main.js' %}"></script>

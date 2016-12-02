@@ -309,7 +309,7 @@ BOWER_COMPONENTS_ROOT = os.path.join(BASE_DIR, '', 'static')
 BOWER_PATH = os.path.join(NODE_MODULES_ROOT, 'bower/bin/bower')
 BOWER_INSTALLED_APPS = [
     'animate.css#3.5.2',
-    'bootstrap#3.3.7',
+    'bootstrap-sass',
     'font-awesome#4.6.3',
     'jquery#2.2.4',
     'noty#2.3.8',
@@ -318,12 +318,14 @@ BOWER_INSTALLED_APPS = [
 
 # Django compressor related
 # TODO add in other minifiers, etc. for scss, css, js. Look into settings for yuglify
-COMPRESS_PRECOMPILERS = [('text/scss', 'sassc {infile} {outfile}')]
+COMPRESS_PRECOMPILERS = [('text/scss', 'sassc {infile} {outfile} -p 8')]
 COMPRESS_CSS_FILTERS = ['compressor.filters.css_default.CssAbsoluteFilter',
-                        'compressor.filters.yuglify.YUglifyCSSFilter']
+                        'compressor.filters.yuglify.YUglifyCSSFilter',
+                        'django_compressor_autoprefixer.AutoprefixerFilter']
 COMPRESS_YUGLIFY_BINARY = os.path.join(NODE_MODULES_ROOT, 'yuglify/bin/yuglify')
 COMPRESS_JS_FILTERS = ['compressor.filters.yuglify.YUglifyJSFilter']
-
+COMPRESS_AUTOPREFIXER_BINARY = os.path.join(NODE_MODULES_ROOT, 'postcss-cli/bin/postcss')
+COMPRESS_AUTOPREFIXER_ARGS = '--use autoprefixer -c {}'.format(os.path.join(BASE_DIR, 'post_css_config.json'))
 COMPRESS_ROOT = STATICFILES_DIRS[0]
 
 # User account related
