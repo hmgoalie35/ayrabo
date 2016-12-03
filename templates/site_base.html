@@ -34,8 +34,8 @@
 {% endblock %}
 
 {% block footer %}
-    <footer>
-        <ol class="breadcrumb breadcrumb-footer text-center">
+    <footer class="navbar-fixed-bottom">
+        <ol class="breadcrumb text-center">
 
             {% url 'about_us' as about_us_url %}
             {% if request.path == about_us_url %}
