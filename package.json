@@ -9,9 +9,7 @@
   "author": "Harris Pittinsky",
   "private": true,
   "devDependencies": {
-    "phantomjs-prebuilt": "^2.1.13"
-  },
-  "dependencies": {
+    "phantomjs-prebuilt": "^2.1.13",
     "autoprefixer": "^6.5.3",
     "bower": "^1.8.0",
     "node-sass": "^3.13.0",
