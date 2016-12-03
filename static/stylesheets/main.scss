@@ -1,3 +1,4 @@
+@import "../bootstrap-sass/assets/stylesheets/bootstrap";
 @import "variables";
 
 html {
@@ -10,15 +11,10 @@ body {
 }
 
 footer {
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-  background-color: #F8F8F8;
-  border: 1px solid #E7E7E7;
-}
-
-.breadcrumb-footer {
-  margin: 0 auto;
+  border: 1px solid $navbar-default-border;
+  .breadcrumb {
+    margin-bottom: 0;
+  }
 }
 
 #noty_topRight_layout_container {
@@ -32,15 +28,15 @@ footer {
 }
 
 .noty_type_info {
-  color: #31708F;
-  background-color: #D9EDF7;
-  border-color: #BCE8F1;
+  color: $alert-info-text;
+  background-color: $alert-info-bg;
+  border-color: $alert-info-border;
 }
 
 .noty_type_alert {
-  color: #A94442;
-  background-color: #F2DEDE;
-  border-color: #EBCCD1;
+  color: $alert-danger-text;
+  background-color: $alert-danger-bg;
+  border-color: $alert-danger-border;
 }
 
 .asteriskField {
@@ -53,10 +49,10 @@ div.alert.alert-block.alert-danger > ul > li {
 
 .btn-back {
   color: white;
-  background: #8B8B8B;
+  background: $ess-gray;
   &:hover {
     color: white;
-    background: #686868;
+    background: $ess-gray-dark;
   }
 }
 
@@ -65,9 +61,9 @@ div.alert.alert-block.alert-danger > ul > li {
 }
 
 .nav-tab-link-color {
-  color: #999999;
+  color: $ess-gray-light;
   &:hover {
-    color: black;
+    color: $ess-gray-darker;
   }
 }
 
@@ -75,7 +71,7 @@ div.alert.alert-block.alert-danger > ul > li {
   cursor: pointer;
 
   &:hover {
-    background-color: #F5F5F5;
+    background-color: $ess-gray-lightest;
   }
 }
 
@@ -93,20 +89,20 @@ div.alert.alert-block.alert-danger > ul > li {
 }
 
 .vertical-line-left {
-  @media (min-width: 768px) {
-    border-left: $vertical-line;
+  @media (min-width: $screen-sm-min) {
+    border-left: $navbar-vertical-line;
   }
-  @media(max-width: 767px) {
-    border-top: $vertical-line;
+  @media(max-width: $screen-sm-min - 1) {
+    border-top: $navbar-vertical-line;
   }
 }
 
 .vertical-line-right {
-  @media (min-width: 768px) {
-    border-left: $vertical-line;
+  @media (min-width: $screen-sm-min) {
+    border-left: $navbar-vertical-line;
   }
-  @media(max-width: 767px) {
-    border-top: $vertical-line;
+  @media(max-width: $screen-sm-min - 1) {
+    border-top: $navbar-vertical-line;
   }
 }
 
@@ -120,7 +116,7 @@ table.table.table-borderless {
   tbody {
     // Apply box shadow to all tr's except tr's meant to be spacers
     tr:not(.table-row-spacer) {
-      box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+      box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
     }
 
     tr.table-row-collapsible td {
@@ -128,7 +124,7 @@ table.table.table-borderless {
       padding: 0;
       // Color the collapsible div (panel)
       div {
-        background: #F5F5F5;
+        background: $ess-gray-lightest;
       }
     }
 
@@ -143,7 +139,7 @@ table.table.table-borderless {
         padding-bottom: 20px;
       }
       // Color the tr
-      background: #D6D6D6;
+      background: $ess-table-row;
     }
 
     // Make the table row spacer bigger
