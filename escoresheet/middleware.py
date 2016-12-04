@@ -1,9 +1,10 @@
 import pytz
 from django.conf import settings
 from django.utils import timezone, translation
+from django.utils.deprecation import MiddlewareMixin
 
 
-class TranslationMiddleware(object):
+class TranslationMiddleware(MiddlewareMixin):
     def process_request(self, request):
         if request.user.is_authenticated() and hasattr(request.user, 'userprofile'):
             language_code = request.user.userprofile.language
@@ -14,7 +15,7 @@ class TranslationMiddleware(object):
         return None
 
 
-class TimezoneMiddleware(object):
+class TimezoneMiddleware(MiddlewareMixin):
     def process_request(self, request):
         if request.user.is_authenticated() and hasattr(request.user, 'userprofile'):
             tz = request.user.userprofile.timezone

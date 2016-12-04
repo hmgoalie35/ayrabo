@@ -1,11 +1,12 @@
 from django.core.urlresolvers import reverse
 from django.shortcuts import redirect
+from django.utils.deprecation import  MiddlewareMixin
 
 from sports.models import SportRegistration
 from userprofiles.models import UserProfile
 
 
-class AccountAndSportRegistrationCompleteMiddleware(object):
+class AccountAndSportRegistrationCompleteMiddleware(MiddlewareMixin):
     """
     This middleware makes sure the user has a profile, has at least one sport registration and has no sport registrations
     that are not complete. Any requests to the urls in whitelisted_urls are allowed to pass through because a redirect
