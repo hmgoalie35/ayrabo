@@ -1,6 +1,6 @@
 from unittest.mock import Mock
 
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.test import TestCase
 
 from accounts.tests import UserFactory

@@ -1,6 +1,6 @@
 from django.contrib import messages
 from django.core.exceptions import ImproperlyConfigured
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.shortcuts import redirect
 
 from sports.models import SportRegistration

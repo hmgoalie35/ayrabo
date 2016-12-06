@@ -14,7 +14,7 @@ import os
 import sys
 
 import pytz
-from django.core.urlresolvers import reverse_lazy
+from django.urls import reverse_lazy
 
 SITE_ID = 1
 
@@ -105,7 +105,6 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.contrib.sites.middleware.CurrentSiteMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',

@@ -1,7 +1,7 @@
 from allauth.account.models import EmailConfirmationHMAC, EmailAddress
 from django.contrib.auth import get_user_model
 from django.core import mail
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.test import TestCase
 
 from escoresheet.utils.testing_utils import get_messages

@@ -4,7 +4,7 @@ from django.core.validators import ValidationError
 from django.db import models
 from django.db.models.signals import m2m_changed
 from django.dispatch import receiver
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 
 from teams.models import Team
 

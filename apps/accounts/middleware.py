@@ -1,4 +1,4 @@
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.shortcuts import redirect
 from django.utils.deprecation import  MiddlewareMixin
 
@@ -28,7 +28,7 @@ class AccountAndSportRegistrationCompleteMiddleware(MiddlewareMixin):
 
         # Do not apply this middleware to anonymous users, or for any request to a whitelisted url. A redirect
         # loop would occur if we didn't whitelist certain urls.
-        if request.user.is_authenticated() and request.path not in whitelisted_urls:
+        if request.user.is_authenticated and request.path not in whitelisted_urls:
 
             up = UserProfile.objects.filter(user=request.user)
             if not up.exists():

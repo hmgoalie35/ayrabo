@@ -6,7 +6,7 @@ from django.utils.deprecation import MiddlewareMixin
 
 class TranslationMiddleware(MiddlewareMixin):
     def process_request(self, request):
-        if request.user.is_authenticated() and hasattr(request.user, 'userprofile'):
+        if request.user.is_authenticated and hasattr(request.user, 'userprofile'):
             language_code = request.user.userprofile.language
         else:
             language_code = translation.get_language_from_request(request)
@@ -17,7 +17,7 @@ class TranslationMiddleware(MiddlewareMixin):
 
 class TimezoneMiddleware(MiddlewareMixin):
     def process_request(self, request):
-        if request.user.is_authenticated() and hasattr(request.user, 'userprofile'):
+        if request.user.is_authenticated and hasattr(request.user, 'userprofile'):
             tz = request.user.userprofile.timezone
         else:
             tz = settings.TIME_ZONE

@@ -7,7 +7,7 @@ logger = logging.getLogger()
 
 class HomePageView(TemplateView):
     def get_template_names(self):
-        return ['home/authenticated_home.html'] if self.request.user.is_authenticated() else [
+        return ['home/authenticated_home.html'] if self.request.user.is_authenticated else [
             'home/anonymous_home.html']
 
 
