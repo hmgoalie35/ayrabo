@@ -1,7 +1,7 @@
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.forms import inlineformset_factory, BaseInlineFormSet
 from django.http import Http404
 from django.shortcuts import redirect, render, get_object_or_404
@@ -163,7 +163,10 @@ class FinishSportRegistrationView(LoginRequiredMixin, ContextMixin, generic.View
 
 class SportRegistrationInlineFormSet(BaseInlineFormSet):
     def clean(self):
-        super(SportRegistrationInlineFormSet, self).clean()
+        # Django 1.10.x adds in unique_constraint validation specified by the model the form is for.
+        # I am currently disabling this because I had already implemented something similar and using the native
+        # method was showing unhelpful error messages that would confused the user.
+        # super(SportRegistrationInlineFormSet, self).clean()
         sports_already_seen = []
         for form in self.forms:
             sport = form.cleaned_data.get('sport')

@@ -14,7 +14,7 @@ import os
 import sys
 
 import pytz
-from django.core.urlresolvers import reverse_lazy
+from django.urls import reverse_lazy
 
 SITE_ID = 1
 
@@ -97,7 +97,7 @@ INSTALLED_APPS = [
 
 CRISPY_TEMPLATE_PACK = 'bootstrap3'
 
-MIDDLEWARE_CLASSES = [
+MIDDLEWARE = [
     'debug_toolbar.middleware.DebugToolbarMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -105,7 +105,6 @@ MIDDLEWARE_CLASSES = [
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.contrib.sites.middleware.CurrentSiteMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -205,6 +204,10 @@ LOGGING = {
         'simple': {
             'format': '[%(levelname)s] %(message)s'
         },
+        'django.server': {
+            '()': 'django.utils.log.ServerFormatter',
+            'format': '[%(server_time)s] %(message)s',
+        }
     },
     'filters': {
         'require_debug_true': {
@@ -244,9 +247,19 @@ LOGGING = {
             'level': 'DEBUG',
             'class': 'logging.NullHandler',
             'filters': ['require_debug_true'],
-        }
+        },
+        'django.server': {
+            'level': 'INFO',
+            'class': 'logging.StreamHandler',
+            'formatter': 'django.server',
+        },
     },
     'loggers': {
+        'django.server': {
+            'handlers': ['django.server'],
+            'level': 'INFO',
+            'propagate': False,
+        },
         'django': {
             'handlers': ['console_simple'],
             'propagate': True,
@@ -352,7 +365,7 @@ ACCOUNT_USER_DISPLAY = lambda user: user.email
 # Django auth settings
 LOGIN_URL = reverse_lazy('account_login')
 LOGIN_REDIRECT_URL = reverse_lazy('home')
-LOGOUT_URL = reverse_lazy('account_logout')
+LOGOUT_REDIRECT_URL = reverse_lazy('home')
 
 TEST_RUNNER = 'redgreenunittest.django.runner.RedGreenDiscoverRunner'
 

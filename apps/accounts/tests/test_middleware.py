@@ -1,6 +1,6 @@
 from unittest.mock import Mock
 
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.test import TestCase
 
 from accounts.tests import UserFactory
@@ -124,8 +124,7 @@ class MiddlewareAddsRolesToSessionTests(TestCase):
         self.hockey_sr = SportRegistrationFactory(user=self.user, sport=self.ice_hockey, is_complete=True)
         self.baseball_sr = SportRegistrationFactory(user=self.user, sport=self.baseball, is_complete=True)
         self.request = Mock()
-        self.request.user = self.user
-        self.request.user.is_authenticated = Mock(return_value=True)
+        self.request.configure_mock(**{'user': self.user, 'user.is_authenticated.return_value': True})
         self.request.path = '/'
         self.request.session = {}
 

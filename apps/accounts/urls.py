@@ -1,6 +1,6 @@
 from allauth.account.views import signup
 from django.conf.urls import url
-from django.core.urlresolvers import reverse_lazy
+from django.urls import reverse_lazy
 from django.views import generic
 
 from userprofiles.views import UpdateUserProfileView
