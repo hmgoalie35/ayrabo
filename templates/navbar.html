@@ -86,6 +86,9 @@
                             <li class="divider"></li>
 
                             <li>
+                                <form id="logout_form" action="{% url 'account_logout' %}" method="post">
+                                    {% csrf_token %}
+                                </form>
                                 <a id="logout_btn_acct_menu" href="{% url 'account_logout' %}"><span
                                         class="fa fa-fw fa-power-off"></span>Logout</a>
                             </li>
