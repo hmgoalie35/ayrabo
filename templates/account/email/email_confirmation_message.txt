@@ -1,7 +1,5 @@
 {% load account %}
 {% user_display user as user_display %}
-{% load i18n %}
-{% blocktrans with site_name=current_site.name site_domain=current_site.domain %}
 Welcome {{ user }}!
 
 You can confirm the email address for your account through the link below:
@@ -11,4 +9,3 @@ You can confirm the email address for your account through the link below:
 If you were not the person who created this account, please ignore this message.
 
 Thanks!
-{% endblocktrans %}

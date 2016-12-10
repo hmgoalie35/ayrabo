@@ -1,0 +1,20 @@
+{% extends 'emails/email_base.html' %}
+{% load account %}
+{% user_display user as user_display %}
+
+{% block content %}
+    <p>Welcome {{ user }}!</p>
+
+    <p>
+        You can confirm the email address for your account through the link below:
+    </p>
+
+    <p>
+        {% include "emails/button.html" with btn_link=activate_url btn_text="Confirm Email" %}
+    </p>
+
+    <p>If you were not the person who created this account, please ignore this message.</p>
+
+    <p>Thanks!</p>
+
+{% endblock %}
