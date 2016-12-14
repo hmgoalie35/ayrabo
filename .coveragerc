@@ -17,6 +17,7 @@ omit =
     escoresheet/utils/*
     */management/*
     */test_*.py
+    venv/*
 
 
 [report]
