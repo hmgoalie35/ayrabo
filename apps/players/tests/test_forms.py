@@ -21,20 +21,18 @@ class PlayerFormTests(BaseTestCase):
     def test_teams_filtered_by_sport(self):
         TeamFactory.create_batch(5, division=self.division)
         team_different_sport = TeamFactory()
+
         form = self.form_cls(sport=self.sport)
-
         team_field = form.fields['team']
-
         self.assertNotIn(team_different_sport, team_field.queryset)
 
     def test_no_sport_kwarg(self):
         teams = TeamFactory.create_batch(2, division=self.division)
         team_different_sport = TeamFactory()
-        form = self.form_cls()
-        team_field = form.fields['team']
-
         teams.append(team_different_sport)
 
+        form = self.form_cls()
+        team_field = form.fields['team']
         self.assertTrue(set(teams).issubset(set(team_field.queryset)))
 
     def test_sets_fields_disabled(self):

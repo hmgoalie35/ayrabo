@@ -24,6 +24,7 @@ class PlayerFactory(django.DjangoModelFactory):
     jersey_number = factory.LazyFunction(generate_jersey_number)
 
 
+# TODO The sport should always be hockey...
 class HockeyPlayerFactory(PlayerFactory):
     class Meta:
         model = models.HockeyPlayer

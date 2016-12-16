@@ -12,20 +12,18 @@ class RefereeFormTests(BaseTestCase):
     def test_leagues_filtered_by_sport(self):
         LeagueFactory(sport=self.sport)
         league_different_sport = LeagueFactory()
+
         form = self.form_cls(sport=self.sport)
-
         league_field = form.fields['league']
-
         self.assertNotIn(league_different_sport, league_field.queryset)
 
     def test_no_sport_kwarg(self):
         leagues = [LeagueFactory(sport=self.sport)]
         league_different_sport = LeagueFactory()
-        form = self.form_cls()
-        league_field = form.fields['league']
-
         leagues.append(league_different_sport)
 
+        form = self.form_cls()
+        league_field = form.fields['league']
         self.assertTrue(set(leagues).issubset(set(league_field.queryset)))
 
     def test_sets_fields_disabled(self):
