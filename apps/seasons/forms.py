@@ -1,3 +1,5 @@
+import datetime
+
 from django import forms
 from django.contrib.admin import widgets
 from django.core.exceptions import ValidationError
@@ -16,7 +18,7 @@ class SeasonAdminForm(forms.ModelForm):
 
     def clean(self):
         league = self.cleaned_data.get('league', None)
-        teams = self.cleaned_data.get('teams', None)
+        teams = self.cleaned_data.get('teams', [])
         errors = {'teams': []}
         if league and teams:
             for team in teams:
@@ -69,16 +71,16 @@ class CreateHockeySeasonRosterForm(forms.ModelForm):
             set_fields_disabled(read_only_fields, self.fields)
 
         if league:
-            # TODO hide past seasons
+            today = datetime.date.today()
             self.fields['season'].queryset = Season.objects.filter(
-                    league__full_name=league).select_related('league')
+                    league__full_name=league).exclude(end_date__lt=today).select_related('league')
             self.fields['team'].queryset = Team.objects.filter(
                     division__league__full_name=league).select_related('division')
 
         if team:
             self.fields['players'].queryset = HockeyPlayer.objects.filter(team=team).select_related('user')
 
-    season = SeasonModelChoiceField(queryset=Season.objects.all().select_related('division'))
+    season = SeasonModelChoiceField(queryset=Season.objects.all().select_related('league'))
     players = forms.ModelMultipleChoiceField(queryset=HockeyPlayer.objects.all().select_related('user'))
 
     class Meta:
