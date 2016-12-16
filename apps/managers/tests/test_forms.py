@@ -32,10 +32,6 @@ class ManagerFormTests(BaseTestCase):
 
         self.assertTrue(set(teams).issubset(set(team_field.queryset)))
 
-    def test_fields_set_to_disabled(self):
+    def test_sets_fields_disabled(self):
         form = self.form_cls(read_only_fields=['team'])
         self.assertTrue(form.fields['team'].disabled)
-
-    def test_no_read_only_fields_kwarg(self):
-        form = self.form_cls()
-        self.assertFalse(form.fields['team'].disabled)

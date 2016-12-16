@@ -28,10 +28,6 @@ class RefereeFormTests(BaseTestCase):
 
         self.assertTrue(set(leagues).issubset(set(league_field.queryset)))
 
-    def test_fields_set_to_disabled(self):
+    def test_sets_fields_disabled(self):
         form = self.form_cls(read_only_fields=['league'])
         self.assertTrue(form.fields['league'].disabled)
-
-    def test_no_read_only_fields_kwarg(self):
-        form = self.form_cls()
-        self.assertFalse(form.fields['league'].disabled)
