@@ -22,7 +22,7 @@ fake-factory==0.7.2
 ipython==5.1.0
 ipython-genutils==0.1.0
 jsonschema==2.5.1
-libsass==0.11.2
+libsass==0.12.0
 nodeenv==1.0.0
 oauthlib==2.0.1
 parse==1.6.6
@@ -40,7 +40,7 @@ pytz==2016.10
 PyYAML==3.12
 rcssmin==1.0.6
 redgreenunittest==0.1.1
-requests==2.12.3
+requests==2.12.4
 requests-oauthlib==0.7.0
 rjsmin==1.0.12
 selenium==3.0.2
