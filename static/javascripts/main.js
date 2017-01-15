@@ -34,7 +34,7 @@ $(function () {
         }
     });
 
-    $.isMobileDevice = function () {
+    var isMobileDevice = function () {
         return (/android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(navigator.userAgent.toLowerCase()));
     };
 
@@ -49,7 +49,7 @@ $(function () {
             liveSearchPlaceholder: "Search",
             noneSelectedText: "---------",
             selectedTextFormat: "count > 2",
-            mobile: $.isMobileDevice(),
+            mobile: isMobileDevice(),
             dropupAuto: true
         };
 
