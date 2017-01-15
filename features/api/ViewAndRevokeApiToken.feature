@@ -25,7 +25,7 @@ Feature: View and revoke api token
     And I go to the "account_home" page
     And I press "show_token_link" which opens "token_modal"
     And I press "revoke_api_token_btn"
-    And I wait for any ajax calls to finish
+    And I wait for a page refresh
     Then I should be on the "account_home" page
     And I should not see "API Token"
 
