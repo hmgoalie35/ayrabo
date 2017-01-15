@@ -201,6 +201,17 @@ def step_impl(context):
     WebDriverWait(context.driver, 30).until(lambda driver: driver.execute_script("return jQuery.active === 0"))
 
 
+@step('I wait for a page refresh')
+def step_impl(context):
+    old_page = context.driver.find_element_by_tag_name('body')
+
+    def check_for_refresh(driver):
+        new_page = driver.find_element_by_tag_name('body')
+        return new_page.id != old_page.id
+
+    WebDriverWait(context.driver, 15).until(check_for_refresh)
+
+
 @step('I press "(?P<prefix>[^"]*)" with kwargs "(?P<kwargs>[^"]*)"')
 def step_impl(context, prefix, kwargs):
     element_selector = prefix + str(context.url_kwargs[kwargs])
