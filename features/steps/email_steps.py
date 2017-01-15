@@ -29,13 +29,10 @@ def step_impl(context, username_or_email, subject):
 
 @step('"(?P<username_or_email>[^"]*)" should have (?P<num_emails>no|\d+) emails?')
 def step_impl(context, username_or_email, num_emails):
-    count = 0
-    for email in mail.outbox:
-        if username_or_email in email.to:
-            count += 1
     if num_emails == "no":
         num_emails = 0
-    context.test.assertEqual(int(num_emails), count)
+    emails = list(filter(lambda e: username_or_email in e.to, mail.outbox))
+    context.test.assertEqual(int(num_emails), len(emails))
 
 
 @step('I follow an invalid password reset link')

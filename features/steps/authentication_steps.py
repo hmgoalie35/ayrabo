@@ -3,7 +3,6 @@ import re
 from allauth.account.models import EmailAddress
 from behave import *
 from django.core import mail
-from django.db.models import Q
 from generic_steps import find_element
 
 from accounts.tests import UserFactory, EmailAddressFactory
@@ -12,7 +11,13 @@ from userprofiles.tests import UserProfileFactory
 
 
 def create_unconfirmed_account(user_data, create_userprofile):
-    # Need to add in userprofile kwarg to prevent the userfactory from creating a userprofile
+    """
+    Creates an unconfirmed user account with the specified `user_data`. Also optionally creates a userprofile.
+
+    :param user_data: Dictionary of key value pairs for username, email, etc.
+    :param create_userprofile: Whether to create a userprofile or not.
+    """
+    # userprofile kwarg prevents the userfactory from creating a userprofile
     user_data['userprofile'] = None
     user = UserFactory(**user_data)
     email = EmailAddressFactory(user=user, email=user_data['email'], verified=False, primary=False)
@@ -23,7 +28,11 @@ def create_unconfirmed_account(user_data, create_userprofile):
 
 
 def confirm_account(context, username_or_email, method='manual'):
-    # When method is email, check the mail box and follow the link, otherwise programatically confirm the email address.
+    """
+    Confirms an account via an email link, or programmatically.
+
+    :method: `manual` or `email_link` -- Self explanatory
+    """
     if method == 'email_link':
         email_body = mail.outbox[0].body
 
@@ -32,8 +41,7 @@ def confirm_account(context, username_or_email, method='manual'):
         confirm_btn = find_element(context, 'confirm_email_btn')
         confirm_btn.click()
     else:
-        email_address_obj = EmailAddress.objects.get(
-                Q(user__email=username_or_email) | Q(user__username=username_or_email))
+        email_address_obj = EmailAddress.objects.get(user=get_user(username_or_email))
         email_address_obj.verified = True
         email_address_obj.save()
 
@@ -50,18 +58,12 @@ def login(context, username_or_email, password, login_method=''):
         password_field = 'id_password_navbar'
         login_btn = 'login_navbar'
 
+    step1 = 'when I fill in "{}" with "{}"'.format(username_email_field, username_or_email)
+    step2 = 'when I fill in "{}" with "{}"'.format(password_field, password)
+    step3 = 'and I press "{}"'.format(login_btn)
+    steps = '{}\n{}\n{}'.format(step1, step2, step3)
+
     context.driver.get(context.get_url(login_path))
-
-    fill_in_username_email_step = 'when I fill in "{username_email_field}" with "{username_or_email}"'.format(
-            username_email_field=username_email_field, username_or_email=username_or_email)
-    fill_in_password_step = 'when I fill in "{password_field}" with "{password}"'.format(
-            password_field=password_field,
-            password=password)
-    press_login_step = 'and I press "{login_btn}"'.format(login_btn=login_btn)
-
-    steps = '''{step_1}\n{step_2}\n{step_3}'''.format(step_1=fill_in_username_email_step,
-                                                      step_2=fill_in_password_step,
-                                                      step_3=press_login_step)
     context.execute_steps(steps)
 
 
@@ -89,7 +91,7 @@ Account management
 @step("The following (?P<account_type>confirmed|unconfirmed) user accounts? exists?")
 def step_impl(context, account_type):
     for row in context.table:
-        user_data = dict(row.as_dict())
+        user_data = row.as_dict()
         username_or_email = user_data['email']
         create_userprofile = user_data.get('create_userprofile', 'true') in ['True', 'true']
         user_data.pop('create_userprofile') if 'create_userprofile' in user_data.keys() else None
@@ -113,7 +115,7 @@ def step_impl(context):
 def step_impl(context, username_or_email):
     user = get_user(username_or_email)
     for row in context.table:
-        userprofile_data = dict(row.as_dict())
+        userprofile_data = row.as_dict()
         UserProfileFactory.create(user=user, **userprofile_data)
 
 
@@ -130,7 +132,7 @@ def step_impl(context):
 
 
 @step(
-        'I login with "(?P<username_or_email>[^"]*)" and "(?P<password>[^"]*)"\s?(?P<optional>via "(?P<login_method>[^"]*)")?') # noqa
+        'I login with "(?P<username_or_email>[^"]*)" and "(?P<password>[^"]*)"\s?(?P<optional>via "(?P<login_method>[^"]*)")?')  # noqa
 def step_impl(context, username_or_email, password, optional, login_method):
     login(context, username_or_email, password, login_method)
 
@@ -153,20 +155,22 @@ def step_impl(context):
     logout(context)
 
 
-# Permission handling
+"""
+
+Permission handling
+
+"""
+
 
 @step('"(?P<username_or_email>[^"]*)" has the following permissions? "(?P<permissions>[^"]*)"')
 def step_impl(context, username_or_email, permissions):
     valid_permissions = ['is_staff', 'is_superuser']
     permissions = permissions.split(' ')
+    user = get_user(username_or_email)
     for permission in permissions:
-        user = get_user(username_or_email)
-        if permission == 'is_staff':
-            user.is_staff = True
-        elif permission == 'is_superuser':
-            user.is_superuser = True
+        if permission in valid_permissions:
+            setattr(user, permission, True)
         else:
             raise Exception(
-                    '{permission} is not a permitted permission. Choose from {permissions}'.format(
-                            permission=permission, permissions=valid_permissions))
+                    '{} is not a valid permission. Choose from {}'.format(permission, valid_permissions))
         user.save()

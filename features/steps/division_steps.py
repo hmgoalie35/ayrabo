@@ -13,3 +13,11 @@ def step_impl(context, division_name):
 def step_impl(context, division_name, league_name):
     league = LeagueFactory(full_name=league_name)
     DivisionFactory(name=division_name, league=league)
+
+
+@step('The following division objects? exists?')
+def step_impl(context):
+    for row in context.table:
+        data = row.as_dict()
+
+        DivisionFactory(**data)

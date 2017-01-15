@@ -28,9 +28,7 @@ def find_element(context, element_to_find):
         try:
             element = context.driver.find_element(method, element_to_find)
             return element
-        except NoSuchElementException:
-            pass
-        except WebDriverException:
+        except (NoSuchElementException, WebDriverException):
             pass
     raise NoSuchElementException('{element} does not exist on the page'.format(element=element_to_find))
 
@@ -39,9 +37,10 @@ def string_to_kwargs_dict(string):
     """
     Given a string of the form "a=b, c=d" returns a dictionary of key-value pairs. i.e {'a': 'b', 'c': 'd'}
     The purpose is so the return dictionary can be used with ** to pass kwargs to functions.
+
     :param string: A string of the form "a=b, c=d"
     :return: A dictionary of key value pairs. The key is derived from the left side of = and the value is from the right
-    side
+      side
     """
     ret_val = {}
     for kwarg in string.split(', '):
@@ -53,7 +52,8 @@ def string_to_kwargs_dict(string):
 
 def navigate_to_page(context, url, url_kwargs=None):
     """
-    Navigates to url. Prepends the hostname and port. Url can be a url name, etc.
+    Navigates to a url. Prepends the hostname and port. Url can be a url name, etc.
+
     :param context: The context for the current step definition
     :param url_kwargs: Any kwargs needed to successfully reverse the url
     :param url: The url to navigate to
@@ -63,9 +63,10 @@ def navigate_to_page(context, url, url_kwargs=None):
     context.driver.get(context.get_url(url, **url_kwargs))
 
 
-def get_model_object(model_class, model_kwargs):
+def get_first_obj_for_model(model_class, model_kwargs):
     """
     Given a model class name and any kwargs to filter by, return the first object in the resulting queryset
+
     :param model_class: The model to retrieve
     :param model_kwargs: Any kwargs the could be passed to the filter() function for the given model
     :return: An object of type model_class
@@ -106,19 +107,19 @@ def step_impl(context, url):
 
 @step('I am on the absolute url page for "(?P<model_class>.*)" and "(?P<kwarg_data>.*)"')
 def step_impl(context, model_class, kwarg_data):
-    obj = get_model_object(model_class, kwarg_data)
+    obj = get_first_obj_for_model(model_class, kwarg_data)
     navigate_to_page(context, obj.get_absolute_url())
 
 
 @step('I go to the absolute url page for "(?P<model_class>.*)" and "(?P<kwarg_data>.*)"')
 def step_impl(context, model_class, kwarg_data):
-    obj = get_model_object(model_class, kwarg_data)
+    obj = get_first_obj_for_model(model_class, kwarg_data)
     navigate_to_page(context, obj.get_absolute_url())
 
 
 @step('I should be on the absolute url page for "(?P<model_class>.*)" and "(?P<kwarg_data>.*)"')
 def step_impl(context, model_class, kwarg_data):
-    obj = get_model_object(model_class, kwarg_data)
+    obj = get_first_obj_for_model(model_class, kwarg_data)
     url_to_check = context.get_url(obj.get_absolute_url())
     context.test.assertEqual(url_to_check, context.driver.current_url)
 
@@ -127,7 +128,7 @@ def step_impl(context, model_class, kwarg_data):
         'I am on the "(?P<model_class>[^"]*)" "(?P<model_kwargs>[^"]*)" "(?P<url_or_url_name>[^"]*)" page with url kwargs "(?P<url_kwargs>[^"]*)"')  # noqa
 def step_impl(context, model_class, model_kwargs, url_or_url_name, url_kwargs):
     url_kwargs_dict = string_to_kwargs_dict(url_kwargs)
-    obj = get_model_object(model_class, model_kwargs)
+    obj = get_first_obj_for_model(model_class, model_kwargs)
     for key, val in url_kwargs_dict.items():
         try:
             url_kwargs_dict[key] = getattr(obj, val)
@@ -141,7 +142,7 @@ def step_impl(context, model_class, model_kwargs, url_or_url_name, url_kwargs):
         'I go to the "(?P<model_class>[^"]*)" "(?P<model_kwargs>[^"]*)" "(?P<url_or_url_name>[^"]*)" page with url kwargs "(?P<url_kwargs>[^"]*)"')  # noqa
 def step_impl(context, model_class, model_kwargs, url_or_url_name, url_kwargs):
     url_kwargs_dict = string_to_kwargs_dict(url_kwargs)
-    obj = get_model_object(model_class, model_kwargs)
+    obj = get_first_obj_for_model(model_class, model_kwargs)
     for key, val in url_kwargs_dict.items():
         try:
             url_kwargs_dict[key] = getattr(obj, val)
@@ -155,7 +156,7 @@ def step_impl(context, model_class, model_kwargs, url_or_url_name, url_kwargs):
         'I should be on the "(?P<model_class>[^"]*)" "(?P<model_kwargs>[^"]*)" "(?P<url_or_url_name>[^"]*)" page with url kwargs "(?P<url_kwargs>[^"]*)"')  # noqa
 def step_impl(context, model_class, model_kwargs, url_or_url_name, url_kwargs):
     url_kwargs_dict = string_to_kwargs_dict(url_kwargs)
-    obj = get_model_object(model_class, model_kwargs)
+    obj = get_first_obj_for_model(model_class, model_kwargs)
     for key, val in url_kwargs_dict.items():
         try:
             url_kwargs_dict[key] = getattr(obj, val)

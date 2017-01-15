@@ -1,6 +1,6 @@
-from django.urls import reverse
 from django.shortcuts import redirect
-from django.utils.deprecation import  MiddlewareMixin
+from django.urls import reverse
+from django.utils.deprecation import MiddlewareMixin
 
 from sports.models import SportRegistration
 from userprofiles.models import UserProfile

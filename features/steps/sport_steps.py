@@ -11,3 +11,11 @@ def step_impl(context, sport_name):
 @step('The following sport exists "(?P<sport_name>.*)"')
 def step_impl(context, sport_name):
     SportFactory(name=sport_name)
+
+
+@step('The following sport objects? exists?')
+def step_impl(context):
+    for row in context.table:
+        data = row.as_dict()
+
+        SportFactory(**data)

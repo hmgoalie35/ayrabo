@@ -7,8 +7,10 @@ Feature: Finish sport registration, filling in any coach/manager/player/referee 
     Given The following confirmed user account exists
       | first_name | last_name | email            | password       |
       | John       | Doe       | user@example.com | myweakpassword |
-    And The following team exists "Green Machine IceCats" in division "Midget Minor AA" in league "Long Island Amateur Hockey League" in sport "Ice Hockey"
-    And The following team exists "Knicks" in division "Atlantic Division" in league "National Basketball Association" in sport "Basketball"
+    And The following team objects exist
+      | name                  | division          | league                            | sport      |
+      | Green Machine IceCats | Midget Minor AA   | Long Island Amateur Hockey League | Ice Hockey |
+      | Knicks                | Atlantic Division | National Basketball Association   | Basketball |
     And I login with "user@example.com" and "myweakpassword"
 
   Scenario: Redirect when trying to navigate to profile create page when sport registration not complete

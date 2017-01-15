@@ -7,7 +7,9 @@ Feature: Update sport registration
     Given The following confirmed user account exists
       | first_name | last_name | email            | password       |
       | John       | Doe       | user@example.com | myweakpassword |
-    And The following team exists "Green Machine IceCats" in division "Midget Minor AA" in league "Long Island Amateur Hockey League" in sport "Ice Hockey"
+    And The following team object exists
+      | name                  | division        | league                            | sport      |
+      | Green Machine IceCats | Midget Minor AA | Long Island Amateur Hockey League | Ice Hockey |
     And The following sport registrations exist
       | username_or_email | sport      | roles                           | complete |
       | user@example.com  | Ice Hockey | Player, Coach, Manager, Referee | true     |
