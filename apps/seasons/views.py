@@ -25,13 +25,15 @@ SPORT_MODEL_MAPPINGS = {
     'Ice Hockey': HockeySeasonRoster
 }
 
-SPORT_NOT_CONFIGURED_MSG = "{sport} hasn't been configured correctly in our system. If you believe this is an error please contact us."
+SPORT_NOT_CONFIGURED_MSG = "{sport} hasn't been configured correctly in our system. " \
+                           "If you believe this is an error please contact us."
 
 
 def email_admins_sport_not_configured(sport_name, view_cls):
     subject = '{sport_name} incorrectly configured'.format(sport_name=sport_name)
     mail.mail_admins(subject,
-                     '{sport} incorrectly configured on the {page} ({cls}) page. You will likely need to add a mapping to the appropriate dictionary.'.format(
+                     '{sport} incorrectly configured on the {page} ({cls}) page. '
+                     'You will likely need to add a mapping to the appropriate dictionary.'.format(
                              sport=sport_name, page=view_cls.request.path, cls=view_cls.__class__.__name__))
 
 

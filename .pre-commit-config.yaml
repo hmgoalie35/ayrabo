@@ -1,6 +1,7 @@
 -   repo: https://github.com/pre-commit/pre-commit-hooks.git
-    sha: 4ef03c4223ad322c7adaa6c6c0efb26b57df3b71
+    sha: 5da199bb8d60f764c0f77a20b0a1dc3a7640bcdd
     hooks:
     -   id: check-merge-conflict
     -   id: debug-statements
     -   id: requirements-txt-fixer
+    -   id: flake8

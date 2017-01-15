@@ -1,17 +1,19 @@
 from django.db.utils import IntegrityError
-from django.test import TestCase
 from django.utils.text import slugify
 
 from divisions.models import Division
-from escoresheet.utils.testing_utils import is_queryset_in_alphabetical_order
+from escoresheet.utils import BaseTestCase
 from leagues.tests import LeagueFactory
 from .factories.DivisionFactory import DivisionFactory
 
 
-class DivisionModelTests(TestCase):
+class DivisionModelTests(BaseTestCase):
     def test_default_ordering(self):
-        DivisionFactory.create_batch(5)
-        self.assertTrue(is_queryset_in_alphabetical_order(Division.objects.all(), 'name'))
+        mm = DivisionFactory(name='Midget Minor')
+        mites = DivisionFactory(name='Mites')
+        peewee = DivisionFactory(name='Pee Wee')
+        expected = [mm, mites, peewee]
+        self.assertListEqual(list(Division.objects.all()), expected)
 
     def test_to_string(self):
         metro_division = DivisionFactory(name='Metropolitan Division')

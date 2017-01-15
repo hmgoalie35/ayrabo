@@ -1,10 +1,9 @@
 from django.core import mail
 from django.urls import reverse
-from django.test import TestCase
 
 from accounts.tests import UserFactory
 from divisions.tests import DivisionFactory
-from escoresheet.utils.testing_utils import get_messages
+from escoresheet.utils import BaseTestCase
 from leagues.tests import LeagueFactory
 from managers.tests import ManagerFactory
 from players.tests import HockeyPlayerFactory
@@ -14,7 +13,7 @@ from sports.tests import SportFactory, SportRegistrationFactory
 from teams.tests import TeamFactory
 
 
-class CreateSeasonRosterViewTests(TestCase):
+class CreateSeasonRosterViewTests(BaseTestCase):
     @classmethod
     def setUpClass(cls):
         super(CreateSeasonRosterViewTests, cls).setUpClass()
@@ -53,7 +52,7 @@ class CreateSeasonRosterViewTests(TestCase):
         # self.baseball_sr.set_roles(['Referee'])
         response = self.client.get(self.url, follow=True)
         self.assertRedirects(response, reverse('home'))
-        self.assertIn('You do not have permission to perform this action.', get_messages(response))
+        self.assertHasMessage(response, 'You do not have permission to perform this action.')
 
     def test_get_invalid_team_pk(self):
         response = self.client.get(reverse('team:create_season_roster', kwargs={'team_pk': 1000}))
@@ -69,8 +68,8 @@ class CreateSeasonRosterViewTests(TestCase):
         ManagerFactory(team=team, user=self.user)
         response = self.client.get(reverse('team:create_season_roster', kwargs={'team_pk': team.pk}), follow=True)
         self.assertTemplateUsed(response, 'message.html')
-        msg = "{sport} hasn't been configured correctly in our system. If you believe this is an error please contact us.".format(
-                sport=team.division.league.sport.name)
+        msg = "{sport} hasn't been configured correctly in our system. " \
+              "If you believe this is an error please contact us.".format(sport=team.division.league.sport.name)
         self.assertEqual(response.context['message'], msg)
         self.assertEqual(len(mail.outbox), 1)
 
@@ -115,7 +114,7 @@ class CreateSeasonRosterViewTests(TestCase):
         # self.baseball_sr.set_roles(['Referee'])
         response = self.client.post(self.url, data={}, follow=True)
         self.assertRedirects(response, reverse('home'))
-        self.assertIn('You do not have permission to perform this action.', get_messages(response))
+        self.assertHasMessage(response, 'You do not have permission to perform this action.')
 
     def test_post_sport_not_configured(self):
         team = TeamFactory()
@@ -123,8 +122,8 @@ class CreateSeasonRosterViewTests(TestCase):
         response = self.client.post(reverse('team:create_season_roster', kwargs={'team_pk': team.pk}), data={},
                                     follow=True)
         self.assertTemplateUsed(response, 'message.html')
-        msg = "{sport} hasn't been configured correctly in our system. If you believe this is an error please contact us.".format(
-                sport=team.division.league.sport.name)
+        msg = "{sport} hasn't been configured correctly in our system. " \
+              "If you believe this is an error please contact us.".format(sport=team.division.league.sport.name)
         self.assertEqual(response.context['message'], msg)
         self.assertEqual(len(mail.outbox), 1)
 
@@ -147,7 +146,7 @@ class CreateSeasonRosterViewTests(TestCase):
                 reverse('team:create_season_roster', kwargs={'team_pk': self.icecats.pk}),
                 data=post_data,
                 follow=True)
-        self.assertIn('Season roster created for {team}'.format(team=self.icecats), get_messages(response))
+        self.assertHasMessage(response, 'Season roster created for {team}'.format(team=self.icecats))
         self.assertRedirects(response, reverse('home'))
         self.assertEqual(HockeySeasonRoster.objects.count(), 1)
 
@@ -158,7 +157,7 @@ class CreateSeasonRosterViewTests(TestCase):
         self.assertFormError(response, 'form', 'players', 'This field is required.')
 
 
-class ListSeasonRosterViewTests(TestCase):
+class ListSeasonRosterViewTests(BaseTestCase):
     @classmethod
     def setUpClass(cls):
         super(ListSeasonRosterViewTests, cls).setUpClass()
@@ -196,15 +195,15 @@ class ListSeasonRosterViewTests(TestCase):
         self.hockey_sr.set_roles(['Player', 'Coach'])
         response = self.client.get(self.url, follow=True)
         self.assertRedirects(response, reverse('home'))
-        self.assertIn('You do not have permission to perform this action.', get_messages(response))
+        self.assertHasMessage(response, 'You do not have permission to perform this action.')
 
     def test_get_sport_not_configured(self):
         team = TeamFactory()
         ManagerFactory(team=team, user=self.user)
         response = self.client.get(reverse('team:list_season_roster', kwargs={'team_pk': team.pk}), follow=True)
         self.assertTemplateUsed(response, 'message.html')
-        msg = "{sport} hasn't been configured correctly in our system. If you believe this is an error please contact us.".format(
-                sport=team.division.league.sport.name)
+        msg = "{sport} hasn't been configured correctly in our system. " \
+              "If you believe this is an error please contact us.".format(sport=team.division.league.sport.name)
         self.assertEqual(response.context['message'], msg)
         self.assertEqual(len(mail.outbox), 1)
 
@@ -226,7 +225,7 @@ class ListSeasonRosterViewTests(TestCase):
         self.assertEqual(set(context['season_rosters']), set(season_rosters))
 
 
-class UpdateSeasonRosterViewTests(TestCase):
+class UpdateSeasonRosterViewTests(BaseTestCase):
     @classmethod
     def setUpClass(cls):
         super(UpdateSeasonRosterViewTests, cls).setUpClass()
@@ -267,16 +266,17 @@ class UpdateSeasonRosterViewTests(TestCase):
         self.hockey_sr.set_roles(['Player', 'Coach'])
         response = self.client.get(self.url, follow=True)
         self.assertRedirects(response, reverse('home'))
-        self.assertIn('You do not have permission to perform this action.', get_messages(response))
+        self.assertHasMessage(response, 'You do not have permission to perform this action.')
 
     def test_get_sport_not_configured(self):
         team = TeamFactory()
         ManagerFactory(team=team, user=self.user)
         response = self.client.get(
-            reverse('team:update_season_roster', kwargs={'team_pk': team.pk, 'pk': self.season_roster.pk}), follow=True)
+                reverse('team:update_season_roster', kwargs={'team_pk': team.pk, 'pk': self.season_roster.pk}),
+                follow=True)
         self.assertTemplateUsed(response, 'message.html')
-        msg = "{sport} hasn't been configured correctly in our system. If you believe this is an error please contact us.".format(
-                sport=team.division.league.sport.name)
+        msg = "{sport} hasn't been configured correctly in our system. " \
+              "If you believe this is an error please contact us.".format(sport=team.division.league.sport.name)
         self.assertEqual(response.context['message'], msg)
         self.assertEqual(len(mail.outbox), 1)
 
@@ -319,11 +319,11 @@ class UpdateSeasonRosterViewTests(TestCase):
         team = TeamFactory()
         ManagerFactory(team=team, user=self.user)
         response = self.client.post(
-            reverse('team:update_season_roster', kwargs={'team_pk': team.pk, 'pk': self.season_roster.pk}), data={},
-            follow=True)
+                reverse('team:update_season_roster', kwargs={'team_pk': team.pk, 'pk': self.season_roster.pk}), data={},
+                follow=True)
         self.assertTemplateUsed(response, 'message.html')
-        msg = "{sport} hasn't been configured correctly in our system. If you believe this is an error please contact us.".format(
-                sport=team.division.league.sport.name)
+        msg = "{sport} hasn't been configured correctly in our system. " \
+              "If you believe this is an error please contact us.".format(sport=team.division.league.sport.name)
         self.assertEqual(response.context['message'], msg)
         self.assertEqual(len(mail.outbox), 1)
 
@@ -334,8 +334,7 @@ class UpdateSeasonRosterViewTests(TestCase):
         }
         response = self.client.post(self.url, data=post_data, follow=True)
         self.assertTrue(HockeySeasonRoster.objects.first().default)
-        self.assertIn('Season roster for {team} successfully updated.'.format(team=self.icecats),
-                      get_messages(response))
+        self.assertHasMessage(response, 'Season roster for {team} successfully updated.'.format(team=self.icecats))
         self.assertRedirects(response, reverse('team:list_season_roster', kwargs={'team_pk': self.icecats.pk}))
 
     def test_post_valid_unchanged_form(self):
@@ -344,8 +343,7 @@ class UpdateSeasonRosterViewTests(TestCase):
             'default': False
         }
         response = self.client.post(self.url, data=post_data, follow=True)
-        self.assertNotIn('Season roster for {team} successfully updated.'.format(team=self.icecats),
-                         get_messages(response))
+        self.assertNoMessage(response, 'Season roster for {team} successfully updated.'.format(team=self.icecats))
         self.assertRedirects(response, reverse('team:list_season_roster', kwargs={'team_pk': self.icecats.pk}))
 
     def test_post_invalid_form(self):

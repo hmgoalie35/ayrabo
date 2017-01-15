@@ -1,14 +1,13 @@
 import factory
 from django.contrib.auth import get_user_model
-from factory import PostGenerationMethodCall
-from factory.django import DjangoModelFactory
+from factory import PostGenerationMethodCall, django
 from faker import Faker
 
 fake = Faker()
 User = get_user_model()
 
 
-class UserFactory(DjangoModelFactory):
+class UserFactory(django.DjangoModelFactory):
     class Meta:
         model = User
 

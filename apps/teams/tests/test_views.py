@@ -2,15 +2,14 @@ import os
 
 from django.conf import settings
 from django.urls import reverse
-from django.test import TransactionTestCase
 
 from accounts.tests import UserFactory
 from divisions.tests import DivisionFactory
-from escoresheet.utils.testing_utils import get_messages
+from escoresheet.utils import BaseTestCase
 from sports.tests import SportFactory, SportRegistrationFactory
 
 
-class TeamViewTests(TransactionTestCase):
+class TeamViewTests(BaseTestCase):
     def setUp(self):
         self.email = 'user@example.com'
         self.password = 'myweakpassword'
@@ -50,7 +49,7 @@ class TeamViewTests(TransactionTestCase):
     def test_post_valid_form(self):
         with open(os.path.join(self.test_file_path, 'valid_team_csv_formatting.csv')) as the_file:
             response = self.client.post(reverse('bulk_upload_teams'), {'file': the_file}, follow=True)
-            self.assertIn('1 out of 1 teams successfully created', get_messages(response))
+            self.assertHasMessage(response, '1 out of 1 teams successfully created')
 
     def test_post_no_csv_headers(self):
         with open(os.path.join(self.test_file_path, 'no_headers.csv')) as the_file:
@@ -76,7 +75,7 @@ class TeamViewTests(TransactionTestCase):
     def test_post_duplicate_teams(self):
         with open(os.path.join(self.test_file_path, 'duplicate_teams.csv')) as the_file:
             response = self.client.post(reverse('bulk_upload_teams'), {'file': the_file}, follow=True)
-            self.assertIn('2 out of 2 teams successfully created', get_messages(response))
+            self.assertHasMessage(response, '2 out of 2 teams successfully created')
 
     def test_post_non_csv_file(self):
         with open(os.path.join(self.test_file_path, 'not_a_csv_file.txt')) as the_file:

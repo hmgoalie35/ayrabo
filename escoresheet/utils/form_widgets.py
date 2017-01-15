@@ -1,3 +1,6 @@
+"""
+A module containing custom form widgets
+"""
 from django.forms import extras
 
 

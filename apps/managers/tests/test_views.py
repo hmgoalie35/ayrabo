@@ -1,9 +1,8 @@
 from django.urls import reverse
-from django.test import TestCase
 
 from accounts.tests import UserFactory
 from divisions.tests import DivisionFactory
-from escoresheet.utils import get_messages
+from escoresheet.utils import BaseTestCase
 from leagues.tests import LeagueFactory
 from managers.tests import ManagerFactory
 from seasons.tests import SeasonFactory
@@ -11,7 +10,7 @@ from sports.tests import SportFactory, SportRegistrationFactory
 from teams.tests import TeamFactory
 
 
-class ManagerHomeViewTests(TestCase):
+class ManagerHomeViewTests(BaseTestCase):
     @classmethod
     def setUpClass(cls):
         super(ManagerHomeViewTests, cls).setUpClass()
@@ -58,7 +57,7 @@ class ManagerHomeViewTests(TestCase):
 
         response = self.client.get(self.url, follow=True)
         self.assertRedirects(response, reverse('home'))
-        self.assertIn('You do not have permission to perform this action.', get_messages(response))
+        self.assertHasMessage(response, 'You do not have permission to perform this action.')
 
     def test_context_dict_populated(self):
         response = self.client.get(self.url)

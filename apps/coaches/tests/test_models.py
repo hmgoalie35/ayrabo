@@ -1,14 +1,14 @@
 from django.core.validators import ValidationError
 from django.db.utils import IntegrityError
-from django.test import TestCase
 
 from accounts.tests import UserFactory
+from escoresheet.utils import BaseTestCase
 from sports.tests import SportRegistrationFactory
 from teams.tests import TeamFactory
 from .factories.CoachFactory import CoachFactory
 
 
-class CoachModelTests(TestCase):
+class CoachModelTests(BaseTestCase):
     def test_to_string(self):
         coach = CoachFactory.create()
         self.assertEqual(str(coach), 'Coach {last_name}'.format(last_name=coach.user.last_name))
@@ -27,6 +27,7 @@ class CoachModelTests(TestCase):
         sr.set_roles(['Player', 'Referee'])
         coach = CoachFactory.create(user=user, team=team)
         with self.assertRaisesMessage(ValidationError,
-                                      '{user} - {sport} might not have a sportregistration object or the sportregistration object does not have the coach role assigned'.format(
+                                      '{user} - {sport} might not have a sportregistration object or the '
+                                      'sportregistration object does not have the coach role assigned'.format(
                                               user=user.email, sport=team.division.league.sport.name)):
             coach.clean()

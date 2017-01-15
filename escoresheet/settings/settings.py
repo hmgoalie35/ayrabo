@@ -40,7 +40,8 @@ CSRF_COOKIE_SECURE = True
 SECURE_SSL_REDIRECT = True
 SESSION_COOKIE_SECURE = True
 
-# TODO See warning on https://docs.djangoproject.com/en/1.9/ref/settings/#secure-proxy-ssl-header. Need to have proxy strip X-Forwarded-Proto header and then set it myself so nobody can spoof the header
+# TODO See warning on https://docs.djangoproject.com/en/1.9/ref/settings/#secure-proxy-ssl-header.
+# TODO Need to have proxy strip X-Forwarded-Proto header and then set it myself so nobody can spoof the header
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 # TODO regenerate new key, export as env var on servers
@@ -402,11 +403,11 @@ REST_FRAMEWORK = {
 
 try:
     # Running in dev mode
-    from .local_settings import *
+    from .local_settings import *  # noqa
 except ImportError as e:
     # Running in production mode
     pass
 finally:
     # Running in testing mode
     if len(sys.argv) > 1 and ('test' in sys.argv or 'behave' in sys.argv):
-        from .testing_settings import *
+        from .testing_settings import *  # noqa

@@ -1,8 +1,8 @@
 from behave import *
 from django.contrib.auth.models import User
-from django.db.models import Q
 
 from accounts.tests import UserFactory
+from escoresheet.utils import get_user
 from players.tests import HockeyPlayerFactory
 from sports.models import Sport
 from sports.tests import SportFactory
@@ -16,10 +16,9 @@ def step_impl(context):
         data = row.as_dict()
 
         username_or_email = data.get('username_or_email')
-        user = User.objects.filter(Q(email=username_or_email) | Q(username=username_or_email))
-        if user.exists():
-            user = user.first()
-        else:
+        try:
+            user = get_user(username_or_email)
+        except User.DoesNotExist:
             user = UserFactory(username=username_or_email, email=username_or_email)
 
         sport = data.get('sport', None)

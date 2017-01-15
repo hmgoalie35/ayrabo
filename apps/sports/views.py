@@ -27,7 +27,8 @@ SPORT_PLAYER_FORM_MAPPINGS = {
     'Basketball': player_forms.BasketballPlayerForm
 }
 
-SPORT_NOT_CONFIGURED_MSG = "{sport} hasn't been configured correctly in our system. If you believe this is an error please contact us."
+SPORT_NOT_CONFIGURED_MSG = "{sport} hasn't been configured correctly in our system. " \
+                           "If you believe this is an error please contact us."
 
 
 class FinishSportRegistrationView(LoginRequiredMixin, ContextMixin, generic.View):
@@ -172,16 +173,16 @@ class SportRegistrationInlineFormSet(BaseInlineFormSet):
             sport = form.cleaned_data.get('sport')
             if sport is not None:
                 if sport in sports_already_seen:
-                    form.add_error('sport',
-                                   'Only one form can have {sport} selected. Choose another sport, or the "---------" value.'.format(
-                                           sport=sport.name))
+                    form.add_error('sport', 'Only one form can have {sport} selected. '
+                                            'Choose another sport, or the "---------" value.'.format(sport=sport.name))
                 else:
                     sports_already_seen.append(sport)
 
 
 class CreateSportRegistrationView(LoginRequiredMixin, ContextMixin, generic.View):
     template_name = 'sports/sport_registration_create.html'
-    already_registered_msg = 'You have already registered for all available sports. Check back later to see if any new sports have been added.'
+    already_registered_msg = 'You have already registered for all available sports. ' \
+                             'Check back later to see if any new sports have been added.'
     success_msg = 'You have successfully registered for {sports}.'
 
     def get_context_data(self, **kwargs):
@@ -194,9 +195,10 @@ class CreateSportRegistrationView(LoginRequiredMixin, ContextMixin, generic.View
                                                             extra=0,
                                                             min_num=1, max_num=context.get('remaining_sport_count'),
                                                             validate_min=True, validate_max=True, can_delete=False)
-        context['formset'] = sport_registration_form_set(self.request.POST or None,
-                                                         form_kwargs={
-                                                             'sports_already_registered_for': sports_already_registered_for})
+        context['formset'] = sport_registration_form_set(
+                self.request.POST or None,
+                form_kwargs={'sports_already_registered_for': sports_already_registered_for}
+        )
         return context
 
     def get(self, request, *args, **kwargs):

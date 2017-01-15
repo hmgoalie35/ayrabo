@@ -1,13 +1,13 @@
 from django.core.exceptions import ValidationError
 from django.db.utils import IntegrityError
-from django.test import TestCase
 
 from accounts.tests import UserFactory
+from escoresheet.utils import BaseTestCase
 from sports.tests import SportRegistrationFactory
 from .factories.PlayerFactory import HockeyPlayerFactory, BaseballPlayerFactory, BasketballPlayerFactory
 
 
-class PlayerModelTests(TestCase):
+class PlayerModelTests(BaseTestCase):
     """
     The tests in this class are testing the shared functionality the abstract Player class provides to subclasses.
     Subclasses shouldn't need to test the fields, properties, etc of the Player class as all of that is handled by this
@@ -51,13 +51,13 @@ class PlayerModelTests(TestCase):
         sr = SportRegistrationFactory(user=user, sport=sport)
         sr.set_roles(['Referee'])
         player = HockeyPlayerFactory(user=user, sport=sport, team=self.player.team)
-        with self.assertRaisesMessage(ValidationError,
-                                      '{user} - {sport} might not have a sportregistration object or the sportregistration object does not have the player role assigned'.format(
-                                              user=user.email, sport=sport)):
+        with self.assertRaisesMessage(ValidationError, '{user} - {sport} might not have a sportregistration object or '
+                                                       'the sportregistration object does not have the '
+                                                       'player role assigned'.format(user=user.email, sport=sport)):
             player.clean()
 
 
-class HockeyPlayerModelTests(TestCase):
+class HockeyPlayerModelTests(BaseTestCase):
     def setUp(self):
         self.jersey_number = 35
         self.hockey_player = HockeyPlayerFactory(jersey_number=self.jersey_number)
@@ -79,13 +79,13 @@ class HockeyPlayerModelTests(TestCase):
         sr = SportRegistrationFactory(user=user, sport=sport)
         sr.set_roles(['Referee'])
         player = HockeyPlayerFactory(user=user, sport=sport, team=self.hockey_player.team)
-        with self.assertRaisesMessage(ValidationError,
-                                      '{user} - {sport} might not have a sportregistration object or the sportregistration object does not have the player role assigned'.format(
-                                              user=user.email, sport=sport)):
+        with self.assertRaisesMessage(ValidationError, '{user} - {sport} might not have a sportregistration object or '
+                                                       'the sportregistration object does not have the '
+                                                       'player role assigned'.format(user=user.email, sport=sport)):
             player.clean()
 
 
-class BaseballPlayerModelTests(TestCase):
+class BaseballPlayerModelTests(BaseTestCase):
     def setUp(self):
         self.jersey_number = 35
         self.baseball_player = BaseballPlayerFactory(jersey_number=self.jersey_number)
@@ -107,13 +107,13 @@ class BaseballPlayerModelTests(TestCase):
         sr = SportRegistrationFactory(user=user, sport=sport)
         sr.set_roles(['Referee'])
         player = BaseballPlayerFactory(user=user, sport=sport, team=self.baseball_player.team)
-        with self.assertRaisesMessage(ValidationError,
-                                      '{user} - {sport} might not have a sportregistration object or the sportregistration object does not have the player role assigned'.format(
-                                              user=user.email, sport=sport)):
+        with self.assertRaisesMessage(ValidationError, '{user} - {sport} might not have a sportregistration object or '
+                                                       'the sportregistration object does not have the '
+                                                       'player role assigned'.format(user=user.email, sport=sport)):
             player.clean()
 
 
-class BasketballPlayerModelTests(TestCase):
+class BasketballPlayerModelTests(BaseTestCase):
     def setUp(self):
         self.jersey_number = 35
         self.basketball_player = BasketballPlayerFactory(jersey_number=self.jersey_number)
@@ -136,7 +136,7 @@ class BasketballPlayerModelTests(TestCase):
         sr = SportRegistrationFactory(user=user, sport=sport)
         sr.set_roles(['Referee'])
         player = BasketballPlayerFactory(user=user, sport=sport, team=self.basketball_player.team)
-        with self.assertRaisesMessage(ValidationError,
-                                      '{user} - {sport} might not have a sportregistration object or the sportregistration object does not have the player role assigned'.format(
-                                              user=user.email, sport=sport)):
+        with self.assertRaisesMessage(ValidationError, '{user} - {sport} might not have a sportregistration object or '
+                                                       'the sportregistration object does not have the '
+                                                       'player role assigned'.format(user=user.email, sport=sport)):
             player.clean()

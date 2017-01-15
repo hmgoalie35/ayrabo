@@ -48,5 +48,5 @@ See the `setup_dev_env.sh` file for packages that will be installed, etc.
     * You can specify specific test files or test classes for an app i.e. `python manage.py test userprofiles.tests.test_models.UserProfileModelTests`
 
 # Running tests with coverage
-* `coverage run manage.py test && coverage html`
+* `coverage run manage.py test --parallel && coverage html`
 * `coverage run manage.py behave && coverage html`

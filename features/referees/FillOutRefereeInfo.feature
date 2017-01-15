@@ -7,7 +7,9 @@ Feature: Create referee in the system
     Given The following confirmed user account exists
       | first_name | last_name | email            | password       |
       | John       | Doe       | user@example.com | myweakpassword |
-    And The following league exists "Long Island Amateur Hockey League" in sport "Ice Hockey"
+    And The following league object exists
+      | full_name                         | sport      |
+      | Long Island Amateur Hockey League | Ice Hockey |
     And "user@example.com" is registered for "Ice Hockey" with role "Referee"
     And I login with "user@example.com" and "myweakpassword"
 

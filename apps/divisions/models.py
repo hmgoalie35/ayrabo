@@ -6,7 +6,9 @@ from leagues.models import League
 
 class Division(models.Model):
     """
-    Represents a division that belongs to a league. Teams belong to divisions. A league has many divisions and a division has many teams.
+    Represents a division that belongs to a league.
+    Teams belong to divisions.
+    A league has many divisions and a division has many teams.
     """
     name = models.CharField(max_length=255, verbose_name='Name')
     slug = models.SlugField(verbose_name='Slug')

@@ -3,6 +3,7 @@ A module that contains useful methods for testing
 """
 from django.contrib.auth.models import User
 from django.db.models import Q
+from django.test import TestCase
 
 from coaches.tests import CoachFactory
 from managers.tests import ManagerFactory
@@ -11,51 +12,45 @@ from referees.tests import RefereeFactory
 
 
 def get_user(username_or_email):
+    """
+    This function is used in *_step.py files, so can't move it to the BaseTestCase class
+    """
     return User.objects.get(Q(email=username_or_email) | Q(username=username_or_email))
 
 
-def get_messages(response):
-    messages = []
-    for msg in response.context['messages']:
-        messages.append(msg.message)
-    return messages
+class BaseTestCase(TestCase):
+    # Helper methods
+    def get_user(self, username_or_email):
+        return get_user(username_or_email)
 
+    def create_related_objects(self, **kwargs):
+        player_args = kwargs.pop('player_args', {})
+        coach_args = kwargs.pop('coach_args', {})
+        referee_args = kwargs.pop('referee_args', {})
+        manager_args = kwargs.pop('manager_args', {})
 
-def is_queryset_in_alphabetical_order(qs, attr_to_test, **kwargs):
-    fk = kwargs.get('fk', None)
-    qs_count = qs.count()
-    qs = list(qs)
-    if qs is None or qs_count == 0:
-        return True
-    if not hasattr(qs[0], attr_to_test):
-        raise Exception('Invalid attribute to test %s' % attr_to_test)
-    for i in range(qs_count):
-        if i + 1 < qs_count:
-            obj_one = getattr(qs[i], attr_to_test)
-            obj_two = getattr(qs[i + 1], attr_to_test)
-            if fk is not None:
-                if getattr(obj_one, fk) > getattr(obj_two, fk):
-                    return False
-            elif obj_one > obj_two:
-                return False
-    return True
+        player = coach = referee = manager = None
 
+        if player_args:
+            player = HockeyPlayerFactory(**player_args)
+        if coach_args:
+            coach = CoachFactory(**coach_args)
+        if referee_args:
+            referee = RefereeFactory(**referee_args)
+        if manager_args:
+            manager = ManagerFactory(**manager_args)
 
-def create_related_objects(**kwargs):
-    player_args = kwargs.pop('player_args', None)
-    coach_args = kwargs.pop('coach_args', None)
-    referee_args = kwargs.pop('referee_args', None)
-    manager_args = kwargs.pop('manager_args', None)
+        return player, coach, referee, manager
 
-    player = coach = referee = manager = None
+    # Custom assertions
+    def assertHasMessage(self, response, msg):
+        assert isinstance(msg, str)
+        messages = [msg.message for msg in response.context['messages']]
+        if msg not in messages:
+            self.fail(msg='{} not found in messages'.format(msg))
 
-    if player_args:
-        player = HockeyPlayerFactory(**player_args)
-    if coach_args:
-        coach = CoachFactory(**coach_args)
-    if referee_args:
-        referee = RefereeFactory(**referee_args)
-    if manager_args:
-        manager = ManagerFactory(**manager_args)
-
-    return player, coach, referee, manager
+    def assertNoMessage(self, response, msg):
+        assert isinstance(msg, str)
+        messages = [msg.message for msg in response.context['messages']]
+        if msg in messages:
+            self.fail(msg='{} not found in messages'.format(msg))

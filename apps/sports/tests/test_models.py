@@ -1,12 +1,11 @@
 from django.urls import reverse
 from django.db.utils import IntegrityError
-from django.test import TestCase
 from django.utils.text import slugify
 
 from accounts.tests import UserFactory
 from coaches.tests import CoachFactory
 from divisions.tests import DivisionFactory
-from escoresheet.utils.testing_utils import is_queryset_in_alphabetical_order
+from escoresheet.utils import BaseTestCase
 from leagues.tests import LeagueFactory
 from managers.tests import ManagerFactory
 from players.tests import HockeyPlayerFactory
@@ -18,9 +17,10 @@ from .factories.SportFactory import SportFactory
 from .factories.SportRegistrationFactory import SportRegistrationFactory
 
 
-class SportModelTests(TestCase):
-    # Slugs are auto generated from the name attribute, so the uniqueness of slugs makes sure names are also unique for case insensitive
-    # ice Hockey and Ice Hockey will pass the uniqueness of the name field, but won't pass uniqueness of slug field
+class SportModelTests(BaseTestCase):
+    # Slugs are auto generated from the name attribute, so the uniqueness of slugs makes sure names are also
+    # unique for case insensitive ice Hockey and Ice Hockey will pass the uniqueness of the name field,
+    # but won't pass uniqueness of slug field
     def test_unique_names_case_sensitive(self):
         SportFactory.create(name='Ice Hockey')
         with self.assertRaises(IntegrityError):
@@ -37,8 +37,11 @@ class SportModelTests(TestCase):
         self.assertEqual(ice_hockey.slug, slugify(ice_hockey.name))
 
     def test_default_ordering(self):
-        SportFactory.create_batch(5)
-        self.assertTrue(is_queryset_in_alphabetical_order(Sport.objects.all(), 'name'))
+        ice_hockey = SportFactory(name='Ice Hockey')
+        soccer = SportFactory(name='Soccer')
+        baseball = SportFactory(name='Baseball')
+        expected = [baseball, ice_hockey, soccer]
+        self.assertListEqual(list(Sport.objects.all()), expected)
 
     def test_to_string(self):
         sport = SportFactory.build(name='Ice Hockey')
@@ -49,14 +52,7 @@ class SportModelTests(TestCase):
         self.assertEqual(sport.name, 'Ice Hockey')
 
 
-class SportRegistrationModelTests(TestCase):
-    def test_default_ordering(self):
-        SportRegistrationFactory(sport__name='Ice Hockey')
-        SportRegistrationFactory(sport__name='Soccer')
-        SportRegistrationFactory(sport__name='Tennis')
-        self.assertTrue(is_queryset_in_alphabetical_order(SportRegistration.objects.all(), 'sport', fk='name'))
-        self.assertTrue(is_queryset_in_alphabetical_order(SportRegistration.objects.all(), 'user', fk='email'))
-
+class SportRegistrationModelTests(BaseTestCase):
     def test_to_string(self):
         sr = SportRegistrationFactory()
         self.assertEqual(str(sr), '{email} - {sport}'.format(email=sr.user.email, sport=sr.sport.name))

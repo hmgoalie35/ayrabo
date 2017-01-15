@@ -7,6 +7,11 @@ from sports.models import SportRegistration
 
 
 class UserHasRolesMixin(object):
+    """
+    A mixin that makes sure the current user has the appropriate roles.
+
+    i.e. That a user who is a coach actually has the coach role.
+    """
     roles_to_check = []
     user_has_no_role_msg = 'You do not have permission to perform this action.'
 
@@ -18,7 +23,6 @@ class UserHasRolesMixin(object):
                 messages.error(request, self.user_has_no_role_msg)
                 return redirect(reverse('home'))
         else:
-            raise ImproperlyConfigured(
-                    'The value of roles_to_check must be specified on the view class, or you have specified values not in {}'.format(
-                        SportRegistration.ROLES))
+            raise ImproperlyConfigured('The value of roles_to_check must be specified on the view class, '
+                                       'or you have specified values not in {}'.format(SportRegistration.ROLES))
         return super(UserHasRolesMixin, self).dispatch(request, *args, **kwargs)

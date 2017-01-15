@@ -1,0 +1,18 @@
+[flake8]
+count = True
+max-line-length = 120
+statistics = True
+exclude =
+    *.pyc,
+    node_modules/*,
+    static/*,
+    */migrations/*,
+    __init__.py,
+    */fixtures/*,
+    venv/*
+ignore =
+    E126,
+    F403,
+    F405,
+    F811,
+    E731

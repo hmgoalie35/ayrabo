@@ -1,14 +1,14 @@
 from unittest.mock import Mock
 
 from django.urls import reverse
-from django.test import TestCase
 
 from accounts.tests import UserFactory
+from escoresheet.utils import BaseTestCase
 from sports.tests import SportFactory, SportRegistrationFactory
 from ..middleware import AccountAndSportRegistrationCompleteMiddleware
 
 
-class AccountAndSportRegistrationCompleteMiddlewareTests(TestCase):
+class AccountAndSportRegistrationCompleteMiddlewareTests(BaseTestCase):
     def setUp(self):
         self.ice_hockey = SportFactory(name='Ice Hockey')
         self.baseball = SportFactory(name='Baseball')
@@ -107,7 +107,7 @@ class AccountAndSportRegistrationCompleteMiddlewareTests(TestCase):
         self.assertTemplateUsed(response, 'home/authenticated_home.html')
 
 
-class MiddlewareAddsRolesToSessionTests(TestCase):
+class MiddlewareAddsRolesToSessionTests(BaseTestCase):
     """
     This tests to make sure the middleware is adding the user roles to the session correctly
     """

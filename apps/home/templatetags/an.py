@@ -6,15 +6,15 @@ from django.utils.encoding import force_text
 
 CONSONANT_SOUND = re.compile(r'''one(![ir])''', re.IGNORECASE | re.VERBOSE)
 VOWEL_SOUND = re.compile(
-    r'''[aeio]|u([aeiou]|[^n][^aeiou]|ni[^dmnl]|nil[^l])|h(ier|onest|onou?r|ors\b|our(!i))|[fhlmnrsx]\b''',
-    re.IGNORECASE | re.VERBOSE)
+        r'''[aeio]|u([aeiou]|[^n][^aeiou]|ni[^dmnl]|nil[^l])|h(ier|onest|onou?r|ors\b|our(!i))|[fhlmnrsx]\b''',
+        re.IGNORECASE | re.VERBOSE)
 
 register = template.Library()
 
 
 @register.filter
 @stringfilter
-def an(text):
+def an(text):  # pragma: no cover
     """
     Guess "a" vs "an" based on the phonetic value of the text.
 

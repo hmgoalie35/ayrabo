@@ -7,8 +7,10 @@ Feature: Create season rosters
     Given The following confirmed user account exists
       | first_name | last_name | email            | password       |
       | John       | Doe       | user@example.com | myweakpassword |
-    And The following team exists "Green Machine IceCats" in division "Midget Minor AA" in league "Long Island Amateur Hockey League" in sport "Ice Hockey"
-    And The following team exists "New York Yankees" in division "American League East" in league "Major League Baseball" in sport "Baseball"
+    And The following team objects exist
+      | name                  | division             | league                            | sport      |
+      | Green Machine IceCats | Midget Minor AA      | Long Island Amateur Hockey League | Ice Hockey |
+      | New York Yankees      | American League East | Major League Baseball             | Baseball   |
     And I login with "user@example.com" and "myweakpassword"
 
   Scenario Outline: Can't create season roster w/o manager role

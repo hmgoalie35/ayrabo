@@ -3,7 +3,6 @@ from django.core.validators import MinValueValidator, MaxValueValidator, Validat
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
-from leagues.models import League
 from sports.models import Sport, SportRegistration
 from teams.models import Team
 
@@ -42,7 +41,8 @@ class AbstractPlayer(models.Model):
             qs = SportRegistration.objects.filter(user=self.user, sport=self.sport)
             if qs.exists() and not qs.first().has_role('Player'):
                 raise ValidationError(
-                        '{user} - {sport} might not have a sportregistration object or the sportregistration object does not have the player role assigned'.format(
+                        '{user} - {sport} might not have a sportregistration object or the '
+                        'sportregistration object does not have the player role assigned'.format(
                                 user=self.user.email, sport=self.sport.name))
 
     class Meta:

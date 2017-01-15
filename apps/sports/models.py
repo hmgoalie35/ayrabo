@@ -131,34 +131,29 @@ class SportRegistration(models.Model):
                 sport_name = self.sport.name
                 players = None
                 if 'Hockey' in sport_name:
-                    players = players_app.models.HockeyPlayer.objects.filter(user=user,
-                                                                             sport=self.sport).select_related('team',
-                                                                                                              'team__division')
+                    players = players_app.models.HockeyPlayer.objects.filter(
+                            user=user, sport=self.sport).select_related('team', 'team__division')
                 elif sport_name == 'Basketball':
-                    players = players_app.models.BasketballPlayer.objects.filter(user=user,
-                                                                                 sport=self.sport).select_related(
-                            'team', 'team__division')
+                    players = players_app.models.BasketballPlayer.objects.filter(
+                            user=user, sport=self.sport).select_related('team', 'team__division')
                 elif sport_name == 'Baseball':
-                    players = players_app.models.BaseballPlayer.objects.filter(user=user,
-                                                                               sport=self.sport).select_related('team',
-                                                                                                                'team__division')
+                    players = players_app.models.BaseballPlayer.objects.filter(
+                            user=user, sport=self.sport).select_related('team', 'team__division')
                 if players is not None:
                     obj_role_mappings['Player'] = players.first()
                 else:
                     obj_role_mappings['Player'] = players
             elif role == 'Coach':
-                coaches = coaches_app.models.Coach.objects.filter(user=user,
-                                                                  team__division__league__sport=self.sport).select_related(
-                        'team', 'team__division')
+                coaches = coaches_app.models.Coach.objects.filter(
+                        user=user, team__division__league__sport=self.sport).select_related('team', 'team__division')
                 obj_role_mappings['Coach'] = coaches.first()
             elif role == 'Manager':
-                managers = managers_app.models.Manager.objects.filter(user=user,
-                                                                      team__division__league__sport=self.sport).select_related(
-                        'team', 'team__division')
+                managers = managers_app.models.Manager.objects.filter(
+                        user=user, team__division__league__sport=self.sport).select_related('team', 'team__division')
                 obj_role_mappings['Manager'] = managers.first()
             elif role == 'Referee':
-                referees = referees_app.models.Referee.objects.filter(user=user,
-                                                                      league__sport=self.sport).select_related('league')
+                referees = referees_app.models.Referee.objects.filter(
+                        user=user, league__sport=self.sport).select_related('league')
                 obj_role_mappings['Referee'] = referees.first()
         return obj_role_mappings
 

@@ -1,11 +1,11 @@
 from django.urls import reverse
-from django.test import TestCase
 
 from accounts.tests import UserFactory
+from escoresheet.utils import BaseTestCase
 from sports.tests import SportRegistrationFactory
 
 
-class HomeViewTests(TestCase):
+class HomeViewTests(BaseTestCase):
     def setUp(self):
         self.email = 'user@example.com'
         self.password = 'myweakpassword'
@@ -24,7 +24,7 @@ class HomeViewTests(TestCase):
         self.assertTemplateUsed(response, 'home/authenticated_home.html')
 
 
-class AboutUsViewTests(TestCase):
+class AboutUsViewTests(BaseTestCase):
     def setUp(self):
         self.response = self.client.get(reverse('about_us'))
 
@@ -35,7 +35,7 @@ class AboutUsViewTests(TestCase):
         self.assertTemplateUsed(self.response, 'home/about_us.html')
 
 
-class ContactUsViewTests(TestCase):
+class ContactUsViewTests(BaseTestCase):
     def setUp(self):
         self.response = self.client.get(reverse('contact_us'))
 

@@ -1,14 +1,13 @@
 import factory
 from django.core import mail
 from django.urls import reverse
-from django.test import TestCase
 
 from accounts.tests import UserFactory
 from coaches.forms import CoachForm
 from coaches.models import Coach
 from coaches.tests import CoachFactory
 from divisions.tests import DivisionFactory
-from escoresheet.utils.testing_utils import get_messages, create_related_objects
+from escoresheet.utils import BaseTestCase
 from leagues.tests import LeagueFactory
 from managers.forms import ManagerForm
 from managers.models import Manager
@@ -24,7 +23,7 @@ from sports.tests import SportFactory, SportRegistrationFactory
 from teams.tests import TeamFactory
 
 
-class CreateSportRegistrationViewTests(TestCase):
+class CreateSportRegistrationViewTests(BaseTestCase):
     @classmethod
     def setUpClass(cls):
         super(CreateSportRegistrationViewTests, cls).setUpClass()
@@ -66,9 +65,8 @@ class CreateSportRegistrationViewTests(TestCase):
         SportRegistrationFactory(sport=self.baseball, user=self.user, is_complete=True)
         SportRegistrationFactory(sport=self.basketball, user=self.user, is_complete=True)
         response = self.client.get(self.url, follow=True)
-        self.assertIn(
-                'You have already registered for all available sports. Check back later to see if any new sports have been added.',
-                get_messages(response))
+        self.assertHasMessage(response, 'You have already registered for all available sports. '
+                                        'Check back later to see if any new sports have been added.')
         self.assertRedirects(response, reverse('home'))
 
     def test_form_only_displays_sports_not_registered_for(self):
@@ -97,9 +95,8 @@ class CreateSportRegistrationViewTests(TestCase):
         SportRegistrationFactory(sport=self.baseball, user=self.user, is_complete=True)
         SportRegistrationFactory(sport=self.basketball, user=self.user, is_complete=True)
         response = self.client.post(self.url, data=self.post_data, follow=True)
-        self.assertIn(
-                'You have already registered for all available sports. Check back later to see if any new sports have been added.',
-                get_messages(response))
+        self.assertHasMessage(response, 'You have already registered for all available sports. '
+                                        'Check back later to see if any new sports have been added.')
         self.assertRedirects(response, reverse('home'))
 
     def test_valid_post_one_form(self):
@@ -159,8 +156,8 @@ class CreateSportRegistrationViewTests(TestCase):
         self.post_data['sportregistration_set-TOTAL_FORMS'] = 2
         response = self.client.post(self.url, data=self.post_data, follow=True)
         self.assertFormsetError(response, 'formset', 1, 'sport',
-                                'Only one form can have {sport} selected. Choose another sport, or the "---------" value.'.format(
-                                        sport=self.ice_hockey))
+                                'Only one form can have {sport} selected. '
+                                'Choose another sport, or the "---------" value.'.format(sport=self.ice_hockey))
 
     def test_post_one_invalid_form(self):
         form_data = {
@@ -196,7 +193,7 @@ class CreateSportRegistrationViewTests(TestCase):
         self.assertRedirects(response, reverse('sport:finish_sport_registration'))
 
 
-class FinishSportRegistrationViewTests(TestCase):
+class FinishSportRegistrationViewTests(BaseTestCase):
     def setUp(self):
         self.email = 'user@example.com'
         self.password = 'myweakpassword'
@@ -262,8 +259,8 @@ class FinishSportRegistrationViewTests(TestCase):
         sr.set_roles(['Player'])
         response = self.client.get(self.url, follow=True)
         self.assertTemplateUsed(response, 'message.html')
-        msg = "{sport} hasn't been configured correctly in our system. If you believe this is an error please contact us.".format(
-                sport=sr.sport.name)
+        msg = "{sport} hasn't been configured correctly in our system. " \
+              "If you believe this is an error please contact us.".format(sport=sr.sport.name)
         self.assertEqual(response.context['message'], msg)
         self.assertEqual(len(mail.outbox), 1)
 
@@ -341,8 +338,8 @@ class FinishSportRegistrationViewTests(TestCase):
         sr.set_roles(['Player'])
         response = self.client.post(self.url, data={}, follow=True)
         self.assertTemplateUsed(response, 'message.html')
-        msg = "{sport} hasn't been configured correctly in our system. If you believe this is an error please contact us.".format(
-                sport=sr.sport.name)
+        msg = "{sport} hasn't been configured correctly in our system. " \
+              "If you believe this is an error please contact us.".format(sport=sr.sport.name)
         self.assertEqual(response.context['message'], msg)
         self.assertEqual(len(mail.outbox), 1)
 
@@ -479,7 +476,7 @@ class FinishSportRegistrationViewTests(TestCase):
         self.assertTrue(SportRegistration.objects.get(user=self.user, sport=self.sr.sport).is_complete)
 
 
-class UpdateSportRegistrationViewTests(TestCase):
+class UpdateSportRegistrationViewTests(BaseTestCase):
     @classmethod
     def setUpClass(cls):
         super(UpdateSportRegistrationViewTests, cls).setUpClass()
@@ -504,7 +501,7 @@ class UpdateSportRegistrationViewTests(TestCase):
         self.referee_post_data = {'user': self.user, 'league': self.league}
         self.manager_post_data = {'user': self.user, 'team': self.team}
 
-        self.player, self.coach, self.referee, self.manager = create_related_objects(
+        self.player, self.coach, self.referee, self.manager = self.create_related_objects(
                 player_args=self.player_post_data,
                 coach_args=self.coach_post_data,
                 referee_args=self.referee_post_data,
@@ -551,8 +548,8 @@ class UpdateSportRegistrationViewTests(TestCase):
         sr.set_roles(['Player'])
         response = self.client.get(reverse('sport:update_sport_registration', kwargs={'pk': sr.pk}))
         self.assertTemplateUsed(response, 'message.html')
-        msg = "{sport} hasn't been configured correctly in our system. If you believe this is an error please contact us.".format(
-                sport=sr.sport.name)
+        msg = "{sport} hasn't been configured correctly in our system. " \
+              "If you believe this is an error please contact us.".format(sport=sr.sport.name)
         self.assertEqual(response.context['message'], msg)
         self.assertEqual(len(mail.outbox), 1)
 
@@ -577,8 +574,8 @@ class UpdateSportRegistrationViewTests(TestCase):
         response = self.client.post(reverse('sport:update_sport_registration', kwargs={'pk': sr.pk}), data={},
                                     follow=True)
         self.assertTemplateUsed(response, 'message.html')
-        msg = "{sport} hasn't been configured correctly in our system. If you believe this is an error please contact us.".format(
-                sport=sr.sport.name)
+        msg = "{sport} hasn't been configured correctly in our system. " \
+              "If you believe this is an error please contact us.".format(sport=sr.sport.name)
         self.assertEqual(response.context['message'], msg)
         self.assertEqual(len(mail.outbox), 1)
 
@@ -610,8 +607,8 @@ class UpdateSportRegistrationViewTests(TestCase):
         response = self.client.post(self.url, data=post_data, follow=True)
 
         self.assertRedirects(response, reverse('account_home'))
-        self.assertIn('Sport registration for {sport} successfully updated.'.format(sport=self.ice_hockey.name),
-                      get_messages(response))
+        self.assertHasMessage(response, 'Sport registration for {sport} successfully updated.'
+                              .format(sport=self.ice_hockey.name))
 
     def test_post_unchanged_forms(self):
         del self.coach_post_data['user']
@@ -640,7 +637,7 @@ class UpdateSportRegistrationViewTests(TestCase):
         self.assertTemplateUsed(response, 'sports/sport_registration_update.html')
 
 
-class AddSportRegistrationRoleViewTests(TestCase):
+class AddSportRegistrationRoleViewTests(BaseTestCase):
     @classmethod
     def setUpClass(cls):
         super(AddSportRegistrationRoleViewTests, cls).setUpClass()
@@ -741,7 +738,7 @@ class AddSportRegistrationRoleViewTests(TestCase):
                 reverse('sport:add_sport_registration_role', kwargs={'pk': self.sr.pk, 'role': 'manager'}), follow=True)
 
         self.assertRedirects(response, self.sr.get_absolute_url())
-        self.assertIn('You are already registered as a manager.', get_messages(response))
+        self.assertHasMessage(response, 'You are already registered as a manager.')
 
     # POST
     def test_post_anonymous_user(self):
@@ -767,7 +764,7 @@ class AddSportRegistrationRoleViewTests(TestCase):
                 reverse('sport:add_sport_registration_role', kwargs={'pk': self.sr.pk, 'role': 'manager'}),
                 data=self.manager_post_data, follow=True)
         self.assertRedirects(response, self.sr.get_absolute_url())
-        self.assertIn('You are already registered as a manager.', get_messages(response))
+        self.assertHasMessage(response, 'You are already registered as a manager.')
 
     def test_post_player_valid_data(self):
         self.assertNotIn('Player', SportRegistration.objects.get(user=self.user, sport=self.sr.sport).roles)
@@ -775,7 +772,7 @@ class AddSportRegistrationRoleViewTests(TestCase):
                 reverse('sport:add_sport_registration_role', kwargs={'pk': self.sr.pk, 'role': 'player'}),
                 data=self.hockeyplayer_post_data, follow=True)
         self.assertRedirects(response, self.sr.get_absolute_url())
-        self.assertIn('Player role successfully added to Ice Hockey', get_messages(response))
+        self.assertHasMessage(response, 'Player role successfully added to Ice Hockey')
         self.assertTrue(HockeyPlayer.objects.filter(user=self.user, team=self.team).exists())
         self.assertIn('Player', SportRegistration.objects.get(user=self.user, sport=self.sr.sport).roles)
 
@@ -785,7 +782,7 @@ class AddSportRegistrationRoleViewTests(TestCase):
                 reverse('sport:add_sport_registration_role', kwargs={'pk': self.sr.pk, 'role': 'coach'}),
                 data=self.coach_post_data, follow=True)
         self.assertRedirects(response, self.sr.get_absolute_url())
-        self.assertIn('Coach role successfully added to Ice Hockey', get_messages(response))
+        self.assertHasMessage(response, 'Coach role successfully added to Ice Hockey')
         self.assertTrue(Coach.objects.filter(user=self.user, team=self.team).exists())
         self.assertIn('Coach', SportRegistration.objects.get(user=self.user, sport=self.sr.sport).roles)
 
@@ -795,7 +792,7 @@ class AddSportRegistrationRoleViewTests(TestCase):
                 reverse('sport:add_sport_registration_role', kwargs={'pk': self.sr.pk, 'role': 'referee'}),
                 data=self.referee_post_data, follow=True)
         self.assertRedirects(response, self.sr.get_absolute_url())
-        self.assertIn('Referee role successfully added to Ice Hockey', get_messages(response))
+        self.assertHasMessage(response, 'Referee role successfully added to Ice Hockey')
         self.assertTrue(Referee.objects.filter(user=self.user, league=self.league).exists())
         self.assertIn('Referee', SportRegistration.objects.get(user=self.user, sport=self.sr.sport).roles)
 
@@ -805,7 +802,7 @@ class AddSportRegistrationRoleViewTests(TestCase):
                 reverse('sport:add_sport_registration_role', kwargs={'pk': self.sr.pk, 'role': 'manager'}),
                 data=self.manager_post_data, follow=True)
         self.assertRedirects(response, self.sr.get_absolute_url())
-        self.assertIn('Manager role successfully added to Ice Hockey', get_messages(response))
+        self.assertHasMessage(response, 'Manager role successfully added to Ice Hockey')
         self.assertTrue(Manager.objects.filter(user=self.user, team=self.team).exists())
         self.assertIn('Manager', SportRegistration.objects.get(user=self.user, sport=self.sr.sport).roles)
 
@@ -819,7 +816,7 @@ class AddSportRegistrationRoleViewTests(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'sports/sport_registration_add_role.html')
-        self.assertNotIn('Player role successfully added to Ice Hockey', get_messages(response))
+        self.assertNoMessage(response, 'Player role successfully added to Ice Hockey')
         self.assertFalse(HockeyPlayer.objects.filter(user=self.user, team=self.team).exists())
         self.assertNotIn('Player', SportRegistration.objects.get(user=self.user, sport=self.sr.sport).roles)
 
@@ -829,7 +826,7 @@ class AddSportRegistrationRoleViewTests(TestCase):
     def test_get_player_obj_exists(self):
         player_data = {'user': self.user, 'team': self.team, 'jersey_number': 23, 'handedness': 'Right',
                        'position': 'G', 'sport': self.ice_hockey}
-        player, _, _, _ = create_related_objects(player_args=player_data)
+        player, _, _, _ = self.create_related_objects(player_args=player_data)
         response = self.client.get(
                 reverse('sport:add_sport_registration_role', kwargs={'pk': self.sr.pk, 'role': 'player'}))
         self.assertIsNotNone(response.context['related_role_object'])
@@ -837,7 +834,7 @@ class AddSportRegistrationRoleViewTests(TestCase):
 
     def test_get_coach_obj_exists(self):
         coach_data = {'user': self.user, 'team': self.team, 'position': 'Head Coach'}
-        _, coach, _, _ = create_related_objects(coach_args=coach_data)
+        _, coach, _, _ = self.create_related_objects(coach_args=coach_data)
         response = self.client.get(
                 reverse('sport:add_sport_registration_role', kwargs={'pk': self.sr.pk, 'role': 'coach'}))
         self.assertIsNotNone(response.context['related_role_object'])
@@ -845,7 +842,7 @@ class AddSportRegistrationRoleViewTests(TestCase):
 
     def test_get_referee_obj_exists(self):
         referee_data = {'user': self.user, 'league': self.league}
-        _, _, referee, _ = create_related_objects(referee_args=referee_data)
+        _, _, referee, _ = self.create_related_objects(referee_args=referee_data)
         response = self.client.get(
                 reverse('sport:add_sport_registration_role', kwargs={'pk': self.sr.pk, 'role': 'referee'}))
         self.assertIsNotNone(response.context['related_role_object'])
@@ -853,7 +850,7 @@ class AddSportRegistrationRoleViewTests(TestCase):
 
     def test_get_manager_obj_exists(self):
         manager_data = {'user': self.user, 'team': self.team}
-        _, _, _, manager = create_related_objects(manager_args=manager_data)
+        _, _, _, manager = self.create_related_objects(manager_args=manager_data)
         response = self.client.get(
                 reverse('sport:add_sport_registration_role', kwargs={'pk': self.sr.pk, 'role': 'manager'}))
         self.assertIsNotNone(response.context['related_role_object'])
@@ -863,7 +860,7 @@ class AddSportRegistrationRoleViewTests(TestCase):
     def test_post_player_obj_exists(self):
         player_data = {'user': self.user, 'team': self.team, 'jersey_number': 23, 'handedness': 'Right',
                        'position': 'G', 'sport': self.ice_hockey}
-        player, _, _, _ = create_related_objects(player_args=player_data)
+        player, _, _, _ = self.create_related_objects(player_args=player_data)
 
         del player_data['user']
         player_data['hockeyplayer-team'] = player_data.pop('team').id
@@ -877,12 +874,12 @@ class AddSportRegistrationRoleViewTests(TestCase):
 
         self.assertRedirects(response, self.sr.get_absolute_url())
         self.assertIn('Player', SportRegistration.objects.get(user=self.user, sport=self.sr.sport).roles)
-        self.assertIn('{role} role successfully added to {sport}'.format(role='Player', sport=self.ice_hockey),
-                      get_messages(response))
+        self.assertHasMessage(response,
+                              '{role} role successfully added to {sport}'.format(role='Player', sport=self.ice_hockey))
 
     def test_post_coach_obj_exists(self):
         coach_data = {'user': self.user, 'team': self.team, 'position': 'Head Coach'}
-        _, coach, _, _ = create_related_objects(coach_args=coach_data)
+        _, coach, _, _ = self.create_related_objects(coach_args=coach_data)
 
         del coach_data['user']
         coach_data['coach-team'] = coach_data.pop('team').id
@@ -894,12 +891,12 @@ class AddSportRegistrationRoleViewTests(TestCase):
 
         self.assertRedirects(response, self.sr.get_absolute_url())
         self.assertIn('Coach', SportRegistration.objects.get(user=self.user, sport=self.sr.sport).roles)
-        self.assertIn('{role} role successfully added to {sport}'.format(role='Coach', sport=self.ice_hockey),
-                      get_messages(response))
+        self.assertHasMessage(response,
+                              '{role} role successfully added to {sport}'.format(role='Coach', sport=self.ice_hockey))
 
     def test_post_referee_obj_exists(self):
         referee_data = {'user': self.user, 'league': self.league}
-        _, _, referee, _ = create_related_objects(referee_args=referee_data)
+        _, _, referee, _ = self.create_related_objects(referee_args=referee_data)
 
         del referee_data['user']
         referee_data['referee-league'] = referee_data.pop('league').id
@@ -910,12 +907,12 @@ class AddSportRegistrationRoleViewTests(TestCase):
 
         self.assertRedirects(response, self.sr.get_absolute_url())
         self.assertIn('Referee', SportRegistration.objects.get(user=self.user, sport=self.sr.sport).roles)
-        self.assertIn('{role} role successfully added to {sport}'.format(role='Referee', sport=self.ice_hockey),
-                      get_messages(response))
+        self.assertHasMessage(response,
+                              '{role} role successfully added to {sport}'.format(role='Referee', sport=self.ice_hockey))
 
     def test_post_manager_obj_exists(self):
         manager_data = {'user': self.user, 'team': self.team}
-        _, _, _, manager = create_related_objects(manager_args=manager_data)
+        _, _, _, manager = self.create_related_objects(manager_args=manager_data)
 
         del manager_data['user']
         manager_data['manager-team'] = manager_data.pop('team').id
@@ -926,5 +923,5 @@ class AddSportRegistrationRoleViewTests(TestCase):
 
         self.assertRedirects(response, self.sr.get_absolute_url())
         self.assertIn('Manager', SportRegistration.objects.get(user=self.user, sport=self.sr.sport).roles)
-        self.assertIn('{role} role successfully added to {sport}'.format(role='Manager', sport=self.ice_hockey),
-                      get_messages(response))
+        self.assertHasMessage(response,
+                              '{role} role successfully added to {sport}'.format(role='Manager', sport=self.ice_hockey))

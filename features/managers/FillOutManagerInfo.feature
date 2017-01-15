@@ -7,7 +7,9 @@ Feature: Create manager in the system
     Given The following confirmed user account exists
       | first_name | last_name | email            | password       |
       | John       | Doe       | user@example.com | myweakpassword |
-    And The following team exists "Green Machine IceCats" in division "Midget Minor AA" in league "Long Island Amateur Hockey League" in sport "Ice Hockey"
+    And The following team object exists
+      | name                  | division        | league                            | sport      |
+      | Green Machine IceCats | Midget Minor AA | Long Island Amateur Hockey League | Ice Hockey |
     And "user@example.com" is registered for "Ice Hockey" with role "Manager"
     And I login with "user@example.com" and "myweakpassword"
 
