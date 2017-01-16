@@ -16,8 +16,7 @@ Feature: User profiles
     Given I go to the "home" page
     Then I should be on the "profile:create" page
     And I should see "Create Your Profile"
-    And I should see "Please fill out the required information below."
-    And I should see "You will be prompted to register for sports on the next page."
+    And I should see "You will register for sports in the next step."
 
   Scenario: Redirected when trying to navigate to new sport registration page when userprofile not complete
     Given I go to the "sport:create_sport_registration" page
