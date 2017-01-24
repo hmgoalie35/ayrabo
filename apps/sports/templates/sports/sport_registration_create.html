@@ -1,18 +1,15 @@
 {% extends 'site_base.html' %}
 {% load crispy_forms_tags static %}
 
-{% block title %}New Sport Registration{% endblock %}
+{% block title %}Register for sports{% endblock %}
 
 {% block content %}
     <div class="container">
         <div class="row">
             <div class="col-sm-12">
                 <div class="text-center">
-                    <h1>Register for a sport</h1>
-                    <br>
-                    <p>You must register for at least one sport.<br>You can register for more sports by pressing the "Add another form" button below.</p>
-                    <p>The maximum number of sports you can currently register for is {{ remaining_sport_count }}.<br>(including sports you have already registered for)</p>
-                    <p class="text-muted">Any forms you add are optional to fill out.</p>
+                    <h1>Register for sports</h1>
+                    <p>You must register for at least one sport.<br>Register for additional sports by pressing the "Add another form" button below.</p>
                 </div>
             </div>
         </div>
@@ -35,7 +32,7 @@
 
                     <div class="text-center">
                         <button id="add_another_form_btn" class="btn btn-info" type="button" role="button"><span
-                                class="fa fa-plus"></span>&nbsp;Add another form
+                                class="fa fa-fw fa-plus"></span>Add another form
                         </button>
                         <input id="sport_registration_next_step_btn" type="submit" class="btn btn-success" value="Register and continue">
                         <br>

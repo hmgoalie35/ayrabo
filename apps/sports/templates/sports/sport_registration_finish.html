@@ -9,7 +9,7 @@
         <div class="row">
             <div class="col-sm-12">
                 <div class="text-center">
-                    <h2>Finish Sport Registration for {{ sport_name }}</h2>
+                    <h2>Finish {{ sport_name }} Registration</h2>
                     <p>Please fill out any role specific information below.</p>
                     <br>
                     <h4 class="text-muted">{{ remaining_sport_registrations }} sport registration{{ remaining_sport_registrations|pluralize }} remaining</h4>
@@ -52,7 +52,7 @@
 
                     <div class="text-center">
                         <button id="next_sport_registration_btn" type="submit" role="button" class="btn btn-success">
-                            {% if remaining_sport_registrations == 1 %}Finish{% else %}Next{% endif %} sport registration
+                            {% if remaining_sport_registrations == 1 %}Finish{% else %}Next sport registration{% endif %}
                         </button>
                     </div>
                     <br>

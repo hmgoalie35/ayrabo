@@ -18,8 +18,7 @@ Feature: Create coach in the system
     When I select "Head Coach" from "id_coach-position"
     And I select "Green Machine IceCats - Midget Minor AA" from "id_coach-team"
     And I press "next_sport_registration_btn"
-    Then I should see "Your profile is now complete, you may now access the site"
-    And I should see "You have finished registering for Ice Hockey."
+    Then I should see "You are now registered for Ice Hockey."
     And I should be on the "home" page
 
   Scenario: Submit invalid coach form

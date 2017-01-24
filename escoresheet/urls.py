@@ -16,7 +16,7 @@ urlpatterns = [
     url(r'^account/', include('accounts.urls')),
     url(r'^account/', include('allauth.urls')),
     url(r'^profile/', include('userprofiles.urls', namespace='profile')),
-    url(r'^sport/', include('sports.urls', namespace='sport')),
+    url(r'', include('sports.urls', namespace='sport')),
     url(r'^api/', include('api.urls')),
     url(r'^managers/', include('managers.urls', namespace='manager')),
     url(r'^team/', include('teams.urls', namespace='team')),

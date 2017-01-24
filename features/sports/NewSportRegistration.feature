@@ -26,12 +26,9 @@ Feature: Register for a sport
 
   Scenario: Informative text displayed to user
     Given I am on the "sport:create_sport_registration" page
-    Then I should see "Register for a sport"
+    Then I should see "Register for sports"
     And I should see "You must register for at least one sport."
-    And I should see "You can register for more sports by pressing the "Add another form" button below."
-    And I should see "The maximum number of sports you can currently register for is 3."
-    And I should see "(including sports you have already registered for)"
-    And I should see "Any forms you add are optional to fill out."
+    And I should see "Register for additional sports by pressing the "Add another form" button below."
     And I should see "Add another form"
 
   Scenario: Submit one valid form
@@ -43,7 +40,6 @@ Feature: Register for a sport
     And I press "id_sportregistration_set-0-roles_2"
     And I press "sport_registration_next_step_btn"
     Then I should be on the "sport:finish_sport_registration" page
-    And I should see "You have successfully registered for Ice Hockey."
 
   Scenario: Submit one invalid form
     Given I am on the "sport:create_sport_registration" page
@@ -82,7 +78,6 @@ Feature: Register for a sport
     And I press "id_sportregistration_set-1-roles_2"
     And I press "sport_registration_next_step_btn"
     Then I should be on the "sport:finish_sport_registration" page
-    And I should see "You have successfully registered for Ice Hockey, Baseball."
 
 
   Scenario: Already registered for all 3 sports
