@@ -49,7 +49,7 @@ Feature: Finish sport registration, filling in any coach/manager/player/referee 
     And I press "next_sport_registration_btn"
     Then I should see "1 sport registration remaining"
     And I should be on the "sport:finish_sport_registration" page
-    And I should see "Finish sport registration"
+    And I should see "Finish Basketball Registration"
 
   Scenario: Submit invalid form for Coach and Manager roles
     Given "user@example.com" is registered for "Ice Hockey" with roles "Coach, Manager"
@@ -69,10 +69,9 @@ Feature: Finish sport registration, filling in any coach/manager/player/referee 
     And I select "Knicks - Atlantic Division" from "id_coach-team"
     And I select "Knicks - Atlantic Division" from "id_manager-team"
     And I select "National Basketball Association" from "id_referee-league"
-    And I should see "Finish sport registration"
+    And I should see "Finish Basketball Registration"
     And I press "next_sport_registration_btn"
-    Then I should see "Your profile is now complete, you may now access the site"
-    And I should see "You have finished registering for Basketball."
+    Then I should see "You are now registered for Basketball."
     And I should be on the "home" page
 
   Scenario: Submit invalid form for basketball Coach, Manager, Referee roles
@@ -99,8 +98,7 @@ Feature: Finish sport registration, filling in any coach/manager/player/referee 
     And I select "Knicks - Atlantic Division" from "id_manager-team"
     And I select "National Basketball Association" from "id_referee-league"
     And I press "next_sport_registration_btn"
-    Then I should see "Your profile is now complete, you may now access the site"
-    And I should see "You have finished registering for Basketball."
+    Then I should see "You are now registered for Basketball."
     And I should be on the "home" page
 
   Scenario: Submit invalid form for basketball Coach, Manager, Referee, Player roles

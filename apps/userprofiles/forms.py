@@ -35,21 +35,23 @@ class CreateUserProfileForm(forms.ModelForm):
     birthday = forms.DateField(
             widget=SelectDateMonthDayYearInitiallyBlankWidget(years=year_range))
 
+    weight = forms.IntegerField(label='Weight (in lbs)', min_value=UserProfile.MIN_WEIGHT,
+                                max_value=UserProfile.MAX_WEIGHT,
+                                help_text='Round to the nearest whole number')
+
     class Meta:
         model = UserProfile
         fields = ['gender', 'birthday', 'height', 'weight', 'language', 'timezone']
-        labels = {
-            'weight': _('Weight (in lbs)')
-        }
 
 
 class UpdateUserProfileForm(forms.ModelForm):
+    weight = forms.IntegerField(label='Weight (in lbs)', min_value=UserProfile.MIN_WEIGHT,
+                                max_value=UserProfile.MAX_WEIGHT,
+                                help_text='Round to the nearest whole number')
+
     class Meta:
         model = UserProfile
         fields = ['height', 'weight', 'language', 'timezone']
-        labels = {
-            'weight': _('Weight (in lbs)')
-        }
 
 
 class UserProfileAdminForm(forms.ModelForm):

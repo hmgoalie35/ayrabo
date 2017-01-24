@@ -33,8 +33,7 @@ SPORT_NOT_CONFIGURED_MSG = "{sport} hasn't been configured correctly in our syst
 
 class FinishSportRegistrationView(LoginRequiredMixin, ContextMixin, generic.View):
     template_name = 'sports/sport_registration_finish.html'
-    success_message_account_registration_complete = 'Your profile is now complete, you may now access the site'
-    success_message_sport_registrations_finished = 'You have finished registering for {sports}.'
+    success_msg = 'You are now registered for {sports}.'
 
     def get_context_data(self, **kwargs):
         context = super(FinishSportRegistrationView, self).get_context_data(**kwargs)
@@ -80,10 +79,8 @@ class FinishSportRegistrationView(LoginRequiredMixin, ContextMixin, generic.View
         if not context.get('sport_registrations_exist'):
             sports_registered_for = request.session.get('sports_registered_for', None)
             if sports_registered_for:
-                messages.success(request, self.success_message_sport_registrations_finished.format(
+                messages.success(request, self.success_msg.format(
                         sports=', '.join(sports_registered_for)))
-                if request.session.get('is_user_currently_registering', False):
-                    messages.success(request, self.success_message_account_registration_complete)
             return redirect(reverse('home'))
 
         return render(request, self.template_name, context)
@@ -104,10 +101,8 @@ class FinishSportRegistrationView(LoginRequiredMixin, ContextMixin, generic.View
         if not context.get('sport_registrations_exist'):
             sports_registered_for = request.session.get('sports_registered_for', None)
             if sports_registered_for:
-                messages.success(request, self.success_message_sport_registrations_finished.format(
+                messages.success(request, self.success_msg.format(
                         sports=', '.join(sports_registered_for)))
-                if request.session.get('is_user_currently_registering', False):
-                    messages.success(request, self.success_message_account_registration_complete)
             return redirect(reverse('home'))
 
         # Forms that were submitted are added to this list. Only check the forms in this list for validity
@@ -183,7 +178,6 @@ class CreateSportRegistrationView(LoginRequiredMixin, ContextMixin, generic.View
     template_name = 'sports/sport_registration_create.html'
     already_registered_msg = 'You have already registered for all available sports. ' \
                              'Check back later to see if any new sports have been added.'
-    success_msg = 'You have successfully registered for {sports}.'
 
     def get_context_data(self, **kwargs):
         context = super(CreateSportRegistrationView, self).get_context_data(**kwargs)
@@ -224,7 +218,6 @@ class CreateSportRegistrationView(LoginRequiredMixin, ContextMixin, generic.View
 
         formset = context.get('formset')
         if formset.is_valid():
-            sports_registered_for = []
             for form in formset.forms:
                 # Since I am not using formset.save(), any empty added forms pass validation but fail on .save()
                 # because a sport has not been chosen. So this check makes sure the form actually had data submitted.
@@ -232,9 +225,6 @@ class CreateSportRegistrationView(LoginRequiredMixin, ContextMixin, generic.View
                     form.instance.user = request.user
                     form.instance.set_roles(form.cleaned_data.get('roles', []))
                     form.save()
-                    sports_registered_for.append(form.instance.sport.name)
-            if sports_registered_for:
-                messages.success(request, self.success_msg.format(sports=', '.join(sports_registered_for)))
             return redirect(reverse('sport:finish_sport_registration'))
 
         return render(request, self.template_name, context)
