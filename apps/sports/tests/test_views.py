@@ -157,7 +157,7 @@ class CreateSportRegistrationViewTests(BaseTestCase):
         response = self.client.post(self.url, data=self.post_data, follow=True)
         self.assertFormsetError(response, 'formset', 1, 'sport',
                                 'Only one form can have {sport} selected. '
-                                'Choose another sport, or the "---------" value.'.format(sport=self.ice_hockey))
+                                'Choose another sport, or remove this form.'.format(sport=self.ice_hockey))
 
     def test_post_one_invalid_form(self):
         form_data = {

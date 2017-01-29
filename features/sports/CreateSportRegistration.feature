@@ -28,8 +28,8 @@ Feature: Register for a sport
     Given I am on the "sport:create_sport_registration" page
     Then I should see "Register for sports"
     And I should see "You must register for at least one sport."
-    And I should see "Register for additional sports by pressing the "Add another form" button below."
-    And I should see "Add another form"
+    And I should see "Register for additional sports by pressing the "Add sport registration" button below."
+    And I should see "Add sport registration"
 
   Scenario: Submit one valid form
     Given I am on the "sport:create_sport_registration" page
@@ -47,11 +47,17 @@ Feature: Register for a sport
     Then I should be on the "sport:create_sport_registration" page
     And "This field is required." should show up 2 times
 
-  Scenario: Add another form
+  Scenario: Add another sport registration
     Given I am on the "sport:create_sport_registration" page
     When I press "add_another_form_btn"
-    # this is a bad way to test that 2 forms are on the page, but as of now is the best solution I have
-    Then "multiField" should show up 2 times
+    Then "id_sportregistration_set-TOTAL_FORMS" should have value "2"
+
+  Scenario: Remove form
+    Given I am on the "sport:create_sport_registration" page
+    When I press "add_another_form_btn"
+    And I press ".fa.fa-trash.trash-delete"
+    And I wait for ".multiField" to be removed
+    Then "id_sportregistration_set-TOTAL_FORMS" should have value "1"
 
   Scenario: Add max amount of forms
     Given I am on the "sport:create_sport_registration" page
@@ -97,7 +103,7 @@ Feature: Register for a sport
     And I select "Ice Hockey" from "id_sportregistration_set-1-sport"
     And I press "id_sportregistration_set-1-roles_2"
     And I press "sport_registration_next_step_btn"
-    Then I should see "Only one form can have Ice Hockey selected. Choose another sport, or the "---------" value."
+    Then I should see "Only one form can have Ice Hockey selected. Choose another sport, or remove this form."
     And I should be on the "sport:create_sport_registration" page
 
   Scenario: Already registered for ice hockey and baseball. They should not be options in select box

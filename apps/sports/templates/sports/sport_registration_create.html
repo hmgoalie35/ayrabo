@@ -9,7 +9,7 @@
             <div class="col-sm-12">
                 <div class="text-center">
                     <h1>Register for sports</h1>
-                    <p>You must register for at least one sport.<br>Register for additional sports by pressing the "Add another form" button below.</p>
+                    <p>You must register for at least one sport.<br>Register for additional sports by pressing the "Add sport registration" button below.</p>
                 </div>
             </div>
         </div>
@@ -20,7 +20,7 @@
             <div class="col-sm-offset-4 col-sm-4 col-sm-offset-4">
                 <form action="" method="post">
                     {% csrf_token %}
-                    {{ formset | crispy }}
+                    {% crispy formset helper %}
 
                     <div id="additional_forms"></div>
 
@@ -32,7 +32,7 @@
 
                     <div class="text-center">
                         <button id="add_another_form_btn" class="btn btn-info" type="button" role="button"><span
-                                class="fa fa-fw fa-plus"></span>Add another form
+                                class="fa fa-fw fa-plus"></span>Add sport registration
                         </button>
                         <input id="sport_registration_next_step_btn" type="submit" class="btn btn-success" value="Register and continue">
                         <br>
@@ -46,5 +46,5 @@
 
 
 {% block extra_js %}
-    <script src="{% static 'sports/javascripts/add_additional_formset_form.js' %}"></script>
+    <script src="{% static 'sports/javascripts/manage_formset_forms.js' %}"></script>
 {% endblock %}

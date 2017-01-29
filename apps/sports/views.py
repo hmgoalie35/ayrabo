@@ -1,10 +1,12 @@
+from crispy_forms.helper import FormHelper
+from crispy_forms.layout import Layout, HTML, Field, Div
+from django import forms
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
-from django.urls import reverse
-from django.forms import inlineformset_factory, BaseInlineFormSet
 from django.http import Http404
 from django.shortcuts import redirect, render, get_object_or_404
+from django.urls import reverse
 from django.views import generic
 from django.views.generic.base import ContextMixin
 
@@ -157,11 +159,18 @@ class FinishSportRegistrationView(LoginRequiredMixin, ContextMixin, generic.View
         return redirect(reverse('sport:finish_sport_registration'))
 
 
-class SportRegistrationInlineFormSet(BaseInlineFormSet):
+class SportRegistrationInlineFormSet(forms.BaseInlineFormSet):
+    def add_fields(self, form, index):
+        super(SportRegistrationInlineFormSet, self).add_fields(form, index)
+        # The empty form would have value `None`, so default to blank string in that case
+        form_num = index if index is not None else ''
+        form.fields['form_num'] = forms.IntegerField(required=False, widget=forms.HiddenInput(
+                attrs={'data-form-num': form_num, 'class': 'form-num'}))
+
     def clean(self):
         # Django 1.10.x adds in unique_constraint validation specified by the model the form is for.
         # I am currently disabling this because I had already implemented something similar and using the native
-        # method was showing unhelpful error messages that would confused the user.
+        # method was showing unhelpful error messages that would confuse the user.
         # super(SportRegistrationInlineFormSet, self).clean()
         sports_already_seen = []
         for form in self.forms:
@@ -169,11 +178,31 @@ class SportRegistrationInlineFormSet(BaseInlineFormSet):
             if sport is not None:
                 if sport in sports_already_seen:
                     form.add_error('sport', 'Only one form can have {sport} selected. '
-                                            'Choose another sport, or the "---------" value.'.format(sport=sport.name))
+                                            'Choose another sport, or remove this form.'.format(sport=sport.name))
                 else:
                     sports_already_seen.append(sport)
 
 
+class CreateSportRegistrationFormSetHelper(FormHelper):
+    def __init__(self, *args, **kwargs):
+        super(CreateSportRegistrationFormSetHelper, self).__init__(*args, **kwargs)
+        self.layout = Layout(
+                Div(
+                        HTML(
+                                "{% if not forloop.first %}<span data-toggle=\"tooltip\" data-placement=\"top\" "
+                                "title=\"Remove form\" class=\"fa fa-trash trash-delete pull-right\"></span>{% endif %}"
+                        ),
+                        Field('sport'),
+                        Field('roles'),
+                        css_class="multiField"
+                )
+        )
+        self.form_tag = False
+        # csrf token is added in the template
+        self.disable_csrf = True
+
+
+# TODO Add API endpoints to do this, so don't have to deal with the formset stuff
 class CreateSportRegistrationView(LoginRequiredMixin, ContextMixin, generic.View):
     template_name = 'sports/sport_registration_create.html'
     already_registered_msg = 'You have already registered for all available sports. ' \
@@ -184,15 +213,17 @@ class CreateSportRegistrationView(LoginRequiredMixin, ContextMixin, generic.View
         sports_already_registered_for = SportRegistration.objects.filter(user=self.request.user).values_list('sport_id')
         context['remaining_sport_count'] = Sport.objects.count() - len(sports_already_registered_for)
         context['user_registered_for_all_sports'] = context.get('remaining_sport_count') == 0
-        sport_registration_form_set = inlineformset_factory(User, SportRegistration, form=CreateSportRegistrationForm,
-                                                            formset=SportRegistrationInlineFormSet,
-                                                            extra=0,
-                                                            min_num=1, max_num=context.get('remaining_sport_count'),
-                                                            validate_min=True, validate_max=True, can_delete=False)
-        context['formset'] = sport_registration_form_set(
+        SportRegistrationFormSet = forms.inlineformset_factory(User, SportRegistration,
+                                                               form=CreateSportRegistrationForm,
+                                                               formset=SportRegistrationInlineFormSet,
+                                                               extra=0,
+                                                               min_num=1, max_num=context.get('remaining_sport_count'),
+                                                               validate_min=True, validate_max=True, can_delete=False)
+        context['formset'] = SportRegistrationFormSet(
                 self.request.POST or None,
                 form_kwargs={'sports_already_registered_for': sports_already_registered_for}
         )
+        context['helper'] = CreateSportRegistrationFormSetHelper
         return context
 
     def get(self, request, *args, **kwargs):
