@@ -14,20 +14,26 @@ from selenium.webdriver.support.ui import WebDriverWait
 from escoresheet.utils import get_user
 
 
-def find_element(context, element_to_find):
+def find_element(context, element_to_find, multiple=False):
     """
     Given an element's id, class name, name, etc. try to find that element on the page
 
+    :param multiple: Whether to return multiple elements or not
     :param context: The testing context (contains the driver, django test runner, etc)
     :param element_to_find: The id, name, etc of the element to be located
     :return: A selenium WebElement.
     """
-    methods_to_find_by = [By.ID, By.CLASS_NAME, By.CSS_SELECTOR, By.LINK_TEXT, By.NAME, By.PARTIAL_LINK_TEXT,
-                          By.TAG_NAME, By.XPATH]
+
+    methods_to_find_by = ['id', 'class_name', 'css_selector', 'link_text', 'name', 'partial_link_text', 'tag_name',
+                          'xpath']
     for method in methods_to_find_by:
+        find_function = 'find_elements_by_{}' if multiple else 'find_element_by_{}'
+        find_function = find_function.format(method)
         try:
-            element = context.driver.find_element(method, element_to_find)
-            return element
+            # NOTE: This might be an array of elements if `multiple` is specified.
+            e = getattr(context.driver, find_function)(element_to_find)
+            if not multiple or len(e) > 0:
+                return e
         except (NoSuchElementException, WebDriverException):
             pass
     raise NoSuchElementException('{element} does not exist on the page'.format(element=element_to_find))
@@ -331,3 +337,16 @@ def step_impl(context, element, prefix):
 @step('I wait for "(?P<element>[^"]*)" to be visible')
 def step_impl(context, element):
     WebDriverWait(context.driver, 10).until(expected_conditions.visibility_of_element_located((By.ID, element)))
+
+
+@step('I wait for "(?P<element>[^"]*)" to be removed')
+def step_impl(context, element):
+    # For some reason the find_element method w/ multiple=True isn't working.
+    elements = context.driver.find_elements_by_css_selector(element)
+    WebDriverWait(context.driver, 10).until(expected_conditions.staleness_of(elements[1]))
+
+
+@step('"(?P<element>[^"]*)" should have value "(?P<value>[^"]*)"')
+def step_impl(context, element, value):
+    the_element = find_element(context, element)
+    context.test.assertEqual(value, the_element.get_property("value"))
