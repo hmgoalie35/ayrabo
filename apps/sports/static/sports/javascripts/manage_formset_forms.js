@@ -45,21 +45,31 @@ $(function () {
         // Want to get all sport registration forms after the form that was removed.
         var $optionalSportRegForms = $removedForm.nextAll("div.multiField");
         if ($optionalSportRegForms.length === 0) {
-            $optionalSportRegForms = $("#additional_forms").find("div.multiField");
-        }
-        $optionalSportRegForms.each(function (index, formElem) {
-            // Find all id, name, for attrs of the current element and its descendants and change the value based on
-            // `formNum`
-            var $allChildren = $(formElem).find(":not('span')");
-            $allChildren.each(function (index, element) {
-                replaceAttrValues($(element), formNum);
+            var $forms = $("#additional_forms").find("div.multiField");
+            // Exclude the form that was just removed (it is selected by the selector above)
+            $optionalSportRegForms = $.map($forms, function (element, index) {
+                var formNumOfElement = parseInt($(element).find("input[data-form-num]").data("form-num"));
+                if (formNumOfElement !== formNum) {
+                    return element;
+                }
             });
-            $(formElem).find("[data-form-num]").attr("data-form-num", formNum);
-            formNum += 1;
-            if (formNum > maxForms) {
-                throw "Form number exceeded max num forms";
-            }
-        });
+        }
+
+        if ($optionalSportRegForms.length > 0) {
+            $optionalSportRegForms.each(function (index, formElem) {
+                // Find all id, name, for attrs of the current element and its descendants and change the value based on
+                // `formNum`
+                var $allChildren = $(formElem).find(":not('span')");
+                $allChildren.each(function (index, element) {
+                    replaceAttrValues($(element), formNum);
+                });
+                $(formElem).find("[data-form-num]").attr("data-form-num", formNum);
+                formNum += 1;
+                if (formNum > maxForms) {
+                    throw "Form number exceeded max num forms";
+                }
+            });
+        }
     };
 
     toggleAddFormBtnDisabled();

@@ -33,11 +33,11 @@ Feature: Register for a sport
 
   Scenario: Submit one valid form
     Given I am on the "sport:create_sport_registration" page
-    When I select "Ice Hockey" from "id_sportregistration_set-0-sport"
+    When I select "Ice Hockey" from "id_sportregistrations-0-sport"
     # Player
-    And I press "id_sportregistration_set-0-roles_1"
+    And I press "id_sportregistrations-0-roles_1"
     # Coach
-    And I press "id_sportregistration_set-0-roles_2"
+    And I press "id_sportregistrations-0-roles_2"
     And I press "sport_registration_next_step_btn"
     Then I should be on the "sport:finish_sport_registration" page
 
@@ -50,14 +50,14 @@ Feature: Register for a sport
   Scenario: Add another sport registration
     Given I am on the "sport:create_sport_registration" page
     When I press "add_another_form_btn"
-    Then "id_sportregistration_set-TOTAL_FORMS" should have value "2"
+    Then "id_sportregistrations-TOTAL_FORMS" should have value "2"
 
   Scenario: Remove form
     Given I am on the "sport:create_sport_registration" page
     When I press "add_another_form_btn"
     And I press ".fa.fa-trash.trash-delete"
     And I wait for ".multiField" to be removed
-    Then "id_sportregistration_set-TOTAL_FORMS" should have value "1"
+    Then "id_sportregistrations-TOTAL_FORMS" should have value "1"
 
   Scenario: Add max amount of forms
     Given I am on the "sport:create_sport_registration" page
