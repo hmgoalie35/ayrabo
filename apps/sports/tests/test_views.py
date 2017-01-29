@@ -36,10 +36,10 @@ class CreateSportRegistrationViewTests(BaseTestCase):
         self.email = 'user@example.com'
         self.password = 'myweakpassword'
         self.post_data = {
-            'sportregistration_set-TOTAL_FORMS': 1,
-            'sportregistration_set-INITIAL_FORMS': 0,
-            'sportregistration_set-MIN_NUM_FORMS': 1,
-            'sportregistration_set-MAX_NUM_FORMS': 3
+            'sportregistrations-TOTAL_FORMS': 1,
+            'sportregistrations-INITIAL_FORMS': 0,
+            'sportregistrations-MIN_NUM_FORMS': 1,
+            'sportregistrations-MAX_NUM_FORMS': 3
         }
 
         self.user = UserFactory(email=self.email, password=self.password)
@@ -101,8 +101,8 @@ class CreateSportRegistrationViewTests(BaseTestCase):
 
     def test_valid_post_one_form(self):
         form_data = {
-            'sportregistration_set-0-sport': self.ice_hockey.id,
-            'sportregistration_set-0-roles': ['Player', 'Coach']
+            'sportregistrations-0-sport': self.ice_hockey.id,
+            'sportregistrations-0-roles': ['Player', 'Coach']
         }
         self.post_data.update(form_data)
         response = self.client.post(self.url, data=self.post_data, follow=True)
@@ -113,13 +113,13 @@ class CreateSportRegistrationViewTests(BaseTestCase):
 
     def test_valid_post_two_forms(self):
         form_data = {
-            'sportregistration_set-0-sport': self.ice_hockey.id,
-            'sportregistration_set-0-roles': ['Player', 'Coach'],
-            'sportregistration_set-1-sport': self.basketball.id,
-            'sportregistration_set-1-roles': ['Player', 'Referee']
+            'sportregistrations-0-sport': self.ice_hockey.id,
+            'sportregistrations-0-roles': ['Player', 'Coach'],
+            'sportregistrations-1-sport': self.basketball.id,
+            'sportregistrations-1-roles': ['Player', 'Referee']
         }
         self.post_data.update(form_data)
-        self.post_data['sportregistration_set-TOTAL_FORMS'] = 2
+        self.post_data['sportregistrations-TOTAL_FORMS'] = 2
 
         response = self.client.post(self.url, data=self.post_data, follow=True)
         sr = SportRegistration.objects.filter(user=self.user)
@@ -130,15 +130,15 @@ class CreateSportRegistrationViewTests(BaseTestCase):
 
     def test_valid_post_three_forms(self):
         form_data = {
-            'sportregistration_set-0-sport': self.ice_hockey.id,
-            'sportregistration_set-0-roles': ['Player', 'Coach'],
-            'sportregistration_set-1-sport': self.basketball.id,
-            'sportregistration_set-1-roles': ['Player', 'Referee'],
-            'sportregistration_set-2-sport': self.baseball.id,
-            'sportregistration_set-2-roles': ['Manager', 'Referee']
+            'sportregistrations-0-sport': self.ice_hockey.id,
+            'sportregistrations-0-roles': ['Player', 'Coach'],
+            'sportregistrations-1-sport': self.basketball.id,
+            'sportregistrations-1-roles': ['Player', 'Referee'],
+            'sportregistrations-2-sport': self.baseball.id,
+            'sportregistrations-2-roles': ['Manager', 'Referee']
         }
         self.post_data.update(form_data)
-        self.post_data['sportregistration_set-TOTAL_FORMS'] = 3
+        self.post_data['sportregistrations-TOTAL_FORMS'] = 3
 
         response = self.client.post(self.url, data=self.post_data, follow=True)
         sr = SportRegistration.objects.filter(user=self.user)
@@ -147,13 +147,13 @@ class CreateSportRegistrationViewTests(BaseTestCase):
 
     def test_post_two_forms_same_sport(self):
         form_data = {
-            'sportregistration_set-0-sport': self.ice_hockey.id,
-            'sportregistration_set-0-roles': ['Referee', 'Manager'],
-            'sportregistration_set-1-sport': self.ice_hockey.id,
-            'sportregistration_set-1-roles': ['Player', 'Coach']
+            'sportregistrations-0-sport': self.ice_hockey.id,
+            'sportregistrations-0-roles': ['Referee', 'Manager'],
+            'sportregistrations-1-sport': self.ice_hockey.id,
+            'sportregistrations-1-roles': ['Player', 'Coach']
         }
         self.post_data.update(form_data)
-        self.post_data['sportregistration_set-TOTAL_FORMS'] = 2
+        self.post_data['sportregistrations-TOTAL_FORMS'] = 2
         response = self.client.post(self.url, data=self.post_data, follow=True)
         self.assertFormsetError(response, 'formset', 1, 'sport',
                                 'Only one form can have {sport} selected. '
@@ -161,7 +161,7 @@ class CreateSportRegistrationViewTests(BaseTestCase):
 
     def test_post_one_invalid_form(self):
         form_data = {
-            'sportregistration_set-0-sport': '',
+            'sportregistrations-0-sport': '',
         }
         self.post_data.update(form_data)
         response = self.client.post(self.url, data=self.post_data, follow=True)
@@ -170,25 +170,25 @@ class CreateSportRegistrationViewTests(BaseTestCase):
 
     def test_post_two_invalid_forms(self):
         form_data = {
-            'sportregistration_set-0-sport': '',
-            'sportregistration_set-1-sport': '',
-            'sportregistration_set-1-roles': ['Player'],
+            'sportregistrations-0-sport': '',
+            'sportregistrations-1-sport': '',
+            'sportregistrations-1-roles': ['Player'],
         }
         self.post_data.update(form_data)
-        self.post_data['sportregistration_set-TOTAL_FORMS'] = 2
+        self.post_data['sportregistrations-TOTAL_FORMS'] = 2
         response = self.client.post(self.url, data=self.post_data, follow=True)
         self.assertFormsetError(response, 'formset', 0, 'sport', 'This field is required.')
         self.assertFormsetError(response, 'formset', 1, 'sport', 'This field is required.')
 
     def test_post_empty_added_form(self):
         form_data = {
-            'sportregistration_set-0-sport': self.ice_hockey.id,
-            'sportregistration_set-0-roles': ['Player', 'Coach'],
-            'sportregistration_set-1-sport': [''],
+            'sportregistrations-0-sport': self.ice_hockey.id,
+            'sportregistrations-0-roles': ['Player', 'Coach'],
+            'sportregistrations-1-sport': [''],
         }
 
         self.post_data.update(form_data)
-        self.post_data['sportregistration_set-TOTAL_FORMS'] = 2
+        self.post_data['sportregistrations-TOTAL_FORMS'] = 2
         response = self.client.post(self.url, data=self.post_data, follow=True)
         self.assertRedirects(response, reverse('sport:finish_sport_registration'))
 

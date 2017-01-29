@@ -3,7 +3,6 @@ from crispy_forms.layout import Layout, HTML, Field, Div
 from django import forms
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.auth.models import User
 from django.http import Http404
 from django.shortcuts import redirect, render, get_object_or_404
 from django.urls import reverse
@@ -159,19 +158,16 @@ class FinishSportRegistrationView(LoginRequiredMixin, ContextMixin, generic.View
         return redirect(reverse('sport:finish_sport_registration'))
 
 
-class SportRegistrationInlineFormSet(forms.BaseInlineFormSet):
+class SportRegistrationModelFormSet(forms.BaseModelFormSet):
     def add_fields(self, form, index):
-        super(SportRegistrationInlineFormSet, self).add_fields(form, index)
-        # The empty form would have value `None`, so default to blank string in that case
-        form_num = index if index is not None else ''
+        super(SportRegistrationModelFormSet, self).add_fields(form, index)
+        # The empty form would have value `None`, so default to an invalid form_num for use in the js.
+        form_num = index if index is not None else -1
         form.fields['form_num'] = forms.IntegerField(required=False, widget=forms.HiddenInput(
                 attrs={'data-form-num': form_num, 'class': 'form-num'}))
 
     def clean(self):
-        # Django 1.10.x adds in unique_constraint validation specified by the model the form is for.
-        # I am currently disabling this because I had already implemented something similar and using the native
-        # method was showing unhelpful error messages that would confuse the user.
-        # super(SportRegistrationInlineFormSet, self).clean()
+        super(SportRegistrationModelFormSet, self).clean()
         sports_already_seen = []
         for form in self.forms:
             sport = form.cleaned_data.get('sport')
@@ -194,6 +190,8 @@ class CreateSportRegistrationFormSetHelper(FormHelper):
                         ),
                         Field('sport'),
                         Field('roles'),
+                        Field('form_num'),
+                        Field('id'),
                         css_class="multiField"
                 )
         )
@@ -213,14 +211,17 @@ class CreateSportRegistrationView(LoginRequiredMixin, ContextMixin, generic.View
         sports_already_registered_for = SportRegistration.objects.filter(user=self.request.user).values_list('sport_id')
         context['remaining_sport_count'] = Sport.objects.count() - len(sports_already_registered_for)
         context['user_registered_for_all_sports'] = context.get('remaining_sport_count') == 0
-        SportRegistrationFormSet = forms.inlineformset_factory(User, SportRegistration,
-                                                               form=CreateSportRegistrationForm,
-                                                               formset=SportRegistrationInlineFormSet,
-                                                               extra=0,
-                                                               min_num=1, max_num=context.get('remaining_sport_count'),
-                                                               validate_min=True, validate_max=True, can_delete=False)
+        SportRegistrationFormSet = forms.modelformset_factory(SportRegistration,
+                                                              form=CreateSportRegistrationForm,
+                                                              formset=SportRegistrationModelFormSet,
+                                                              fields=('sport', 'roles'),
+                                                              extra=0,
+                                                              min_num=1, max_num=context.get('remaining_sport_count'),
+                                                              validate_min=True, validate_max=True, can_delete=False)
         context['formset'] = SportRegistrationFormSet(
                 self.request.POST or None,
+                queryset=SportRegistration.objects.none(),
+                prefix='sportregistrations',
                 form_kwargs={'sports_already_registered_for': sports_already_registered_for}
         )
         context['helper'] = CreateSportRegistrationFormSetHelper
@@ -249,7 +250,7 @@ class CreateSportRegistrationView(LoginRequiredMixin, ContextMixin, generic.View
 
         formset = context.get('formset')
         if formset.is_valid():
-            for form in formset.forms:
+            for form in formset:
                 # Since I am not using formset.save(), any empty added forms pass validation but fail on .save()
                 # because a sport has not been chosen. So this check makes sure the form actually had data submitted.
                 if form.cleaned_data:
