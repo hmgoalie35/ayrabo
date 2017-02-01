@@ -322,11 +322,11 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 BOWER_COMPONENTS_ROOT = os.path.join(BASE_DIR, '', 'static')
 BOWER_PATH = os.path.join(NODE_MODULES_ROOT, 'bower/bin/bower')
 BOWER_INSTALLED_APPS = [
-    'animate.css#3.5.2',
+    'animate.css',
     'bootstrap-sass',
-    'font-awesome#4.6.3',
+    'font-awesome',
     'jquery#2.2.4',
-    'noty#2.3.8',
+    'noty',
     'bootstrap-select'
 ]
 

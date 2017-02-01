@@ -11,6 +11,9 @@ body {
 }
 
 footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
   border: 1px solid $navbar-default-border;
   .breadcrumb {
     margin-bottom: 0;
@@ -91,18 +94,6 @@ div.alert.alert-block.alert-danger > ul > li {
 .vertical-line-left {
   @media (min-width: $screen-sm-min) {
     border-left: $navbar-vertical-line;
-  }
-  @media(max-width: $screen-sm-min - 1) {
-    border-top: $navbar-vertical-line;
-  }
-}
-
-.vertical-line-right {
-  @media (min-width: $screen-sm-min) {
-    border-left: $navbar-vertical-line;
-  }
-  @media(max-width: $screen-sm-min - 1) {
-    border-top: $navbar-vertical-line;
   }
 }
 
