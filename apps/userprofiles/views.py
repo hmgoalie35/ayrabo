@@ -14,6 +14,7 @@ def check_account_and_sport_registration_completed(request):
     """
     This helper function performs the same thing as the middleware, but because the middleware lets the whitelisted
     urls through, we need to do the check again in the actual view.
+
     :param request: The request object passed to the view
     :return: redirect_url: The url to redirect to, redirect_needed: If the redirect needs to happen
     """
@@ -22,11 +23,15 @@ def check_account_and_sport_registration_completed(request):
     sport_registrations = SportRegistration.objects.filter(user=request.user)
     incomplete_sport_registrations = sport_registrations.filter(is_complete=False)
     redirect_url = None
+    request.session['is_user_currently_registering'] = False
     if not up.exists():
         redirect_url = reverse('profile:create')
+        request.session['is_user_currently_registering'] = True
     elif not sport_registrations.exists():
+        request.session['is_user_currently_registering'] = True
         redirect_url = reverse('sport:create_sport_registration')
     elif incomplete_sport_registrations.exists():
+        request.session['is_user_currently_registering'] = True
         redirect_url = reverse('sport:finish_sport_registration')
     # The latter part of this statement prevents redirect loops
     redirect_needed = redirect_url is not None and request.path != redirect_url

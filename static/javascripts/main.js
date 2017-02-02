@@ -58,4 +58,10 @@ $(function () {
 
         return this;
     };
+
+    $("#edit_account_link.disabled").click(function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        return false;
+    });
 });

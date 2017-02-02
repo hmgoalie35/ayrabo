@@ -78,7 +78,7 @@ class FinishSportRegistrationView(LoginRequiredMixin, ContextMixin, generic.View
             return render(request, 'message.html', {'message': SPORT_NOT_CONFIGURED_MSG.format(sport=sport_name)})
 
         if not context.get('sport_registrations_exist'):
-            sports_registered_for = request.session.get('sports_registered_for', None)
+            sports_registered_for = request.session.pop('sports_registered_for', None)
             if sports_registered_for:
                 messages.success(request, self.success_msg.format(
                         sports=', '.join(sports_registered_for)))
@@ -100,7 +100,7 @@ class FinishSportRegistrationView(LoginRequiredMixin, ContextMixin, generic.View
             return render(request, 'message.html', {'message': SPORT_NOT_CONFIGURED_MSG.format(sport=sport_name)})
 
         if not context.get('sport_registrations_exist'):
-            sports_registered_for = request.session.get('sports_registered_for', None)
+            sports_registered_for = request.session.pop('sports_registered_for', None)
             if sports_registered_for:
                 messages.success(request, self.success_msg.format(
                         sports=', '.join(sports_registered_for)))

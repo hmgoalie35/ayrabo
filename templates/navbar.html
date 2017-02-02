@@ -78,10 +78,19 @@
                            aria-haspopup="true" aria-expanded="false">Account<span
                                 class="caret"></span></a>
                         <ul class="dropdown-menu">
-                            <li>
-                                <a id="edit_account_link" href="{% url 'account_home' %}"><span
-                                        class="fa fa-fw fa-user"></span>{{ user.email }}</a>
-                            </li>
+                            {% if request.session.is_user_currently_registering %}
+                                <li data-toggle="tooltip" data-placement="left"
+                                    title="You must complete any ongoing registrations before managing your account." class="disabled">
+                                    <a class="disabled" id="edit_account_link" href="#">
+                                        <span class="fa fa-fw fa-user"></span>{{ user.email }}
+                                    </a>
+                                </li>
+                            {% else %}
+                                <li>
+                                    <a id="edit_account_link" href="{% url 'account_home' %}"><span
+                                            class="fa fa-fw fa-user"></span>{{ user.email }}</a>
+                                </li>
+                            {% endif %}
 
                             <li class="divider"></li>
 
