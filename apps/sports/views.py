@@ -11,6 +11,7 @@ from django.views.generic.base import ContextMixin
 
 from coaches import forms as coach_forms
 from coaches.models import Coach
+from escoresheet.utils import AccountAndSportRegistrationCompleteMixin
 from managers import forms as manager_forms
 from managers.models import Manager
 from players import forms as player_forms
@@ -18,7 +19,6 @@ from players.models import HockeyPlayer, BasketballPlayer, BaseballPlayer
 from referees import forms as referee_forms
 from referees.models import Referee
 from seasons.views import email_admins_sport_not_configured
-from userprofiles.views import check_account_and_sport_registration_completed
 from .forms import CreateSportRegistrationForm
 from .models import SportRegistration, Sport
 
@@ -32,7 +32,8 @@ SPORT_NOT_CONFIGURED_MSG = "{sport} hasn't been configured correctly in our syst
                            "If you believe this is an error please contact us."
 
 
-class FinishSportRegistrationView(LoginRequiredMixin, ContextMixin, generic.View):
+class FinishSportRegistrationView(LoginRequiredMixin, ContextMixin, AccountAndSportRegistrationCompleteMixin,
+                                  generic.View):
     template_name = 'sports/sport_registration_finish.html'
     success_msg = 'You are now registered for {sports}.'
 
@@ -66,10 +67,6 @@ class FinishSportRegistrationView(LoginRequiredMixin, ContextMixin, generic.View
         return context
 
     def get(self, request, *args, **kwargs):
-        redirect_url, redirect_needed = check_account_and_sport_registration_completed(request)
-        if redirect_needed:
-            return redirect(redirect_url)
-
         context = self.get_context_data(**kwargs)
         sr = context.get('sport_registration')
         if sr and sr.has_role('Player') and context.get('player_form') is None:
@@ -87,10 +84,6 @@ class FinishSportRegistrationView(LoginRequiredMixin, ContextMixin, generic.View
         return render(request, self.template_name, context)
 
     def post(self, request, *args, **kwargs):
-        redirect_url, redirect_needed = check_account_and_sport_registration_completed(request)
-        if redirect_needed:
-            return redirect(redirect_url)
-
         context = self.get_context_data(**kwargs)
 
         sr = context.get('sport_registration')
@@ -201,7 +194,8 @@ class CreateSportRegistrationFormSetHelper(FormHelper):
 
 
 # TODO Add API endpoints to do this, so don't have to deal with the formset stuff
-class CreateSportRegistrationView(LoginRequiredMixin, ContextMixin, generic.View):
+class CreateSportRegistrationView(LoginRequiredMixin, ContextMixin, AccountAndSportRegistrationCompleteMixin,
+                                  generic.View):
     template_name = 'sports/sport_registration_create.html'
     already_registered_msg = 'You have already registered for all available sports. ' \
                              'Check back later to see if any new sports have been added.'
@@ -228,9 +222,6 @@ class CreateSportRegistrationView(LoginRequiredMixin, ContextMixin, generic.View
         return context
 
     def get(self, request, *args, **kwargs):
-        redirect_url, redirect_needed = check_account_and_sport_registration_completed(request)
-        if redirect_needed:
-            return redirect(redirect_url)
         context = self.get_context_data(**kwargs)
         if context.get('user_registered_for_all_sports'):
             messages.info(request, self.already_registered_msg)
@@ -238,10 +229,6 @@ class CreateSportRegistrationView(LoginRequiredMixin, ContextMixin, generic.View
         return render(request, self.template_name, context)
 
     def post(self, request, *args, **kwargs):
-        redirect_url, redirect_needed = check_account_and_sport_registration_completed(request)
-        if redirect_needed:
-            return redirect(redirect_url)
-
         context = self.get_context_data(**kwargs)
 
         if context.get('user_registered_for_all_sports'):
