@@ -63,8 +63,9 @@ class SportRegistration(models.Model):
         """
         Given a list of roles (taken from ROLES) creates a mask (int) that represents the roles currently valid for this
         user for a given sport
+
         :param append: Set to True to indicate you want to append roles to any existent roles, set to False to overwrite
-        any existing roles with roles
+            any existing roles with roles
         :param roles: The role(s) to add
         """
 
@@ -84,8 +85,9 @@ class SportRegistration(models.Model):
     def remove_role(self, role):
         """
         Given a role attempts to remove that role.
-        :raise RoleDoesNotExistError if the sport registration does not have the specified role.
-        :raise InvalidNumberOfRolesError if removing the role would result in the sport registration having no roles.
+
+        :raise RoleDoesNotExistError: if the sport registration does not have the specified role.
+        :raise InvalidNumberOfRolesError: if removing the role would result in the sport registration having no roles.
         :param role: The role to remove.
         """
         if not self.has_role(role):
@@ -102,6 +104,7 @@ class SportRegistration(models.Model):
     def roles(self):
         """
         Converts the role mask (int) to the actual roles (strings)
+
         :return: A list containing all of the roles associated with the user
         """
         return [role for role in self.ROLES if (self.roles_mask & 2 ** self.ROLES.index(role)) != 0]
@@ -109,6 +112,7 @@ class SportRegistration(models.Model):
     def has_role(self, role):
         """
         Checks to see if the current user has the specified role for the appropriate sport
+
         :param role: The role to check for (case insensitive)
         :return: True if the user has the current role, False otherwise
         """

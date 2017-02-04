@@ -32,7 +32,7 @@ Feature: User profiles
     And I fill in "id_height" with "5' 7"
     And I fill in "id_weight" with "130"
     And I press "create_userprofile_btn"
-    Then I should see "Invalid format, please use the following format: 5' 7""
+    Then I should see "Invalid format, please enter your height according to the format below."
 
   Scenario: Fill out with invalid weight
     Given I am on the "profile:create" page

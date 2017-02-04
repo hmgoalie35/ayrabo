@@ -90,7 +90,7 @@ class CreateUserProfileViewTests(BaseTestCase):
         for invalid_height in invalid_heights:
             self.post_data['height'] = invalid_height
             response = self.client.post(reverse('profile:create'), data=self.post_data, follow=True)
-            self.assertFormError(response, 'form', 'height', 'Invalid format, please use the following format: 5\' 7"')
+            self.assertFormError(response, 'form', 'height', UserProfile.INVALID_HEIGHT_MSG)
 
     def test_negative_and_zero_weights(self):
         invalid_weights = [-1, -100, 0]
