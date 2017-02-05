@@ -3,9 +3,9 @@ User defined exceptions for the sports app.
 """
 
 
-class RoleDoesNotExistError(Exception):
+class RoleDoesNotExistException(Exception):
     pass
 
 
-class InvalidNumberOfRolesError(Exception):
+class InvalidNumberOfRolesException(Exception):
     pass

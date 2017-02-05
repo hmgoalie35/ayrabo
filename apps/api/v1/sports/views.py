@@ -4,7 +4,7 @@ from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from sports.exceptions import RoleDoesNotExistError, InvalidNumberOfRolesError
+from sports.exceptions import RoleDoesNotExistException, InvalidNumberOfRolesException
 from sports.models import SportRegistration
 
 
@@ -18,10 +18,10 @@ class RemoveSportRegistrationRoleAPIView(APIView):
 
         try:
             sr.remove_role(role)
-        except RoleDoesNotExistError:
+        except RoleDoesNotExistException:
             return Response({'error': 'You are not currently registered as a {role}'.format(role=role)},
                             status.HTTP_400_BAD_REQUEST)
-        except InvalidNumberOfRolesError:
+        except InvalidNumberOfRolesException:
             return Response(
                     {'error': 'You cannot remove the {role} role. You must be registered for at least one role.'.format(
                         role=role)},
