@@ -179,7 +179,7 @@ class CreateSportRegistrationFormSetHelper(FormHelper):
                 Div(
                         HTML(
                                 "{% if not forloop.first %}<span data-toggle=\"tooltip\" data-placement=\"top\" "
-                                "title=\"Remove form\" class=\"fa fa-trash trash-delete pull-right\"></span>{% endif %}"
+                                "title=\"Remove form\" class=\"fa fa-trash fa-trash-red pull-right\"></span>{% endif %}"
                         ),
                         Field('sport'),
                         Field('roles'),

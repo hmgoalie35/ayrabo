@@ -1,5 +1,7 @@
 @import "../bootstrap-sass/assets/stylesheets/bootstrap";
 @import "variables";
+@import "buttons";
+@import "icons";
 
 html {
   position: relative;
@@ -50,20 +52,11 @@ div.alert.alert-block.alert-danger > ul > li {
   list-style: none;
 }
 
-.btn-back {
-  color: white;
-  background: $ess-gray;
-  &:hover {
-    color: white;
-    background: $ess-gray-dark;
-  }
-}
-
 #div_id_birthday > .controls {
   margin-top: 5px;
 }
 
-.nav-tab-link-color {
+.nav-tab {
   color: $ess-gray-light;
   &:hover {
     color: $ess-gray-darker;
@@ -78,17 +71,8 @@ div.alert.alert-block.alert-danger > ul > li {
   }
 }
 
-.more-sport-info-fa-icon {
-  color: black;
+.more-sport-info-fa-caret {
   margin-top: 3px;
-}
-
-.trash-delete {
-  cursor: pointer;
-  color: indianred;
-  &:hover {
-    color: darkred;
-  }
 }
 
 .vertical-line-left {
@@ -149,12 +133,4 @@ table.table.table-borderless {
 // Remove extra margin bootstrap's panels have
 .table-row-panel {
   margin-bottom: 0;
-}
-
-.fa-green-check {
-  color: green;
-}
-
-.fa-red-x {
-  color: red;
 }

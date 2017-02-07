@@ -55,7 +55,7 @@ Feature: Register for a sport
   Scenario: Remove form
     Given I am on the "sport:create_sport_registration" page
     When I press "add_another_form_btn"
-    And I press ".fa.fa-trash.trash-delete"
+    And I press ".fa.fa-trash.fa-trash-red"
     And I wait for ".multiField" to be removed
     Then "id_sportregistrations-TOTAL_FORMS" should have value "1"
 

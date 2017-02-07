@@ -5,9 +5,8 @@ $(function () {
     $("#id_timezone").enableBootstrapSelect({header: "Select a timezone"});
 
     $(".more-sport-info").click(function () {
-        var $elem = $(this).find("span.more-sport-info-fa-icon");
-        $elem.toggleClass("fa-caret-square-o-down");
-        $elem.toggleClass("fa-caret-square-o-up");
+        var $elem = $(this).find("span.more-sport-info-fa-caret");
+        $elem.toggleClass("fa-caret-down fa-caret-up");
     });
 
     // allows click-through of edit registration links

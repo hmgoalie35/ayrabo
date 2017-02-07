@@ -83,7 +83,7 @@ $(function () {
             var form_data = $("#empty_form").html();
             form_data = form_data.replace(/__prefix__/g, new_form_num);
             form_data = form_data.replace(/data-form-num="-?\d*"/, "data-form-num=\"" + new_form_num + "\"");
-            var trashIcon = '<span data-toggle="tooltip" data-placement="top" title="Remove form" class="fa fa-trash trash-delete pull-right"></span>';
+            var trashIcon = '<span data-toggle="tooltip" data-placement="top" title="Remove form" class="fa fa-trash fa-trash-red pull-right"></span>';
             $("<div class='multiField'>" + trashIcon + form_data + "</div>").hide().appendTo($("#additional_forms")).fadeIn(800);
             window.scrollTo(0, document.body.scrollHeight);
             incrementTotalForms();
@@ -94,7 +94,7 @@ $(function () {
     });
 
 
-    $(document).on("click", ".fa-trash.trash-delete", function (e) {
+    $(document).on("click", ".fa-trash.fa-trash-red", function (e) {
         $(this).parent().fadeOut(300, function () {
             decrementTotalForms();
             toggleAddFormBtnDisabled();
