@@ -16,7 +16,7 @@ Feature: Finish sport registration, filling in any coach/manager/player/referee 
   Scenario: Redirect when trying to navigate to profile create page when sport registration not complete
     Given "user@example.com" is registered for "Ice Hockey" with roles "Player, Coach, Referee, Manager"
     And "user@example.com" is registered for "Basketball" with roles "Player, Coach, Referee, Manager"
-    When I go to the "profile:create" page
+    When I go to the "account_complete_registration" page
     Then I should be on the "sport:finish_sport_registration" page
 
   Scenario: Redirect when trying to navigate to create sport registration page when sport registration not complete

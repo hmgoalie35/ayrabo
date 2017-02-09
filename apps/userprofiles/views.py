@@ -16,7 +16,7 @@ class CreateUserProfileView(LoginRequiredMixin, SuccessMessageMixin, AccountAndS
     model = UserProfile
     template_name = 'userprofiles/userprofile_create.html'
     success_url = reverse_lazy('sport:create_sport_registration')
-    success_message = 'Your profile has been created.'
+    success_message = 'You have completed your account registration.'
     form_class = CreateUserProfileForm
 
     def form_valid(self, form):
@@ -29,7 +29,7 @@ class UpdateUserProfileView(LoginRequiredMixin, SuccessMessageMixin, generic.Upd
     form_class = UpdateUserProfileForm
     template_name = 'userprofiles/userprofile_update.html'
     success_url = reverse_lazy('account_home')
-    success_message = 'Your profile has been updated'
+    success_message = 'Your account has been updated.'
     context_object_name = 'userprofile'
 
     def get_context_data(self, **kwargs):

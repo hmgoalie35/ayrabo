@@ -43,7 +43,7 @@ class AccountAndSportRegistrationCompleteMixin(object):
 
         if not up.exists():
             request.session['is_user_currently_registering'] = True
-            redirect_url = reverse('profile:create')
+            redirect_url = reverse('account_complete_registration')
         elif not sport_registrations.exists():
             request.session['is_user_currently_registering'] = True
             redirect_url = reverse('sport:create_sport_registration')

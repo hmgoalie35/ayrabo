@@ -29,49 +29,49 @@ class CreateUserProfileViewTests(BaseTestCase):
     # GET
     def test_get_anonymous_user(self):
         self.client.logout()
-        response = self.client.get(reverse('profile:create'))
-        result_url = '%s?next=%s' % (reverse('account_login'), reverse('profile:create'))
+        response = self.client.get(reverse('account_complete_registration'))
+        result_url = '%s?next=%s' % (reverse('account_login'), reverse('account_complete_registration'))
         self.assertRedirects(response, result_url)
 
     def test_correct_template(self):
-        response = self.client.get(reverse('profile:create'))
+        response = self.client.get(reverse('account_complete_registration'))
         self.assertTemplateUsed(response, 'userprofiles/userprofile_create.html')
 
     def test_200_status_code(self):
-        response = self.client.get(reverse('profile:create'))
+        response = self.client.get(reverse('account_complete_registration'))
         self.assertEqual(response.status_code, 200)
 
     def test_form_in_context(self):
-        response = self.client.get(reverse('profile:create'))
+        response = self.client.get(reverse('account_complete_registration'))
         self.assertIsNotNone(response.context['form'])
 
     def test_get_userprofile_already_created(self):
         self.client.logout()
         user_with_profile = UserFactory.create(password=self.password)
         self.client.login(email=user_with_profile.email, password=self.password)
-        response = self.client.get(reverse('profile:create'))
+        response = self.client.get(reverse('account_complete_registration'))
         self.assertRedirects(response, reverse('sport:create_sport_registration'))
 
     # POST
     def test_post_anonymous_user(self):
         self.client.logout()
-        response = self.client.post(reverse('profile:create'), data=self.post_data)
-        result_url = '%s?next=%s' % (reverse('account_login'), reverse('profile:create'))
+        response = self.client.post(reverse('account_complete_registration'), data=self.post_data)
+        result_url = '%s?next=%s' % (reverse('account_login'), reverse('account_complete_registration'))
         self.assertRedirects(response, result_url)
 
     def test_post_userprofile_already_created(self):
         self.client.logout()
         user_with_profile = UserFactory(password=self.password)
         self.client.login(email=user_with_profile.email, password=self.password)
-        response = self.client.post(reverse('profile:create'), data=self.post_data, follow=True)
+        response = self.client.post(reverse('account_complete_registration'), data=self.post_data, follow=True)
         self.assertRedirects(response, reverse('sport:create_sport_registration'))
 
     def test_valid_post_data(self):
-        response = self.client.post(reverse('profile:create'), data=self.post_data, follow=True)
+        response = self.client.post(reverse('account_complete_registration'), data=self.post_data, follow=True)
         self.assertRedirects(response, reverse('sport:create_sport_registration'))
 
     def test_user_attribute_is_set(self):
-        self.client.post(reverse('profile:create'), data=self.post_data, follow=True)
+        self.client.post(reverse('account_complete_registration'), data=self.post_data, follow=True)
         self.assertTrue(UserProfile.objects.filter(user=self.user).exists())
 
     # Invalid POST data
@@ -80,7 +80,7 @@ class CreateUserProfileViewTests(BaseTestCase):
         self.post_data.pop('gender')
         self.post_data.pop('height')
         self.post_data.pop('weight')
-        response = self.client.post(reverse('profile:create'), data=self.post_data, follow=True)
+        response = self.client.post(reverse('account_complete_registration'), data=self.post_data, follow=True)
         self.assertFormError(response, 'form', 'gender', 'This field is required.')
         self.assertFormError(response, 'form', 'height', 'This field is required.')
         self.assertFormError(response, 'form', 'weight', 'This field is required.')
@@ -89,21 +89,21 @@ class CreateUserProfileViewTests(BaseTestCase):
         invalid_heights = ['5 7', '5 7\"', '5\' 7']
         for invalid_height in invalid_heights:
             self.post_data['height'] = invalid_height
-            response = self.client.post(reverse('profile:create'), data=self.post_data, follow=True)
+            response = self.client.post(reverse('account_complete_registration'), data=self.post_data, follow=True)
             self.assertFormError(response, 'form', 'height', UserProfile.INVALID_HEIGHT_MSG)
 
     def test_negative_and_zero_weights(self):
         invalid_weights = [-1, -100, 0]
         for invalid_weight in invalid_weights:
             self.post_data['weight'] = invalid_weight
-            response = self.client.post(reverse('profile:create'), data=self.post_data, follow=True)
+            response = self.client.post(reverse('account_complete_registration'), data=self.post_data, follow=True)
             self.assertFormError(response, 'form', 'weight', 'Ensure this value is greater than or equal to 1.')
 
     def test_decimal_weights(self):
         invalid_weights = [.5, -.5]
         for invalid_weight in invalid_weights:
             self.post_data['weight'] = invalid_weight
-            response = self.client.post(reverse('profile:create'), data=self.post_data, follow=True)
+            response = self.client.post(reverse('account_complete_registration'), data=self.post_data, follow=True)
             self.assertFormError(response, 'form', 'weight', 'Enter a whole number.')
 
 
@@ -180,7 +180,7 @@ class UpdateUserProfileViewTests(BaseTestCase):
         self.post_data.pop('gender')
         self.post_data.pop('birthday')
         response = self.client.post(reverse('account_home'), data=self.post_data, follow=True)
-        success_msg = 'Your profile has been updated'
+        success_msg = 'Your account has been updated.'
         self.assertHasMessage(response, success_msg)
         self.assertTemplateUsed('userprofiles/userprofile_update.html')
 
