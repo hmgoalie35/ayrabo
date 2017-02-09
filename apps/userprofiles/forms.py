@@ -25,7 +25,8 @@ class CreateUserProfileForm(forms.ModelForm):
                 Field('language'),
                 Field('timezone'),
                 HTML('<br>'),
-                Div(Submit('create_userprofile_btn', 'Create profile and continue', css_class='btn btn-success'),
+                Div(Submit('create_userprofile_btn', 'Continue',
+                           css_class='btn btn-success'),
                     css_class='text-center'),
                 HTML('<br>'),
         )
