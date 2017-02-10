@@ -1,6 +1,7 @@
 from django.core.exceptions import ValidationError
 
 from escoresheet.utils import BaseTestCase
+from userprofiles.models import UserProfile
 from .factories.UserProfileFactory import UserProfileFactory
 
 
@@ -8,8 +9,7 @@ class UserProfileModelTests(BaseTestCase):
     def test_invalid_height_format(self):
         invalid_heights = ['5 7', '5 7\"', '5\' 7', '5\' 12\"', '5\' 13\"', '5\'1\"']
         for invalid_height in invalid_heights:
-            msg = '{\'height\': [\'Invalid format, please use the following format: 5\\\' 7"\']}'
-            with self.assertRaisesMessage(ValidationError, msg):
+            with self.assertRaisesMessage(ValidationError, UserProfile.INVALID_HEIGHT_MSG):
                 UserProfileFactory.create(height=invalid_height).full_clean()
 
     def test_valid_height_format(self):

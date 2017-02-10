@@ -11,14 +11,14 @@ class AccountAndSportRegistrationCompleteMiddleware(MiddlewareMixin):
     This middleware makes sure the user has a profile, has at least one sport registration and has no sport
     registrations that are not complete. Any requests to the urls in whitelisted_urls are allowed to pass through
     because a redirect loop would occur otherwise. It is the job of the view for the whitelisted_urls to make sure
-    user's can't go from create_profile_url to create_sport_registration_url, etc.
+    user's can't go from complete_registration_url to create_sport_registration_url, etc.
     """
 
     def process_request(self, request):
-        create_profile_url = reverse('profile:create')
+        complete_registration_url = reverse('account_complete_registration')
         create_sport_registration_url = reverse('sport:create_sport_registration')
         finish_sport_registration_url = reverse('sport:finish_sport_registration')
-        whitelisted_urls = [reverse('account_logout'), create_profile_url, create_sport_registration_url,
+        whitelisted_urls = [reverse('account_logout'), complete_registration_url, create_sport_registration_url,
                             finish_sport_registration_url]
 
         # debug_toolbar wasn't working properly because of my custom middleware so let all debug_toolbar
@@ -33,7 +33,7 @@ class AccountAndSportRegistrationCompleteMiddleware(MiddlewareMixin):
             up = UserProfile.objects.filter(user=request.user)
             if not up.exists():
                 request.session['is_user_currently_registering'] = True
-                return redirect(create_profile_url)
+                return redirect(complete_registration_url)
 
             sport_registrations = SportRegistration.objects.filter(user=request.user)
             if not sport_registrations.exists():

@@ -32,15 +32,18 @@ class BulkUploadTeamsView(LoginRequiredMixin, FormView):
     def form_valid(self, form):
         uploaded_file = form.cleaned_data.get('file')
         errors, successful_teams_created, total_csv_rows = self.parse_csv(uploaded_file)
+
         if len(errors) > 0:
             context = self.get_context_data()
             context['errors'] = errors
-            return render(self.request, 'teams/team_bulk_upload.html', context)
+            return render(self.request, self.template_name, context)
 
         messages.success(self.request, '{successful_teams_created} out of {total_csv_rows} teams successfully created'
                          .format(successful_teams_created=successful_teams_created, total_csv_rows=total_csv_rows - 1))
         return super(BulkUploadTeamsView, self).form_valid(form)
 
+    # TODO Append unsaved team instances to list, and only save them after all teams in the file are validated.
+    # TLDR; Do not save any teams to the db unless all teams in the csv are valid.
     def parse_csv(self, uploaded_file):
         # uploaded_file is a bytesio object, but DictReader needs stringio, so convert it
         csv_file = TextIOWrapper(uploaded_file.file)
@@ -85,12 +88,11 @@ class BulkUploadTeamsView(LoginRequiredMixin, FormView):
                 team.full_clean(exclude=['slug'])
                 team.save()
                 successful_teams_created += 1
-            except ValidationError:
-                successful_teams_created += 1
-            except IntegrityError:
-                # Ignore duplicates
-                successful_teams_created += 1
-
+            except ValidationError as e:
+                errors.append('Validation failed on line {}. Error: {}'.format(line_no, ', '.join(e.messages)))
+                return errors, successful_teams_created, line_no
+            except IntegrityError as e:
+                errors.append('Integrity Error: {}'.format(', '.join(e.messages)))
             line_no += 1
 
         return errors, successful_teams_created, line_no

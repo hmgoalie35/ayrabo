@@ -11,6 +11,7 @@ from django.views.generic.base import ContextMixin
 
 from coaches import forms as coach_forms
 from coaches.models import Coach
+from escoresheet.utils import AccountAndSportRegistrationCompleteMixin
 from managers import forms as manager_forms
 from managers.models import Manager
 from players import forms as player_forms
@@ -18,7 +19,6 @@ from players.models import HockeyPlayer, BasketballPlayer, BaseballPlayer
 from referees import forms as referee_forms
 from referees.models import Referee
 from seasons.views import email_admins_sport_not_configured
-from userprofiles.views import check_account_and_sport_registration_completed
 from .forms import CreateSportRegistrationForm
 from .models import SportRegistration, Sport
 
@@ -28,11 +28,18 @@ SPORT_PLAYER_FORM_MAPPINGS = {
     'Basketball': player_forms.BasketballPlayerForm
 }
 
+SPORT_PLAYER_MODEL_MAPPINGS = {
+    'Ice Hockey': HockeyPlayer,
+    'Basketball': BasketballPlayer,
+    'Baseball': BaseballPlayer
+}
+
 SPORT_NOT_CONFIGURED_MSG = "{sport} hasn't been configured correctly in our system. " \
                            "If you believe this is an error please contact us."
 
 
-class FinishSportRegistrationView(LoginRequiredMixin, ContextMixin, generic.View):
+class FinishSportRegistrationView(LoginRequiredMixin, ContextMixin, AccountAndSportRegistrationCompleteMixin,
+                                  generic.View):
     template_name = 'sports/sport_registration_finish.html'
     success_msg = 'You are now registered for {sports}.'
 
@@ -40,9 +47,8 @@ class FinishSportRegistrationView(LoginRequiredMixin, ContextMixin, generic.View
         context = super(FinishSportRegistrationView, self).get_context_data(**kwargs)
         sport_registrations = SportRegistration.objects.filter(user=self.request.user,
                                                                is_complete=False).select_related('sport')
-        context['sport_registrations_exist'] = sport_registrations.exists()
-        context['remaining_sport_registrations'] = sport_registrations.count()
-        if context.get('sport_registrations_exist'):
+        sport_registrations_exist = sport_registrations.exists()
+        if sport_registrations_exist:
             sr = sport_registrations.first()
             context['sport_registration'] = sr
             context['sport_name'] = sr.sport.name
@@ -63,13 +69,12 @@ class FinishSportRegistrationView(LoginRequiredMixin, ContextMixin, generic.View
                 context['manager_form'] = manager_forms.ManagerForm(self.request.POST or None, sport=sr.sport)
             if sr.has_role('Referee'):
                 context['referee_form'] = referee_forms.RefereeForm(self.request.POST or None, sport=sr.sport)
+
+        context['sport_registrations_exist'] = sport_registrations_exist
+        context['remaining_sport_registrations'] = sport_registrations.count()
         return context
 
     def get(self, request, *args, **kwargs):
-        redirect_url, redirect_needed = check_account_and_sport_registration_completed(request)
-        if redirect_needed:
-            return redirect(redirect_url)
-
         context = self.get_context_data(**kwargs)
         sr = context.get('sport_registration')
         if sr and sr.has_role('Player') and context.get('player_form') is None:
@@ -78,7 +83,7 @@ class FinishSportRegistrationView(LoginRequiredMixin, ContextMixin, generic.View
             return render(request, 'message.html', {'message': SPORT_NOT_CONFIGURED_MSG.format(sport=sport_name)})
 
         if not context.get('sport_registrations_exist'):
-            sports_registered_for = request.session.get('sports_registered_for', None)
+            sports_registered_for = request.session.pop('sports_registered_for', None)
             if sports_registered_for:
                 messages.success(request, self.success_msg.format(
                         sports=', '.join(sports_registered_for)))
@@ -87,10 +92,6 @@ class FinishSportRegistrationView(LoginRequiredMixin, ContextMixin, generic.View
         return render(request, self.template_name, context)
 
     def post(self, request, *args, **kwargs):
-        redirect_url, redirect_needed = check_account_and_sport_registration_completed(request)
-        if redirect_needed:
-            return redirect(redirect_url)
-
         context = self.get_context_data(**kwargs)
 
         sr = context.get('sport_registration')
@@ -100,7 +101,7 @@ class FinishSportRegistrationView(LoginRequiredMixin, ContextMixin, generic.View
             return render(request, 'message.html', {'message': SPORT_NOT_CONFIGURED_MSG.format(sport=sport_name)})
 
         if not context.get('sport_registrations_exist'):
-            sports_registered_for = request.session.get('sports_registered_for', None)
+            sports_registered_for = request.session.pop('sports_registered_for', None)
             if sports_registered_for:
                 messages.success(request, self.success_msg.format(
                         sports=', '.join(sports_registered_for)))
@@ -186,7 +187,7 @@ class CreateSportRegistrationFormSetHelper(FormHelper):
                 Div(
                         HTML(
                                 "{% if not forloop.first %}<span data-toggle=\"tooltip\" data-placement=\"top\" "
-                                "title=\"Remove form\" class=\"fa fa-trash trash-delete pull-right\"></span>{% endif %}"
+                                "title=\"Remove form\" class=\"fa fa-trash fa-trash-red pull-right\"></span>{% endif %}"
                         ),
                         Field('sport'),
                         Field('roles'),
@@ -201,7 +202,8 @@ class CreateSportRegistrationFormSetHelper(FormHelper):
 
 
 # TODO Add API endpoints to do this, so don't have to deal with the formset stuff
-class CreateSportRegistrationView(LoginRequiredMixin, ContextMixin, generic.View):
+class CreateSportRegistrationView(LoginRequiredMixin, ContextMixin, AccountAndSportRegistrationCompleteMixin,
+                                  generic.View):
     template_name = 'sports/sport_registration_create.html'
     already_registered_msg = 'You have already registered for all available sports. ' \
                              'Check back later to see if any new sports have been added.'
@@ -209,15 +211,17 @@ class CreateSportRegistrationView(LoginRequiredMixin, ContextMixin, generic.View
     def get_context_data(self, **kwargs):
         context = super(CreateSportRegistrationView, self).get_context_data(**kwargs)
         sports_already_registered_for = SportRegistration.objects.filter(user=self.request.user).values_list('sport_id')
-        context['remaining_sport_count'] = Sport.objects.count() - len(sports_already_registered_for)
-        context['user_registered_for_all_sports'] = context.get('remaining_sport_count') == 0
+        remaining_sport_count = Sport.objects.count() - len(sports_already_registered_for)
         SportRegistrationFormSet = forms.modelformset_factory(SportRegistration,
                                                               form=CreateSportRegistrationForm,
                                                               formset=SportRegistrationModelFormSet,
                                                               fields=('sport', 'roles'),
                                                               extra=0,
-                                                              min_num=1, max_num=context.get('remaining_sport_count'),
+                                                              min_num=1, max_num=remaining_sport_count,
                                                               validate_min=True, validate_max=True, can_delete=False)
+
+        context['remaining_sport_count'] = remaining_sport_count
+        context['user_registered_for_all_sports'] = context.get('remaining_sport_count') == 0
         context['formset'] = SportRegistrationFormSet(
                 self.request.POST or None,
                 queryset=SportRegistration.objects.none(),
@@ -228,9 +232,6 @@ class CreateSportRegistrationView(LoginRequiredMixin, ContextMixin, generic.View
         return context
 
     def get(self, request, *args, **kwargs):
-        redirect_url, redirect_needed = check_account_and_sport_registration_completed(request)
-        if redirect_needed:
-            return redirect(redirect_url)
         context = self.get_context_data(**kwargs)
         if context.get('user_registered_for_all_sports'):
             messages.info(request, self.already_registered_msg)
@@ -238,10 +239,6 @@ class CreateSportRegistrationView(LoginRequiredMixin, ContextMixin, generic.View
         return render(request, self.template_name, context)
 
     def post(self, request, *args, **kwargs):
-        redirect_url, redirect_needed = check_account_and_sport_registration_completed(request)
-        if redirect_needed:
-            return redirect(redirect_url)
-
         context = self.get_context_data(**kwargs)
 
         if context.get('user_registered_for_all_sports'):
@@ -269,8 +266,7 @@ class UpdateSportRegistrationView(LoginRequiredMixin, ContextMixin, generic.View
         context = super(UpdateSportRegistrationView, self).get_context_data(**kwargs)
         sr = get_object_or_404(SportRegistration, pk=kwargs.get('pk', None))
         if sr.user != self.request.user:
-            context['not_obj_owner'] = True
-            return context
+            raise Http404
         context['sport_registration'] = sr
         related_objects = sr.get_related_role_objects()
         context['remaining_roles'] = sorted(set(SportRegistration.ROLES) - set(sr.roles))
@@ -303,9 +299,6 @@ class UpdateSportRegistrationView(LoginRequiredMixin, ContextMixin, generic.View
 
     def get(self, request, *args, **kwargs):
         context = self.get_context_data(**kwargs)
-        if context.get('not_obj_owner'):
-            raise Http404
-
         sr = context.get('sport_registration')
         sport_name = sr.sport.name
         if sr and sr.has_role('Player') and context.get('player_form') is None:
@@ -316,9 +309,6 @@ class UpdateSportRegistrationView(LoginRequiredMixin, ContextMixin, generic.View
 
     def post(self, request, *args, **kwargs):
         context = self.get_context_data(**kwargs)
-        if context.get('not_obj_owner'):
-            raise Http404
-
         sr = context.get('sport_registration')
         sport_name = sr.sport.name
         if sr and sr.has_role('Player') and context.get('player_form') is None:
@@ -384,6 +374,8 @@ class AddSportRegistrationRoleView(LoginRequiredMixin, ContextMixin, generic.Vie
     def get_context_data(self, **kwargs):
         context = super(AddSportRegistrationRoleView, self).get_context_data(**kwargs)
         sr = get_object_or_404(SportRegistration, pk=kwargs.get('pk', None))
+        if not self.request.user.id == sr.user_id:
+            raise Http404
         form_class = None
         role = kwargs.get('role', None)
         sport = sr.sport
@@ -393,12 +385,8 @@ class AddSportRegistrationRoleView(LoginRequiredMixin, ContextMixin, generic.Vie
         related_role_object = None
         if role == 'player':
             form_class = SPORT_PLAYER_FORM_MAPPINGS[sport.name]
-            if 'Hockey' in sport.name:
-                related_role_object = HockeyPlayer.objects.filter(user=self.request.user, sport=sport).first()
-            elif sport.name == 'Basketball':
-                related_role_object = BasketballPlayer.objects.filter(user=self.request.user, sport=sport).first()
-            elif sport.name == 'Baseball':
-                related_role_object = BaseballPlayer.objects.filter(user=self.request.user, sport=sport).first()
+            model_class = SPORT_PLAYER_MODEL_MAPPINGS.get(sport.name)
+            related_role_object = model_class.objects.filter(user=self.request.user, sport=sport).first()
         elif role == 'coach':
             form_class = coach_forms.CoachForm
             related_role_object = Coach.objects.filter(user=self.request.user,
@@ -412,23 +400,20 @@ class AddSportRegistrationRoleView(LoginRequiredMixin, ContextMixin, generic.Vie
                                                          team__division__league__sport=sport).first()
 
         # Show the user the object they had previously created for the given sport.
+        form_kwargs = {}
         if related_role_object:
-            form = form_class(self.request.POST or None, sport=sport, instance=related_role_object,
-                              read_only_fields=['__all__'])
-        else:
-            form = form_class(self.request.POST or None, sport=sport)
+            form_kwargs['instance'] = related_role_object
+            form_kwargs['read_only_fields'] = ['__all__']
+        form = form_class(self.request.POST or None, sport=sport, **form_kwargs)
 
         context['related_role_object'] = related_role_object
         context['form'] = form
         context['role'] = role
         context['sport_registration'] = sr
-        context['is_obj_owner'] = self.request.user.id == sr.user_id
         return context
 
     def get(self, request, *args, **kwargs):
         context = self.get_context_data(**kwargs)
-        if not context.get('is_obj_owner'):
-            raise Http404
         sr = context.get('sport_registration')
         role = context.get('role')
         if sr.has_role(role):
@@ -438,8 +423,6 @@ class AddSportRegistrationRoleView(LoginRequiredMixin, ContextMixin, generic.Vie
 
     def post(self, request, *args, **kwargs):
         context = self.get_context_data(**kwargs)
-        if not context.get('is_obj_owner'):
-            raise Http404
         form = context.get('form', None)
         role = context.get('role', None)
         sr = context.get('sport_registration', None)

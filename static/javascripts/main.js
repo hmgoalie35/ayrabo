@@ -58,4 +58,18 @@ $(function () {
 
         return this;
     };
+
+    $("#edit_account_link.disabled").click(function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        return false;
+    });
+
+    $("#logout_btn_acct_menu").click(function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        $("#logout_form").submit();
+        return false;
+    });
+
 });

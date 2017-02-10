@@ -1,13 +1,13 @@
 from django.contrib.auth.models import User
-from django.urls import reverse
 from django.db import models
+from django.urls import reverse
 from django.utils.text import slugify
 
 import coaches as coaches_app
 import managers as managers_app
 import players as players_app
 import referees as referees_app
-from .exceptions import RoleDoesNotExistError, InvalidNumberOfRolesError
+from .exceptions import RoleDoesNotExistException, InvalidNumberOfRolesException
 
 
 class Sport(models.Model):
@@ -63,8 +63,9 @@ class SportRegistration(models.Model):
         """
         Given a list of roles (taken from ROLES) creates a mask (int) that represents the roles currently valid for this
         user for a given sport
+
         :param append: Set to True to indicate you want to append roles to any existent roles, set to False to overwrite
-        any existing roles with roles
+            any existing roles with roles
         :param roles: The role(s) to add
         """
 
@@ -84,24 +85,27 @@ class SportRegistration(models.Model):
     def remove_role(self, role):
         """
         Given a role attempts to remove that role.
-        :raise RoleDoesNotExistError if the sport registration does not have the specified role.
-        :raise InvalidNumberOfRolesError if removing the role would result in the sport registration having no roles.
+
+        :raise RoleDoesNotExistException: if the sport registration does not have the specified role.
+        :raise InvalidNumberOfRolesException: if removing the role would result in the sport registration
+            having no roles.
         :param role: The role to remove.
         """
         if not self.has_role(role):
-            raise RoleDoesNotExistError()
+            raise RoleDoesNotExistException()
 
         new_roles = list(set(self.roles) - {role.title()})
 
         if new_roles:
             self.set_roles(new_roles)
         else:
-            raise InvalidNumberOfRolesError()
+            raise InvalidNumberOfRolesException()
 
     @property
     def roles(self):
         """
         Converts the role mask (int) to the actual roles (strings)
+
         :return: A list containing all of the roles associated with the user
         """
         return [role for role in self.ROLES if (self.roles_mask & 2 ** self.ROLES.index(role)) != 0]
@@ -109,6 +113,7 @@ class SportRegistration(models.Model):
     def has_role(self, role):
         """
         Checks to see if the current user has the specified role for the appropriate sport
+
         :param role: The role to check for (case insensitive)
         :return: True if the user has the current role, False otherwise
         """
@@ -123,6 +128,12 @@ class SportRegistration(models.Model):
         :return: A dictionary where the keys are the role (Player, Coach, etc.) and the value is the associated object
         """
 
+        SPORT_MODEL_MAPPINGS = {
+            'Ice Hockey': players_app.models.HockeyPlayer,
+            'Baseball': players_app.models.BaseballPlayer,
+            'Basketball': players_app.models.BasketballPlayer,
+        }
+
         obj_role_mappings = {}
         roles = self.roles
         user = self.user_id
@@ -130,15 +141,11 @@ class SportRegistration(models.Model):
             if role == 'Player':
                 sport_name = self.sport.name
                 players = None
-                if 'Hockey' in sport_name:
-                    players = players_app.models.HockeyPlayer.objects.filter(
-                            user=user, sport=self.sport).select_related('team', 'team__division')
-                elif sport_name == 'Basketball':
-                    players = players_app.models.BasketballPlayer.objects.filter(
-                            user=user, sport=self.sport).select_related('team', 'team__division')
-                elif sport_name == 'Baseball':
-                    players = players_app.models.BaseballPlayer.objects.filter(
-                            user=user, sport=self.sport).select_related('team', 'team__division')
+                model_cls = SPORT_MODEL_MAPPINGS.get(sport_name)
+                if model_cls is not None:
+                    players = model_cls.objects.filter(user=user, sport=self.sport).select_related('team',
+                                                                                                   'team__division')
+
                 if players is not None:
                     obj_role_mappings['Player'] = players.first()
                 else:

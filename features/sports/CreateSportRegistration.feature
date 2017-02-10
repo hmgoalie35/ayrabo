@@ -17,7 +17,7 @@ Feature: Register for a sport
     Then I should be on the "sport:create_sport_registration" page
 
   Scenario: Redirected when trying to navigate to profile create page when no sport registrations
-    Given I go to the "profile:create" page
+    Given I go to the "account_complete_registration" page
     Then I should be on the "sport:create_sport_registration" page
 
   Scenario: Redirect when trying to navigate to finish sport registration page when no sport registrations exist
@@ -55,7 +55,7 @@ Feature: Register for a sport
   Scenario: Remove form
     Given I am on the "sport:create_sport_registration" page
     When I press "add_another_form_btn"
-    And I press ".fa.fa-trash.trash-delete"
+    And I press ".fa.fa-trash.fa-trash-red"
     And I wait for ".multiField" to be removed
     Then "id_sportregistrations-TOTAL_FORMS" should have value "1"
 

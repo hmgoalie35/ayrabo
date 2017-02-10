@@ -10,7 +10,7 @@ from leagues.tests import LeagueFactory
 from managers.tests import ManagerFactory
 from players.tests import HockeyPlayerFactory
 from referees.tests import RefereeFactory
-from sports.exceptions import RoleDoesNotExistError, InvalidNumberOfRolesError
+from sports.exceptions import RoleDoesNotExistException, InvalidNumberOfRolesException
 from sports.models import Sport, SportRegistration
 from teams.tests import TeamFactory
 from .factories.SportFactory import SportFactory
@@ -185,7 +185,7 @@ class SportRegistrationModelTests(BaseTestCase):
         sport = SportFactory(name='Ice Hockey')
         sr = SportRegistrationFactory(user=user, sport=sport)
         sr.set_roles(['Player', 'Coach'])
-        with self.assertRaises(RoleDoesNotExistError):
+        with self.assertRaises(RoleDoesNotExistException):
             sr.remove_role('Manager')
             sr.remove_role('Referee')
 
@@ -194,7 +194,7 @@ class SportRegistrationModelTests(BaseTestCase):
         sport = SportFactory(name='Ice Hockey')
         sr = SportRegistrationFactory(user=user, sport=sport)
         sr.set_roles(['Player'])
-        with self.assertRaises(InvalidNumberOfRolesError):
+        with self.assertRaises(InvalidNumberOfRolesException):
             sr.remove_role('Player')
 
     def test_remove_role_valid(self):

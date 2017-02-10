@@ -5,7 +5,7 @@ from teams.models import Team
 from . import models
 
 
-class PlayerForm(forms.ModelForm):
+class BasePlayerForm(forms.ModelForm):
     """
     Base form class for all player forms.
     """
@@ -20,14 +20,14 @@ class PlayerForm(forms.ModelForm):
         """
         sport = kwargs.pop('sport', None)
         read_only_fields = kwargs.pop('read_only_fields', None)
-        super(PlayerForm, self).__init__(*args, **kwargs)
+        super(BasePlayerForm, self).__init__(*args, **kwargs)
         if sport is not None:
             self.fields['team'].queryset = Team.objects.filter(division__league__sport=sport).select_related('division')
         if read_only_fields is not None:
             set_fields_disabled(read_only_fields, self.fields)
 
 
-class HockeyPlayerForm(PlayerForm):
+class HockeyPlayerForm(BasePlayerForm):
     prefix = 'hockeyplayer'
 
     jersey_number = forms.IntegerField(min_value=models.HockeyPlayer.MIN_JERSEY_NUMBER,
@@ -40,7 +40,7 @@ class HockeyPlayerForm(PlayerForm):
         fields = ['team', 'jersey_number', 'position', 'handedness']
 
 
-class BaseballPlayerForm(PlayerForm):
+class BaseballPlayerForm(BasePlayerForm):
     prefix = 'baseballplayer'
 
     jersey_number = forms.IntegerField(min_value=models.BaseballPlayer.MIN_JERSEY_NUMBER,
@@ -53,7 +53,7 @@ class BaseballPlayerForm(PlayerForm):
         fields = ['team', 'jersey_number', 'position', 'catches', 'bats']
 
 
-class BasketballPlayerForm(PlayerForm):
+class BasketballPlayerForm(BasePlayerForm):
     prefix = 'basketballplayer'
 
     jersey_number = forms.IntegerField(min_value=models.BasketballPlayer.MIN_JERSEY_NUMBER,

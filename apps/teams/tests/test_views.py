@@ -75,7 +75,8 @@ class TeamViewTests(BaseTestCase):
     def test_post_duplicate_teams(self):
         with open(os.path.join(self.test_file_path, 'duplicate_teams.csv')) as the_file:
             response = self.client.post(reverse('bulk_upload_teams'), {'file': the_file}, follow=True)
-            self.assertHasMessage(response, '2 out of 2 teams successfully created')
+            self.assertIn('Validation failed on line 2. Error: Team with this Name and Division already exists.',
+                          response.context['errors'])
 
     def test_post_non_csv_file(self):
         with open(os.path.join(self.test_file_path, 'not_a_csv_file.txt')) as the_file:

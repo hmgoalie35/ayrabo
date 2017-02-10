@@ -33,7 +33,7 @@ class AccountAndSportRegistrationCompleteMiddlewareTests(BaseTestCase):
         Make sure accessing a whitelisted url does not lead to a redirect loop
         """
         self.client.login(email=self.user_without_profile.email, password=self.password)
-        response = self.client.get(reverse('profile:create'))
+        response = self.client.get(reverse('account_complete_registration'))
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'userprofiles/userprofile_create.html')
 
@@ -82,7 +82,7 @@ class AccountAndSportRegistrationCompleteMiddlewareTests(BaseTestCase):
         """
         self.client.login(email=self.user_without_profile.email, password=self.password)
         response = self.client.get(reverse('home'))
-        self.assertRedirects(response, reverse('profile:create'))
+        self.assertRedirects(response, reverse('account_complete_registration'))
 
     def test_incomplete_sport_registrations(self):
         """

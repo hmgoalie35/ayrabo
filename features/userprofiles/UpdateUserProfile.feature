@@ -44,7 +44,7 @@ Feature: Edit information associated with my account
     Given I login with "user@example.com" and "myweakpassword"
     And I am on the "account_home" page
     When I press "update_userprofile_btn"
-    Then I should not see "Your profile has been updated"
+    Then I should not see "Your account has been updated."
     And I should be on the "account_home" page
 
   Scenario: Submit changed form
@@ -53,5 +53,5 @@ Feature: Edit information associated with my account
     When I fill in "id_height" with "5' 7""
     And I fill in "id_weight" with "120"
     And I press "update_userprofile_btn"
-    Then I should see "Your profile has been updated"
+    Then I should see "Your account has been updated."
     And I should be on the "account_home" page

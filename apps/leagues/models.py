@@ -22,12 +22,20 @@ class League(models.Model):
             ('slug', 'sport')
         )
 
-    def clean(self):
-        # Takes the first letter of each word and concatenates them together. ex: National Hockey League --> NHL
-        words = self.full_name.split(' ')
-        self.abbreviated_name = ''.join([word[:1].strip().upper() for word in words])
+    def generate_abbreviation(self):
+        """
+        Generates an abbreviation based on the model's `full_name`. ex: National Hockey League --> NHL
 
-        self.slug = slugify(self.abbreviated_name)
+        :return: Abbreviation for the model's `full_name`
+        """
+        # Takes the first letter of each word and concatenates them together.
+        words = self.full_name.split(' ')
+        return ''.join([word[:1].strip().upper() for word in words])
+
+    def clean(self):
+        abbreviated_name = self.generate_abbreviation()
+        self.abbreviated_name = abbreviated_name
+        self.slug = slugify(abbreviated_name)
 
     def __str__(self):
         return self.full_name

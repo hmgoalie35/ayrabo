@@ -14,28 +14,28 @@ Feature: User profiles
 # Userprofile does not exist, create profile page
   Scenario: Prompted to fill out user profile after logging in for the first time
     Given I go to the "home" page
-    Then I should be on the "profile:create" page
-    And I should see "Create Your Profile"
+    Then I should be on the "account_complete_registration" page
+    And I should see "Complete Your Account Registration"
     And I should see "You will register for sports in the next step."
 
   Scenario: Redirected when trying to navigate to new sport registration page when userprofile not complete
     Given I go to the "sport:create_sport_registration" page
-    Then I should be on the "profile:create" page
+    Then I should be on the "account_complete_registration" page
 
   Scenario: Redirected when trying to navigate to finish sport registration page when userprofile not complete
     Given I go to the "sport:finish_sport_registration" page
-    Then I should be on the "profile:create" page
+    Then I should be on the "account_complete_registration" page
 
   Scenario: Fill out with invalid height
-    Given I am on the "profile:create" page
+    Given I am on the "account_complete_registration" page
     When I select "Male" from "id_gender"
     And I fill in "id_height" with "5' 7"
     And I fill in "id_weight" with "130"
     And I press "create_userprofile_btn"
-    Then I should see "Invalid format, please use the following format: 5' 7""
+    Then I should see "Invalid format, please enter your height according to the format below."
 
   Scenario: Fill out with invalid weight
-    Given I am on the "profile:create" page
+    Given I am on the "account_complete_registration" page
     When I select "Male" from "id_gender"
     And I fill in "id_height" with "5' 7""
     And I fill in "id_weight" with "-1"
@@ -43,7 +43,7 @@ Feature: User profiles
     Then I should see "Ensure this value is greater than or equal to 1."
 
   Scenario: Fill out with invalid birthday
-    Given I am on the "profile:create" page
+    Given I am on the "account_complete_registration" page
     When I select "Male" from "id_gender"
     And I fill in "id_height" with "5' 7""
     And I fill in "id_weight" with "100"
@@ -51,12 +51,12 @@ Feature: User profiles
     Then I should see "This field is required."
 
   Scenario: Submit invalid form
-    Given I am on the "profile:create" page
+    Given I am on the "account_complete_registration" page
     When I press "create_userprofile_btn"
     Then "This field is required." should show up 4 times
 
   Scenario: Submit valid form
-    Given I am on the "profile:create" page
+    Given I am on the "account_complete_registration" page
     When I select "Male" from "id_gender"
     And I select "April" from "id_birthday_month"
     And I select "4" from "id_birthday_day"
@@ -65,6 +65,6 @@ Feature: User profiles
     And I fill in "id_weight" with "130"
     And I press "create_userprofile_btn"
     Then I should be on the "sport:create_sport_registration" page
-    And I should see "Your profile has been created."
+    And I should see "You have completed your account registration."
 
     # See features/sports/NewSportRegistration.feature for the next set of tests

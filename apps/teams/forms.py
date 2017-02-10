@@ -8,6 +8,6 @@ class BulkUploadTeamsForm(forms.Form):
 
     def clean_file(self):
         file = self.cleaned_data['file']
-        if not file.name.endswith('.csv'):
+        if not file.name.endswith('.csv') or file.content_type != 'text/csv':
             raise ValidationError(_('Uploaded files must be in .csv format'), code='invalid')
         return file
