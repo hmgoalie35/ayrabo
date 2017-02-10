@@ -31,9 +31,7 @@ class BulkUploadTeamsView(LoginRequiredMixin, FormView):
 
     def form_valid(self, form):
         uploaded_file = form.cleaned_data.get('file')
-        errors, successful_teams_created, duplicates, total_csv_rows = self.parse_csv(uploaded_file)
-        if duplicates > 0:
-            messages.warning(self.request, '{} Duplicates were ignored'.format(duplicates))
+        errors, successful_teams_created, total_csv_rows = self.parse_csv(uploaded_file)
 
         if len(errors) > 0:
             context = self.get_context_data()
@@ -52,7 +50,6 @@ class BulkUploadTeamsView(LoginRequiredMixin, FormView):
         reader = csv.DictReader(csv_file)
         errors = []
         successful_teams_created = 0
-        duplicates = 0
         line_no = 1
         for row in reader:
             # These variables will be None if the corresponding header does not exist in the file
@@ -65,7 +62,7 @@ class BulkUploadTeamsView(LoginRequiredMixin, FormView):
                 errors.append(
                         'You must include Team Name, Website and Division as headings in the .csv '
                         'on line {lineno}'.format(lineno=line_no))
-                return errors, successful_teams_created, duplicates, line_no
+                return errors, successful_teams_created, line_no
 
             team_name = team_name.strip()
             division = division.strip()
@@ -74,7 +71,7 @@ class BulkUploadTeamsView(LoginRequiredMixin, FormView):
             # Make sure the value of the headers aren't empty strings
             if team_name == '' or division == '':
                 errors.append("Team Name and/or Division can't be blank on line {lineno}".format(lineno=line_no))
-                return errors, successful_teams_created, duplicates, line_no
+                return errors, successful_teams_created, line_no
 
             # Attempt to locate the division object the user wants to create a team under
             try:
@@ -83,7 +80,7 @@ class BulkUploadTeamsView(LoginRequiredMixin, FormView):
                 errors.append(
                         'The division {division} does not currently exist, you need to create it '
                         'under the correct league and sport'.format(division=division))
-                return errors, successful_teams_created, duplicates, line_no
+                return errors, successful_teams_created, line_no
 
             # Attempt to create a team, ignoring duplicates.
             try:
@@ -93,11 +90,9 @@ class BulkUploadTeamsView(LoginRequiredMixin, FormView):
                 successful_teams_created += 1
             except ValidationError as e:
                 errors.append('Validation failed on line {}. Error: {}'.format(line_no, ', '.join(e.messages)))
-                return errors, successful_teams_created, duplicates, line_no
-            except IntegrityError:
-                # Ignore duplicates
-                duplicates += 1
-
+                return errors, successful_teams_created, line_no
+            except IntegrityError as e:
+                errors.append('Integrity Error: {}'.format(', '.join(e.messages)))
             line_no += 1
 
-        return errors, successful_teams_created, duplicates, line_no
+        return errors, successful_teams_created, line_no
