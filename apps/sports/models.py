@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User
-from django.urls import reverse
 from django.db import models
+from django.urls import reverse
 from django.utils.text import slugify
 
 import coaches as coaches_app
@@ -128,6 +128,12 @@ class SportRegistration(models.Model):
         :return: A dictionary where the keys are the role (Player, Coach, etc.) and the value is the associated object
         """
 
+        SPORT_MODEL_MAPPINGS = {
+            'Ice Hockey': players_app.models.HockeyPlayer,
+            'Baseball': players_app.models.BaseballPlayer,
+            'Basketball': players_app.models.BasketballPlayer,
+        }
+
         obj_role_mappings = {}
         roles = self.roles
         user = self.user_id
@@ -135,15 +141,11 @@ class SportRegistration(models.Model):
             if role == 'Player':
                 sport_name = self.sport.name
                 players = None
-                if 'Hockey' in sport_name:
-                    players = players_app.models.HockeyPlayer.objects.filter(
-                            user=user, sport=self.sport).select_related('team', 'team__division')
-                elif sport_name == 'Basketball':
-                    players = players_app.models.BasketballPlayer.objects.filter(
-                            user=user, sport=self.sport).select_related('team', 'team__division')
-                elif sport_name == 'Baseball':
-                    players = players_app.models.BaseballPlayer.objects.filter(
-                            user=user, sport=self.sport).select_related('team', 'team__division')
+                model_cls = SPORT_MODEL_MAPPINGS.get(sport_name)
+                if model_cls is not None:
+                    players = model_cls.objects.filter(user=user, sport=self.sport).select_related('team',
+                                                                                                   'team__division')
+
                 if players is not None:
                     obj_role_mappings['Player'] = players.first()
                 else:
