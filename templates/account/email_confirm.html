@@ -2,7 +2,7 @@
 {% load i18n %}
 {% load account %}
 
-{% block title %}Confirm E-mail{% endblock %}
+{% block title %}{% if confirmation %}Confirm E-mail{% else %}Request New Confirmation Email{% endif %}{% endblock %}
 
 {% block content %}
     <div class="container">
@@ -10,10 +10,10 @@
             <div class="col-sm-12">
                 <div class="text-center">
                     {% if request.user.is_anonymous %}
-                        <br>
-                        <h1>{% trans "Confirm E-mail Address" %}</h1>
-                        <br>
                         {% if confirmation %}
+                            <br>
+                            <h1>{% trans "Confirm E-mail Address" %}</h1>
+                            <br>
                             {% user_display confirmation.email_address.user as user_display %}
                             <p>
                                 {% blocktrans with confirmation.email_address.email as email %}
@@ -27,6 +27,9 @@
                                         type="submit">{% trans 'Confirm' %}</button>
                             </form>
                         {% else %}
+                            <br>
+                            <h1>Request New Confirmation Email</h1>
+                            <br>
                             {% url 'account_email' as email_url %}
                             <br>
                             <p>
