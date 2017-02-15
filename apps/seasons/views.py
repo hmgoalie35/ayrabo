@@ -1,9 +1,9 @@
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core import mail
-from django.urls import reverse
 from django.http import Http404
 from django.shortcuts import render, get_object_or_404, redirect
+from django.urls import reverse
 from django.views import generic
 from django.views.generic.base import ContextMixin
 
@@ -95,7 +95,8 @@ class ListSeasonRosterView(LoginRequiredMixin, UserHasRolesMixin, generic.Templa
     def get_context_data(self, **kwargs):
         context = super(ListSeasonRosterView, self).get_context_data(**kwargs)
 
-        team = get_object_or_404(Team, pk=kwargs.get('team_pk', None))
+        team = get_object_or_404(Team.objects.select_related('division', 'division__league', 'division__league__sport'),
+                                 pk=kwargs.get('team_pk', None))
 
         # Can also do Manager.objects.filter(user=self.request.user, team=team)
         is_user_manager_for_team = team.manager_set.filter(user=self.request.user).exists()
@@ -106,8 +107,11 @@ class ListSeasonRosterView(LoginRequiredMixin, UserHasRolesMixin, generic.Templa
         season_roster_cls = SPORT_MODEL_MAPPINGS.get(sport_name)
         season_rosters = None
         if season_roster_cls:
-            season_rosters = season_roster_cls.objects.order_by('-created').filter(team=team).select_related(
-                    'season', 'team')
+            season_rosters = {}
+            temp = season_roster_cls.objects.order_by('-created').filter(team=team).select_related(
+                    'season', 'team', 'team__division')
+            for season_roster in temp:
+                season_rosters[season_roster] = season_roster.players.select_related('user').order_by('jersey_number')
         context['season_rosters'] = season_rosters
         context['team'] = team
 

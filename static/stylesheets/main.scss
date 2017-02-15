@@ -2,6 +2,7 @@
 @import "variables";
 @import "buttons";
 @import "icons";
+@import "typography";
 
 html {
   position: relative;
@@ -79,58 +80,4 @@ div.alert.alert-block.alert-danger > ul > li {
   @media (min-width: $screen-sm-min) {
     border-left: $navbar-vertical-line;
   }
-}
-
-table.table.table-borderless {
-
-  // Remove table borders for header
-  thead tr th {
-    border: none;
-  }
-
-  tbody {
-    // Apply box shadow to all tr's except tr's meant to be spacers
-    tr:not(.table-row-spacer) {
-      box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-    }
-
-    tr.table-row-collapsible td {
-      // Completely hide the collapsible tr
-      padding: 0;
-      // Color the collapsible div (panel)
-      div {
-        background: $ess-gray-lightest;
-      }
-    }
-
-    tr.table-row-extra-padding {
-      // Add some padding to the left most column so text isn't flush against the left side of the table
-      td:first-child {
-        padding-left: 15px;
-      }
-      // Make each tr bigger (can't set padding on tr so need to do it on each td)
-      td {
-        padding-top: 20px;
-        padding-bottom: 20px;
-      }
-      // Color the tr
-      background: $ess-table-row;
-    }
-
-    // Make the table row spacer bigger
-    tr.table-row-spacer td {
-      padding-bottom: 25px;
-    }
-
-    // Remove table borders for tbody elements
-    tr td {
-      border: none;
-    }
-
-  }
-}
-
-// Remove extra margin bootstrap's panels have
-.table-row-panel {
-  margin-bottom: 0;
 }

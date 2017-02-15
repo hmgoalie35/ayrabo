@@ -35,7 +35,6 @@ Feature: Manager home page
     Then I should see "Green Machine IceCats"
     And I should see "Midget Minor AA"
     And I should see "Long Island Amateur Hockey League"
-    And I should see "Ice Hockey"
 
   Scenario: Manager functions for a specific team become visible after clicking button
     Given I am on the "manager:home" page
