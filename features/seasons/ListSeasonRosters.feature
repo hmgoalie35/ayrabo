@@ -45,7 +45,7 @@ Feature: List season rosters
       | user@example.com  | Green Machine IceCats |
     And I am on the "teams.Team" "" "team:list_season_roster" page with url kwargs "team_pk=pk"
     Then I should see "Season Rosters for Green Machine IceCats"
-    And I should see "A season roster has not been created for this team yet. You can create a season roster"
+    And I should see "A season roster has not been created for this team yet."
 
   Scenario: Season rosters are listed
     Given "user@example.com" is completely registered for "Ice Hockey" with role "Manager"
