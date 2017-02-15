@@ -105,10 +105,12 @@ class ListSeasonRosterView(LoginRequiredMixin, UserHasRolesMixin, generic.Templa
 
         sport_name = team.division.league.sport.name
         season_roster_cls = SPORT_MODEL_MAPPINGS.get(sport_name)
-        season_rosters = None
+        season_rosters = {}
         if season_roster_cls:
-            season_rosters = season_roster_cls.objects.order_by('-created').filter(team=team).select_related(
+            temp = season_roster_cls.objects.order_by('-created').filter(team=team).select_related(
                     'season', 'team', 'team__division')
+            for season_roster in temp:
+                season_rosters[season_roster] = season_roster.players.select_related('user').order_by('jersey_number')
         context['season_rosters'] = season_rosters
         context['team'] = team
 

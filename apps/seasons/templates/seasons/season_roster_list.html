@@ -19,7 +19,7 @@
             <div class="col-sm-offset-3 col-sm-6 col-sm-offset-3">
                 <div class="text-center">
                     {% if season_rosters %}
-                        {% for season_roster in season_rosters %}
+                        {% for season_roster, players in season_rosters.items %}
                             <div class="panel panel-primary">
                                 <div class="panel-heading">
                                     <h3 class="text-center panel-title">
@@ -36,6 +36,40 @@
                                     </div>
                                     <div class="text-left"><strong>Created:&nbsp;</strong>{{ season_roster.created }}
                                     </div>
+
+
+                                    <div class="text-left">
+                                        <strong>Players:&nbsp;</strong>
+                                        <a href="#" data-toggle="modal"
+                                           data-target="#{{ season_roster.id }}-modal">View</a>
+                                    </div>
+
+                                    <div class="modal fade" tabindex="-1" role="dialog"
+                                         id="{{ season_roster.id }}-modal">
+                                        <br>
+                                        <div class="modal-dialog modal-sm" role="document">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <button type="button" class="close" data-dismiss="modal"
+                                                            aria-label="Close"><span aria-hidden="true">&times;</span>
+                                                    </button>
+                                                    <h4 class="modal-title">Players At A Glance</h4>
+                                                </div>
+                                                <div class="modal-body text-left">
+                                                    {% for player in players %}
+                                                        {{ player.jersey_number }} - {{ player }} - {{ player.position }}
+                                                        <br>
+                                                    {% endfor %}
+                                                    <br>
+                                                    <div class="pull-left">{{ players.count }}
+                                                        Player{{ players.count|pluralize }}</div>
+                                                    <br>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+
                                     <div class="pull-right">
                                         <a name="update_link" id="update_{{ season_roster.pk }}_link"
                                            href="{% url 'team:update_season_roster' team.pk season_roster.pk %}"
