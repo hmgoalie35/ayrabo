@@ -1,6 +1,6 @@
 from django.core.exceptions import ValidationError
 
-from escoresheet.utils import BaseTestCase
+from escoresheet.utils.testing_utils import BaseTestCase
 from userprofiles.models import UserProfile
 from .factories.UserProfileFactory import UserProfileFactory
 

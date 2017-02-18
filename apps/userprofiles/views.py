@@ -5,7 +5,7 @@ from django.urls import reverse, reverse_lazy
 from django.views import generic
 from rest_framework.authtoken.models import Token
 
-from escoresheet.utils import AccountAndSportRegistrationCompleteMixin
+from escoresheet.utils.mixins import AccountAndSportRegistrationCompleteMixin
 from sports.models import SportRegistration
 from userprofiles.models import UserProfile
 from .forms import CreateUserProfileForm, UpdateUserProfileForm

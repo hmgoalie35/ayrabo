@@ -1,6 +1,6 @@
 from coaches.forms import CoachForm
 from divisions.tests import DivisionFactory
-from escoresheet.utils import BaseTestCase
+from escoresheet.utils.testing_utils import BaseTestCase
 from leagues.tests import LeagueFactory
 from sports.tests import SportFactory
 from teams.tests import TeamFactory

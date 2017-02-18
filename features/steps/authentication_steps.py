@@ -6,7 +6,7 @@ from django.core import mail
 from generic_steps import find_element
 
 from accounts.tests import UserFactory, EmailAddressFactory
-from escoresheet.utils import get_user
+from escoresheet.utils.testing_utils import get_user
 from userprofiles.tests import UserProfileFactory
 
 

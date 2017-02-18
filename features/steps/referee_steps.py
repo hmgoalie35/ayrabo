@@ -1,6 +1,6 @@
 from behave import *
 
-from escoresheet.utils import get_user
+from escoresheet.utils.testing_utils import get_user
 from leagues.models import League
 from leagues.tests import LeagueFactory
 from referees.tests import RefereeFactory

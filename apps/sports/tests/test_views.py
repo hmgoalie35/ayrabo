@@ -7,7 +7,7 @@ from coaches.forms import CoachForm
 from coaches.models import Coach
 from coaches.tests import CoachFactory
 from divisions.tests import DivisionFactory
-from escoresheet.utils import BaseTestCase
+from escoresheet.utils.testing_utils import BaseTestCase
 from leagues.tests import LeagueFactory
 from managers.forms import ManagerForm
 from managers.models import Manager

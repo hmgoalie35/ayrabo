@@ -11,8 +11,9 @@ from django.views.generic.base import ContextMixin
 
 from coaches import forms as coach_forms
 from coaches.models import Coach
-from escoresheet.utils import AccountAndSportRegistrationCompleteMixin, email_admins_sport_not_configured, \
-    SportNotConfiguredException
+from escoresheet.utils import email_admins_sport_not_configured
+from escoresheet.utils.exceptions import SportNotConfiguredException
+from escoresheet.utils.mixins import AccountAndSportRegistrationCompleteMixin
 from managers import forms as manager_forms
 from managers.models import Manager
 from players import forms as player_forms

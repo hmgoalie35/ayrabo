@@ -1,7 +1,7 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views import generic
 
-from escoresheet.utils import UserHasRolesMixin
+from escoresheet.utils.mixins import UserHasRolesMixin
 from managers.models import Manager
 
 

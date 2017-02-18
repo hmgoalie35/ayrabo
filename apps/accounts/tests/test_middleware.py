@@ -3,7 +3,7 @@ from unittest.mock import Mock
 from django.urls import reverse
 
 from accounts.tests import UserFactory
-from escoresheet.utils import BaseTestCase
+from escoresheet.utils.testing_utils import BaseTestCase
 from sports.tests import SportFactory, SportRegistrationFactory
 from ..middleware import AccountAndSportRegistrationCompleteMiddleware
 
