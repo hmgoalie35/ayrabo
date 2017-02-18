@@ -1,13 +1,12 @@
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.core import mail
 from django.http import Http404
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
 from django.views import generic
 from django.views.generic.base import ContextMixin
 
-from escoresheet.utils import UserHasRolesMixin, SportNotConfiguredException
+from escoresheet.utils import UserHasRolesMixin, SportNotConfiguredException, email_admins_sport_not_configured
 from managers.models import Manager
 from teams.models import Team
 from .forms import CreateHockeySeasonRosterForm, UpdateHockeySeasonRosterForm
@@ -26,14 +25,6 @@ SPORT_MODEL_MAPPINGS = {
 }
 
 
-def email_admins_sport_not_configured(sport_name, view_cls):
-    subject = '{sport_name} incorrectly configured'.format(sport_name=sport_name)
-    mail.mail_admins(subject,
-                     '{sport} incorrectly configured on the {page} ({cls}) page. '
-                     'You will likely need to add a mapping to the appropriate dictionary.'.format(
-                             sport=sport_name, page=view_cls.request.path, cls=view_cls.__class__.__name__))
-
-
 class CreateSeasonRosterView(LoginRequiredMixin, UserHasRolesMixin, ContextMixin, generic.View):
     template_name = 'seasons/season_roster_create.html'
     roles_to_check = ['Manager']
@@ -41,7 +32,7 @@ class CreateSeasonRosterView(LoginRequiredMixin, UserHasRolesMixin, ContextMixin
 
     def _handle_sport_not_configured(self, e):
         email_admins_sport_not_configured(e.sport, self)
-        return render(self.request, 'message.html', {'message': e.message})
+        return render(self.request, 'sport_not_configured_msg.html', {'message': e.message})
 
     def get_context_data(self, **kwargs):
         context = super(CreateSeasonRosterView, self).get_context_data(**kwargs)
@@ -124,7 +115,7 @@ class ListSeasonRosterView(LoginRequiredMixin, UserHasRolesMixin, generic.Templa
             self.get_context_data(**kwargs)
         except SportNotConfiguredException as e:
             email_admins_sport_not_configured(e.sport, self)
-            return render(request, 'message.html', {'message': e.message})
+            return render(request, 'sport_not_configured_msg.html', {'message': e.message})
         return super(ListSeasonRosterView, self).get(request, *args, **kwargs)
 
 
@@ -134,7 +125,7 @@ class UpdateSeasonRosterView(LoginRequiredMixin, UserHasRolesMixin, ContextMixin
 
     def _handle_sport_not_configured(self, e):
         email_admins_sport_not_configured(e.sport, self)
-        return render(self.request, 'message.html', {'message': e.message})
+        return render(self.request, 'sport_not_configured_msg.html', {'message': e.message})
 
     def get_context_data(self, **kwargs):
         context = super(UpdateSeasonRosterView, self).get_context_data(**kwargs)

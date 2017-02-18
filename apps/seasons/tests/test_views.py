@@ -67,7 +67,7 @@ class CreateSeasonRosterViewTests(BaseTestCase):
         team = TeamFactory()
         ManagerFactory(team=team, user=self.user)
         response = self.client.get(reverse('team:create_season_roster', kwargs={'team_pk': team.pk}), follow=True)
-        self.assertTemplateUsed(response, 'message.html')
+        self.assertTemplateUsed(response, 'sport_not_configured_msg.html')
         msg = "{sport} hasn't been configured correctly in our system. " \
               "If you believe this is an error please contact us.".format(sport=team.division.league.sport.name)
         self.assertEqual(response.context['message'], msg)
@@ -121,7 +121,7 @@ class CreateSeasonRosterViewTests(BaseTestCase):
         ManagerFactory(team=team, user=self.user)
         response = self.client.post(reverse('team:create_season_roster', kwargs={'team_pk': team.pk}), data={},
                                     follow=True)
-        self.assertTemplateUsed(response, 'message.html')
+        self.assertTemplateUsed(response, 'sport_not_configured_msg.html')
         msg = "{sport} hasn't been configured correctly in our system. " \
               "If you believe this is an error please contact us.".format(sport=team.division.league.sport.name)
         self.assertEqual(response.context['message'], msg)
@@ -201,7 +201,7 @@ class ListSeasonRosterViewTests(BaseTestCase):
         team = TeamFactory()
         ManagerFactory(team=team, user=self.user)
         response = self.client.get(reverse('team:list_season_roster', kwargs={'team_pk': team.pk}), follow=True)
-        self.assertTemplateUsed(response, 'message.html')
+        self.assertTemplateUsed(response, 'sport_not_configured_msg.html')
         msg = "{sport} hasn't been configured correctly in our system. " \
               "If you believe this is an error please contact us.".format(sport=team.division.league.sport.name)
         self.assertEqual(response.context['message'], msg)
@@ -274,7 +274,7 @@ class UpdateSeasonRosterViewTests(BaseTestCase):
         response = self.client.get(
                 reverse('team:update_season_roster', kwargs={'team_pk': team.pk, 'pk': self.season_roster.pk}),
                 follow=True)
-        self.assertTemplateUsed(response, 'message.html')
+        self.assertTemplateUsed(response, 'sport_not_configured_msg.html')
         msg = "{sport} hasn't been configured correctly in our system. " \
               "If you believe this is an error please contact us.".format(sport=team.division.league.sport.name)
         self.assertEqual(response.context['message'], msg)
@@ -321,7 +321,7 @@ class UpdateSeasonRosterViewTests(BaseTestCase):
         response = self.client.post(
                 reverse('team:update_season_roster', kwargs={'team_pk': team.pk, 'pk': self.season_roster.pk}), data={},
                 follow=True)
-        self.assertTemplateUsed(response, 'message.html')
+        self.assertTemplateUsed(response, 'sport_not_configured_msg.html')
         msg = "{sport} hasn't been configured correctly in our system. " \
               "If you believe this is an error please contact us.".format(sport=team.division.league.sport.name)
         self.assertEqual(response.context['message'], msg)

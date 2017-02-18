@@ -11,14 +11,14 @@ from django.views.generic.base import ContextMixin
 
 from coaches import forms as coach_forms
 from coaches.models import Coach
-from escoresheet.utils import AccountAndSportRegistrationCompleteMixin
+from escoresheet.utils import AccountAndSportRegistrationCompleteMixin, email_admins_sport_not_configured, \
+    SportNotConfiguredException
 from managers import forms as manager_forms
 from managers.models import Manager
 from players import forms as player_forms
 from players.models import HockeyPlayer, BasketballPlayer, BaseballPlayer
 from referees import forms as referee_forms
 from referees.models import Referee
-from seasons.views import email_admins_sport_not_configured
 from .forms import CreateSportRegistrationForm
 from .models import SportRegistration, Sport
 
@@ -34,14 +34,15 @@ SPORT_PLAYER_MODEL_MAPPINGS = {
     'Baseball': BaseballPlayer
 }
 
-SPORT_NOT_CONFIGURED_MSG = "{sport} hasn't been configured correctly in our system. " \
-                           "If you believe this is an error please contact us."
-
 
 class FinishSportRegistrationView(LoginRequiredMixin, ContextMixin, AccountAndSportRegistrationCompleteMixin,
                                   generic.View):
     template_name = 'sports/sport_registration_finish.html'
     success_msg = 'You are now registered for {sports}.'
+
+    def _handle_sport_not_configured(self, e):
+        email_admins_sport_not_configured(e.sport, self)
+        return render(self.request, 'sport_not_configured_msg.html', {'message': e.message})
 
     def get_context_data(self, **kwargs):
         context = super(FinishSportRegistrationView, self).get_context_data(**kwargs)
@@ -50,20 +51,21 @@ class FinishSportRegistrationView(LoginRequiredMixin, ContextMixin, AccountAndSp
         sport_registrations_exist = sport_registrations.exists()
         if sport_registrations_exist:
             sr = sport_registrations.first()
+            sport_name = sr.sport.name
             context['sport_registration'] = sr
-            context['sport_name'] = sr.sport.name
+            context['sport_name'] = sport_name
             if 'sports_registered_for' in self.request.session.keys():
-                if sr.sport.name not in self.request.session.get('sports_registered_for'):
-                    self.request.session.get('sports_registered_for').append(sr.sport.name)
+                if sport_name not in self.request.session.get('sports_registered_for'):
+                    self.request.session.get('sports_registered_for').append(sport_name)
             else:
-                self.request.session['sports_registered_for'] = [sr.sport.name]
+                self.request.session['sports_registered_for'] = [sport_name]
             if sr.has_role('Coach'):
                 context['coach_form'] = coach_forms.CoachForm(self.request.POST or None, sport=sr.sport)
             if sr.has_role('Player'):
-                form_cls = SPORT_PLAYER_FORM_MAPPINGS.get(sr.sport.name)
-                player_form = None
-                if form_cls:
-                    player_form = form_cls(self.request.POST or None, sport=sr.sport)
+                form_cls = SPORT_PLAYER_FORM_MAPPINGS.get(sport_name)
+                if form_cls is None:
+                    raise SportNotConfiguredException(sport_name)
+                player_form = form_cls(self.request.POST or None, sport=sr.sport)
                 context['player_form'] = player_form
             if sr.has_role('Manager'):
                 context['manager_form'] = manager_forms.ManagerForm(self.request.POST or None, sport=sr.sport)
@@ -75,12 +77,10 @@ class FinishSportRegistrationView(LoginRequiredMixin, ContextMixin, AccountAndSp
         return context
 
     def get(self, request, *args, **kwargs):
-        context = self.get_context_data(**kwargs)
-        sr = context.get('sport_registration')
-        if sr and sr.has_role('Player') and context.get('player_form') is None:
-            sport_name = context.get('sport_name')
-            email_admins_sport_not_configured(sport_name, self)
-            return render(request, 'message.html', {'message': SPORT_NOT_CONFIGURED_MSG.format(sport=sport_name)})
+        try:
+            context = self.get_context_data(**kwargs)
+        except SportNotConfiguredException as e:
+            return self._handle_sport_not_configured(e)
 
         if not context.get('sport_registrations_exist'):
             sports_registered_for = request.session.pop('sports_registered_for', None)
@@ -92,13 +92,10 @@ class FinishSportRegistrationView(LoginRequiredMixin, ContextMixin, AccountAndSp
         return render(request, self.template_name, context)
 
     def post(self, request, *args, **kwargs):
-        context = self.get_context_data(**kwargs)
-
-        sr = context.get('sport_registration')
-        if sr and sr.has_role('Player') and context.get('player_form') is None:
-            sport_name = context.get('sport_name')
-            email_admins_sport_not_configured(sport_name, self)
-            return render(request, 'message.html', {'message': SPORT_NOT_CONFIGURED_MSG.format(sport=sport_name)})
+        try:
+            context = self.get_context_data(**kwargs)
+        except SportNotConfiguredException as e:
+            return self._handle_sport_not_configured(e)
 
         if not context.get('sport_registrations_exist'):
             sports_registered_for = request.session.pop('sports_registered_for', None)
@@ -262,11 +259,16 @@ class CreateSportRegistrationView(LoginRequiredMixin, ContextMixin, AccountAndSp
 class UpdateSportRegistrationView(LoginRequiredMixin, ContextMixin, generic.View):
     template_name = 'sports/sport_registration_update.html'
 
+    def _handle_sport_not_configured(self, e):
+        email_admins_sport_not_configured(e.sport, self)
+        return render(self.request, 'sport_not_configured_msg.html', {'message': e.message})
+
     def get_context_data(self, **kwargs):
         context = super(UpdateSportRegistrationView, self).get_context_data(**kwargs)
         sr = get_object_or_404(SportRegistration, pk=kwargs.get('pk', None))
         if sr.user != self.request.user:
             raise Http404
+        sport_name = sr.sport.name
         context['sport_registration'] = sr
         related_objects = sr.get_related_role_objects()
         context['remaining_roles'] = sorted(set(SportRegistration.ROLES) - set(sr.roles))
@@ -278,12 +280,12 @@ class UpdateSportRegistrationView(LoginRequiredMixin, ContextMixin, generic.View
         context['referee_read_only_fields'] = ['league']
         for role, role_obj in related_objects.items():
             if role == 'Player':
-                form_cls = SPORT_PLAYER_FORM_MAPPINGS.get(sr.sport.name)
-                player_form = None
-                if form_cls:
-                    player_form = form_cls(self.request.POST or None, instance=role_obj,
-                                           read_only_fields=context.get('player_read_only_fields'))
-                context['player_form'] = player_form
+                form_cls = SPORT_PLAYER_FORM_MAPPINGS.get(sport_name)
+                if form_cls is None:
+                    raise SportNotConfiguredException(sport_name)
+
+                context['player_form'] = form_cls(self.request.POST or None, instance=role_obj,
+                                                  read_only_fields=context.get('player_read_only_fields'))
             elif role == 'Coach':
                 context['coach_form'] = coach_forms.CoachForm(self.request.POST or None, instance=role_obj,
                                                               read_only_fields=context.get('coach_read_only_fields'))
@@ -298,22 +300,18 @@ class UpdateSportRegistrationView(LoginRequiredMixin, ContextMixin, generic.View
         return context
 
     def get(self, request, *args, **kwargs):
-        context = self.get_context_data(**kwargs)
-        sr = context.get('sport_registration')
-        sport_name = sr.sport.name
-        if sr and sr.has_role('Player') and context.get('player_form') is None:
-            email_admins_sport_not_configured(sport_name, self)
-            return render(request, 'message.html', {'message': SPORT_NOT_CONFIGURED_MSG.format(sport=sport_name)})
+        try:
+            context = self.get_context_data(**kwargs)
+        except SportNotConfiguredException as e:
+            return self._handle_sport_not_configured(e)
 
         return render(request, self.template_name, context)
 
     def post(self, request, *args, **kwargs):
-        context = self.get_context_data(**kwargs)
-        sr = context.get('sport_registration')
-        sport_name = sr.sport.name
-        if sr and sr.has_role('Player') and context.get('player_form') is None:
-            email_admins_sport_not_configured(sport_name, self)
-            return render(request, 'message.html', {'message': SPORT_NOT_CONFIGURED_MSG.format(sport=sport_name)})
+        try:
+            context = self.get_context_data(**kwargs)
+        except SportNotConfiguredException as e:
+            return self._handle_sport_not_configured(e)
 
         # Forms that were submitted are added to this list. Only check the forms in this list for validity
         forms_that_were_submitted = []
