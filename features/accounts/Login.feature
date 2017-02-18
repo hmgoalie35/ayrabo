@@ -37,4 +37,4 @@ Feature: Login to my existing account
     Then I should not be logged in
     And I should be on the "account_email_verification_sent" page
     And I should see "Verify Your E-mail Address"
-    And I should see "An email with a confirmation link has been sent to your email address. Please follow the link to activate your account."
+    And I should see "An email with a confirmation link has been sent to your email address. Please follow the"
