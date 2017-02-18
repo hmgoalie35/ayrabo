@@ -72,8 +72,10 @@ class FinishSportRegistrationView(LoginRequiredMixin, ContextMixin, AccountAndSp
             if sr.has_role('Referee'):
                 context['referee_form'] = referee_forms.RefereeForm(self.request.POST or None, sport=sr.sport)
 
+            context['sport_registrations_remaining'] = [sr.sport.name for sr in sport_registrations if
+                                                        sr.sport.name != sport_name]
+
         context['sport_registrations_exist'] = sport_registrations_exist
-        context['remaining_sport_registrations'] = sport_registrations.count()
         return context
 
     def get(self, request, *args, **kwargs):
@@ -269,6 +271,7 @@ class UpdateSportRegistrationView(LoginRequiredMixin, ContextMixin, generic.View
         if sr.user != self.request.user:
             raise Http404
         sport_name = sr.sport.name
+        context['sport_name'] = sport_name
         context['sport_registration'] = sr
         related_objects = sr.get_related_role_objects()
         context['remaining_roles'] = sorted(set(SportRegistration.ROLES) - set(sr.roles))
@@ -402,6 +405,7 @@ class AddSportRegistrationRoleView(LoginRequiredMixin, ContextMixin, generic.Vie
         if related_role_object:
             form_kwargs['instance'] = related_role_object
             form_kwargs['read_only_fields'] = ['__all__']
+
         form = form_class(self.request.POST or None, sport=sport, **form_kwargs)
 
         context['related_role_object'] = related_role_object

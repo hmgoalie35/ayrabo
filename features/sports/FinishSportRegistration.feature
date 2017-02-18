@@ -35,7 +35,8 @@ Feature: Finish sport registration, filling in any coach/manager/player/referee 
     And I should see "Ice Hockey Manager"
     And I should not see "Ice Hockey Player"
     And I should not see "Ice Hockey Referee"
-    And I should see "2 sport registrations remaining"
+    And I should see "Remaining sport registrations:"
+    And I should see "Basketball"
     And I should see "Next sport registration"
 
   Scenario: Submit valid form for ice hockey and Coach and Manager roles
@@ -47,7 +48,7 @@ Feature: Finish sport registration, filling in any coach/manager/player/referee 
     And I select "Green Machine IceCats - Midget Minor AA" from "id_manager-team"
     And I should see "Next sport registration"
     And I press "next_sport_registration_btn"
-    Then I should see "1 sport registration remaining"
+    Then I should not see "Remaining sport registrations:"
     And I should be on the "sport:finish_sport_registration" page
     And I should see "Finish Basketball Registration"
 
@@ -59,7 +60,8 @@ Feature: Finish sport registration, filling in any coach/manager/player/referee 
     And I press "next_sport_registration_btn"
     Then I should be on the "sport:finish_sport_registration" page
     And "This field is required." should show up 2 times
-    And I should see "2 sport registrations remaining"
+    And I should see "Remaining sport registrations:"
+    And I should see "Basketball"
 
   Scenario: Submit valid form for basketball Coach, Manager, Referee roles
     Given "user@example.com" is completely registered for "Ice Hockey" with roles "Coach, Manager, Referee"
@@ -83,7 +85,7 @@ Feature: Finish sport registration, filling in any coach/manager/player/referee 
     And I press "next_sport_registration_btn"
     Then I should be on the "sport:finish_sport_registration" page
     And "This field is required." should show up 2 times
-    And I should see "1 sport registration remaining"
+    And I should not see "Remaining sport registrations:"
 
   Scenario: Submit valid form for basketball Coach, Manager, Referee, Player roles
     Given "user@example.com" is completely registered for "Ice Hockey" with roles "Coach, Manager, Referee, Player"
@@ -110,4 +112,4 @@ Feature: Finish sport registration, filling in any coach/manager/player/referee 
     And I press "next_sport_registration_btn"
     Then I should be on the "sport:finish_sport_registration" page
     And "This field is required." should show up 6 times
-    And I should see "1 sport registration remaining"
+    And I should not see "Remaining sport registrations:"

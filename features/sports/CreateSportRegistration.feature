@@ -28,7 +28,7 @@ Feature: Register for a sport
     Given I am on the "sport:create_sport_registration" page
     Then I should see "Register for sports"
     And I should see "You must register for at least one sport."
-    And I should see "Register for additional sports by pressing the "Add sport registration" button below."
+    And I should see "Register for additional sports by pressing the"
     And I should see "Add sport registration"
 
   Scenario: Submit one valid form
