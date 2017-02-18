@@ -9,7 +9,7 @@
         <div class="row">
             <div class="col-sm-12">
                 <div class="text-center">
-                    <h1>Team List</h1>
+                    <h1>Your Teams</h1>
                     <h4 class="text-muted">Showing all teams you are a manager for</h4>
                 </div>
             </div>
@@ -61,7 +61,8 @@
 
                 {% else %}
                     <div class="h4 text-center alert alert-warning">
-                        You are not registered as a manager for any teams
+                        You are not registered as a manager for any teams.<br><br>Manage your sport registrations <a
+                            class="alert-link" href="{% url 'account_home' %}">here.</a>
                     </div>
                 {% endif %}
 

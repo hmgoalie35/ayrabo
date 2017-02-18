@@ -17,7 +17,6 @@ $(function () {
         return false;
     });
 
-
     $("#revoke_token_form").submit(function (event) {
         event.preventDefault();
         event.stopPropagation();
