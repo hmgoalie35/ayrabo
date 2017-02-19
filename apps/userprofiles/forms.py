@@ -5,7 +5,7 @@ from crispy_forms.layout import Layout, Field, Submit, Div, HTML
 from django import forms
 from django.utils.translation import ugettext_lazy as _
 
-from escoresheet.utils import SelectDateMonthDayYearInitiallyBlankWidget
+from escoresheet.utils.form_widgets import SelectDateMonthDayYearInitiallyBlankWidget
 from .models import UserProfile
 
 YEAR_DIFFERENCE = 20

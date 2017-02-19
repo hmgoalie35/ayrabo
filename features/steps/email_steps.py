@@ -37,7 +37,8 @@ def step_impl(context, username_or_email, num_emails):
 
 @step('I follow an invalid password reset link')
 def step_impl(context):
-    invalid_url = context.get_url('account_reset_password_from_key', uidb36='myinvaliduidb36', key='myinvalidkey')
+    invalid_url = context.get_url('account_reset_password_from_key', uidb36='myinvaliduidb36',
+                                  key='new-confirmation-link')
     context.driver.get(invalid_url)
 
 

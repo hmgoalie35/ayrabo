@@ -2,7 +2,7 @@ from django.urls import reverse
 
 from accounts.tests import UserFactory
 from divisions.tests import DivisionFactory
-from escoresheet.utils import BaseTestCase
+from escoresheet.utils.testing_utils import BaseTestCase
 from leagues.tests import LeagueFactory
 from managers.tests import ManagerFactory
 from seasons.tests import SeasonFactory

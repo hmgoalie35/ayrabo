@@ -27,7 +27,7 @@ Feature: Manager home page
 
   Scenario: Informative text about the page exists
     Given I am on the "manager:home" page
-    Then I should see "Team List"
+    Then I should see "Your Teams"
     And I should see "Showing all teams you are a manager for"
 
   Scenario: All teams the manager manages are displayed

@@ -7,7 +7,7 @@ from coaches.forms import CoachForm
 from coaches.models import Coach
 from coaches.tests import CoachFactory
 from divisions.tests import DivisionFactory
-from escoresheet.utils import BaseTestCase
+from escoresheet.utils.testing_utils import BaseTestCase
 from leagues.tests import LeagueFactory
 from managers.forms import ManagerForm
 from managers.models import Manager
@@ -258,7 +258,7 @@ class FinishSportRegistrationViewTests(BaseTestCase):
         sr = SportRegistrationFactory(user=self.user, is_complete=False)
         sr.set_roles(['Player'])
         response = self.client.get(self.url, follow=True)
-        self.assertTemplateUsed(response, 'message.html')
+        self.assertTemplateUsed(response, 'sport_not_configured_msg.html')
         msg = "{sport} hasn't been configured correctly in our system. " \
               "If you believe this is an error please contact us.".format(sport=sr.sport.name)
         self.assertEqual(response.context['message'], msg)
@@ -337,7 +337,7 @@ class FinishSportRegistrationViewTests(BaseTestCase):
         sr = SportRegistrationFactory(user=self.user, is_complete=False)
         sr.set_roles(['Player'])
         response = self.client.post(self.url, data={}, follow=True)
-        self.assertTemplateUsed(response, 'message.html')
+        self.assertTemplateUsed(response, 'sport_not_configured_msg.html')
         msg = "{sport} hasn't been configured correctly in our system. " \
               "If you believe this is an error please contact us.".format(sport=sr.sport.name)
         self.assertEqual(response.context['message'], msg)
@@ -547,7 +547,7 @@ class UpdateSportRegistrationViewTests(BaseTestCase):
         sr = SportRegistrationFactory(user=self.user)
         sr.set_roles(['Player'])
         response = self.client.get(reverse('sport:update_sport_registration', kwargs={'pk': sr.pk}))
-        self.assertTemplateUsed(response, 'message.html')
+        self.assertTemplateUsed(response, 'sport_not_configured_msg.html')
         msg = "{sport} hasn't been configured correctly in our system. " \
               "If you believe this is an error please contact us.".format(sport=sr.sport.name)
         self.assertEqual(response.context['message'], msg)
@@ -573,7 +573,7 @@ class UpdateSportRegistrationViewTests(BaseTestCase):
         sr.set_roles(['Player'])
         response = self.client.post(reverse('sport:update_sport_registration', kwargs={'pk': sr.pk}), data={},
                                     follow=True)
-        self.assertTemplateUsed(response, 'message.html')
+        self.assertTemplateUsed(response, 'sport_not_configured_msg.html')
         msg = "{sport} hasn't been configured correctly in our system. " \
               "If you believe this is an error please contact us.".format(sport=sr.sport.name)
         self.assertEqual(response.context['message'], msg)

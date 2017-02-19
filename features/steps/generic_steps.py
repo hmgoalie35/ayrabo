@@ -11,7 +11,7 @@ from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.select import Select
 from selenium.webdriver.support.ui import WebDriverWait
 
-from escoresheet.utils import get_user
+from escoresheet.utils.testing_utils import get_user
 
 
 def find_element(context, element_to_find, multiple=False):

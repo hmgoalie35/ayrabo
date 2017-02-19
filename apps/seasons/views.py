@@ -1,13 +1,14 @@
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.core import mail
 from django.http import Http404
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
 from django.views import generic
 from django.views.generic.base import ContextMixin
 
-from escoresheet.utils import UserHasRolesMixin
+from escoresheet.utils import email_admins_sport_not_configured
+from escoresheet.utils.exceptions import SportNotConfiguredException
+from escoresheet.utils.mixins import UserHasRolesMixin
 from managers.models import Manager
 from teams.models import Team
 from .forms import CreateHockeySeasonRosterForm, UpdateHockeySeasonRosterForm
@@ -25,22 +26,15 @@ SPORT_MODEL_MAPPINGS = {
     'Ice Hockey': HockeySeasonRoster
 }
 
-SPORT_NOT_CONFIGURED_MSG = "{sport} hasn't been configured correctly in our system. " \
-                           "If you believe this is an error please contact us."
-
-
-def email_admins_sport_not_configured(sport_name, view_cls):
-    subject = '{sport_name} incorrectly configured'.format(sport_name=sport_name)
-    mail.mail_admins(subject,
-                     '{sport} incorrectly configured on the {page} ({cls}) page. '
-                     'You will likely need to add a mapping to the appropriate dictionary.'.format(
-                             sport=sport_name, page=view_cls.request.path, cls=view_cls.__class__.__name__))
-
 
 class CreateSeasonRosterView(LoginRequiredMixin, UserHasRolesMixin, ContextMixin, generic.View):
     template_name = 'seasons/season_roster_create.html'
     roles_to_check = ['Manager']
     user_has_no_role_msg = 'You do not have permission to perform this action.'
+
+    def _handle_sport_not_configured(self, e):
+        email_admins_sport_not_configured(e.sport, self)
+        return render(self.request, 'sport_not_configured_msg.html', {'message': e.message})
 
     def get_context_data(self, **kwargs):
         context = super(CreateSeasonRosterView, self).get_context_data(**kwargs)
@@ -56,30 +50,30 @@ class CreateSeasonRosterView(LoginRequiredMixin, UserHasRolesMixin, ContextMixin
         sport_name = team.division.league.sport.name
 
         form_cls = SPORT_CREATE_FORM_MAPPINGS.get(sport_name)
-        form = None
-        if form_cls:
-            form = form_cls(self.request.POST or None, initial={'team': team.pk}, read_only_fields=['team'],
-                            league=team.division.league.full_name, team=team)
+        if form_cls is None:
+            raise SportNotConfiguredException(sport_name)
+
+        form = form_cls(self.request.POST or None, initial={'team': team.pk}, read_only_fields=['team'],
+                        league=team.division.league.full_name, team=team)
         context['team'] = team
         context['form'] = form
         context['sport_name'] = sport_name
         return context
 
     def get(self, request, *args, **kwargs):
-        context = self.get_context_data(**kwargs)
-        if context.get('form') is None:
-            sport = context.get('sport_name')
-            email_admins_sport_not_configured(sport, self)
-            return render(request, 'message.html', {'message': SPORT_NOT_CONFIGURED_MSG.format(sport=sport)})
+        try:
+            context = self.get_context_data(**kwargs)
+        except SportNotConfiguredException as e:
+            return self._handle_sport_not_configured(e)
         return render(request, self.template_name, context)
 
     def post(self, request, *args, **kwargs):
-        context = self.get_context_data(**kwargs)
+        try:
+            context = self.get_context_data(**kwargs)
+        except SportNotConfiguredException as e:
+            return self._handle_sport_not_configured(e)
+
         form = context.get('form')
-        if context.get('form') is None:
-            sport = context.get('sport_name')
-            email_admins_sport_not_configured(sport, self)
-            return render(request, 'message.html', {'message': SPORT_NOT_CONFIGURED_MSG.format(sport=sport)})
         if form.is_valid():
             form.save()
             messages.success(request, 'Season roster created for {team}'.format(
@@ -105,30 +99,35 @@ class ListSeasonRosterView(LoginRequiredMixin, UserHasRolesMixin, generic.Templa
 
         sport_name = team.division.league.sport.name
         season_roster_cls = SPORT_MODEL_MAPPINGS.get(sport_name)
-        season_rosters = None
-        if season_roster_cls:
-            season_rosters = {}
-            temp = season_roster_cls.objects.order_by('-created').filter(team=team).select_related(
-                    'season', 'team', 'team__division')
-            for season_roster in temp:
-                season_rosters[season_roster] = season_roster.players.select_related('user').order_by('jersey_number')
+        if season_roster_cls is None:
+            raise SportNotConfiguredException(sport_name)
+
+        season_rosters = {}
+        temp = season_roster_cls.objects.order_by('-created').filter(team=team).select_related(
+                'season', 'team', 'team__division')
+        for season_roster in temp:
+            season_rosters[season_roster] = season_roster.players.select_related('user').order_by('jersey_number')
         context['season_rosters'] = season_rosters
         context['team'] = team
 
         return context
 
     def get(self, request, *args, **kwargs):
-        context = self.get_context_data(**kwargs)
-        if context.get('season_rosters') is None:
-            sport = context.get('team').division.league.sport
-            email_admins_sport_not_configured(sport, self)
-            return render(request, 'message.html', {'message': SPORT_NOT_CONFIGURED_MSG.format(sport=sport)})
+        try:
+            self.get_context_data(**kwargs)
+        except SportNotConfiguredException as e:
+            email_admins_sport_not_configured(e.sport, self)
+            return render(request, 'sport_not_configured_msg.html', {'message': e.message})
         return super(ListSeasonRosterView, self).get(request, *args, **kwargs)
 
 
 class UpdateSeasonRosterView(LoginRequiredMixin, UserHasRolesMixin, ContextMixin, generic.View):
     roles_to_check = ['Manager']
     template_name = 'seasons/season_roster_update.html'
+
+    def _handle_sport_not_configured(self, e):
+        email_admins_sport_not_configured(e.sport, self)
+        return render(self.request, 'sport_not_configured_msg.html', {'message': e.message})
 
     def get_context_data(self, **kwargs):
         context = super(UpdateSeasonRosterView, self).get_context_data(**kwargs)
@@ -141,46 +140,41 @@ class UpdateSeasonRosterView(LoginRequiredMixin, UserHasRolesMixin, ContextMixin
         sport_name = team.division.league.sport.name
 
         season_roster_cls = SPORT_MODEL_MAPPINGS.get(sport_name)
-        season_roster = None
-        if season_roster_cls:
-            season_roster = get_object_or_404(season_roster_cls, pk=kwargs.get('pk', None))
+        if season_roster_cls is None:
+            raise SportNotConfiguredException(sport_name)
 
-        context['season_roster'] = season_roster
-        context['sport_name'] = sport_name
-        if season_roster is None:
-            return context
+        season_roster = get_object_or_404(season_roster_cls, pk=kwargs.get('pk', None))
 
         if season_roster.team_id != team.id:
             raise Http404
 
         form_cls = SPORT_UPDATE_FORM_MAPPINGS.get(sport_name)
-        form = None
-        if form_cls:
-            form = form_cls(self.request.POST or None, instance=season_roster, team=team)
+        if form_cls is None:
+            raise SportNotConfiguredException(sport_name)
 
+        form = form_cls(self.request.POST or None, instance=season_roster, team=team)
+
+        context['season_roster'] = season_roster
+        context['sport_name'] = sport_name
         context['team'] = team
         context['form'] = form
 
         return context
 
     def get(self, request, *args, **kwargs):
-        context = self.get_context_data(**kwargs)
-        if context.get('season_roster') is None or context.get('form') is None:
-            sport = context.get('sport_name')
-            email_admins_sport_not_configured(sport, self)
-            return render(request, 'message.html',
-                          {'message': SPORT_NOT_CONFIGURED_MSG.format(sport=sport)})
+        try:
+            context = self.get_context_data(**kwargs)
+        except SportNotConfiguredException as e:
+            return self._handle_sport_not_configured(e)
         return render(request, self.template_name, context)
 
     def post(self, request, *args, **kwargs):
-        context = self.get_context_data(**kwargs)
+        try:
+            context = self.get_context_data(**kwargs)
+        except SportNotConfiguredException as e:
+            return self._handle_sport_not_configured(e)
         team = context.get('team')
         form = context.get('form')
-        if context.get('season_roster') is None or form is None:
-            sport = context.get('sport_name')
-            email_admins_sport_not_configured(sport, self)
-            return render(request, 'message.html',
-                          {'message': SPORT_NOT_CONFIGURED_MSG.format(sport=sport)})
         if form.is_valid():
             if form.has_changed():
                 form.save()

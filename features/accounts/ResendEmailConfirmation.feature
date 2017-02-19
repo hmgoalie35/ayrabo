@@ -12,10 +12,10 @@ Feature: Resend account confirmation
   Scenario: Navigate to resend confirmation page
     Given I am on the "account_login" page
     When I press "didnt_receive_confirmation_email"
-    Then I should be on the "/account/confirm-email/invalidkey/" page
+    Then I should be on the "/account/confirm-email/new-confirmation-link/" page
 
   Scenario: Request a new email confirmation with valid email
-    Given I am on the "/account/confirm-email/invalidkey/" page
+    Given I am on the "/account/confirm-email/new-confirmation-link/" page
     When I fill in "new_email_confirmation" with "user@example.com"
     And I press "request_new_confirmation_email"
     Then I should see "A new confirmation email has been sent to user@example.com"
@@ -23,7 +23,7 @@ Feature: Resend account confirmation
     And "user@example.com" should have 1 email
 
   Scenario: Request a new email confirmation with invalid email
-    Given I am on the "/account/confirm-email/invalidkey/" page
+    Given I am on the "/account/confirm-email/new-confirmation-link/" page
     When I fill in "new_email_confirmation" with "myinvalidemail@example.com"
     And I press "request_new_confirmation_email"
     Then I should see "myinvalidemail@example.com is not a valid e-mail address or has already been confirmed"
@@ -36,5 +36,5 @@ Feature: Resend account confirmation
       | Jane       | Doe       | testing@example.com | myweakpassword |
     And "testing@example.com" is completely registered for "Ice Hockey" with roles "Coach, Referee"
     And I login with "testing@example.com" and "myweakpassword"
-    When I go to the "/account/confirm-email/invalidkey/" page
+    When I go to the "/account/confirm-email/new-confirmation-link/" page
     Then I should see "You have already confirmed your e-mail address"

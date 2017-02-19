@@ -13,7 +13,7 @@ Feature: Register for an account
     And I press "id_submit"
     Then I should be on the "account_email_verification_sent" page
     And I should see "Verify Your E-mail Address"
-    And I should see "An email with a confirmation link has been sent to your email address. Please follow the link to activate your account."
+    And I should see "An email with a confirmation link has been sent to your email address. Please follow the"
     # Note this does not test confirming the account, that is done below.
     And A user account should exist for "user@example.com"
 
@@ -31,8 +31,8 @@ Feature: Register for an account
       | John       | Doe       | user@example.com | myweakpassword |
 
     When I follow an invalid email link
-    Then I should see "This confirmation link has expired or is invalid"
-    And I should see "request a new confirmation link"
+    Then I should see "This confirmation link is invalid or has expired."
+    And I should see "Please request a new confirmation link by entering your email address below."
 
   Scenario: Register for an account with no info
     Given I am on the "account_register" page

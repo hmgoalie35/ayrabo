@@ -11,6 +11,12 @@
             <div class="col-sm-12">
                 <div class="text-center">
                     <h1>Update Season Roster for {{ team }}</h1>
+                    <h4 class="text-muted">{{ team.division }} - {{ team.division.league }}</h4>
+                    <br>
+                    <h4>{{ season_roster.season }}</h4>
+                    <br>
+                    <h5>This season roster was created:</h5>
+                    <h5>{{ season_roster.created }}</h5>
                 </div>
             </div>
         </div>

@@ -81,9 +81,9 @@ Feature: Add roles to a sport registration
       | username_or_email | sport      | team                  | jersey_number | position | handedness |
       | user@example.com  | Ice Hockey | Green Machine IceCats | 35            | G        | Left       |
     And I am on the "sports.SportRegistration" "user__email=user@example.com, sport__name=Ice Hockey" "sport:add_sport_registration_role" page with url kwargs "pk=pk, role=player"
-    Then I should see "It seems like you have already registered as an Ice Hockey player"
-    And I should see "Please confirm the information below is correct before adding the player role"
-    And I should see "You will be able to update the information on the update sport registration page"
+    Then I should see "It seems like you have previously registered as an Ice Hockey player."
+    And I should see "Please confirm the information below is correct before adding the player role."
+    And I should see "You will be able to update the information below on the next page."
     And "id_hockeyplayer-team" should be disabled
     And "id_hockeyplayer-jersey_number" should be disabled
     And "id_hockeyplayer-position" should be disabled

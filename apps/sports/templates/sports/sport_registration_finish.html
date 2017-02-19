@@ -11,8 +11,13 @@
                 <div class="text-center">
                     <h2>Finish {{ sport_name }} Registration</h2>
                     <p>Please fill out any role specific information below.</p>
-                    <br>
-                    <h4 class="text-muted">{{ remaining_sport_registrations }} sport registration{{ remaining_sport_registrations|pluralize }} remaining</h4>
+                    {% if sport_registrations_remaining %}
+                        <br>
+                        <h4 class="text-muted">Remaining sport registrations:</h4>
+                        {% for sport in sport_registrations_remaining %}
+                            <span class="label label-primary">{{ sport }}</span>
+                        {% endfor %}
+                    {% endif %}
                 </div>
             </div>
         </div>
@@ -52,7 +57,7 @@
 
                     <div class="text-center">
                         <button id="next_sport_registration_btn" type="submit" role="button" class="btn btn-success">
-                            {% if remaining_sport_registrations == 1 %}Finish{% else %}Next sport registration{% endif %}
+                            {% if sport_registrations_remaining %}Next sport registration{% else %}Finish{% endif %}
                         </button>
                     </div>
                     <br>

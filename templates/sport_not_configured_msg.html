@@ -5,11 +5,7 @@
         <div class="row">
             <div class="col-sm-offset-2 col-sm-8 col-sm-offset-2">
                 <div class="text-center">
-                    <br><br><br>
-                    <h1>We have encountered an error</h1>
-                    <h4>The message below may help you resolve the problem, but if it doesn't feel free to <a
-                            href="{% url 'contact_us' %}">contact us</a>.</h4>
-                    <br>
+                    <br><br><br><br><br><br><br>
                     <div class="alert alert-danger" role="alert">
                         {% if message %}
                             <p>{{ message }}</p>
@@ -17,6 +13,8 @@
                             <p>No message to display</p>
                         {% endif %}
                     </div>
+                    <br><br>
+                    <a href="{{ request.META.HTTP_REFERER|default:"/" }}" class="btn btn-back">Back</a>
                 </div>
             </div>
         </div>
