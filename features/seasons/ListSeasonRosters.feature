@@ -14,7 +14,7 @@ Feature: List season rosters
 
   Scenario Outline: Can't view season roster list page w/o manager role
     Given "user@example.com" is completely registered for "Ice Hockey" with role "<role>"
-    When I go to the "teams.Team" "" "team:create_season_roster" page with url kwargs "team_pk=pk"
+    When I go to the "teams.Team" "" "teams:season_rosters:create" page with url kwargs "team_pk=pk"
     Then I should be on the "home" page
     And I should see "You do not have permission to perform this action."
 
@@ -29,11 +29,11 @@ Feature: List season rosters
     And The following manager object exists
       | username_or_email | team                  |
       | user@example.com  | Green Machine IceCats |
-    And I am on the "manager:home" page
+    And I am on the "managers:home" page
     When I press "green-machine-icecats_manage_link"
     And I wait for "green-machine-icecats_create_season_roster_btn" to be visible
     And I press "green-machine-icecats_list_season_rosters_btn"
-    Then I should be on the "teams.Team" "" "team:list_season_roster" page with url kwargs "team_pk=pk"
+    Then I should be on the "teams.Team" "" "teams:season_rosters:list" page with url kwargs "team_pk=pk"
 
   Scenario: No season rosters created
     Given "user@example.com" is completely registered for "Ice Hockey" with role "Manager"
@@ -43,7 +43,7 @@ Feature: List season rosters
     And The following manager object exists
       | username_or_email | team                  |
       | user@example.com  | Green Machine IceCats |
-    And I am on the "teams.Team" "" "team:list_season_roster" page with url kwargs "team_pk=pk"
+    And I am on the "teams.Team" "" "teams:season_rosters:list" page with url kwargs "team_pk=pk"
     Then I should see "Season Rosters for Green Machine IceCats"
     And I should see "A season roster has not been created for this team yet."
 
@@ -58,6 +58,6 @@ Feature: List season rosters
     And The following manager object exists
       | username_or_email | team                  |
       | user@example.com  | Green Machine IceCats |
-    And I am on the "teams.Team" "" "team:list_season_roster" page with url kwargs "team_pk=pk"
+    And I am on the "teams.Team" "" "teams:season_rosters:list" page with url kwargs "team_pk=pk"
     Then I should see "Season Rosters for Green Machine IceCats"
     And I should see "2016-2017 Season"

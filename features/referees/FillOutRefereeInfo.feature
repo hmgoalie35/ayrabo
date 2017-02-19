@@ -14,14 +14,14 @@ Feature: Create referee in the system
     And I login with "user@example.com" and "myweakpassword"
 
   Scenario: Submit valid referee form
-    Given I am on the "sport:finish_sport_registration" page
+    Given I am on the "sportregistrations:finish" page
     When I select "Long Island Amateur Hockey League" from "id_referee-league"
     And I press "next_sport_registration_btn"
     Then I should see "You are now registered for Ice Hockey."
     And I should be on the "home" page
 
   Scenario: Submit invalid referee form
-    Given I am on the "sport:finish_sport_registration" page
+    Given I am on the "sportregistrations:finish" page
     When I press "next_sport_registration_btn"
-    Then I should be on the "sport:finish_sport_registration" page
+    Then I should be on the "sportregistrations:finish" page
     And "This field is required." should show up 1 time

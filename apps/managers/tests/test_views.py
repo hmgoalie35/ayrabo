@@ -37,7 +37,7 @@ class ManagerHomeViewTests(BaseTestCase):
         self.baseball_sr.set_roles(['Manager'])
         self.baseball_manager = ManagerFactory(user=self.user, team=self.yankees)
 
-        self.url = reverse('manager:home')
+        self.url = reverse('managers:home')
         self.client.login(email=self.email, password=self.password)
 
     # GET

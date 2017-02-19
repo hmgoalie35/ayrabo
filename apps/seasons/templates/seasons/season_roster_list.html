@@ -72,7 +72,7 @@
 
                                     <div class="pull-right">
                                         <a name="update_link" id="update_{{ season_roster.pk }}_link"
-                                           href="{% url 'team:update_season_roster' team.pk season_roster.pk %}"
+                                           href="{% url 'teams:season_rosters:update' team.pk season_roster.pk %}"
                                            title="Update season roster">
                                             <span class="fa fa-fw fa-lg fa-pencil"></span>
                                         </a>
@@ -84,7 +84,7 @@
                     {% else %}
                         <div class="alert alert-warning">
                             A season roster has not been created for this team yet.<br>You can create a season roster
-                            <a class="alert-link" href="{% url 'team:create_season_roster' team.pk %}">here.</a>
+                            <a class="alert-link" href="{% url 'teams:season_rosters:create' team.pk %}">here.</a>
                         </div>
                     {% endif %}
                 </div>

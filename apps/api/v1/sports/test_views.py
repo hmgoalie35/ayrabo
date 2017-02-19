@@ -18,21 +18,21 @@ class RemoveSportRegistrationRoleAPIViewTests(APITestCase):
         self.client.login(email=self.email, password=self.password)
 
     def test_pk_dne(self):
-        response = self.client.patch(reverse('v1:remove_sport_registration_role', kwargs={'pk': 100, 'role': 'player'}))
+        response = self.client.patch(reverse('v1:sportregistrations:remove_role', kwargs={'pk': 100, 'role': 'player'}))
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_not_object_owner(self):
         other_user = UserFactory()
         sr = SportRegistrationFactory(user=other_user)
         response = self.client.patch(
-                reverse('v1:remove_sport_registration_role', kwargs={'pk': sr.pk, 'role': 'player'}))
+                reverse('v1:sportregistrations:remove_role', kwargs={'pk': sr.pk, 'role': 'player'}))
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
         self.assertDictEqual({'detail': 'You do not have permission to perform this action.'}, response.data)
 
     def test_role_removed(self):
         response = self.client.patch(
-                reverse('v1:remove_sport_registration_role', kwargs={'pk': self.sr.pk, 'role': 'player'}))
+                reverse('v1:sportregistrations:remove_role', kwargs={'pk': self.sr.pk, 'role': 'player'}))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertDictEqual({'detail': 'player role successfully removed.'}, response.data)
         # Need to refetch the object in order to see the changes
@@ -40,14 +40,14 @@ class RemoveSportRegistrationRoleAPIViewTests(APITestCase):
 
     def test_sportregistration_doesnt_have_role(self):
         response = self.client.patch(
-                reverse('v1:remove_sport_registration_role', kwargs={'pk': self.sr.pk, 'role': 'referee'}))
+                reverse('v1:sportregistrations:remove_role', kwargs={'pk': self.sr.pk, 'role': 'referee'}))
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertDictEqual({'error': 'You are not currently registered as a referee'}, response.data)
 
     def test_remove_last_role(self):
         self.sr.set_roles(['Player'])
         response = self.client.patch(
-                reverse('v1:remove_sport_registration_role', kwargs={'pk': self.sr.pk, 'role': 'player'}))
+                reverse('v1:sportregistrations:remove_role', kwargs={'pk': self.sr.pk, 'role': 'player'}))
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertDictEqual(

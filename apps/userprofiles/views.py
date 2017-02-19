@@ -15,7 +15,7 @@ class CreateUserProfileView(LoginRequiredMixin, SuccessMessageMixin, AccountAndS
                             generic.CreateView):
     model = UserProfile
     template_name = 'userprofiles/userprofile_create.html'
-    success_url = reverse_lazy('sport:create_sport_registration')
+    success_url = reverse_lazy('sportregistrations:create')
     success_message = 'You have completed your account registration.'
     form_class = CreateUserProfileForm
 

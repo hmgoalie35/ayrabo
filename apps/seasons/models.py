@@ -108,7 +108,7 @@ class AbstractSeasonRoster(models.Model):
         get_latest_by = 'created'
 
     def get_absolute_url(self):
-        return reverse('team:update_season_roster', kwargs={'team_pk': self.team.pk, 'pk': self.pk})
+        return reverse('teams:season_rosters:update', kwargs={'team_pk': self.team.pk, 'pk': self.pk})
 
     def __str__(self):
         return '{team}-{division}: {season}'.format(team=self.team, division=self.team.division, season=self.season)

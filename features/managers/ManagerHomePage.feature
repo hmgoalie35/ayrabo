@@ -23,21 +23,21 @@ Feature: Manager home page
     Given I am on the "home" page
     When I press "manager_menu"
     And I press "manager_home"
-    Then I should be on the "manager:home" page
+    Then I should be on the "managers:home" page
 
   Scenario: Informative text about the page exists
-    Given I am on the "manager:home" page
+    Given I am on the "managers:home" page
     Then I should see "Your Teams"
     And I should see "Showing all teams you are a manager for"
 
   Scenario: All teams the manager manages are displayed
-    Given I am on the "manager:home" page
+    Given I am on the "managers:home" page
     Then I should see "Green Machine IceCats"
     And I should see "Midget Minor AA"
     And I should see "Long Island Amateur Hockey League"
 
   Scenario: Manager functions for a specific team become visible after clicking button
-    Given I am on the "manager:home" page
+    Given I am on the "managers:home" page
     When I press "green-machine-icecats_manage_link"
     And I press "new-york-yankees_manage_link"
     Then "green-machine-icecats_create_season_roster_btn" should be visible

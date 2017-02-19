@@ -60,7 +60,7 @@ class SportRegistrationModelTests(BaseTestCase):
     def test_absolute_url(self):
         ice_hockey = SportRegistrationFactory(sport__name='Ice Hockey')
         self.assertEqual(ice_hockey.get_absolute_url(),
-                         reverse('sport:update_sport_registration', kwargs={'pk': ice_hockey.pk}))
+                         reverse('sportregistrations:update', kwargs={'pk': ice_hockey.pk}))
 
     def test_current_available_roles(self):
         self.assertListEqual(SportRegistration.ROLES, ['Player', 'Coach', 'Referee', 'Manager'])

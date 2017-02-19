@@ -38,7 +38,7 @@ Feature: Update season roster
     And The following manager object exists
       | username_or_email | team                  |
       | user@example.com  | Green Machine IceCats |
-    And I am on the "teams.Team" "" "team:list_season_roster" page with url kwargs "team_pk=pk"
+    And I am on the "teams.Team" "" "teams:season_rosters:list" page with url kwargs "team_pk=pk"
     When I press "update_link"
     Then I should be on the absolute url page for "seasons.HockeySeasonRoster" and "team__name=Green Machine IceCats"
 
@@ -49,7 +49,7 @@ Feature: Update season roster
       | user@example.com  | Green Machine IceCats |
     And I am on the absolute url page for "seasons.HockeySeasonRoster" and "team__name=Green Machine IceCats"
     When I press "update_season_roster_btn"
-    Then I should be on the "teams.Team" "" "team:list_season_roster" page with url kwargs "team_pk=pk"
+    Then I should be on the "teams.Team" "" "teams:season_rosters:list" page with url kwargs "team_pk=pk"
     And I should not see "Season roster for Green Machine IceCats successfully updated."
 
   Scenario: Submit changed form
@@ -60,7 +60,7 @@ Feature: Update season roster
     And I am on the absolute url page for "seasons.HockeySeasonRoster" and "team__name=Green Machine IceCats"
     When I press "id_default"
     And I press "update_season_roster_btn"
-    Then I should be on the "teams.Team" "" "team:list_season_roster" page with url kwargs "team_pk=pk"
+    Then I should be on the "teams.Team" "" "teams:season_rosters:list" page with url kwargs "team_pk=pk"
     And I should see "Season roster for Green Machine IceCats successfully updated."
 
   Scenario: Invalid form

@@ -23,7 +23,7 @@ Feature: View what sports I am currently registered for
     And The following sport exists "Basketball"
     When I press "My Sport Registrations"
     And I press "register_for_sport_btn"
-    Then I should be on the "sport:create_sport_registration" page
+    Then I should be on the "sportregistrations:create" page
 
   Scenario: Navigate to new sport registration page when no more sports to register for exist
     Given I am on the "account_home" page

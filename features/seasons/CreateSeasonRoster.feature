@@ -15,7 +15,7 @@ Feature: Create season rosters
 
   Scenario Outline: Can't create season roster w/o manager role
     Given "user@example.com" is completely registered for "Ice Hockey" with role "<role>"
-    When I go to the "teams.Team" "" "team:create_season_roster" page with url kwargs "team_pk=pk"
+    When I go to the "teams.Team" "" "teams:season_rosters:create" page with url kwargs "team_pk=pk"
     Then I should be on the "home" page
     And I should see "You do not have permission to perform this action."
 
@@ -30,11 +30,11 @@ Feature: Create season rosters
     And The following manager objects exist
       | username_or_email | team                  |
       | user@example.com  | Green Machine IceCats |
-    And I am on the "manager:home" page
+    And I am on the "managers:home" page
     When I press "green-machine-icecats_manage_link"
     And I wait for "green-machine-icecats_create_season_roster_btn" to be visible
     And I press "green-machine-icecats_create_season_roster_btn"
-    Then I should be on the "teams.Team" "" "team:create_season_roster" page with url kwargs "team_pk=pk"
+    Then I should be on the "teams.Team" "" "teams:season_rosters:create" page with url kwargs "team_pk=pk"
     And I should see "Create Season Roster for Green Machine IceCats"
 
   Scenario: Submit valid ice hockey create season roster form
@@ -52,7 +52,7 @@ Feature: Create season rosters
       | test3@example.com | Ice Hockey | Green Machine IceCats |
       | test4@example.com | Ice Hockey | Green Machine IceCats |
       | test5@example.com | Ice Hockey | Green Machine IceCats |
-    Given I am on the "teams.Team" "" "team:create_season_roster" page with url kwargs "team_pk=pk"
+    Given I am on the "teams.Team" "" "teams:season_rosters:create" page with url kwargs "team_pk=pk"
     And I select "Long Island Amateur Hockey League: 2016 - 2017 Season" from "id_season"
     And I select 5 players from "id_players"
     And I press "create_season_roster_btn"
@@ -74,9 +74,9 @@ Feature: Create season rosters
       | test3@example.com | Ice Hockey | Green Machine IceCats |
       | test4@example.com | Ice Hockey | Green Machine IceCats |
       | test5@example.com | Ice Hockey | Green Machine IceCats |
-    Given I am on the "teams.Team" "" "team:create_season_roster" page with url kwargs "team_pk=pk"
+    Given I am on the "teams.Team" "" "teams:season_rosters:create" page with url kwargs "team_pk=pk"
     And I press "create_season_roster_btn"
     Then "This field is required." should show up 2 times
-    And I should be on the "teams.Team" "" "team:create_season_roster" page with url kwargs "team_pk=pk"
+    And I should be on the "teams.Team" "" "teams:season_rosters:create" page with url kwargs "team_pk=pk"
 
       # TODO add in tests for BaseballSeasonRoster, etc.

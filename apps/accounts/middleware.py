@@ -16,8 +16,8 @@ class AccountAndSportRegistrationCompleteMiddleware(MiddlewareMixin):
 
     def process_request(self, request):
         complete_registration_url = reverse('account_complete_registration')
-        create_sport_registration_url = reverse('sport:create_sport_registration')
-        finish_sport_registration_url = reverse('sport:finish_sport_registration')
+        create_sport_registration_url = reverse('sportregistrations:create')
+        finish_sport_registration_url = reverse('sportregistrations:finish')
         whitelisted_urls = [reverse('account_logout'), complete_registration_url, create_sport_registration_url,
                             finish_sport_registration_url]
 

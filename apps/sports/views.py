@@ -156,7 +156,7 @@ class FinishSportRegistrationView(LoginRequiredMixin, ContextMixin, AccountAndSp
         sr = context.get('sport_registration')
         sr.is_complete = True
         sr.save()
-        return redirect(reverse('sport:finish_sport_registration'))
+        return redirect(reverse('sportregistrations:finish'))
 
 
 class SportRegistrationModelFormSet(forms.BaseModelFormSet):
@@ -254,7 +254,7 @@ class CreateSportRegistrationView(LoginRequiredMixin, ContextMixin, AccountAndSp
                     form.instance.user = request.user
                     form.instance.set_roles(form.cleaned_data.get('roles', []))
                     form.save()
-            return redirect(reverse('sport:finish_sport_registration'))
+            return redirect(reverse('sportregistrations:finish'))
 
         return render(request, self.template_name, context)
 

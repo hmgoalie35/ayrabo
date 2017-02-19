@@ -50,7 +50,7 @@ class CreateUserProfileViewTests(BaseTestCase):
         user_with_profile = UserFactory.create(password=self.password)
         self.client.login(email=user_with_profile.email, password=self.password)
         response = self.client.get(reverse('account_complete_registration'))
-        self.assertRedirects(response, reverse('sport:create_sport_registration'))
+        self.assertRedirects(response, reverse('sportregistrations:create'))
 
     # POST
     def test_post_anonymous_user(self):
@@ -64,11 +64,11 @@ class CreateUserProfileViewTests(BaseTestCase):
         user_with_profile = UserFactory(password=self.password)
         self.client.login(email=user_with_profile.email, password=self.password)
         response = self.client.post(reverse('account_complete_registration'), data=self.post_data, follow=True)
-        self.assertRedirects(response, reverse('sport:create_sport_registration'))
+        self.assertRedirects(response, reverse('sportregistrations:create'))
 
     def test_valid_post_data(self):
         response = self.client.post(reverse('account_complete_registration'), data=self.post_data, follow=True)
-        self.assertRedirects(response, reverse('sport:create_sport_registration'))
+        self.assertRedirects(response, reverse('sportregistrations:create'))
 
     def test_user_attribute_is_set(self):
         self.client.post(reverse('account_complete_registration'), data=self.post_data, follow=True)

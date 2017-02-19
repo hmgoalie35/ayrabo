@@ -16,7 +16,7 @@
                         <p class="text-muted">Choose a role you would like to register as.</p>
                         {% for role in remaining_roles %}
                             <a id="add_{{ role|lower }}_role_link" class="btn btn-primary btn-xs"
-                               href="{% url 'sport:add_sport_registration_role' pk=sport_registration.pk role=role|lower %}">{{ role }}</a>
+                               href="{% url 'sportregistrations:add_role' pk=sport_registration.pk role=role|lower %}">{{ role }}</a>
                         {% endfor %}
                         <br><br>
                     {% endif %}
@@ -151,7 +151,7 @@
                                             <button type="button" class="btn btn-default" data-dismiss="modal">Cancel
                                             </button>
                                             <button id="remove_{{ role }}_role_btn" name="remove_role_btn"
-                                                    data-url="{% url 'v1:remove_sport_registration_role' pk=sport_registration.pk role=role %}"
+                                                    data-url="{% url 'v1:sportregistrations:remove_role' pk=sport_registration.pk role=role %}"
                                                     type="button" class="btn btn-danger">Ok
                                             </button>
                                         </div>
