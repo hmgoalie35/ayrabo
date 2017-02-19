@@ -19,11 +19,11 @@ Feature: User profiles
     And I should see "You will register for sports in the next step."
 
   Scenario: Redirected when trying to navigate to new sport registration page when userprofile not complete
-    Given I go to the "sport:create_sport_registration" page
+    Given I go to the "sportregistrations:create" page
     Then I should be on the "account_complete_registration" page
 
   Scenario: Redirected when trying to navigate to finish sport registration page when userprofile not complete
-    Given I go to the "sport:finish_sport_registration" page
+    Given I go to the "sportregistrations:finish" page
     Then I should be on the "account_complete_registration" page
 
   Scenario: Fill out with invalid height
@@ -64,7 +64,7 @@ Feature: User profiles
     And I fill in "id_height" with "5' 7""
     And I fill in "id_weight" with "130"
     And I press "create_userprofile_btn"
-    Then I should be on the "sport:create_sport_registration" page
+    Then I should be on the "sportregistrations:create" page
     And I should see "You have completed your account registration."
 
     # See features/sports/NewSportRegistration.feature for the next set of tests

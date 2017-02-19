@@ -182,6 +182,6 @@ class UpdateSeasonRosterView(LoginRequiredMixin, UserHasRolesMixin, ContextMixin
                 form.save()
                 messages.success(
                         request, 'Season roster for {team} successfully updated.'.format(team=team))
-            return redirect(reverse('team:list_season_roster', kwargs={'team_pk': team.pk}))
+            return redirect(reverse('teams:season_rosters:list', kwargs={'team_pk': team.pk}))
 
         return render(request, self.template_name, context)

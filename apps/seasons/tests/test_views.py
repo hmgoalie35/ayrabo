@@ -33,7 +33,7 @@ class CreateSeasonRosterViewTests(BaseTestCase):
         self.hockey_manager = ManagerFactory(user=self.user, team=self.icecats)
 
         self.hockey_players = HockeyPlayerFactory.create_batch(5, sport=self.ice_hockey, team=self.icecats)
-        self.url = reverse('team:create_season_roster', kwargs={'team_pk': self.icecats.pk})
+        self.url = reverse('teams:season_rosters:create', kwargs={'team_pk': self.icecats.pk})
         self.client.login(email=self.email, password=self.password)
 
     # GET
@@ -55,18 +55,18 @@ class CreateSeasonRosterViewTests(BaseTestCase):
         self.assertHasMessage(response, 'You do not have permission to perform this action.')
 
     def test_get_invalid_team_pk(self):
-        response = self.client.get(reverse('team:create_season_roster', kwargs={'team_pk': 1000}))
+        response = self.client.get(reverse('teams:season_rosters:create', kwargs={'team_pk': 1000}))
         self.assertEqual(response.status_code, 404)
 
     def test_get_user_not_team_manager(self):
         team = TeamFactory(division=self.mm_aa)
-        response = self.client.get(reverse('team:create_season_roster', kwargs={'team_pk': team.pk}))
+        response = self.client.get(reverse('teams:season_rosters:create', kwargs={'team_pk': team.pk}))
         self.assertEqual(response.status_code, 404)
 
     def test_get_sport_not_configured(self):
         team = TeamFactory()
         ManagerFactory(team=team, user=self.user)
-        response = self.client.get(reverse('team:create_season_roster', kwargs={'team_pk': team.pk}), follow=True)
+        response = self.client.get(reverse('teams:season_rosters:create', kwargs={'team_pk': team.pk}), follow=True)
         self.assertTemplateUsed(response, 'sport_not_configured_msg.html')
         msg = "{sport} hasn't been configured correctly in our system. " \
               "If you believe this is an error please contact us.".format(sport=team.division.league.sport.name)
@@ -92,7 +92,7 @@ class CreateSeasonRosterViewTests(BaseTestCase):
         team = TeamFactory()
         player = HockeyPlayerFactory(sport=self.ice_hockey, team=team)
         response = self.client.get(
-                reverse('team:create_season_roster', kwargs={'team_pk': self.icecats.pk}))
+                reverse('teams:season_rosters:create', kwargs={'team_pk': self.icecats.pk}))
 
         form = response.context['form']
         self.assertNotIn(season, form.fields['season'].queryset)
@@ -119,7 +119,7 @@ class CreateSeasonRosterViewTests(BaseTestCase):
     def test_post_sport_not_configured(self):
         team = TeamFactory()
         ManagerFactory(team=team, user=self.user)
-        response = self.client.post(reverse('team:create_season_roster', kwargs={'team_pk': team.pk}), data={},
+        response = self.client.post(reverse('teams:season_rosters:create', kwargs={'team_pk': team.pk}), data={},
                                     follow=True)
         self.assertTemplateUsed(response, 'sport_not_configured_msg.html')
         msg = "{sport} hasn't been configured correctly in our system. " \
@@ -128,13 +128,13 @@ class CreateSeasonRosterViewTests(BaseTestCase):
         self.assertEqual(len(mail.outbox), 1)
 
     def test_post_invalid_team_pk(self):
-        response = self.client.post(reverse('team:create_season_roster', kwargs={'team_pk': 1000}), data={},
+        response = self.client.post(reverse('teams:season_rosters:create', kwargs={'team_pk': 1000}), data={},
                                     follow=True)
         self.assertEqual(response.status_code, 404)
 
     def test_post_user_not_team_manager(self):
         team = TeamFactory(division=self.mm_aa)
-        response = self.client.post(reverse('team:create_season_roster', kwargs={'team_pk': team.pk}), data={},
+        response = self.client.post(reverse('teams:season_rosters:create', kwargs={'team_pk': team.pk}), data={},
                                     follow=True)
         self.assertEqual(response.status_code, 404)
 
@@ -143,7 +143,7 @@ class CreateSeasonRosterViewTests(BaseTestCase):
     def test_post_valid_hockeyseasonroster_form_data(self):
         post_data = {'season': [self.liahl_season.pk], 'players': [player.pk for player in self.hockey_players]}
         response = self.client.post(
-                reverse('team:create_season_roster', kwargs={'team_pk': self.icecats.pk}),
+                reverse('teams:season_rosters:create', kwargs={'team_pk': self.icecats.pk}),
                 data=post_data,
                 follow=True)
         self.assertHasMessage(response, 'Season roster created for {team}'.format(team=self.icecats))
@@ -152,7 +152,7 @@ class CreateSeasonRosterViewTests(BaseTestCase):
 
     def test_post_invalid_hockeyseasonroster_form_data(self):
         response = self.client.post(
-                reverse('team:create_season_roster', kwargs={'team_pk': self.icecats.pk}),
+                reverse('teams:season_rosters:create', kwargs={'team_pk': self.icecats.pk}),
                 data={'season': None, 'players': []})
         self.assertFormError(response, 'form', 'players', 'This field is required.')
 
@@ -177,7 +177,7 @@ class ListSeasonRosterViewTests(BaseTestCase):
         self.hockey_manager = ManagerFactory(user=self.user, team=self.icecats)
 
         self.hockey_players = HockeyPlayerFactory.create_batch(5, sport=self.ice_hockey, team=self.icecats)
-        self.url = reverse('team:list_season_roster', kwargs={'team_pk': self.icecats.pk})
+        self.url = reverse('teams:season_rosters:list', kwargs={'team_pk': self.icecats.pk})
         self.client.login(email=self.email, password=self.password)
 
     # GET
@@ -200,7 +200,7 @@ class ListSeasonRosterViewTests(BaseTestCase):
     def test_get_sport_not_configured(self):
         team = TeamFactory()
         ManagerFactory(team=team, user=self.user)
-        response = self.client.get(reverse('team:list_season_roster', kwargs={'team_pk': team.pk}), follow=True)
+        response = self.client.get(reverse('teams:season_rosters:list', kwargs={'team_pk': team.pk}), follow=True)
         self.assertTemplateUsed(response, 'sport_not_configured_msg.html')
         msg = "{sport} hasn't been configured correctly in our system. " \
               "If you believe this is an error please contact us.".format(sport=team.division.league.sport.name)
@@ -208,12 +208,12 @@ class ListSeasonRosterViewTests(BaseTestCase):
         self.assertEqual(len(mail.outbox), 1)
 
     def test_get_invalid_team_pk(self):
-        response = self.client.get(reverse('team:list_season_roster', kwargs={'team_pk': 1000}))
+        response = self.client.get(reverse('teams:season_rosters:list', kwargs={'team_pk': 1000}))
         self.assertEqual(response.status_code, 404)
 
     def test_get_user_not_team_manager(self):
         team = TeamFactory(division=self.mm_aa)
-        response = self.client.get(reverse('team:list_season_roster', kwargs={'team_pk': team.pk}))
+        response = self.client.get(reverse('teams:season_rosters:list', kwargs={'team_pk': team.pk}))
         self.assertEqual(response.status_code, 404)
 
     def test_get_context_populated(self):
@@ -272,7 +272,7 @@ class UpdateSeasonRosterViewTests(BaseTestCase):
         team = TeamFactory()
         ManagerFactory(team=team, user=self.user)
         response = self.client.get(
-                reverse('team:update_season_roster', kwargs={'team_pk': team.pk, 'pk': self.season_roster.pk}),
+                reverse('teams:season_rosters:update', kwargs={'team_pk': team.pk, 'pk': self.season_roster.pk}),
                 follow=True)
         self.assertTemplateUsed(response, 'sport_not_configured_msg.html')
         msg = "{sport} hasn't been configured correctly in our system. " \
@@ -282,25 +282,25 @@ class UpdateSeasonRosterViewTests(BaseTestCase):
 
     def test_get_invalid_team_pk(self):
         response = self.client.get(
-                reverse('team:update_season_roster', kwargs={'team_pk': 1000, 'pk': self.season_roster.pk}))
+                reverse('teams:season_rosters:update', kwargs={'team_pk': 1000, 'pk': self.season_roster.pk}))
         self.assertEqual(response.status_code, 404)
 
     def test_get_user_not_team_manager(self):
         team = TeamFactory(division=self.mm_aa)
         response = self.client.get(
-                reverse('team:update_season_roster', kwargs={'team_pk': team.pk, 'pk': self.season_roster.pk}))
+                reverse('teams:season_rosters:update', kwargs={'team_pk': team.pk, 'pk': self.season_roster.pk}))
         self.assertEqual(response.status_code, 404)
 
     def test_get_invalid_season_roster_pk(self):
         response = self.client.get(
-                reverse('team:update_season_roster', kwargs={'team_pk': self.icecats.pk, 'pk': 1000}))
+                reverse('teams:season_rosters:update', kwargs={'team_pk': self.icecats.pk, 'pk': 1000}))
         self.assertEqual(response.status_code, 404)
 
     def test_get_season_roster_is_for_different_team(self):
         # This will create a hockey season roster with a random team that is different from self.icecats
         season_roster = HockeySeasonRosterFactory()
         response = self.client.get(
-                reverse('team:update_season_roster', kwargs={'team_pk': self.icecats.pk, 'pk': season_roster.pk}))
+                reverse('teams:season_rosters:update', kwargs={'team_pk': self.icecats.pk, 'pk': season_roster.pk}))
         self.assertEqual(response.status_code, 404)
 
     def test_get_context_populated(self):
@@ -319,7 +319,8 @@ class UpdateSeasonRosterViewTests(BaseTestCase):
         team = TeamFactory()
         ManagerFactory(team=team, user=self.user)
         response = self.client.post(
-                reverse('team:update_season_roster', kwargs={'team_pk': team.pk, 'pk': self.season_roster.pk}), data={},
+                reverse('teams:season_rosters:update', kwargs={'team_pk': team.pk, 'pk': self.season_roster.pk}),
+                data={},
                 follow=True)
         self.assertTemplateUsed(response, 'sport_not_configured_msg.html')
         msg = "{sport} hasn't been configured correctly in our system. " \
@@ -335,7 +336,7 @@ class UpdateSeasonRosterViewTests(BaseTestCase):
         response = self.client.post(self.url, data=post_data, follow=True)
         self.assertTrue(HockeySeasonRoster.objects.first().default)
         self.assertHasMessage(response, 'Season roster for {team} successfully updated.'.format(team=self.icecats))
-        self.assertRedirects(response, reverse('team:list_season_roster', kwargs={'team_pk': self.icecats.pk}))
+        self.assertRedirects(response, reverse('teams:season_rosters:list', kwargs={'team_pk': self.icecats.pk}))
 
     def test_post_valid_unchanged_form(self):
         post_data = {
@@ -344,7 +345,7 @@ class UpdateSeasonRosterViewTests(BaseTestCase):
         }
         response = self.client.post(self.url, data=post_data, follow=True)
         self.assertNoMessage(response, 'Season roster for {team} successfully updated.'.format(team=self.icecats))
-        self.assertRedirects(response, reverse('team:list_season_roster', kwargs={'team_pk': self.icecats.pk}))
+        self.assertRedirects(response, reverse('teams:season_rosters:list', kwargs={'team_pk': self.icecats.pk}))
 
     def test_post_invalid_form(self):
         post_data = {

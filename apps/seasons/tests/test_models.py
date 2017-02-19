@@ -160,7 +160,7 @@ class AbstractSeasonRosterModelTests(BaseTestCase):
 
     def test_get_absolute_url(self):
         season_roster = HockeySeasonRosterFactory()
-        self.assertEqual(season_roster.get_absolute_url(), reverse('team:update_season_roster',
+        self.assertEqual(season_roster.get_absolute_url(), reverse('teams:season_rosters:update',
                                                                    kwargs={'team_pk': season_roster.team.pk,
                                                                            'pk': season_roster.pk}))
 

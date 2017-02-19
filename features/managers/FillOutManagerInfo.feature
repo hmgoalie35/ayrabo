@@ -14,14 +14,14 @@ Feature: Create manager in the system
     And I login with "user@example.com" and "myweakpassword"
 
   Scenario: Submit valid manager form
-    Given I am on the "sport:finish_sport_registration" page
+    Given I am on the "sportregistrations:finish" page
     When I select "Green Machine IceCats - Midget Minor AA" from "id_manager-team"
     And I press "next_sport_registration_btn"
     Then I should see "You are now registered for Ice Hockey."
     And I should be on the "home" page
 
   Scenario: Submit invalid manager form
-    Given I am on the "sport:finish_sport_registration" page
+    Given I am on the "sportregistrations:finish" page
     When I press "next_sport_registration_btn"
-    Then I should be on the "sport:finish_sport_registration" page
+    Then I should be on the "sportregistrations:finish" page
     And "This field is required." should show up 1 time

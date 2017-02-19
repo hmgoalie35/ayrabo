@@ -28,7 +28,7 @@
                     {{ form | crispy }}
                     <br>
                     <div class="text-center">
-                        <a href="{% url 'sport:update_sport_registration' sport_registration.pk %}" class="btn btn-back">Back</a>
+                        <a href="{% url 'sportregistrations:update' sport_registration.pk %}" class="btn btn-back">Back</a>
                         <input id="add_role_btn" type="submit" class="btn btn-success" value="Add {{ role }} role">
                     </div>
                 </form>

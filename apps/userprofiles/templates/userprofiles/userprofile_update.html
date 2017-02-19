@@ -85,7 +85,7 @@
                                 </div>
                             </div>
                             <div class="panel-body">
-                                <a id="register_for_sport_btn" href="{% url 'sport:create_sport_registration' %}"
+                                <a id="register_for_sport_btn" href="{% url 'sportregistrations:create' %}"
                                    class="btn btn-default btn-sm pull-right">Register for a sport</a>
                                 <br><br>
                                 {% if data %}
@@ -100,7 +100,7 @@
                                                 {% endfor %}
 
                                                 <span class="pull-right fa fa-fw fa-caret-down more-sport-info-fa-caret"></span>
-                                                <a name="edit_registration_link" id="edit-{{ sport_registration.id }}" href="{% url 'sport:update_sport_registration' sport_registration.pk %}" class="pull-right ">Edit Registration</a>
+                                                <a name="edit_registration_link" id="edit-{{ sport_registration.id }}" href="{% url 'sportregistrations:update' sport_registration.pk %}" class="pull-right ">Edit Registration</a>
                                             </li>
                                             <div class="collapse" id="{{ data_dict.sport.slug }}">
                                                 <div class="list-group-item">

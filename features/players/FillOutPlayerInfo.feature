@@ -14,7 +14,7 @@ Feature: Create player in the system
     And I login with "user@example.com" and "myweakpassword"
 
   Scenario: Submit valid player form
-    Given I am on the "sport:finish_sport_registration" page
+    Given I am on the "sportregistrations:finish" page
     When I select "Green Machine IceCats - Midget Minor AA" from "id_hockeyplayer-team"
     And I fill in "id_hockeyplayer-jersey_number" with "35"
     And I select "G" from "id_hockeyplayer-position"
@@ -24,7 +24,7 @@ Feature: Create player in the system
     And I should be on the "home" page
 
   Scenario: Submit invalid player form
-    Given I am on the "sport:finish_sport_registration" page
+    Given I am on the "sportregistrations:finish" page
     When I press "next_sport_registration_btn"
-    Then I should be on the "sport:finish_sport_registration" page
+    Then I should be on the "sportregistrations:finish" page
     And "This field is required." should show up 4 times

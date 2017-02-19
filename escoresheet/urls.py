@@ -15,10 +15,12 @@ urlpatterns = [
     # This allows me to override allauth views, and add in custom views under account/
     url(r'^account/', include('accounts.urls')),
     url(r'^account/', include('allauth.urls')),
-    url(r'', include('sports.urls', namespace='sport')),
+    url(r'^', include('sports.urls')),
+    url(r'^', include('teams.urls')),
+    # Adding namespace of `api` will cause drf login/logout/obtain token endpoints to fail because they need to
+    # only be under the rest_framework namespace.
     url(r'^api/', include('api.urls')),
-    url(r'^managers/', include('managers.urls', namespace='manager')),
-    url(r'^team/', include('teams.urls', namespace='team')),
+    url(r'^managers/', include('managers.urls', namespace='managers')),
 
 ]
 

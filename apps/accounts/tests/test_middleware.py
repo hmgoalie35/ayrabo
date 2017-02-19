@@ -42,7 +42,7 @@ class AccountAndSportRegistrationCompleteMiddlewareTests(BaseTestCase):
         Make sure accessing a whitelisted url does not lead to a redirect loop
         """
         self.client.login(email=self.user_with_profile.email, password=self.password)
-        response = self.client.get(reverse('sport:create_sport_registration'))
+        response = self.client.get(reverse('sportregistrations:create'))
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'sports/sport_registration_create.html')
 
@@ -53,7 +53,7 @@ class AccountAndSportRegistrationCompleteMiddlewareTests(BaseTestCase):
         self.client.login(email=self.user_with_profile.email, password=self.password)
         SportRegistrationFactory(user=self.user_with_profile, sport=self.ice_hockey, is_complete=False)
         SportRegistrationFactory(user=self.user_with_profile, sport=self.baseball, is_complete=False)
-        response = self.client.get(reverse('sport:finish_sport_registration'))
+        response = self.client.get(reverse('sportregistrations:finish'))
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'sports/sport_registration_finish.html')
 
@@ -74,7 +74,7 @@ class AccountAndSportRegistrationCompleteMiddlewareTests(BaseTestCase):
         """
         self.client.login(email=self.user_with_profile.email, password=self.password)
         response = self.client.get(reverse('home'))
-        self.assertRedirects(response, reverse('sport:create_sport_registration'))
+        self.assertRedirects(response, reverse('sportregistrations:create'))
 
     def test_no_userprofile(self):
         """
@@ -92,7 +92,7 @@ class AccountAndSportRegistrationCompleteMiddlewareTests(BaseTestCase):
         SportRegistrationFactory(user=self.user_with_profile, sport=self.ice_hockey, is_complete=False)
         SportRegistrationFactory(user=self.user_with_profile, sport=self.baseball, is_complete=False)
         response = self.client.get(reverse('home'))
-        self.assertRedirects(response, reverse('sport:finish_sport_registration'))
+        self.assertRedirects(response, reverse('sportregistrations:finish'))
 
     def test_account_completed(self):
         """
