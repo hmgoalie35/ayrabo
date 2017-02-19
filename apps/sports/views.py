@@ -268,8 +268,8 @@ class UpdateSportRegistrationView(LoginRequiredMixin, ContextMixin, generic.View
 
     def get_context_data(self, **kwargs):
         context = super(UpdateSportRegistrationView, self).get_context_data(**kwargs)
-        sr = get_object_or_404(SportRegistration, pk=kwargs.get('pk', None))
-        if sr.user != self.request.user:
+        sr = get_object_or_404(SportRegistration.objects.select_related('sport'), pk=kwargs.get('pk', None))
+        if sr.user_id != self.request.user.id:
             raise Http404
         sport_name = sr.sport.name
         context['sport_name'] = sport_name
@@ -375,8 +375,8 @@ class AddSportRegistrationRoleView(LoginRequiredMixin, ContextMixin, generic.Vie
 
     def get_context_data(self, **kwargs):
         context = super(AddSportRegistrationRoleView, self).get_context_data(**kwargs)
-        sr = get_object_or_404(SportRegistration, pk=kwargs.get('pk', None))
-        if not self.request.user.id == sr.user_id:
+        sr = get_object_or_404(SportRegistration.objects.select_related('sport'), pk=kwargs.get('pk', None))
+        if sr.user_id != self.request.user.id:
             raise Http404
         form_class = None
         role = kwargs.get('role', None)
