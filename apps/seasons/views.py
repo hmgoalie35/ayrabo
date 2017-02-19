@@ -38,7 +38,8 @@ class CreateSeasonRosterView(LoginRequiredMixin, UserHasRolesMixin, ContextMixin
 
     def get_context_data(self, **kwargs):
         context = super(CreateSeasonRosterView, self).get_context_data(**kwargs)
-        team = get_object_or_404(Team, pk=kwargs.get('team_pk', None))
+        team = get_object_or_404(Team.objects.select_related('division', 'division__league', 'division__league__sport'),
+                                 pk=kwargs.get('team_pk', None))
 
         # A user has many manager objects, with each manager object being tied to a team
         manager_objects = Manager.objects.filter(user=self.request.user).select_related('team',
@@ -131,7 +132,8 @@ class UpdateSeasonRosterView(LoginRequiredMixin, UserHasRolesMixin, ContextMixin
 
     def get_context_data(self, **kwargs):
         context = super(UpdateSeasonRosterView, self).get_context_data(**kwargs)
-        team = get_object_or_404(Team, pk=kwargs.get('team_pk', None))
+        team = get_object_or_404(Team.objects.select_related('division', 'division__league', 'division__league__sport'),
+                                 pk=kwargs.get('team_pk', None))
 
         is_user_manager_for_team = team.manager_set.filter(user=self.request.user).exists()
         if not is_user_manager_for_team:
@@ -143,7 +145,7 @@ class UpdateSeasonRosterView(LoginRequiredMixin, UserHasRolesMixin, ContextMixin
         if season_roster_cls is None:
             raise SportNotConfiguredException(sport_name)
 
-        season_roster = get_object_or_404(season_roster_cls, pk=kwargs.get('pk', None))
+        season_roster = get_object_or_404(season_roster_cls.objects.select_related('season'), pk=kwargs.get('pk', None))
 
         if season_roster.team_id != team.id:
             raise Http404
