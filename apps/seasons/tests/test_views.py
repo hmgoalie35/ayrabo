@@ -156,6 +156,17 @@ class CreateSeasonRosterViewTests(BaseTestCase):
                 data={'season': None, 'players': []})
         self.assertFormError(response, 'form', 'players', 'This field is required.')
 
+    def test_duplicate_season_roster_for_season_and_team(self):
+        # This tests to make sure you can't have more than 1 default season roster for a given team/season
+        player_ids = [player.pk for player in self.hockey_players]
+        HockeySeasonRosterFactory(season=self.liahl_season, team=self.icecats, players=player_ids, default=True)
+
+        post_data = {'season': [self.liahl_season.pk], 'players': player_ids, 'default': True}
+        response = self.client.post(reverse('teams:season_rosters:create', kwargs={'team_pk': self.icecats.pk}),
+                                    data=post_data)
+        self.assertFormError(response, 'form', 'default',
+                             'A default season roster for this team and season already exists.')
+
 
 class ListSeasonRosterViewTests(BaseTestCase):
     @classmethod
@@ -355,3 +366,13 @@ class UpdateSeasonRosterViewTests(BaseTestCase):
         response = self.client.post(self.url, data=post_data, follow=True)
         self.assertFormError(response, 'form', 'players', 'This field is required.')
         self.assertTemplateUsed(response, 'seasons/season_roster_update.html')
+
+    def test_duplicate_season_roster_for_season_and_team(self):
+        # This tests to make sure you can't have more than 1 default season roster for a given team/season
+        HockeySeasonRosterFactory(season=self.liahl_season, team=self.icecats, players=self.hockey_player_ids,
+                                  default=True)
+
+        post_data = {'default': True}
+        response = self.client.post(self.url, data=post_data)
+        self.assertFormError(response, 'form', 'default',
+                             'A default season roster for this team and season already exists.')

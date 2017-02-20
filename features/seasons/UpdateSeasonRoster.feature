@@ -74,3 +74,7 @@ Feature: Update season roster
     And I press "update_season_roster_btn"
     Then I should be on the absolute url page for "seasons.HockeySeasonRoster" and "team__name=Green Machine IceCats"
     And "This field is required." should show up 1 time
+
+    # Am omitting a test for "Attempt to add another default season roster for a team/season" because this is handled
+    # in the view tests. Not really worth it to duplicate the test here also. The test in CreateSeasonRoster is being
+    # kept solely for reference

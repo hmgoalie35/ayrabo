@@ -49,6 +49,14 @@ class HockeySeasonRosterAdminForm(forms.ModelForm):
                                              widget=widgets.FilteredSelectMultiple(verbose_name='Players',
                                                                                    is_stacked=False))
 
+    def clean_default(self):
+        team = self.cleaned_data.get('team')
+        season = self.cleaned_data.get('season')
+        default = self.cleaned_data.get('default', False)
+        if default and HockeySeasonRoster.objects.filter(team=team, season=season, default=True).exists():
+            raise ValidationError('A default season roster for this team and season already exists.')
+        return default
+
     class Meta:
         model = HockeySeasonRoster
         fields = '__all__'
@@ -83,6 +91,14 @@ class CreateHockeySeasonRosterForm(forms.ModelForm):
     season = SeasonModelChoiceField(queryset=Season.objects.all().select_related('league'))
     players = forms.ModelMultipleChoiceField(queryset=HockeyPlayer.objects.all().select_related('user'))
 
+    def clean_default(self):
+        team = self.cleaned_data.get('team')
+        season = self.cleaned_data.get('season')
+        default = self.cleaned_data.get('default', False)
+        if default and HockeySeasonRoster.objects.filter(team=team, season=season, default=True).exists():
+            raise ValidationError('A default season roster for this team and season already exists.')
+        return default
+
     class Meta:
         model = HockeySeasonRoster
         fields = ['team', 'season', 'players', 'default']
@@ -101,6 +117,14 @@ class UpdateHockeySeasonRosterForm(forms.ModelForm):
             self.fields['players'].queryset = HockeyPlayer.objects.filter(team=team).select_related('user')
 
     players = forms.ModelMultipleChoiceField(queryset=HockeyPlayer.objects.all().select_related('user'))
+
+    def clean_default(self):
+        team = self.instance.team
+        season = self.instance.season
+        default = self.cleaned_data.get('default', False)
+        if default and HockeySeasonRoster.objects.filter(team=team, season=season, default=True).exists():
+            raise ValidationError('A default season roster for this team and season already exists.')
+        return default
 
     class Meta:
         model = HockeySeasonRoster
