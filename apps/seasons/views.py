@@ -77,7 +77,7 @@ class CreateSeasonRosterView(LoginRequiredMixin, UserHasRolesMixin, ContextMixin
         form = context.get('form')
         if form.is_valid():
             form.save()
-            messages.success(request, 'Season roster created for {team}'.format(
+            messages.success(request, 'Season roster created for {team}.'.format(
                     team=context.get('team')))
             return redirect(reverse('home'))
         return render(request, self.template_name, context)

@@ -19,7 +19,7 @@ class NewConfirmationEmailView(View):
             return redirect('/')
 
         if email is None or email.strip() == '':
-            messages.error(self.request, 'You must specify an email address')
+            messages.error(self.request, 'You must specify an email address.')
             return redirect(request_path)
 
         qs = EmailAddress.objects.filter(email=email).distinct()
@@ -27,11 +27,11 @@ class NewConfirmationEmailView(View):
         if qs.exists() and not qs.first().verified:
             email_obj = qs.first()
             email_obj.send_confirmation(self.request)
-            messages.info(self.request, 'A new confirmation email has been sent to {email}'.format(email=email))
+            messages.info(self.request, 'A new confirmation email has been sent to {email}.'.format(email=email))
             return redirect(reverse('account_email_verification_sent'))
         else:
             messages.error(self.request,
-                           '{email} is not a valid e-mail address or has already been confirmed'.format(email=email))
+                           '{email} is not a valid e-mail address or has already been confirmed.'.format(email=email))
             return redirect(request_path)
 
 

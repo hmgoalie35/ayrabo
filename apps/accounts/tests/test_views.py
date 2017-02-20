@@ -8,7 +8,7 @@ from escoresheet.utils.testing_utils import BaseTestCase
 User = get_user_model()
 
 
-class NewEmailConfirmationTests(BaseTestCase):
+class NewConfirmationEmailViewTests(BaseTestCase):
     def post_to_account_new_email_confirmation(self, data):
         return self.client.post(reverse('account_new_email_confirmation'), data, follow=True)
 
@@ -36,12 +36,12 @@ class NewEmailConfirmationTests(BaseTestCase):
     def test_no_email_address(self):
         response = self.post_to_account_new_email_confirmation({'request_path': self.invalid_request_path})
         self.assertRedirects(response, self.invalid_request_path)
-        self.assertHasMessage(response, 'You must specify an email address')
+        self.assertHasMessage(response, 'You must specify an email address.')
 
     def test_blank_email_address(self):
         response = self.post_to_account_new_email_confirmation({'email': '', 'request_path': self.invalid_request_path})
         self.assertRedirects(response, self.invalid_request_path)
-        self.assertHasMessage(response, 'You must specify an email address')
+        self.assertHasMessage(response, 'You must specify an email address.')
 
     def test_nonexistent_email_address(self):
         mail.outbox = []
@@ -49,7 +49,7 @@ class NewEmailConfirmationTests(BaseTestCase):
         response = self.post_to_account_new_email_confirmation(
                 {'email': invalid_email, 'request_path': self.invalid_request_path})
 
-        error_msg = '{email} is not a valid e-mail address or has already been confirmed'.format(email=invalid_email)
+        error_msg = '{email} is not a valid e-mail address or has already been confirmed.'.format(email=invalid_email)
         self.assertHasMessage(response, error_msg)
 
         # Make sure email wasn't sent.
@@ -65,7 +65,7 @@ class NewEmailConfirmationTests(BaseTestCase):
         self.assertTrue(EmailAddress.objects.get(user=self.user).verified)
         response = self.post_to_account_new_email_confirmation(
                 {'email': self.user.email, 'request_path': self.invalid_request_path})
-        error_msg = '{email} is not a valid e-mail address or has already been confirmed'.format(email=self.user.email)
+        error_msg = '{email} is not a valid e-mail address or has already been confirmed.'.format(email=self.user.email)
         self.assertHasMessage(response, error_msg)
 
     def test_existent_email_address(self):
@@ -73,7 +73,7 @@ class NewEmailConfirmationTests(BaseTestCase):
         response = self.post_to_account_new_email_confirmation(
                 {'email': self.user.email, 'request_path': self.valid_request_path})
 
-        success_msg = 'A new confirmation email has been sent to {email}'.format(email=self.user.email)
+        success_msg = 'A new confirmation email has been sent to {email}.'.format(email=self.user.email)
         self.assertHasMessage(response, success_msg)
         # Make sure email was actually sent.
         self.assertEqual(len(mail.outbox), 1)

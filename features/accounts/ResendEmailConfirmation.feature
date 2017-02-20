@@ -18,7 +18,7 @@ Feature: Resend account confirmation
     Given I am on the "/account/confirm-email/new-confirmation-link/" page
     When I fill in "new_email_confirmation" with "user@example.com"
     And I press "request_new_confirmation_email"
-    Then I should see "A new confirmation email has been sent to user@example.com"
+    Then I should see "A new confirmation email has been sent to user@example.com."
     And "user@example.com" should receive an email with subject "Please Confirm Your E-mail Address"
     And "user@example.com" should have 1 email
 
@@ -26,7 +26,7 @@ Feature: Resend account confirmation
     Given I am on the "/account/confirm-email/new-confirmation-link/" page
     When I fill in "new_email_confirmation" with "myinvalidemail@example.com"
     And I press "request_new_confirmation_email"
-    Then I should see "myinvalidemail@example.com is not a valid e-mail address or has already been confirmed"
+    Then I should see "myinvalidemail@example.com is not a valid e-mail address or has already been confirmed."
     And "user@example.com" should have no emails
 
 

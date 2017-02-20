@@ -146,7 +146,7 @@ class CreateSeasonRosterViewTests(BaseTestCase):
                 reverse('teams:season_rosters:create', kwargs={'team_pk': self.icecats.pk}),
                 data=post_data,
                 follow=True)
-        self.assertHasMessage(response, 'Season roster created for {team}'.format(team=self.icecats))
+        self.assertHasMessage(response, 'Season roster created for {team}.'.format(team=self.icecats))
         self.assertRedirects(response, reverse('home'))
         self.assertEqual(HockeySeasonRoster.objects.count(), 1)
 

@@ -38,7 +38,7 @@ class BulkUploadTeamsView(LoginRequiredMixin, FormView):
             context['errors'] = errors
             return render(self.request, self.template_name, context)
 
-        messages.success(self.request, '{successful_teams_created} out of {total_csv_rows} teams successfully created'
+        messages.success(self.request, '{successful_teams_created} out of {total_csv_rows} teams successfully created.'
                          .format(successful_teams_created=successful_teams_created, total_csv_rows=total_csv_rows - 1))
         return super(BulkUploadTeamsView, self).form_valid(form)
 

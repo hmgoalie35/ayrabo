@@ -23,7 +23,7 @@ Feature: Forgotten password
     And I fill in "id_password1" with "mynewpassword"
     And I fill in "id_password2" with "mynewpassword"
     And I press "reset_password_btn"
-    Then I should see "Password successfully changed"
+    Then I should see "Password successfully changed."
     And I should see "to access your account."
 
   Scenario: Request a password reset with invalid email

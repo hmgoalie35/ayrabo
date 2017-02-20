@@ -772,7 +772,7 @@ class AddSportRegistrationRoleViewTests(BaseTestCase):
                 reverse('sportregistrations:add_role', kwargs={'pk': self.sr.pk, 'role': 'player'}),
                 data=self.hockeyplayer_post_data, follow=True)
         self.assertRedirects(response, self.sr.get_absolute_url())
-        self.assertHasMessage(response, 'Player role successfully added to Ice Hockey')
+        self.assertHasMessage(response, 'Player role successfully added to Ice Hockey.')
         self.assertTrue(HockeyPlayer.objects.filter(user=self.user, team=self.team).exists())
         self.assertIn('Player', SportRegistration.objects.get(user=self.user, sport=self.sr.sport).roles)
 
@@ -782,7 +782,7 @@ class AddSportRegistrationRoleViewTests(BaseTestCase):
                 reverse('sportregistrations:add_role', kwargs={'pk': self.sr.pk, 'role': 'coach'}),
                 data=self.coach_post_data, follow=True)
         self.assertRedirects(response, self.sr.get_absolute_url())
-        self.assertHasMessage(response, 'Coach role successfully added to Ice Hockey')
+        self.assertHasMessage(response, 'Coach role successfully added to Ice Hockey.')
         self.assertTrue(Coach.objects.filter(user=self.user, team=self.team).exists())
         self.assertIn('Coach', SportRegistration.objects.get(user=self.user, sport=self.sr.sport).roles)
 
@@ -792,7 +792,7 @@ class AddSportRegistrationRoleViewTests(BaseTestCase):
                 reverse('sportregistrations:add_role', kwargs={'pk': self.sr.pk, 'role': 'referee'}),
                 data=self.referee_post_data, follow=True)
         self.assertRedirects(response, self.sr.get_absolute_url())
-        self.assertHasMessage(response, 'Referee role successfully added to Ice Hockey')
+        self.assertHasMessage(response, 'Referee role successfully added to Ice Hockey.')
         self.assertTrue(Referee.objects.filter(user=self.user, league=self.league).exists())
         self.assertIn('Referee', SportRegistration.objects.get(user=self.user, sport=self.sr.sport).roles)
 
@@ -802,7 +802,7 @@ class AddSportRegistrationRoleViewTests(BaseTestCase):
                 reverse('sportregistrations:add_role', kwargs={'pk': self.sr.pk, 'role': 'manager'}),
                 data=self.manager_post_data, follow=True)
         self.assertRedirects(response, self.sr.get_absolute_url())
-        self.assertHasMessage(response, 'Manager role successfully added to Ice Hockey')
+        self.assertHasMessage(response, 'Manager role successfully added to Ice Hockey.')
         self.assertTrue(Manager.objects.filter(user=self.user, team=self.team).exists())
         self.assertIn('Manager', SportRegistration.objects.get(user=self.user, sport=self.sr.sport).roles)
 
@@ -875,7 +875,7 @@ class AddSportRegistrationRoleViewTests(BaseTestCase):
         self.assertRedirects(response, self.sr.get_absolute_url())
         self.assertIn('Player', SportRegistration.objects.get(user=self.user, sport=self.sr.sport).roles)
         self.assertHasMessage(response,
-                              '{role} role successfully added to {sport}'.format(role='Player', sport=self.ice_hockey))
+                              '{role} role successfully added to {sport}.'.format(role='Player', sport=self.ice_hockey))
 
     def test_post_coach_obj_exists(self):
         coach_data = {'user': self.user, 'team': self.team, 'position': 'Head Coach'}
@@ -892,7 +892,7 @@ class AddSportRegistrationRoleViewTests(BaseTestCase):
         self.assertRedirects(response, self.sr.get_absolute_url())
         self.assertIn('Coach', SportRegistration.objects.get(user=self.user, sport=self.sr.sport).roles)
         self.assertHasMessage(response,
-                              '{role} role successfully added to {sport}'.format(role='Coach', sport=self.ice_hockey))
+                              '{role} role successfully added to {sport}.'.format(role='Coach', sport=self.ice_hockey))
 
     def test_post_referee_obj_exists(self):
         referee_data = {'user': self.user, 'league': self.league}
@@ -908,7 +908,8 @@ class AddSportRegistrationRoleViewTests(BaseTestCase):
         self.assertRedirects(response, self.sr.get_absolute_url())
         self.assertIn('Referee', SportRegistration.objects.get(user=self.user, sport=self.sr.sport).roles)
         self.assertHasMessage(response,
-                              '{role} role successfully added to {sport}'.format(role='Referee', sport=self.ice_hockey))
+                              '{role} role successfully added to {sport}.'.format(role='Referee',
+                                                                                  sport=self.ice_hockey))
 
     def test_post_manager_obj_exists(self):
         manager_data = {'user': self.user, 'team': self.team}
@@ -924,4 +925,5 @@ class AddSportRegistrationRoleViewTests(BaseTestCase):
         self.assertRedirects(response, self.sr.get_absolute_url())
         self.assertIn('Manager', SportRegistration.objects.get(user=self.user, sport=self.sr.sport).roles)
         self.assertHasMessage(response,
-                              '{role} role successfully added to {sport}'.format(role='Manager', sport=self.ice_hockey))
+                              '{role} role successfully added to {sport}.'.format(role='Manager',
+                                                                                  sport=self.ice_hockey))

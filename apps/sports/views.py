@@ -371,7 +371,7 @@ class UpdateSportRegistrationView(LoginRequiredMixin, ContextMixin, generic.View
 
 class AddSportRegistrationRoleView(LoginRequiredMixin, ContextMixin, generic.View):
     template_name = 'sports/sport_registration_add_role.html'
-    success_message = '{role} role successfully added to {sport}'
+    success_message = '{role} role successfully added to {sport}.'
 
     def get_context_data(self, **kwargs):
         context = super(AddSportRegistrationRoleView, self).get_context_data(**kwargs)

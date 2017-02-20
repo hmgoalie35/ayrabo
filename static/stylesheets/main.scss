@@ -23,14 +23,30 @@ footer {
   }
 }
 
-#noty_topRight_layout_container {
-  :hover {
-    opacity: 0.5;
-  }
+#noty_top_layout_container {
+  top: 54px !important;
 
-  .list-group-item {
-    margin: 4px 0;
+  :hover {
+    opacity: 0.6;
   }
+}
+
+#noty_topRight_layout_container {
+  top: 60px !important;
+  right: 5px !important;
+
+  // If using bootstrapTheme uncomment this.
+  //  .list-group-item {
+  //    margin: 4px 0;
+  //  }
+
+  :hover {
+    opacity: 0.6;
+  }
+}
+
+.noty_message {
+  font-weight: normal !important;
 }
 
 .noty_type_info {
@@ -47,10 +63,6 @@ footer {
 
 .asteriskField {
   color: red;
-}
-
-div.alert.alert-block.alert-danger > ul > li {
-  list-style: none;
 }
 
 #div_id_birthday > .controls {

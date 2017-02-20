@@ -22,7 +22,7 @@ Feature: Register for an account
       | first_name | last_name | email            | password       |
       | John       | Doe       | user@example.com | myweakpassword |
     When I confirm "user@example.com" via "email_link"
-    Then I should see "You have confirmed user@example.com"
+    Then I should see "You have confirmed user@example.com."
     And I should be on the "account_login" page
 
   Scenario: Attempt to confirm email address with an invalid link
