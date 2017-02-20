@@ -345,8 +345,9 @@ COMPRESS_ROOT = STATICFILES_DIRS[0]
 # User account related
 
 # Django all auth
-# TODO look at django all auth settings again to see if missing any settings
+
 ACCOUNT_AUTHENTICATION_METHOD = 'email'
+ACCOUNT_DEFAULT_HTTP_PROTOCOL = 'https'  # This is `http` for local dev.
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_USERNAME_REQUIRED = False
 ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
@@ -359,7 +360,6 @@ ACCOUNT_FORMS = {
     'add_email': 'accounts.forms.AddEmailForm'
 }
 ACCOUNT_USERNAME_MIN_LENGTH = 1
-ACCOUNT_PASSWORD_MIN_LENGTH = 8
 ACCOUNT_SESSION_REMEMBER = False
 ACCOUNT_USER_DISPLAY = lambda user: user.email
 

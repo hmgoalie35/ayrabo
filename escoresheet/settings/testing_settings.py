@@ -6,6 +6,8 @@ from .settings import CACHES
 
 logging.disable(logging.CRITICAL)
 
+ACCOUNT_DEFAULT_HTTP_PROTOCOL = 'http'
+
 COMPRESS_ENABLED = False
 COMPRESS_OFFLINE = False
 
