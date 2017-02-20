@@ -25,7 +25,7 @@ Feature: Remove roles from sport registration
     And I am on the absolute url page for "sports.SportRegistration" and "user__email=user@example.com, sport__name=Ice Hockey"
     And I press "remove_player_icon" which opens "remove_player_modal"
     And I press "remove_player_role_btn"
-    And I wait for any ajax calls to finish
+    And I wait for a page refresh
     Then I should be on the absolute url page for "sports.SportRegistration" and "user__email=user@example.com, sport__name=Ice Hockey"
     And I should not see "Ice Hockey Player"
 

@@ -53,4 +53,4 @@ class BaseTestCase(TestCase):
         assert isinstance(msg, str)
         messages = [msg.message for msg in response.context['messages']]
         if msg in messages:
-            self.fail(msg='{} not found in messages'.format(msg))
+            self.fail(msg='{} unexpectedly found in messages'.format(msg))

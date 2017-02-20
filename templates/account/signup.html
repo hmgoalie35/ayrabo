@@ -11,14 +11,10 @@
                 <br>
                 <form class="signup" id="signup_form" method="post" action="{% url 'account_register' %}">
                     {% csrf_token %}
-                    {{ form | crispy }}
+                    {% crispy form %}
                     {% if redirect_field_value %}
                         <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}"/>
                     {% endif %}
-                    <br>
-                    <div class="text-center">
-                        <button id="id_submit" type="submit" class="btn btn-success">Register</button>
-                    </div>
                 </form>
             </div>
         </div>
