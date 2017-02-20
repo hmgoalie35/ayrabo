@@ -49,6 +49,14 @@ class HockeySeasonRosterAdminForm(forms.ModelForm):
                                              widget=widgets.FilteredSelectMultiple(verbose_name='Players',
                                                                                    is_stacked=False))
 
+    def clean_default(self):
+        team = self.cleaned_data.get('team')
+        season = self.cleaned_data.get('season')
+        default = self.cleaned_data.get('default', False)
+        if default and HockeySeasonRoster.objects.filter(team=team, season=season, default=True).exists():
+            raise ValidationError('A default season roster for this team and season already exists.')
+        return default
+
     class Meta:
         model = HockeySeasonRoster
         fields = '__all__'
