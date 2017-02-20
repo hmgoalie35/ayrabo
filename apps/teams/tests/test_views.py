@@ -49,7 +49,7 @@ class TeamViewTests(BaseTestCase):
     def test_post_valid_form(self):
         with open(os.path.join(self.test_file_path, 'valid_team_csv_formatting.csv')) as the_file:
             response = self.client.post(reverse('bulk_upload_teams'), {'file': the_file}, follow=True)
-            self.assertHasMessage(response, '1 out of 1 teams successfully created')
+            self.assertHasMessage(response, '1 out of 1 teams successfully created.')
 
     def test_post_no_csv_headers(self):
         with open(os.path.join(self.test_file_path, 'no_headers.csv')) as the_file:

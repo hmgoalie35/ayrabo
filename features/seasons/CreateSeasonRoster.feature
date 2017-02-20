@@ -56,7 +56,7 @@ Feature: Create season rosters
     And I select "Long Island Amateur Hockey League: 2016 - 2017 Season" from "id_season"
     And I select 5 players from "id_players"
     And I press "create_season_roster_btn"
-    Then I should see "Season roster created for Green Machine IceCats"
+    Then I should see "Season roster created for Green Machine IceCats."
     And I should be on the "home" page
 
   Scenario: Submit invalid ice hockey create season roster form

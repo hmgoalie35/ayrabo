@@ -47,7 +47,7 @@ Feature: Bulk upload teams from csv
     And The following division exists "Midget Minor AA"
     When I upload "valid_team_csv_formatting.csv" into "id_file"
     And I press "bulk_upload_submit_btn"
-    Then I should see "1 out of 1 teams successfully created"
+    Then I should see "1 out of 1 teams successfully created."
 
   Scenario: Upload invalid file
     Given I am on the "admin:login" page

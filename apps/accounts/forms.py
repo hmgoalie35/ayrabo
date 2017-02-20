@@ -67,7 +67,11 @@ class LoginForm(allauth_forms.LoginForm):
         self.helper.layout = Layout(
                 Field('login'),
                 HTML("""
-                    <span class="clickable pull-right" data-toggle="modal" data-target="#password_guidelines">
+                    <span
+                        class="password-guidelines clickable pull-right"
+                        data-toggle="modal"
+                        data-target="#password_guidelines">
+
                         <span
                             data-toggle="tooltip"
                             data-placement="left"

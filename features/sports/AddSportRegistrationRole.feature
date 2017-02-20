@@ -47,7 +47,7 @@ Feature: Add roles to a sport registration
     And I select "Left" from "id_hockeyplayer-handedness"
     And I press "add_role_btn"
     Then I should be on the absolute url page for "sports.SportRegistration" and "user__email=user@example.com, sport__name=Ice Hockey"
-    And I should see "Player role successfully added to Ice Hockey"
+    And I should see "Player role successfully added to Ice Hockey."
 
   Scenario: Add coach role, object dne
     Given "user@example.com" is completely registered for "Ice Hockey" with roles "Player, Referee"
@@ -56,7 +56,7 @@ Feature: Add roles to a sport registration
     And I select "Green Machine IceCats - Midget Minor AA" from "id_coach-team"
     And I press "add_role_btn"
     Then I should be on the absolute url page for "sports.SportRegistration" and "user__email=user@example.com, sport__name=Ice Hockey"
-    And I should see "Coach role successfully added to Ice Hockey"
+    And I should see "Coach role successfully added to Ice Hockey."
 
   Scenario: Add referee role, object dne
     Given "user@example.com" is completely registered for "Ice Hockey" with role "Coach"
@@ -64,7 +64,7 @@ Feature: Add roles to a sport registration
     And I select "Long Island Amateur Hockey League" from "id_referee-league"
     And I press "add_role_btn"
     Then I should be on the absolute url page for "sports.SportRegistration" and "user__email=user@example.com, sport__name=Ice Hockey"
-    And I should see "Referee role successfully added to Ice Hockey"
+    And I should see "Referee role successfully added to Ice Hockey."
 
   Scenario: Add manager role, object dne
     Given "user@example.com" is completely registered for "Ice Hockey" with role "Player, Coach"
@@ -72,7 +72,7 @@ Feature: Add roles to a sport registration
     And I select "Green Machine IceCats - Midget Minor AA" from "id_manager-team"
     And I press "add_role_btn"
     Then I should be on the absolute url page for "sports.SportRegistration" and "user__email=user@example.com, sport__name=Ice Hockey"
-    And I should see "Manager role successfully added to Ice Hockey"
+    And I should see "Manager role successfully added to Ice Hockey."
 
   # as a user who already has player, coach, etc. objects. (the user unregistered for a role and then re-registered for the role)
   Scenario: Informative text and disabled form displayed to user
@@ -97,7 +97,7 @@ Feature: Add roles to a sport registration
     And I am on the "sports.SportRegistration" "user__email=user@example.com, sport__name=Ice Hockey" "sportregistrations:add_role" page with url kwargs "pk=pk, role=player"
     When I press "add_role_btn"
     Then I should be on the absolute url page for "sports.SportRegistration" and "user__email=user@example.com, sport__name=Ice Hockey"
-    And I should see "Player role successfully added to Ice Hockey"
+    And I should see "Player role successfully added to Ice Hockey."
 
   Scenario: Add coach role, object exists
     Given "user@example.com" is completely registered for "Ice Hockey" with roles "Player, Referee"
@@ -107,7 +107,7 @@ Feature: Add roles to a sport registration
     And I am on the "sports.SportRegistration" "user__email=user@example.com, sport__name=Ice Hockey" "sportregistrations:add_role" page with url kwargs "pk=pk, role=coach"
     When I press "add_role_btn"
     Then I should be on the absolute url page for "sports.SportRegistration" and "user__email=user@example.com, sport__name=Ice Hockey"
-    And I should see "Coach role successfully added to Ice Hockey"
+    And I should see "Coach role successfully added to Ice Hockey."
 
   Scenario: Add referee role, object exists
     Given "user@example.com" is completely registered for "Ice Hockey" with role "Coach"
@@ -117,7 +117,7 @@ Feature: Add roles to a sport registration
     And I am on the "sports.SportRegistration" "user__email=user@example.com, sport__name=Ice Hockey" "sportregistrations:add_role" page with url kwargs "pk=pk, role=referee"
     And I press "add_role_btn"
     Then I should be on the absolute url page for "sports.SportRegistration" and "user__email=user@example.com, sport__name=Ice Hockey"
-    And I should see "Referee role successfully added to Ice Hockey"
+    And I should see "Referee role successfully added to Ice Hockey."
 
   Scenario: Add manager role, object exists
     Given "user@example.com" is completely registered for "Ice Hockey" with role "Player, Coach"
@@ -127,4 +127,4 @@ Feature: Add roles to a sport registration
     And I am on the "sports.SportRegistration" "user__email=user@example.com, sport__name=Ice Hockey" "sportregistrations:add_role" page with url kwargs "pk=pk, role=manager"
     And I press "add_role_btn"
     Then I should be on the absolute url page for "sports.SportRegistration" and "user__email=user@example.com, sport__name=Ice Hockey"
-    And I should see "Manager role successfully added to Ice Hockey"
+    And I should see "Manager role successfully added to Ice Hockey."
