@@ -21,7 +21,7 @@ def step_impl(context, sport_name):
         team = Team.objects.get(name=data.get('team'))
         season = Season.objects.get(start_date=season_start_date, end_date=season_end_date)
         players = data.get('players', None)
-        factory_kwargs = {'season': season, 'team': team}
+        factory_kwargs = {'season': season, 'team': team, 'default': data.get('default', False)}
         if players:
             players = players.split(',')
             player_objs = []
