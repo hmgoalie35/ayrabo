@@ -447,13 +447,13 @@ class FinishSportRegistrationViewTests(BaseTestCase):
         del post_data['coach-position']
         del post_data['manager-team']
         del post_data['referee-league']
-        del post_data['hockeyplayer-position']
+        del post_data['hockeyplayer-team']
 
         response = self.client.post(self.url, data=post_data, follow=True)
         self.assertFormError(response, 'coach_form', 'position', 'This field is required.')
         self.assertFormError(response, 'manager_form', 'team', 'This field is required.')
         self.assertFormError(response, 'referee_form', 'league', 'This field is required.')
-        self.assertFormError(response, 'player_form', 'position', 'This field is required.')
+        self.assertFormError(response, 'player_form', 'team', 'This field is required.')
 
     def test_post_invalid_coach_form_valid_manager_form(self):
         """

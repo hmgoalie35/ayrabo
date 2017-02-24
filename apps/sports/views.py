@@ -107,52 +107,39 @@ class FinishSportRegistrationView(LoginRequiredMixin, ContextMixin, AccountAndSp
                         sports=', '.join(sports_registered_for)))
             return redirect(reverse('home'))
 
-        # Forms that were submitted are added to this list. Only check the forms in this list for validity
-        forms_that_were_submitted = []
-        # If a form was submitted and is_valid is True, the corresponding value will be set to True
-        is_form_valid = {}
-
         coach_form = context.get('coach_form', None)
         player_form = context.get('player_form', None)
         manager_form = context.get('manager_form', None)
         referee_form = context.get('referee_form', None)
         user = request.user
 
-        if coach_form is not None:
-            forms_that_were_submitted.append(coach_form)
-            coach_form.instance.user = user
-            is_form_valid[coach_form] = coach_form.is_valid()
+        # We only want to validate forms that were added to the context.
+        # Passing None to `filter` results in falsey values being removed.
+        submitted_forms = list(filter(None, [coach_form, player_form, manager_form, referee_form]))
 
-        if manager_form is not None:
-            forms_that_were_submitted.append(manager_form)
-            manager_form.instance.user = user
-            is_form_valid[manager_form] = manager_form.is_valid()
+        forms_valid = []
+        for form in submitted_forms:
+            # Each form needs a user, so prepopulate that.
+            form.instance.user = user
 
-        if referee_form is not None:
-            forms_that_were_submitted.append(referee_form)
-            referee_form.instance.user = user
-            is_form_valid[referee_form] = referee_form.is_valid()
+            form_valid = form.is_valid()
+            forms_valid.append(form_valid)
 
-        if player_form is not None:
-            forms_that_were_submitted.append(player_form)
-            is_form_valid[player_form] = False
-            player_form.instance.user = user
-            if player_form.is_valid():
-                player_form.instance.sport = player_form.instance.team.division.league.sport
-                is_form_valid[player_form] = True
+            # Player forms need a sport.
+            # issubclass won't work because it requires a class. `form` has already been instantiated at this point.
+            if isinstance(form, player_forms.BasePlayerForm):
+                # `instance.team` isn't a model object until is_valid is called.
+                if form_valid:
+                    form.instance.sport = form.instance.team.division.league.sport
 
-        # Check to see if all of the forms that were submitted are valid.
-        # If there is a non valid form that was submitted, redisplay the form with errors
-        for submitted_form in forms_that_were_submitted:
-            if not is_form_valid[submitted_form]:
-                return render(request, self.template_name, context)
+        # Check to see if all of the forms that were submitted are valid, rendering the page with errors if any are
+        # invalid.
+        if len(forms_valid) == 0 or not all(forms_valid):
+            return render(request, self.template_name, context)
 
-        # Need to make sure all submitted forms were valid before saving them, otherwise will have a bug where
-        # submitting a valid form for coach will create the object but any other invalid form will throw an error. When
-        # the user tries to resubmit the forms then will have integrity error because coach object was already created
-        for form, is_valid in is_form_valid.items():
-            if is_valid:
-                form.save()
+        for form in submitted_forms:
+            form.save()
+
         sr = context.get('sport_registration')
         sr.is_complete = True
         sr.save()
