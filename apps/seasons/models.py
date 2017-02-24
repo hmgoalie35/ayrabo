@@ -16,8 +16,8 @@ class Season(models.Model):
     Represents a season which is used to organize games, etc. under. A league has many seasons. A season has many teams
     and a team has many seasons.
     """
-    league = models.ForeignKey('leagues.League', unique_for_year='start_date')
-    teams = models.ManyToManyField(Team)
+    league = models.ForeignKey('leagues.League', unique_for_year='start_date', related_name='seasons')
+    teams = models.ManyToManyField(Team, related_name='seasons')
     start_date = models.DateField(verbose_name='Start Date')
     end_date = models.DateField(verbose_name='End Date')
 
@@ -54,7 +54,7 @@ def validate_leagues(action, instance, pk_set, reverse, **kwargs):
     :param action: The type of m2m action that has occurred.
     :param instance: The object being acted upon (being updated). Can be of class Team or Season depending on reverse.
     :param pk_set: List of pks for objects being added
-    :param reverse: True if team_obj.season_set was used, False if season_obj.teams was used
+    :param reverse: True if team_obj.seasons was used, False if season_obj.teams was used
     :param kwargs: Other kwargs sent by the signal
     """
     if action == 'pre_add':
@@ -98,7 +98,7 @@ class AbstractSeasonRoster(models.Model):
     Multiple season rosters can be created for a season/team.
     """
     season = models.ForeignKey(Season)
-    team = models.ForeignKey(Team)
+    team = models.ForeignKey(Team, related_name='season_rosters')
     default = models.BooleanField(default=False, verbose_name='Default Season Roster')
     created = models.DateTimeField(auto_now_add=True, verbose_name='Created')
 

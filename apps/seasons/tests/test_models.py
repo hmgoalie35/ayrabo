@@ -98,18 +98,18 @@ class SeasonTeamM2MSignalTests(BaseTestCase):
 
     def test_add_season_diff_league_to_team_obj(self):
         """
-        reverse, i.e. team_obj.season_set.add(season_obj), so pk_set contains pks for season objects
+        reverse, i.e. team_obj.seasons.add(season_obj), so pk_set contains pks for season objects
         """
         team = TeamFactory(division=self.mites, name='IceCats')
         s1 = SeasonFactory()
         s2 = SeasonFactory(league=self.nhl)
-        self.assertListEqual([], list(team.season_set.all()))
-        team.season_set.add(s1, s2)
-        self.assertListEqual([], list(team.season_set.all()))
+        self.assertListEqual([], list(team.seasons.all()))
+        team.seasons.add(s1, s2)
+        self.assertListEqual([], list(team.seasons.all()))
 
     def test_add_season_same_league_to_team_obj(self):
         """
-        reverse, i.e. team_obj.season_set.add(season_obj), so pk_set contains pks for season objects
+        reverse, i.e. team_obj.seasons.add(season_obj), so pk_set contains pks for season objects
         """
         start_date = datetime.date(2016, 8, 15)
         end_date = start_date + datetime.timedelta(days=365)
@@ -117,9 +117,9 @@ class SeasonTeamM2MSignalTests(BaseTestCase):
         s1 = SeasonFactory(league=self.liahl, start_date=start_date, end_date=end_date)
         s2 = SeasonFactory(league=self.liahl, start_date=start_date - datetime.timedelta(days=365),
                            end_date=end_date - datetime.timedelta(days=365))
-        self.assertListEqual([], list(team.season_set.all()))
-        team.season_set.add(s1, s2)
-        self.assertListEqual([s1, s2], list(team.season_set.all()))
+        self.assertListEqual([], list(team.seasons.all()))
+        team.seasons.add(s1, s2)
+        self.assertListEqual([s1, s2], list(team.seasons.all()))
 
     def test_invalid_pks(self):
         self.liahl_season.teams.add(88)
