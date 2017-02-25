@@ -3,8 +3,10 @@ from django.shortcuts import render
 from django.views import generic
 from django.views.generic.base import ContextMixin
 
+from escoresheet.utils.mixins import AccountAndSportRegistrationCompleteMixin
 
-class CreateRefereesView(LoginRequiredMixin, ContextMixin, generic.View):
+
+class CreateRefereesView(LoginRequiredMixin, ContextMixin, AccountAndSportRegistrationCompleteMixin, generic.View):
     template_name = 'referees/referees_create.html'
 
     def get(self, *args, **kwargs):
