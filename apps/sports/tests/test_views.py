@@ -190,7 +190,7 @@ class CreateSportRegistrationViewTests(BaseTestCase):
             'sportregistrations-1-sport': [''],
         }
 
-        # Could do an ORM call to grab the created obj, but it's id is going to be 1.
+        # Could do an ORM call to grab the created obj, but its id is going to be 1.
         sr_id = 1
 
         self.post_data.update(form_data)

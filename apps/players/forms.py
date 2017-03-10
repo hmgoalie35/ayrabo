@@ -65,3 +65,26 @@ class BasketballPlayerForm(BasePlayerForm):
     class Meta:
         model = models.BasketballPlayer
         fields = ['team', 'jersey_number', 'position', 'shoots']
+
+
+# TODO move this and the other modelformset that share same add_fields functionality to base class, inherit from it.
+class PlayerModelFormSet(forms.BaseModelFormSet):
+    def add_fields(self, form, index):
+        super(PlayerModelFormSet, self).add_fields(form, index)
+        # The empty form would have value `None`, so default to an invalid form_num for use in the js.
+        form_num = index if index is not None else -1
+        form.fields['form_num'] = forms.IntegerField(required=False, widget=forms.HiddenInput(
+                attrs={'data-form-num': form_num, 'class': 'form-num'}))
+
+    def clean(self):
+        super(PlayerModelFormSet, self).clean()
+        teams_already_seen = []
+        for form in self.forms:
+            team = form.cleaned_data.get('team')
+            if team is not None:
+                if team.id in teams_already_seen:
+                    form.add_error('team',
+                                   '{} has already been selected. '
+                                   'Please choose another team or remove this form.'.format(team.name))
+                else:
+                    teams_already_seen.append(team.id)

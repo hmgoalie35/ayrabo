@@ -1,16 +1,50 @@
 {% extends 'site_base.html' %}
+{% load crispy_forms_tags static %}
 
-{% block title %}{% endblock %}
+{% block title %}{{ sport_name }} Player Registration{% endblock %}
 
 
 {% block content %}
     <div class="container">
+
         <div class="row">
-            <div class="col-sm-offset-4 col-sm-4 col-sm-offset-4">
+            <div class="col-sm-12">
                 <div class="text-center">
-                    <h1>Hello World!</h1>
+                    <h2>{{ sport_name }} Player Registration</h2>
                 </div>
             </div>
         </div>
+
+        <br>
+
+        <div class="row">
+            <div class="col-sm-offset-4 col-sm-4 col-sm-offset-4">
+                <div class="hidden" id="prefix" data-prefix="{{ formset.prefix }}"></div>
+                <form action="" method="post">
+                    {% csrf_token %}
+                    {% crispy formset helper %}
+                    <br>
+                    <div id="additional_forms"></div>
+                    <div id="empty_form" class="hidden">
+                        {{ formset.empty_form | crispy }}
+                    </div>
+                    <br>
+                    <div class="text-center">
+                        <button id="add_another_form_btn" class="btn btn-info" type="button" role="button"><span
+                                class="fa fa-fw fa-plus"></span>Add player
+                        </button>
+                        <input id="create_players_btn" type="submit" class="btn btn-success"
+                               value="Register and continue">
+                        <br>
+                    </div>
+                </form>
+            </div>
+        </div>
+
     </div>
+{% endblock %}
+
+
+{% block extra_js %}
+    <script src="{% static 'javascripts/manage_formset_forms.js' %}"></script>
 {% endblock %}

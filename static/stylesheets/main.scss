@@ -61,6 +61,11 @@ footer {
   border-color: $alert-danger-border;
 }
 
+// For non-field errors
+div.alert.alert-block.alert-danger > ul > li {
+  list-style: none;
+}
+
 .asteriskField {
   color: red;
 }

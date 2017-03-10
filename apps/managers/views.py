@@ -21,7 +21,7 @@ class ManagerHomeView(LoginRequiredMixin, UserHasRolesMixin, generic.TemplateVie
 
 
 class CreateManagersView(LoginRequiredMixin, ContextMixin, AccountAndSportRegistrationCompleteMixin, generic.View):
-    template_name = 'players/players_create.html'
+    template_name = 'managers/managers_create.html'
 
     def get(self, *args, **kwargs):
         context = self.get_context_data(**kwargs)

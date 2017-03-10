@@ -1,10 +1,11 @@
 $(function () {
     "use strict";
 
+    var prefix = $("#prefix").attr("data-prefix");
     var $add_form_btn = $("#add_another_form_btn");
-    var $total_forms_element = $("#id_sportregistrations-TOTAL_FORMS");
+    var $total_forms_element = $("#id_" + prefix + "-TOTAL_FORMS");
 
-    var max_num_forms = parseInt($("#id_sportregistrations-MAX_NUM_FORMS").val());
+    var max_num_forms = parseInt($("#id_" + prefix + "-MAX_NUM_FORMS").val());
     var regex = /-\d+-/;
 
 
@@ -42,12 +43,12 @@ $(function () {
     var fixFormNumbers = function ($removedForm) {
         var formNum = $removedForm.find("[data-form-num]").data("form-num");
         var maxForms = getTotalNumForms();
-        // Want to get all sport registration forms after the form that was removed.
-        var $optionalSportRegForms = $removedForm.nextAll("div.multiField");
-        if ($optionalSportRegForms.length === 0) {
+        // Want to get all forms after the form that was removed.
+        var $optionalForms = $removedForm.nextAll("div.multiField");
+        if ($optionalForms.length === 0) {
             var $forms = $("#additional_forms").find("div.multiField");
             // Exclude the form that was just removed (it is selected by the selector above)
-            $optionalSportRegForms = $.map($forms, function (element, index) {
+            $optionalForms = $.map($forms, function (element, index) {
                 var formNumOfElement = parseInt($(element).find("input[data-form-num]").data("form-num"));
                 if (formNumOfElement !== formNum) {
                     return element;
@@ -55,8 +56,8 @@ $(function () {
             });
         }
 
-        if ($optionalSportRegForms.length > 0) {
-            $optionalSportRegForms.each(function (index, formElem) {
+        if ($optionalForms.length > 0) {
+            $optionalForms.each(function (index, formElem) {
                 // Find all id, name, for attrs of the current element and its descendants and change the value based on
                 // `formNum`
                 var $allChildren = $(formElem).find(":not('span')");

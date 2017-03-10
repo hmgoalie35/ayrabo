@@ -5,7 +5,6 @@ from django.urls import reverse
 from accounts.tests import UserFactory
 from coaches.tests import CoachFactory
 from escoresheet.utils.testing_utils import BaseTestCase
-from leagues.tests import LeagueFactory
 from players.tests import HockeyPlayerFactory
 from referees.tests import RefereeFactory
 from sports.tests import SportFactory, SportRegistrationFactory
@@ -131,12 +130,11 @@ class AccountAndSportRegistrationCompleteMiddlewareTests(BaseTestCase):
         Should redirect to page to create managers
         """
         self.client.login(email=self.user_with_profile.email, password=self.password)
-        league = LeagueFactory(sport=self.ice_hockey, full_name='Long Island Amateur Hockey League')
         sr = SportRegistrationFactory(user=self.user_with_profile, sport=self.ice_hockey, is_complete=False)
         sr.set_roles(['Player', 'Coach', 'Referee', 'Manager'])
         HockeyPlayerFactory(user=self.user_with_profile, sport=self.ice_hockey)
-        CoachFactory(user=self.user_with_profile, team__division__league=league)
-        RefereeFactory(user=self.user_with_profile, league=league)
+        CoachFactory(user=self.user_with_profile, team__division__league__sport=self.ice_hockey)
+        RefereeFactory(user=self.user_with_profile, league__sport=self.ice_hockey)
         response = self.client.get(reverse('home'))
         url = reverse('sportregistrations:managers:create', kwargs={'pk': sr.id})
         self.assertRedirects(response, url)

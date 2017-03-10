@@ -1,5 +1,7 @@
-from django.urls import reverse
+from unittest.mock import Mock
+
 from django.db.utils import IntegrityError
+from django.urls import reverse
 from django.utils.text import slugify
 
 from accounts.tests import UserFactory
@@ -214,3 +216,38 @@ class SportRegistrationModelTests(BaseTestCase):
         sr.set_roles(roles)
         sr.remove_role('coach')
         self.assertEqual(sorted(sr.roles), sorted(list(set(roles) - {'Coach'})))
+
+    def test_get_next_namespace_for_registration_no_roles_complete(self):
+        sr = SportRegistrationFactory()
+        sr.set_roles(['Player', 'Coach', 'Referee', 'Manager'])
+        sr.save()
+        self.assertEqual(sr.get_next_namespace_for_registration(), 'players')
+
+    def test_get_next_namespace_for_registration_player_role_complete(self):
+        sr = SportRegistrationFactory()
+        sr.set_roles(['Player', 'Coach', 'Referee', 'Manager'])
+        sr.save()
+        sr.get_related_role_objects = Mock(return_value={'Player': Mock()})
+        self.assertEqual(sr.get_next_namespace_for_registration(), 'coaches')
+
+    def test_get_next_namespace_for_registration_player_coach_roles_complete(self):
+        sr = SportRegistrationFactory()
+        sr.set_roles(['Player', 'Coach', 'Referee', 'Manager'])
+        sr.save()
+        sr.get_related_role_objects = Mock(return_value={'Player': Mock(), 'Coach': Mock()})
+        self.assertEqual(sr.get_next_namespace_for_registration(), 'referees')
+
+    def test_get_next_namespace_for_registration_player_coach_referee_roles_complete(self):
+        sr = SportRegistrationFactory()
+        sr.set_roles(['Player', 'Coach', 'Referee', 'Manager'])
+        sr.save()
+        sr.get_related_role_objects = Mock(return_value={'Player': Mock(), 'Coach': Mock(), 'Referee': Mock()})
+        self.assertEqual(sr.get_next_namespace_for_registration(), 'managers')
+
+    def test_get_next_namespace_for_registration_all_roles_complete(self):
+        sr = SportRegistrationFactory()
+        sr.set_roles(['Player', 'Coach', 'Referee', 'Manager'])
+        sr.save()
+        sr.get_related_role_objects = Mock(
+            return_value={'Player': Mock(), 'Coach': Mock(), 'Referee': Mock(), 'Manager': Mock()})
+        self.assertIsNone(sr.get_next_namespace_for_registration())

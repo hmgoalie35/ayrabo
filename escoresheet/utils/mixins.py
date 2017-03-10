@@ -50,18 +50,7 @@ class AccountAndSportRegistrationCompleteMixin(object):
         elif incomplete_sport_registrations.exists():
             request.session['is_user_currently_registering'] = True
             sr = incomplete_sport_registrations.first()
-            # TODO Figure out a better way to do this, it seems really inefficient to run this on every request.
-            # Add boolean fields to sport reg model for is_player_complete, etc.
-            next_role = None
-            related_objects = sr.get_related_role_objects()
-            if sr.has_role('Player') and related_objects.get('Player') is None:
-                next_role = 'players'
-            elif sr.has_role('Coach') and related_objects.get('Coach') is None:
-                next_role = 'coaches'
-            elif sr.has_role('Referee') and related_objects.get('Referee') is None:
-                next_role = 'referees'
-            elif sr.has_role('Manager') and related_objects.get('Manager') is None:
-                next_role = 'managers'
+            next_role = sr.get_next_namespace_for_registration()
             url = 'sportregistrations:{role}:create'.format(role=next_role)
             redirect_url = reverse(url, kwargs={'pk': sr.id})
 

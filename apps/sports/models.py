@@ -164,5 +164,28 @@ class SportRegistration(models.Model):
                 obj_role_mappings['Referee'] = referees.first()
         return obj_role_mappings
 
+    # TODO Figure out a better way to do this, it seems really inefficient to run get_related_objects on every request.
+    # Add boolean fields to sport reg model for is_player_complete, etc. Or store completed roles in db array field
+    def get_next_namespace_for_registration(self):
+        """
+        Figures out what namespace (which can be mapped to a role) should be registered for next.
+
+        :return: The namespace corresponding to the first role that doesn't have related objects, otherwise
+         None if all roles had related objects created.
+        """
+        related_objects = self.get_related_role_objects()
+        if self.has_role('Player') and related_objects.get('Player') is None:
+            namespace = 'players'
+        elif self.has_role('Coach') and related_objects.get('Coach') is None:
+            namespace = 'coaches'
+        elif self.has_role('Referee') and related_objects.get('Referee') is None:
+            namespace = 'referees'
+        elif self.has_role('Manager') and related_objects.get('Manager') is None:
+            namespace = 'managers'
+        else:
+            namespace = None
+
+        return namespace
+
     def __str__(self):
         return '{email} - {sport}'.format(email=self.user.email, sport=self.sport.name)
