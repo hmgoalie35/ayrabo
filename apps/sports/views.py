@@ -85,16 +85,6 @@ class CreateSportRegistrationView(LoginRequiredMixin, ContextMixin, AccountAndSp
     already_registered_msg = 'You have already registered for all available sports. ' \
                              'Check back later to see if any new sports have been added.'
 
-    def _get_url_namespace_for_role(self, role):
-        if role == 'Player':
-            return 'players'
-        if role == 'Coach':
-            return 'coaches'
-        if role == 'Referee':
-            return 'referees'
-        if role == 'Manager':
-            return 'managers'
-
     def get_context_data(self, **kwargs):
         context = super(CreateSportRegistrationView, self).get_context_data(**kwargs)
         sports_already_registered_for = SportRegistration.objects.filter(user=self.request.user).values_list('sport_id')
@@ -144,7 +134,7 @@ class CreateSportRegistrationView(LoginRequiredMixin, ContextMixin, AccountAndSp
                     sr = form.save()
                     sport_registrations.append(sr)
             first_sport_reg = sport_registrations[0]
-            namespace_for_role = self._get_url_namespace_for_role(first_sport_reg.roles[0])
+            namespace_for_role = first_sport_reg.get_next_namespace_for_registration()
             url = 'sportregistrations:{role}:create'.format(role=namespace_for_role)
             return redirect(reverse(url, kwargs={'pk': first_sport_reg.id}))
 
