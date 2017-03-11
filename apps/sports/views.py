@@ -1,5 +1,3 @@
-from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Layout, HTML, Field, Div
 from django import forms
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -11,7 +9,7 @@ from django.views.generic.base import ContextMixin
 
 from coaches import forms as coach_forms
 from coaches.models import Coach
-from escoresheet.utils import email_admins_sport_not_configured
+from escoresheet.utils import handle_sport_not_configured
 from escoresheet.utils.exceptions import SportNotConfiguredException
 from escoresheet.utils.mixins import AccountAndSportRegistrationCompleteMixin
 from managers import forms as manager_forms
@@ -20,7 +18,8 @@ from players import forms as player_forms
 from players.models import HockeyPlayer, BasketballPlayer, BaseballPlayer
 from referees import forms as referee_forms
 from referees.models import Referee
-from .forms import CreateSportRegistrationForm
+from .forms import CreateSportRegistrationForm, SportRegistrationModelFormSet
+from .formset_helpers import CreateSportRegistrationFormSetHelper
 from .models import SportRegistration, Sport
 
 SPORT_PLAYER_FORM_MAPPINGS = {
@@ -34,48 +33,6 @@ SPORT_PLAYER_MODEL_MAPPINGS = {
     'Basketball': BasketballPlayer,
     'Baseball': BaseballPlayer
 }
-
-
-class SportRegistrationModelFormSet(forms.BaseModelFormSet):
-    def add_fields(self, form, index):
-        super(SportRegistrationModelFormSet, self).add_fields(form, index)
-        # The empty form would have value `None`, so default to an invalid form_num for use in the js.
-        form_num = index if index is not None else -1
-        form.fields['form_num'] = forms.IntegerField(required=False, widget=forms.HiddenInput(
-                attrs={'data-form-num': form_num, 'class': 'form-num'}))
-
-    def clean(self):
-        super(SportRegistrationModelFormSet, self).clean()
-        sports_already_seen = []
-        for form in self.forms:
-            sport = form.cleaned_data.get('sport')
-            if sport is not None:
-                if sport in sports_already_seen:
-                    form.add_error('sport', 'Only one form can have {sport} selected. '
-                                            'Choose another sport, or remove this form.'.format(sport=sport.name))
-                else:
-                    sports_already_seen.append(sport)
-
-
-class CreateSportRegistrationFormSetHelper(FormHelper):
-    def __init__(self, *args, **kwargs):
-        super(CreateSportRegistrationFormSetHelper, self).__init__(*args, **kwargs)
-        self.layout = Layout(
-                Div(
-                        HTML(
-                                "{% if not forloop.first %}<span data-toggle=\"tooltip\" data-placement=\"top\" "
-                                "title=\"Remove form\" class=\"fa fa-trash fa-trash-red pull-right\"></span>{% endif %}"
-                        ),
-                        Field('sport'),
-                        Field('roles'),
-                        Field('form_num'),
-                        Field('id'),
-                        css_class="multiField"
-                )
-        )
-        self.form_tag = False
-        # csrf token is added in the template
-        self.disable_csrf = True
 
 
 # TODO Add API endpoints to do this, so don't have to deal with the formset stuff
@@ -144,10 +101,6 @@ class CreateSportRegistrationView(LoginRequiredMixin, ContextMixin, AccountAndSp
 class UpdateSportRegistrationView(LoginRequiredMixin, ContextMixin, generic.View):
     template_name = 'sports/sport_registration_update.html'
 
-    def _handle_sport_not_configured(self, e):
-        email_admins_sport_not_configured(e.sport, self)
-        return render(self.request, 'sport_not_configured_msg.html', {'message': e.message})
-
     def get_context_data(self, **kwargs):
         context = super(UpdateSportRegistrationView, self).get_context_data(**kwargs)
         sr = get_object_or_404(SportRegistration.objects.select_related('sport'), pk=kwargs.get('pk', None))
@@ -189,7 +142,7 @@ class UpdateSportRegistrationView(LoginRequiredMixin, ContextMixin, generic.View
         try:
             context = self.get_context_data(**kwargs)
         except SportNotConfiguredException as e:
-            return self._handle_sport_not_configured(e)
+            return handle_sport_not_configured(self.request, self, e)
 
         return render(request, self.template_name, context)
 
@@ -197,7 +150,7 @@ class UpdateSportRegistrationView(LoginRequiredMixin, ContextMixin, generic.View
         try:
             context = self.get_context_data(**kwargs)
         except SportNotConfiguredException as e:
-            return self._handle_sport_not_configured(e)
+            return handle_sport_not_configured(self.request, self, e)
 
         # Forms that were submitted are added to this list. Only check the forms in this list for validity
         forms_that_were_submitted = []

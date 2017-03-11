@@ -94,6 +94,7 @@ INSTALLED_APPS = [
     'players.apps.PlayersConfig',
     'seasons.apps.SeasonsConfig',
     'api.apps.ApiConfig',
+    'common.apps.CommonConfig',
 ]
 
 CRISPY_TEMPLATE_PACK = 'bootstrap3'

@@ -6,7 +6,7 @@ from django.urls import reverse
 from django.views import generic
 from django.views.generic.base import ContextMixin
 
-from escoresheet.utils import email_admins_sport_not_configured
+from escoresheet.utils import handle_sport_not_configured
 from escoresheet.utils.exceptions import SportNotConfiguredException
 from escoresheet.utils.mixins import UserHasRolesMixin
 from managers.models import Manager
@@ -31,10 +31,6 @@ class CreateSeasonRosterView(LoginRequiredMixin, UserHasRolesMixin, ContextMixin
     template_name = 'seasons/season_roster_create.html'
     roles_to_check = ['Manager']
     user_has_no_role_msg = 'You do not have permission to perform this action.'
-
-    def _handle_sport_not_configured(self, e):
-        email_admins_sport_not_configured(e.sport, self)
-        return render(self.request, 'sport_not_configured_msg.html', {'message': e.message})
 
     def get_context_data(self, **kwargs):
         context = super(CreateSeasonRosterView, self).get_context_data(**kwargs)
@@ -65,14 +61,14 @@ class CreateSeasonRosterView(LoginRequiredMixin, UserHasRolesMixin, ContextMixin
         try:
             context = self.get_context_data(**kwargs)
         except SportNotConfiguredException as e:
-            return self._handle_sport_not_configured(e)
+            return handle_sport_not_configured(self.request, self, e)
         return render(request, self.template_name, context)
 
     def post(self, request, *args, **kwargs):
         try:
             context = self.get_context_data(**kwargs)
         except SportNotConfiguredException as e:
-            return self._handle_sport_not_configured(e)
+            return handle_sport_not_configured(self.request, self, e)
 
         form = context.get('form')
         if form.is_valid():
@@ -117,18 +113,13 @@ class ListSeasonRosterView(LoginRequiredMixin, UserHasRolesMixin, generic.Templa
         try:
             self.get_context_data(**kwargs)
         except SportNotConfiguredException as e:
-            email_admins_sport_not_configured(e.sport, self)
-            return render(request, 'sport_not_configured_msg.html', {'message': e.message})
+            return handle_sport_not_configured(self.request, self, e)
         return super(ListSeasonRosterView, self).get(request, *args, **kwargs)
 
 
 class UpdateSeasonRosterView(LoginRequiredMixin, UserHasRolesMixin, ContextMixin, generic.View):
     roles_to_check = ['Manager']
     template_name = 'seasons/season_roster_update.html'
-
-    def _handle_sport_not_configured(self, e):
-        email_admins_sport_not_configured(e.sport, self)
-        return render(self.request, 'sport_not_configured_msg.html', {'message': e.message})
 
     def get_context_data(self, **kwargs):
         context = super(UpdateSeasonRosterView, self).get_context_data(**kwargs)
@@ -167,14 +158,14 @@ class UpdateSeasonRosterView(LoginRequiredMixin, UserHasRolesMixin, ContextMixin
         try:
             context = self.get_context_data(**kwargs)
         except SportNotConfiguredException as e:
-            return self._handle_sport_not_configured(e)
+            return handle_sport_not_configured(self.request, self, e)
         return render(request, self.template_name, context)
 
     def post(self, request, *args, **kwargs):
         try:
             context = self.get_context_data(**kwargs)
         except SportNotConfiguredException as e:
-            return self._handle_sport_not_configured(e)
+            return handle_sport_not_configured(self.request, self, e)
         team = context.get('team')
         form = context.get('form')
         if form.is_valid():

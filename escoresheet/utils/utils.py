@@ -2,6 +2,7 @@
 A module to store useful helper functions used throughout the code base
 """
 from django.core import mail
+from django.shortcuts import render
 
 
 def remove_form_placeholders(field_list):
@@ -52,3 +53,15 @@ def email_admins_sport_not_configured(sport_name, view_cls):
                      '{sport} incorrectly configured on the {page} ({cls}) page. '
                      'You will likely need to add a mapping to the appropriate dictionary.'.format(
                              sport=sport_name, page=view_cls.request.path, cls=view_cls.__class__.__name__))
+
+
+def handle_sport_not_configured(request, cls, e):
+    """
+    If a sport is not configured correctly, show an error page to the user and email site admins.
+
+    :param request: The request
+    :param cls: The view class the exception occurred in.
+    :param e: The exception
+    """
+    email_admins_sport_not_configured(e.sport, cls)
+    return render(request, 'sport_not_configured_msg.html', {'message': e.message})
