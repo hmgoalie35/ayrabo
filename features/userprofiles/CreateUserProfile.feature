@@ -22,10 +22,6 @@ Feature: User profiles
     Given I go to the "sportregistrations:create" page
     Then I should be on the "account_complete_registration" page
 
-  Scenario: Redirected when trying to navigate to finish sport registration page when userprofile not complete
-    Given I go to the "sportregistrations:finish" page
-    Then I should be on the "account_complete_registration" page
-
   Scenario: Fill out with invalid height
     Given I am on the "account_complete_registration" page
     When I select "Male" from "id_gender"
