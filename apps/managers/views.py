@@ -1,9 +1,10 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.shortcuts import render
 from django.views import generic
-from django.views.generic.base import ContextMixin
 
-from escoresheet.utils.mixins import AccountAndSportRegistrationCompleteMixin, UserHasRolesMixin
+from common.views import BaseCreateRelatedObjectsView
+from escoresheet.utils.mixins import UserHasRolesMixin
+from managers.forms import ManagerForm, ManagerModelFormSet
+from managers.formset_helpers import ManagerFormSetHelper
 from managers.models import Manager
 
 
@@ -20,9 +21,30 @@ class ManagerHomeView(LoginRequiredMixin, UserHasRolesMixin, generic.TemplateVie
         return context
 
 
-class CreateManagersView(LoginRequiredMixin, ContextMixin, AccountAndSportRegistrationCompleteMixin, generic.View):
-    template_name = 'managers/managers_create.html'
+class CreateManagersView(BaseCreateRelatedObjectsView):
+    def get_formset_prefix(self):
+        return 'managers'
 
-    def get(self, *args, **kwargs):
-        context = self.get_context_data(**kwargs)
-        return render(self.request, self.template_name, context)
+    def get_model_class(self, sport_name):
+        return Manager
+
+    def get_form_class(self, sport_name):
+        return ManagerForm
+
+    def get_formset_class(self, sport_name):
+        return ManagerModelFormSet
+
+    def get_formset_helper_class(self, sport_name):
+        return ManagerFormSetHelper
+
+    def get_template_name(self):
+        return 'managers/managers_create.html'
+
+    def get_form_kwargs(self, **kwargs):
+        sport_registration = kwargs.get('sport_registration')
+        return {
+            'sport': sport_registration.sport
+        }
+
+    def get_role(self):
+        return 'Manager'
