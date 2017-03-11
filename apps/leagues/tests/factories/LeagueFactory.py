@@ -11,6 +11,7 @@ from sports.tests import SportFactory
 class LeagueFactory(django.DjangoModelFactory):
     class Meta:
         model = League
+        django_get_or_create = ('full_name',)
 
     full_name = factory.sequence(
         lambda x: 'National Sport {letter}{x} League'.format(letter=chr(random.randint(97, 122)), x=x))

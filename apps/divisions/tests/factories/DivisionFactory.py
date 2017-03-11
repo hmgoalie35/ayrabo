@@ -8,6 +8,7 @@ from leagues.tests import LeagueFactory
 class DivisionFactory(django.DjangoModelFactory):
     class Meta:
         model = Division
+        django_get_or_create = ('name',)
 
     name = fuzzy.FuzzyText(length=8, suffix=' Division')
     league = factory.SubFactory(LeagueFactory)

@@ -21,9 +21,9 @@ class DivisionModelTests(BaseTestCase):
 
     def test_duplicate_division_name_same_league(self):
         liahl = LeagueFactory(full_name='Long Island Amateur Hockey League')
-        DivisionFactory(name='Default', league=liahl)
+        Division.objects.create(name='Default', league=liahl)
         with self.assertRaises(IntegrityError):
-            DivisionFactory(name='Default', league=liahl)
+            Division.objects.create(name='Default', league=liahl)
 
     def test_duplicate_division_name_different_league(self):
         # shouldn't throw an error
@@ -41,6 +41,6 @@ class DivisionModelTests(BaseTestCase):
     def test_slug_unique_for_league(self):
         liahl = LeagueFactory(full_name='Long Island Amateur Hockey League')
         division_name = 'Midget Minor AA'
-        DivisionFactory(name=division_name, league=liahl)
+        Division.objects.create(name=division_name, league=liahl)
         with self.assertRaises(IntegrityError):
-            DivisionFactory(name=division_name, league=liahl)
+            Division.objects.create(name=division_name, league=liahl)
