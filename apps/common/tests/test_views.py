@@ -64,10 +64,6 @@ class BaseCreateRelatedObjectsViewTests(BaseTestCase):
         response = self.client.get(self._format_url('players', pk=self.sr.id))
         self.assertEqual(response.status_code, 404)
 
-    def test_formset_in_context(self):
-        response = self.client.get(self._format_url('players', pk=self.sr.id), follow=True)
-        self.assertIsNotNone(response.context['formset'])
-
     # POST
     def test_post_anonymous_user(self):
         self.client.logout()

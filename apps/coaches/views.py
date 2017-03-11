@@ -6,7 +6,7 @@ from .models import Coach
 
 
 class CreateCoachesView(BaseCreateRelatedObjectsView):
-    def get_form_prefix(self):
+    def get_formset_prefix(self):
         return 'coaches'
 
     def get_model_class(self, sport_name):

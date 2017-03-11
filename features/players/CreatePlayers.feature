@@ -19,12 +19,12 @@ Feature: Multiple player registration
     And I fill in "id_players-0-jersey_number" with "35"
     And I select "G" from "id_players-0-position"
     And I select "Left" from "id_players-0-handedness"
-    And I press "create_players_btn"
+    And I press "create_objects_btn"
     Then I should be on the "home" page
 
   Scenario: Submit invalid player form
     Given I am on the "sports.SportRegistration" "" "sportregistrations:players:create" page with url kwargs "pk=pk"
-    And I press "create_players_btn"
+    And I press "create_objects_btn"
     Then I should be on the "sports.SportRegistration" "" "sportregistrations:players:create" page with url kwargs "pk=pk"
     And "This field is required." should show up 4 times
 
@@ -47,7 +47,7 @@ Feature: Multiple player registration
     And I fill in "id_players-0-jersey_number" with "35"
     And I select "G" from "id_players-0-position"
     And I select "Left" from "id_players-0-handedness"
-    And I press "create_players_btn"
+    And I press "create_objects_btn"
     Then I should be on the "home" page
 
   Scenario: Submit 2 valid forms
@@ -62,6 +62,6 @@ Feature: Multiple player registration
     And I fill in "id_players-1-jersey_number" with "23"
     And I select "LW" from "id_players-1-position"
     And I select "Left" from "id_players-1-handedness"
-    And I press "create_players_btn"
+    And I press "create_objects_btn"
     Then I should be on the "home" page
 

@@ -23,7 +23,7 @@ SPORT_PLAYER_FORMSET_HELPER_MAPPINGS = {
 
 
 class CreatePlayersView(BaseCreateRelatedObjectsView):
-    def get_form_prefix(self):
+    def get_formset_prefix(self):
         return 'players'
 
     def get_model_class(self, sport_name):

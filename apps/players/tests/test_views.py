@@ -5,6 +5,9 @@ from accounts.tests import UserFactory
 from divisions.tests import DivisionFactory
 from escoresheet.utils.testing_utils import BaseTestCase
 from leagues.tests import LeagueFactory
+from players.forms import HockeyPlayerForm
+from players.formset_helpers import HockeyPlayerFormSetHelper
+from players.models import HockeyPlayer
 from sports.tests import SportFactory, SportRegistrationFactory
 from teams.tests import TeamFactory
 
@@ -41,6 +44,38 @@ class CreatePlayersViewTests(BaseTestCase):
         self.sr_2 = SportRegistrationFactory(user=self.user, sport=self.baseball, is_complete=False)
         self.sr.set_roles(['Player', 'Coach'])
         self.client.login(email=self.email, password=self.password)
+
+    def test_get_template_name(self):
+        response = self.client.get(self._format_url('players', pk=self.sr.id))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'players/players_create.html')
+
+    def test_get_form_class(self):
+        response = self.client.get(self._format_url('players', pk=self.sr.id))
+        form_cls = response.context['formset'].forms[0]
+        self.assertIsInstance(form_cls, HockeyPlayerForm)
+
+    def test_get_form_kwargs(self):
+        response = self.client.get(self._format_url('players', pk=self.sr.id))
+        formset = response.context['formset']
+        self.assertDictEqual(formset.form_kwargs, {'sport': self.ice_hockey})
+
+    def test_get_formset_prefix(self):
+        response = self.client.get(self._format_url('players', pk=self.sr.id))
+        formset = response.context['formset']
+        self.assertEqual(formset.prefix, 'players')
+
+    def test_get_model_class(self):
+        response = self.client.get(self._format_url('players', pk=self.sr.id))
+        self.assertIs(response.context['formset'].model, HockeyPlayer)
+
+    def test_get_formset_helper_class(self):
+        response = self.client.get(self._format_url('players', pk=self.sr.id))
+        self.assertIs(response.context['helper'], HockeyPlayerFormSetHelper)
+
+    def test_get_role(self):
+        response = self.client.get(self._format_url('players', pk=self.sr.id))
+        self.assertEqual(response.context['role'], 'Player')
 
     # GET
     def test_get_sport_not_configured(self):
