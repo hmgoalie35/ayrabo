@@ -19,9 +19,6 @@ class BaseCreateRelatedObjectsView(LoginRequiredMixin, ContextMixin, AccountAndS
     def get_form_class(self, sport_name):
         raise NotImplementedError()
 
-    def get_form_kwargs(self, **kwargs):
-        return {}
-
     def get_formset_prefix(self):
         raise NotImplementedError()
 
@@ -58,7 +55,7 @@ class BaseCreateRelatedObjectsView(LoginRequiredMixin, ContextMixin, AccountAndS
                                              can_delete=False)
         context['formset'] = FormSet(self.request.POST or None, queryset=model_cls.objects.none(),
                                      prefix=self.get_formset_prefix(),
-                                     form_kwargs=self.get_form_kwargs(sport_registration=sr))
+                                     form_kwargs={'sport': sr.sport})
         context['helper'] = formset_helper_cls
         context['sport_name'] = sport_name
         context['sport_registration'] = sr

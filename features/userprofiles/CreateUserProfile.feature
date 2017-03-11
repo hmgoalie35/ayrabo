@@ -61,6 +61,5 @@ Feature: User profiles
     And I fill in "id_weight" with "130"
     And I press "create_userprofile_btn"
     Then I should be on the "sportregistrations:create" page
-    And I should see "You have completed your account registration."
 
     # See features/sports/NewSportRegistration.feature for the next set of tests

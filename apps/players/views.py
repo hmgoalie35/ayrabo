@@ -41,11 +41,5 @@ class CreatePlayersView(BaseCreateRelatedObjectsView):
     def get_template_name(self):
         return 'players/players_create.html'
 
-    def get_form_kwargs(self, **kwargs):
-        sport_registration = kwargs.get('sport_registration')
-        return {
-            'sport': sport_registration.sport
-        }
-
     def get_role(self):
         return 'Player'

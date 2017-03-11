@@ -54,11 +54,6 @@ class CreateRefereesViewTests(BaseTestCase):
         form_cls = response.context['formset'].forms[0]
         self.assertIsInstance(form_cls, RefereeForm)
 
-    def test_get_form_kwargs(self):
-        response = self.client.get(self._format_url('referees', pk=self.sr.id))
-        formset = response.context['formset']
-        self.assertDictEqual(formset.form_kwargs, {'sport': self.ice_hockey})
-
     def test_get_formset_prefix(self):
         response = self.client.get(self._format_url('referees', pk=self.sr.id))
         formset = response.context['formset']

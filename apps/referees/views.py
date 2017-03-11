@@ -23,11 +23,5 @@ class CreateRefereesView(BaseCreateRelatedObjectsView):
     def get_template_name(self):
         return 'referees/referees_create.html'
 
-    def get_form_kwargs(self, **kwargs):
-        sport_registration = kwargs.get('sport_registration')
-        return {
-            'sport': sport_registration.sport
-        }
-
     def get_role(self):
         return 'Referee'

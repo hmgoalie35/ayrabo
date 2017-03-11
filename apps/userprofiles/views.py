@@ -11,12 +11,11 @@ from userprofiles.models import UserProfile
 from .forms import CreateUserProfileForm, UpdateUserProfileForm
 
 
-class CreateUserProfileView(LoginRequiredMixin, SuccessMessageMixin, AccountAndSportRegistrationCompleteMixin,
+class CreateUserProfileView(LoginRequiredMixin, AccountAndSportRegistrationCompleteMixin,
                             generic.CreateView):
     model = UserProfile
     template_name = 'userprofiles/userprofile_create.html'
     success_url = reverse_lazy('sportregistrations:create')
-    success_message = 'You have completed your account registration.'
     form_class = CreateUserProfileForm
 
     def form_valid(self, form):
