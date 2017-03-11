@@ -84,3 +84,122 @@ class CreateCoachesViewTests(BaseTestCase):
         self.assertFormsetError(response, 'formset', 1, 'team',
                                 '{} has already been selected. Please choose another team or remove this form.'.format(
                                         self.team.name))
+
+    def test_post_one_valid_form(self):
+        form_data = {
+            'coaches-0-team': self.team.id,
+            'coaches-0-position': 'Head Coach',
+        }
+        self.post_data.update(form_data)
+        response = self.client.post(self._format_url('coaches', pk=self.sr.id), data=self.post_data, follow=True)
+        coach = Coach.objects.filter(user=self.user, team=self.team)
+        self.assertTrue(coach.exists())
+        self.assertRedirects(response, self._format_url('referees', pk=self.sr.id))
+
+    def test_post_two_valid_forms(self):
+        t1 = TeamFactory(division__league__sport=self.ice_hockey)
+        form_data = {
+            'coaches-0-team': self.team.id,
+            'coaches-0-position': 'Head Coach',
+            'coaches-1-team': t1.id,
+            'coaches-1-position': 'Assistant Coach',
+            'coaches-TOTAL_FORMS': 2,
+        }
+        self.post_data.update(form_data)
+        response = self.client.post(self._format_url('coaches', pk=self.sr.id), data=self.post_data, follow=True)
+        coaches = Coach.objects.filter(user=self.user)
+        self.assertEqual(coaches.count(), 2)
+        self.assertRedirects(response, self._format_url('referees', pk=self.sr.id))
+
+    def test_post_three_valid_forms(self):
+        l1 = LeagueFactory(full_name='National Hockey League', sport=self.ice_hockey)
+        l2 = LeagueFactory(sport=self.ice_hockey)
+        d1 = DivisionFactory(league=l1)
+        d2 = DivisionFactory(league=l2)
+        t1 = TeamFactory(division=d1)
+        t2 = TeamFactory(division=d2)
+        form_data = {
+            'coaches-0-team': self.team.id,
+            'coaches-0-position': 'Head Coach',
+            'coaches-1-team': t1.id,
+            'coaches-1-position': 'Assistant Coach',
+            'coaches-2-team': t2.id,
+            'coaches-2-position': 'Assistant Coach',
+            'coaches-TOTAL_FORMS': 3,
+        }
+        self.post_data.update(form_data)
+        response = self.client.post(self._format_url('coaches', pk=self.sr.id), data=self.post_data, follow=True)
+        coaches = Coach.objects.filter(user=self.user)
+        self.assertEqual(coaches.count(), 3)
+        self.assertRedirects(response, self._format_url('referees', pk=self.sr.id))
+
+    def test_post_one_invalid_form(self):
+        form_data = {
+            'coaches-0-position': 'Head Coach',
+            'coaches-TOTAL_FORMS': 1,
+        }
+        self.post_data.update(form_data)
+        response = self.client.post(self._format_url('coaches', pk=self.sr.id), data=self.post_data, follow=True)
+        self.assertFormsetError(response, 'formset', 0, 'team', 'This field is required.')
+
+    def test_post_two_invalid_forms(self):
+        form_data = {
+            'coaches-0-position': 'Head Coach',
+            'coaches-1-team': self.team.id,
+            'coaches-TOTAL_FORMS': 2,
+        }
+        self.post_data.update(form_data)
+        response = self.client.post(self._format_url('coaches', pk=self.sr.id), data=self.post_data, follow=True)
+        self.assertFormsetError(response, 'formset', 0, 'team', 'This field is required.')
+        self.assertFormsetError(response, 'formset', 1, 'position', 'This field is required.')
+
+    def test_post_empty_added_form(self):
+        form_data = {
+            'coaches-0-team': self.team.id,
+            'coaches-0-position': 'Head Coach',
+            'coaches-1-team': '',
+            'coaches-1-position': '',
+            'coaches-TOTAL_FORMS': 2,
+        }
+
+        # Could do an ORM call to grab the created obj, but its id is going to be 1.
+        sr_id = 1
+
+        self.post_data.update(form_data)
+        response = self.client.post(self._format_url('coaches', pk=self.sr.id), data=self.post_data, follow=True)
+        url = 'sportregistrations:{role}:create'.format(role='referees')
+        self.assertRedirects(response, reverse(url, kwargs={'pk': sr_id}))
+
+    def test_next_sport_registration_fetched(self):
+        self.sr.set_roles(['Coach'])
+        form_data = {
+            'coaches-0-team': self.team.id,
+            'coaches-0-position': 'Head Coach'
+        }
+        self.post_data.update(form_data)
+        response = self.client.post(self._format_url('coaches', pk=self.sr.id), data=self.post_data, follow=True)
+        # sr_2 has role player
+        url = 'sportregistrations:{role}:create'.format(role='players')
+        self.assertRedirects(response, reverse(url, kwargs={'pk': self.sr_2.id}))
+
+    def test_no_remaining_sport_registrations(self):
+        self.sr.set_roles(['Coach'])
+        self.sr_2.set_roles(['Coach'])
+        form_data = {
+            'coaches-0-team': self.team.id,
+            'coaches-0-position': 'Head Coach',
+        }
+        self.post_data.update(form_data)
+        self.client.post(self._format_url('coaches', pk=self.sr.id), data=self.post_data, follow=True)
+
+        league = LeagueFactory(full_name='Major League Baseball', sport=self.baseball)
+        division = DivisionFactory(name='American League Central', league=league)
+        team = TeamFactory(name='Detroit Tigers', division=division)
+        self.post_data.update({
+            'coaches-0-team': team.id,
+            'coaches-0-position': 'Assistant Coach',
+        })
+
+        response = self.client.post(self._format_url('coaches', pk=self.sr_2.id), data=self.post_data, follow=True)
+
+        self.assertRedirects(response, reverse('home'))

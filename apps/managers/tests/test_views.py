@@ -4,13 +4,13 @@ from accounts.tests import UserFactory
 from divisions.tests import DivisionFactory
 from escoresheet.utils.testing_utils import BaseTestCase
 from leagues.tests import LeagueFactory
+from managers.forms import ManagerForm
+from managers.formset_helpers import ManagerFormSetHelper
+from managers.models import Manager
 from managers.tests import ManagerFactory
 from seasons.tests import SeasonFactory
 from sports.tests import SportFactory, SportRegistrationFactory
 from teams.tests import TeamFactory
-from managers.models import Manager
-from managers.forms import ManagerForm
-from managers.formset_helpers import ManagerFormSetHelper
 
 
 class ManagerHomeViewTests(BaseTestCase):
@@ -139,3 +139,109 @@ class CreateManagersViewTests(BaseTestCase):
         self.assertFormsetError(response, 'formset', 1, 'team',
                                 '{} has already been selected. Please choose another team or remove this form.'.format(
                                         self.team.name))
+
+    def test_post_one_valid_form(self):
+        form_data = {
+            'managers-0-team': self.team.id,
+        }
+        self.post_data.update(form_data)
+        response = self.client.post(self._format_url('managers', pk=self.sr.id), data=self.post_data, follow=True)
+        manager = Manager.objects.filter(user=self.user, team=self.team)
+        self.assertTrue(manager.exists())
+        self.assertRedirects(response, self._format_url('players', pk=self.sr_2.id))
+
+    def test_post_two_valid_forms(self):
+        t1 = TeamFactory(division__league__sport=self.ice_hockey)
+        form_data = {
+            'managers-0-team': self.team.id,
+            'managers-1-team': t1.id,
+            'managers-TOTAL_FORMS': 2,
+        }
+        self.post_data.update(form_data)
+        response = self.client.post(self._format_url('managers', pk=self.sr.id), data=self.post_data, follow=True)
+        managers = Manager.objects.filter(user=self.user)
+        self.assertEqual(managers.count(), 2)
+        self.assertRedirects(response, self._format_url('players', pk=self.sr_2.id))
+
+    def test_post_three_valid_forms(self):
+        l1 = LeagueFactory(full_name='National Hockey League', sport=self.ice_hockey)
+        l2 = LeagueFactory(sport=self.ice_hockey)
+        d1 = DivisionFactory(league=l1)
+        d2 = DivisionFactory(league=l2)
+        t1 = TeamFactory(division=d1)
+        t2 = TeamFactory(division=d2)
+        form_data = {
+            'managers-0-team': self.team.id,
+            'managers-1-team': t1.id,
+            'managers-2-team': t2.id,
+            'managers-TOTAL_FORMS': 3,
+        }
+        self.post_data.update(form_data)
+        response = self.client.post(self._format_url('managers', pk=self.sr.id), data=self.post_data, follow=True)
+        managers = Manager.objects.filter(user=self.user)
+        self.assertEqual(managers.count(), 3)
+        self.assertRedirects(response, self._format_url('players', pk=self.sr_2.id))
+
+    def test_post_one_invalid_form(self):
+        form_data = {
+            'managers-0-team': '',
+            'managers-TOTAL_FORMS': 1,
+        }
+        self.post_data.update(form_data)
+        response = self.client.post(self._format_url('managers', pk=self.sr.id), data=self.post_data, follow=True)
+        self.assertFormsetError(response, 'formset', 0, 'team', 'This field is required.')
+
+    def test_post_two_invalid_forms(self):
+        form_data = {
+            'managers-0-team': '',
+            'managers-1-team': -1,
+            'managers-TOTAL_FORMS': 2,
+        }
+        self.post_data.update(form_data)
+        response = self.client.post(self._format_url('managers', pk=self.sr.id), data=self.post_data, follow=True)
+        self.assertFormsetError(response, 'formset', 0, 'team', 'This field is required.')
+        self.assertFormsetError(response, 'formset', 1, 'team',
+                                'Select a valid choice. That choice is not one of the available choices.')
+
+    def test_post_empty_added_form(self):
+        form_data = {
+            'managers-0-team': self.team.id,
+            'managers-1-team': '',
+            'managers-TOTAL_FORMS': 2,
+        }
+
+        self.post_data.update(form_data)
+        response = self.client.post(self._format_url('managers', pk=self.sr.id), data=self.post_data, follow=True)
+        url = 'sportregistrations:{role}:create'.format(role='players')
+        self.assertRedirects(response, reverse(url, kwargs={'pk': self.sr_2.id}))
+
+    def test_next_sport_registration_fetched(self):
+        self.sr.set_roles(['Manager'])
+        form_data = {
+            'managers-0-team': self.team.id,
+        }
+        self.post_data.update(form_data)
+        response = self.client.post(self._format_url('managers', pk=self.sr.id), data=self.post_data, follow=True)
+        # sr_2 has role player
+        url = 'sportregistrations:{role}:create'.format(role='players')
+        self.assertRedirects(response, reverse(url, kwargs={'pk': self.sr_2.id}))
+
+    def test_no_remaining_sport_registrations(self):
+        self.sr.set_roles(['Manager'])
+        self.sr_2.set_roles(['Manager'])
+        form_data = {
+            'managers-0-team': self.team.id,
+        }
+        self.post_data.update(form_data)
+        self.client.post(self._format_url('managers', pk=self.sr.id), data=self.post_data, follow=True)
+
+        league = LeagueFactory(full_name='Major League Baseball', sport=self.baseball)
+        division = DivisionFactory(name='American League Central', league=league)
+        team = TeamFactory(name='Detroit Tigers', division=division)
+        self.post_data.update({
+            'managers-0-team': team.id,
+        })
+
+        response = self.client.post(self._format_url('managers', pk=self.sr_2.id), data=self.post_data, follow=True)
+
+        self.assertRedirects(response, reverse('home'))

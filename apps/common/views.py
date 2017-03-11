@@ -8,6 +8,7 @@ from django.views.generic.base import ContextMixin
 from escoresheet.utils import handle_sport_not_configured
 from escoresheet.utils.exceptions import SportNotConfiguredException
 from escoresheet.utils.mixins import AccountAndSportRegistrationCompleteMixin
+from players.models import AbstractPlayer
 from sports.models import SportRegistration
 
 
@@ -81,7 +82,8 @@ class BaseCreateRelatedObjectsView(LoginRequiredMixin, ContextMixin, AccountAndS
         user = self.request.user
         for form in formset:
             form.instance.user = user
-            form.instance.sport = sport_registration.sport
+            if isinstance(form.instance, AbstractPlayer):
+                form.instance.sport = sport_registration.sport
         if formset.is_valid():
             formset.save()
             next_role = sport_registration.get_next_namespace_for_registration()
