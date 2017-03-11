@@ -2,6 +2,7 @@ from django import forms
 
 from escoresheet.utils import set_fields_disabled
 from escoresheet.utils.form_fields import TeamModelChoiceField
+from escoresheet.utils.formsets import BaseModelFormSet
 from teams.models import Team
 from . import models
 
@@ -67,15 +68,7 @@ class BasketballPlayerForm(BasePlayerForm):
         fields = ['team', 'jersey_number', 'position', 'shoots']
 
 
-# TODO move this and the other modelformset that share same add_fields functionality to base class, inherit from it.
-class PlayerModelFormSet(forms.BaseModelFormSet):
-    def add_fields(self, form, index):
-        super(PlayerModelFormSet, self).add_fields(form, index)
-        # The empty form would have value `None`, so default to an invalid form_num for use in the js.
-        form_num = index if index is not None else -1
-        form.fields['form_num'] = forms.IntegerField(required=False, widget=forms.HiddenInput(
-                attrs={'data-form-num': form_num, 'class': 'form-num'}))
-
+class PlayerModelFormSet(BaseModelFormSet):
     def clean(self):
         super(PlayerModelFormSet, self).clean()
         teams_already_seen = []

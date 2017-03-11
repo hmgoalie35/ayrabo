@@ -1,5 +1,3 @@
-from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Layout, HTML, Field, Div
 from django import forms
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -20,7 +18,8 @@ from players import forms as player_forms
 from players.models import HockeyPlayer, BasketballPlayer, BaseballPlayer
 from referees import forms as referee_forms
 from referees.models import Referee
-from .forms import CreateSportRegistrationForm
+from .forms import CreateSportRegistrationForm, SportRegistrationModelFormSet
+from .formset_helpers import CreateSportRegistrationFormSetHelper
 from .models import SportRegistration, Sport
 
 SPORT_PLAYER_FORM_MAPPINGS = {
@@ -34,48 +33,6 @@ SPORT_PLAYER_MODEL_MAPPINGS = {
     'Basketball': BasketballPlayer,
     'Baseball': BaseballPlayer
 }
-
-
-class SportRegistrationModelFormSet(forms.BaseModelFormSet):
-    def add_fields(self, form, index):
-        super(SportRegistrationModelFormSet, self).add_fields(form, index)
-        # The empty form would have value `None`, so default to an invalid form_num for use in the js.
-        form_num = index if index is not None else -1
-        form.fields['form_num'] = forms.IntegerField(required=False, widget=forms.HiddenInput(
-                attrs={'data-form-num': form_num, 'class': 'form-num'}))
-
-    def clean(self):
-        super(SportRegistrationModelFormSet, self).clean()
-        sports_already_seen = []
-        for form in self.forms:
-            sport = form.cleaned_data.get('sport')
-            if sport is not None:
-                if sport in sports_already_seen:
-                    form.add_error('sport', 'Only one form can have {sport} selected. '
-                                            'Choose another sport, or remove this form.'.format(sport=sport.name))
-                else:
-                    sports_already_seen.append(sport)
-
-
-class CreateSportRegistrationFormSetHelper(FormHelper):
-    def __init__(self, *args, **kwargs):
-        super(CreateSportRegistrationFormSetHelper, self).__init__(*args, **kwargs)
-        self.layout = Layout(
-                Div(
-                        HTML(
-                                "{% if not forloop.first %}<span data-toggle=\"tooltip\" data-placement=\"top\" "
-                                "title=\"Remove form\" class=\"fa fa-trash fa-trash-red pull-right\"></span>{% endif %}"
-                        ),
-                        Field('sport'),
-                        Field('roles'),
-                        Field('form_num'),
-                        Field('id'),
-                        css_class="multiField"
-                )
-        )
-        self.form_tag = False
-        # csrf token is added in the template
-        self.disable_csrf = True
 
 
 # TODO Add API endpoints to do this, so don't have to deal with the formset stuff

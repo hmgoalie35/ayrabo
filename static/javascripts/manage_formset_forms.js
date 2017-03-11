@@ -43,6 +43,9 @@ $(function () {
     var fixFormNumbers = function ($removedForm) {
         var formNum = $removedForm.find("[data-form-num]").data("form-num");
         var maxForms = getTotalNumForms();
+        if (formNum === maxForms) {
+            return;
+        }
         // Want to get all forms after the form that was removed.
         var $optionalForms = $removedForm.nextAll("div.multiField");
         if ($optionalForms.length === 0) {
@@ -57,7 +60,7 @@ $(function () {
         }
 
         if ($optionalForms.length > 0) {
-            $optionalForms.each(function (index, formElem) {
+            $.each($optionalForms, function (index, formElem) {
                 // Find all id, name, for attrs of the current element and its descendants and change the value based on
                 // `formNum`
                 var $allChildren = $(formElem).find(":not('span')");

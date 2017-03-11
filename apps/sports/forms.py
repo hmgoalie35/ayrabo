@@ -1,6 +1,7 @@
 from django import forms
 from django.utils.translation import ugettext_lazy as _
 
+from escoresheet.utils.formsets import BaseModelFormSet
 from .models import Sport, SportRegistration
 
 
@@ -38,3 +39,17 @@ class CreateSportRegistrationForm(forms.ModelForm):
     class Meta:
         model = SportRegistration
         fields = ['sport']
+
+
+class SportRegistrationModelFormSet(BaseModelFormSet):
+    def clean(self):
+        super(SportRegistrationModelFormSet, self).clean()
+        sports_already_seen = []
+        for form in self.forms:
+            sport = form.cleaned_data.get('sport')
+            if sport is not None:
+                if sport in sports_already_seen:
+                    form.add_error('sport', 'Only one form can have {sport} selected. '
+                                            'Choose another sport, or remove this form.'.format(sport=sport.name))
+                else:
+                    sports_already_seen.append(sport)
