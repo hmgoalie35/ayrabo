@@ -132,3 +132,15 @@ class CreateManagersViewTests(BaseTestCase):
     def test_get_role(self):
         response = self.client.get(self._format_url('managers', pk=self.sr.id))
         self.assertEqual(response.context['role'], 'Manager')
+
+    def test_post_two_forms_same_team(self):
+        form_data = {
+            'managers-0-team': self.team.id,
+            'managers-1-team': self.team.id,
+            'managers-TOTAL_FORMS': 2,
+        }
+        self.post_data.update(form_data)
+        response = self.client.post(self._format_url('managers', pk=self.sr.id), data=self.post_data, follow=True)
+        self.assertFormsetError(response, 'formset', 1, 'team',
+                                '{} has already been selected. Please choose another team or remove this form.'.format(
+                                        self.team.name))

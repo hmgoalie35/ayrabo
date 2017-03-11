@@ -75,3 +75,17 @@ class CreateCoachesViewTests(BaseTestCase):
     def test_get_role(self):
         response = self.client.get(self._format_url('coaches', pk=self.sr.id))
         self.assertEqual(response.context['role'], 'Coach')
+
+    def test_post_two_forms_same_team(self):
+        form_data = {
+            'coaches-0-team': self.team.id,
+            'coaches-0-position': "Head Coach",
+            'coaches-1-team': self.team.id,
+            'coaches-1-position': "Assistant Coach",
+            'coaches-TOTAL_FORMS': 2,
+        }
+        self.post_data.update(form_data)
+        response = self.client.post(self._format_url('coaches', pk=self.sr.id), data=self.post_data, follow=True)
+        self.assertFormsetError(response, 'formset', 1, 'team',
+                                '{} has already been selected. Please choose another team or remove this form.'.format(
+                                        self.team.name))

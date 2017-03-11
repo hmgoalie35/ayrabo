@@ -1,8 +1,7 @@
+from coaches.forms import CoachForm, CoachModelFormSet
+from coaches.formset_helpers import CoachFormSetHelper
+from coaches.models import Coach
 from common.views import BaseCreateRelatedObjectsView
-
-from .forms import CoachForm, CoachModelFormSet
-from .formset_helpers import CoachFormSetHelper
-from .models import Coach
 
 
 class CreateCoachesView(BaseCreateRelatedObjectsView):
