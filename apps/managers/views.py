@@ -1,7 +1,9 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.shortcuts import render
 from django.views import generic
+from django.views.generic.base import ContextMixin
 
-from escoresheet.utils.mixins import UserHasRolesMixin
+from escoresheet.utils.mixins import AccountAndSportRegistrationCompleteMixin, UserHasRolesMixin
 from managers.models import Manager
 
 
@@ -16,3 +18,11 @@ class ManagerHomeView(LoginRequiredMixin, UserHasRolesMixin, generic.TemplateVie
                                                                                         'team__division__league__sport')
         context['teams'] = [manager.team for manager in manager_objects]
         return context
+
+
+class CreateManagersView(LoginRequiredMixin, ContextMixin, AccountAndSportRegistrationCompleteMixin, generic.View):
+    template_name = 'managers/managers_create.html'
+
+    def get(self, *args, **kwargs):
+        context = self.get_context_data(**kwargs)
+        return render(self.request, self.template_name, context)

@@ -27,9 +27,9 @@ class LeagueModelTests(BaseTestCase):
         LeagueFactory.create(full_name='My League', sport=SportFactory.create(name='My Other Sport'))
 
     def test_full_name_unique_with_sport(self):
-        LeagueFactory.create(full_name='National Hockey League', sport=self.ice_hockey)
+        League.objects.create(full_name='National Hockey League', sport=self.ice_hockey)
         with self.assertRaises(IntegrityError):
-            LeagueFactory.create(full_name='National Hockey League', sport=self.ice_hockey).full_clean(
+            League.objects.create(full_name='National Hockey League', sport=self.ice_hockey).full_clean(
                     exclude=['abbreviated_name'])
 
     def test_abbreviated_name_lowercase(self):

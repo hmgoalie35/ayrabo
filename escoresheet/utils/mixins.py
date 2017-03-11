@@ -49,7 +49,10 @@ class AccountAndSportRegistrationCompleteMixin(object):
             redirect_url = reverse('sportregistrations:create')
         elif incomplete_sport_registrations.exists():
             request.session['is_user_currently_registering'] = True
-            redirect_url = reverse('sportregistrations:finish')
+            sr = incomplete_sport_registrations.first()
+            next_role = sr.get_next_namespace_for_registration()
+            url = 'sportregistrations:{role}:create'.format(role=next_role)
+            redirect_url = reverse(url, kwargs={'pk': sr.id})
 
         if redirect_url is not None and request.path != redirect_url:
             return redirect(redirect_url)

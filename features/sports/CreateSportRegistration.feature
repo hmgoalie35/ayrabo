@@ -20,10 +20,6 @@ Feature: Register for a sport
     Given I go to the "account_complete_registration" page
     Then I should be on the "sportregistrations:create" page
 
-  Scenario: Redirect when trying to navigate to finish sport registration page when no sport registrations exist
-    Given I go to the "sportregistrations:finish" page
-    Then I should be on the "sportregistrations:create" page
-
   Scenario: Informative text displayed to user
     Given I am on the "sportregistrations:create" page
     Then I should see "Register for sports"
@@ -39,7 +35,7 @@ Feature: Register for a sport
     # Coach
     And I press "id_sportregistrations-0-roles_2"
     And I press "sport_registration_next_step_btn"
-    Then I should be on the "sportregistrations:finish" page
+    Then I should be on the "sports.SportRegistration" "" "sportregistrations:players:create" page with url kwargs "pk=pk"
 
   Scenario: Submit one invalid form
     Given I am on the "sportregistrations:create" page
@@ -83,7 +79,7 @@ Feature: Register for a sport
     And I select "Baseball" from "id_sportregistrations-1-sport"
     And I press "id_sportregistrations-1-roles_2"
     And I press "sport_registration_next_step_btn"
-    Then I should be on the "sportregistrations:finish" page
+    Then I should be on the "sports.SportRegistration" "" "sportregistrations:players:create" page with url kwargs "pk=pk"
 
 
   Scenario: Already registered for all 3 sports
@@ -121,4 +117,4 @@ Feature: Register for a sport
     And I press "id_sportregistrations-0-roles_1"
     And I press "id_sportregistrations-0-roles_2"
     And I press "sport_registration_next_step_btn"
-    Then I should be on the "sportregistrations:finish" page
+    Then I should be on the "sports.SportRegistration" "" "sportregistrations:players:create" page with url kwargs "pk=pk"

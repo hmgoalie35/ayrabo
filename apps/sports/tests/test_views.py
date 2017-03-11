@@ -109,7 +109,8 @@ class CreateSportRegistrationViewTests(BaseTestCase):
         sr = SportRegistration.objects.filter(user=self.user, sport=self.ice_hockey)
         self.assertTrue(sr.exists())
         self.assertEqual(sr.first().roles, ['Player', 'Coach'])
-        self.assertRedirects(response, reverse('sportregistrations:finish'))
+        url = 'sportregistrations:{role}:create'.format(role='players')
+        self.assertRedirects(response, reverse(url, kwargs={'pk': sr.first().id}))
 
     def test_valid_post_two_forms(self):
         form_data = {
@@ -126,7 +127,8 @@ class CreateSportRegistrationViewTests(BaseTestCase):
         self.assertEqual(sr.count(), 2)
         self.assertEqual(sr[0].roles, ['Player', 'Coach'])
         self.assertEqual(sr[1].roles, ['Player', 'Referee'])
-        self.assertRedirects(response, reverse('sportregistrations:finish'))
+        url = 'sportregistrations:{role}:create'.format(role='players')
+        self.assertRedirects(response, reverse(url, kwargs={'pk': sr.first().id}))
 
     def test_valid_post_three_forms(self):
         form_data = {
@@ -143,7 +145,8 @@ class CreateSportRegistrationViewTests(BaseTestCase):
         response = self.client.post(self.url, data=self.post_data, follow=True)
         sr = SportRegistration.objects.filter(user=self.user)
         self.assertEqual(sr.count(), 3)
-        self.assertRedirects(response, reverse('sportregistrations:finish'))
+        url = 'sportregistrations:{role}:create'.format(role='players')
+        self.assertRedirects(response, reverse(url, kwargs={'pk': sr.first().id}))
 
     def test_post_two_forms_same_sport(self):
         form_data = {
@@ -187,293 +190,14 @@ class CreateSportRegistrationViewTests(BaseTestCase):
             'sportregistrations-1-sport': [''],
         }
 
+        # Could do an ORM call to grab the created obj, but its id is going to be 1.
+        sr_id = 1
+
         self.post_data.update(form_data)
         self.post_data['sportregistrations-TOTAL_FORMS'] = 2
         response = self.client.post(self.url, data=self.post_data, follow=True)
-        self.assertRedirects(response, reverse('sportregistrations:finish'))
-
-
-class FinishSportRegistrationViewTests(BaseTestCase):
-    def setUp(self):
-        self.email = 'user@example.com'
-        self.password = 'myweakpassword'
-        self.url = reverse('sportregistrations:finish')
-
-        self.coach_post_data = factory.build(dict, FACTORY_CLASS=CoachFactory)
-        self.coach_post_data['coach-position'] = self.coach_post_data.pop('position')
-        self.manager_post_data = factory.build(dict, FACTORY_CLASS=ManagerFactory)
-        self.referee_post_data = factory.build(dict, FACTORY_CLASS=RefereeFactory)
-        self.hockeyplayer_post_data = factory.build(dict, FACTORY_CLASS=HockeyPlayerFactory)
-
-        self.league = LeagueFactory(full_name='Long Island Amateur Hockey League', sport__name='Ice Hockey')
-        self.division = DivisionFactory(name='Midget Minor AA', league=self.league)
-        self.team = TeamFactory(name='Green Machine IceCats', division=self.division)
-
-        self.referee_post_data['referee-league'] = str(self.league.id)
-        self.coach_post_data['coach-team'] = str(self.team.id)
-        self.manager_post_data['manager-team'] = str(self.team.id)
-
-        self.hockeyplayer_post_data['hockeyplayer-team'] = str(self.team.id)
-        self.hockeyplayer_post_data['hockeyplayer-position'] = self.hockeyplayer_post_data.pop('position')
-        self.hockeyplayer_post_data['hockeyplayer-jersey_number'] = self.hockeyplayer_post_data.pop('jersey_number')
-        self.hockeyplayer_post_data['hockeyplayer-handedness'] = self.hockeyplayer_post_data.pop('handedness')
-
-        del self.coach_post_data['user']
-        del self.manager_post_data['user']
-        del self.referee_post_data['user']
-        del self.hockeyplayer_post_data['user']
-
-        del self.coach_post_data['team']
-        del self.manager_post_data['team']
-        del self.referee_post_data['league']
-        del self.hockeyplayer_post_data['team']
-        del self.hockeyplayer_post_data['sport']
-
-        self.user = UserFactory(email=self.email, password=self.password)
-        self.sr = SportRegistrationFactory(user=self.user, sport=self.league.sport, is_complete=False)
-        self.sr_2 = SportRegistrationFactory(user=self.user, sport__name='Baseball', is_complete=False)
-        self.sr.set_roles(['Coach'])
-        self.client.login(email=self.email, password=self.password)
-
-    # GET
-    def test_get_anonymous_user(self):
-        self.client.logout()
-        response = self.client.get(self.url)
-        result_url = '%s?next=%s' % (reverse('account_login'), self.url)
-        self.assertRedirects(response, result_url)
-
-    def test_renders_correct_template(self):
-        response = self.client.get(self.url)
-        self.assertTemplateUsed(response, 'sports/sport_registration_finish.html')
-
-    def test_200_status_code(self):
-        response = self.client.get(self.url)
-        self.assertEqual(response.status_code, 200)
-
-    def test_get_sport_not_configured(self):
-        self.sr.is_complete = True
-        self.sr.save()
-        self.sr_2.is_complete = True
-        self.sr_2.save()
-        sr = SportRegistrationFactory(user=self.user, is_complete=False)
-        sr.set_roles(['Player'])
-        response = self.client.get(self.url, follow=True)
-        self.assertTemplateUsed(response, 'sport_not_configured_msg.html')
-        msg = "{sport} hasn't been configured correctly in our system. " \
-              "If you believe this is an error please contact us.".format(sport=sr.sport.name)
-        self.assertEqual(response.context['message'], msg)
-        self.assertEqual(len(mail.outbox), 1)
-
-    def test_coach_form_in_context(self):
-        """
-        Only coach role
-        """
-        response = self.client.get(self.url)
-        self.assertIn('coach_form', response.context)
-
-    def test_manager_form_in_context(self):
-        self.sr.set_roles(['Manager'])
-        response = self.client.get(self.url)
-        self.assertIn('manager_form', response.context)
-
-    def test_all_forms_in_context(self):
-        """
-        All roles
-        """
-        self.sr.set_roles([role for role in SportRegistration.ROLES])
-        response = self.client.get(self.url)
-        self.assertIn('coach_form', response.context)
-        self.assertIn('player_form', response.context)
-        self.assertIn('manager_form', response.context)
-        self.assertIn('referee_form', response.context)
-
-    def test_coach_player_forms_in_context(self):
-        """
-        Coach and player roles
-        """
-        self.sr.set_roles(['Coach', 'Player'])
-        response = self.client.get(self.url)
-        self.assertIn('coach_form', response.context)
-        self.assertIn('player_form', response.context)
-        self.assertIsInstance(response.context['player_form'], player_forms.HockeyPlayerForm)
-
-    def test_coach_manager_referee_forms_in_context(self):
-        self.sr.set_roles(['Coach', 'Manager', 'Referee'])
-        response = self.client.get(self.url)
-        self.assertIn('coach_form', response.context)
-        self.assertIn('manager_form', response.context)
-        self.assertIn('referee_form', response.context)
-
-    def test_get_account_complete(self):
-        self.sr.is_complete = True
-        self.sr.save()
-        self.sr_2.is_complete = True
-        self.sr_2.save()
-        response = self.client.get(self.url)
-        self.assertRedirects(response, reverse('home'))
-
-    # it's overkill to add in tests for all permutations of SportRegistration.ROLES, but might need to do it anyway
-
-    # POST
-    def test_post_anonymous_user(self):
-        self.client.logout()
-        response = self.client.post(self.url, data=self.coach_post_data, follow=True)
-        result_url = '%s?next=%s' % (reverse('account_login'), self.url)
-        self.assertRedirects(response, result_url)
-
-    def test_post_account_complete(self):
-        self.sr.is_complete = True
-        self.sr.save()
-        self.sr_2.is_complete = True
-        self.sr_2.save()
-        response = self.client.post(self.url, data=self.coach_post_data, follow=True)
-        self.assertRedirects(response, reverse('home'))
-
-    def test_post_sport_not_configured(self):
-        self.sr.is_complete = True
-        self.sr.save()
-        self.sr_2.is_complete = True
-        self.sr_2.save()
-        sr = SportRegistrationFactory(user=self.user, is_complete=False)
-        sr.set_roles(['Player'])
-        response = self.client.post(self.url, data={}, follow=True)
-        self.assertTemplateUsed(response, 'sport_not_configured_msg.html')
-        msg = "{sport} hasn't been configured correctly in our system. " \
-              "If you believe this is an error please contact us.".format(sport=sr.sport.name)
-        self.assertEqual(response.context['message'], msg)
-        self.assertEqual(len(mail.outbox), 1)
-
-    def test_post_valid_coach_form_data(self):
-        response = self.client.post(self.url, data=self.coach_post_data, follow=True)
-        self.assertRedirects(response, self.url)
-        self.assertTrue(Coach.objects.filter(user=self.user).exists())
-
-    def test_post_invalid_coach_form_data(self):
-        del self.coach_post_data['coach-position']
-        response = self.client.post(self.url, data=self.coach_post_data, follow=True)
-        self.assertFormError(response, 'coach_form', 'position', 'This field is required.')
-
-    def test_post_valid_manager_form_data(self):
-        self.sr.set_roles(['Manager'])
-        response = self.client.post(self.url, data=self.manager_post_data, follow=True)
-
-        self.assertRedirects(response, self.url)
-        self.assertTrue(Manager.objects.filter(user=self.user).exists())
-
-    def test_post_invalid_manager_form_data(self):
-        self.sr.set_roles(['Manager'])
-        self.manager_post_data['manager-team'] = ''
-        response = self.client.post(self.url, data=self.manager_post_data, follow=True)
-        self.assertFormError(response, 'manager_form', 'team', 'This field is required.')
-
-    def test_post_valid_hockeyplayer_form_data(self):
-        self.sr.set_roles(['Player'])
-        response = self.client.post(self.url, data=self.hockeyplayer_post_data, follow=True)
-        self.assertRedirects(response, self.url)
-        self.assertTrue(HockeyPlayer.objects.filter(user=self.user).exists())
-
-    def test_post_invalid_hockeyplayer_form_data(self):
-        self.sr.set_roles(['Player'])
-        self.hockeyplayer_post_data['hockeyplayer-position'] = ''
-        response = self.client.post(self.url, data=self.hockeyplayer_post_data, follow=True)
-        self.assertFormError(response, 'player_form', 'position', 'This field is required.')
-
-    def test_post_valid_coach_and_manager_forms(self):
-        self.sr.set_roles(['Coach', 'Manager'])
-        post_data = self.manager_post_data.copy()
-        post_data.update(self.coach_post_data)
-        response = self.client.post(self.url, data=post_data, follow=True)
-        self.assertRedirects(response, self.url)
-        self.assertTrue(Manager.objects.filter(user=self.user).exists())
-        self.assertTrue(Coach.objects.filter(user=self.user).exists())
-
-    def test_post_invalid_coach_manager_forms(self):
-        self.sr.set_roles(['Coach', 'Manager'])
-        post_data = self.manager_post_data.copy()
-        post_data.update(self.coach_post_data)
-        del post_data['coach-position']
-        del post_data['manager-team']
-        response = self.client.post(self.url, data=post_data, follow=True)
-        self.assertFormError(response, 'coach_form', 'position', 'This field is required.')
-        self.assertFormError(response, 'manager_form', 'team', 'This field is required.')
-
-    def test_post_valid_coach_manager_referee_forms(self):
-        self.sr.set_roles(['Coach', 'Manager', 'Referee'])
-        post_data = self.manager_post_data.copy()
-        post_data.update(self.coach_post_data)
-        post_data.update(self.referee_post_data)
-
-        response = self.client.post(self.url, data=post_data, follow=True)
-
-        self.assertRedirects(response, self.url)
-        self.assertTrue(Manager.objects.filter(user=self.user).exists())
-        self.assertTrue(Coach.objects.filter(user=self.user).exists())
-        self.assertTrue(Referee.objects.filter(user=self.user).exists())
-
-    def test_post_invalid_coach_manager_referee_forms(self):
-        self.sr.set_roles(['Coach', 'Manager', 'Referee'])
-        post_data = self.manager_post_data.copy()
-        post_data.update(self.coach_post_data)
-        post_data.update(self.referee_post_data)
-        del post_data['coach-position']
-        del post_data['manager-team']
-        del post_data['referee-league']
-        response = self.client.post(self.url, data=post_data, follow=True)
-        self.assertFormError(response, 'coach_form', 'position', 'This field is required.')
-        self.assertFormError(response, 'manager_form', 'team', 'This field is required.')
-        self.assertFormError(response, 'referee_form', 'league', 'This field is required.')
-
-    def test_post_valid_coach_manager_referee_hockeyplayer_forms(self):
-        self.sr.set_roles(['Coach', 'Manager', 'Referee', 'Player'])
-        post_data = self.manager_post_data.copy()
-        post_data.update(self.coach_post_data)
-        post_data.update(self.referee_post_data)
-        post_data.update(self.hockeyplayer_post_data)
-
-        response = self.client.post(self.url, data=post_data, follow=True)
-        self.assertRedirects(response, self.url)
-        self.assertTrue(Manager.objects.filter(user=self.user).exists())
-        self.assertTrue(Coach.objects.filter(user=self.user).exists())
-        self.assertTrue(Referee.objects.filter(user=self.user).exists())
-        self.assertTrue(HockeyPlayer.objects.filter(user=self.user).exists())
-
-    def test_post_invalid_coach_manager_referee_hockeyplayer_forms(self):
-        self.sr.set_roles(['Coach', 'Manager', 'Referee', 'Player'])
-        post_data = self.manager_post_data.copy()
-        post_data.update(self.coach_post_data)
-        post_data.update(self.referee_post_data)
-        post_data.update(self.hockeyplayer_post_data)
-
-        del post_data['coach-position']
-        del post_data['manager-team']
-        del post_data['referee-league']
-        del post_data['hockeyplayer-team']
-
-        response = self.client.post(self.url, data=post_data, follow=True)
-        self.assertFormError(response, 'coach_form', 'position', 'This field is required.')
-        self.assertFormError(response, 'manager_form', 'team', 'This field is required.')
-        self.assertFormError(response, 'referee_form', 'league', 'This field is required.')
-        self.assertFormError(response, 'player_form', 'team', 'This field is required.')
-
-    def test_post_invalid_coach_form_valid_manager_form(self):
-        """
-        We only want to save the forms if all of the submitted forms are valid
-        """
-        self.sr.set_roles(['Coach', 'Manager'])
-        post_data = self.manager_post_data.copy()
-        post_data.update(self.coach_post_data)
-        # Coach form is invalid
-        del post_data['coach-position']
-        response = self.client.post(self.url, data=post_data, follow=True)
-        self.assertFormError(response, 'coach_form', 'position', 'This field is required.')
-        self.assertFalse(Manager.objects.filter(user=self.user).exists())
-        self.assertFalse(Coach.objects.filter(user=self.user).exists())
-
-    def test_next_sport_registration_fetched(self):
-        response = self.client.post(self.url, data=self.coach_post_data, follow=True)
-        self.assertTrue(response.context['sport_registrations_exist'])
-        self.assertRedirects(response, self.url)
-        self.assertTrue(SportRegistration.objects.get(user=self.user, sport=self.sr.sport).is_complete)
+        url = 'sportregistrations:{role}:create'.format(role='players')
+        self.assertRedirects(response, reverse(url, kwargs={'pk': sr_id}))
 
 
 class UpdateSportRegistrationViewTests(BaseTestCase):

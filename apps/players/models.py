@@ -48,7 +48,6 @@ class AbstractPlayer(models.Model):
     class Meta:
         abstract = True
         unique_together = (
-            ('user', 'sport'),
             ('user', 'team'),
         )
 
