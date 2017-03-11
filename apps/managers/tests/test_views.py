@@ -8,6 +8,9 @@ from managers.tests import ManagerFactory
 from seasons.tests import SeasonFactory
 from sports.tests import SportFactory, SportRegistrationFactory
 from teams.tests import TeamFactory
+from managers.models import Manager
+from managers.forms import ManagerForm
+from managers.formset_helpers import ManagerFormSetHelper
 
 
 class ManagerHomeViewTests(BaseTestCase):
@@ -63,3 +66,69 @@ class ManagerHomeViewTests(BaseTestCase):
         response = self.client.get(self.url)
         context = response.context
         self.assertEqual(list(context['teams']), [self.icecats, self.yankees])
+
+
+class CreateManagersViewTests(BaseTestCase):
+    def _format_url(self, role, **kwargs):
+        return reverse(self.url.format(role=role), kwargs=kwargs)
+
+    @classmethod
+    def setUpClass(cls):
+        super(CreateManagersViewTests, cls).setUpClass()
+        cls.ice_hockey = SportFactory(name='Ice Hockey')
+        cls.baseball = SportFactory(name='Baseball')
+        cls.basketball = SportFactory(name='Basketball')
+
+    def setUp(self):
+        self.url = 'sportregistrations:{role}:create'
+        self.email = 'user@example.com'
+        self.password = 'myweakpassword'
+        self.post_data = {
+            'managers-TOTAL_FORMS': 1,
+            'managers-INITIAL_FORMS': 0,
+            'managers-MIN_NUM_FORMS': 1,
+            'managers-MAX_NUM_FORMS': 10
+        }
+
+        self.user = UserFactory(email=self.email, password=self.password)
+
+        self.league = LeagueFactory(full_name='Long Island Amateur Hockey League', sport=self.ice_hockey)
+        self.division = DivisionFactory(name='Midget Minor AA', league=self.league)
+        self.team = TeamFactory(name='Green Machine IceCats', division=self.division)
+
+        self.sr = SportRegistrationFactory(user=self.user, sport=self.ice_hockey, is_complete=False)
+        self.sr_2 = SportRegistrationFactory(user=self.user, sport=self.baseball, is_complete=False)
+        self.sr.set_roles(['Manager'])
+        self.client.login(email=self.email, password=self.password)
+
+    def test_get_template_name(self):
+        response = self.client.get(self._format_url('managers', pk=self.sr.id))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'managers/managers_create.html')
+
+    def test_get_form_class(self):
+        response = self.client.get(self._format_url('managers', pk=self.sr.id))
+        form_cls = response.context['formset'].forms[0]
+        self.assertIsInstance(form_cls, ManagerForm)
+
+    def test_get_form_kwargs(self):
+        response = self.client.get(self._format_url('managers', pk=self.sr.id))
+        formset = response.context['formset']
+        self.assertDictEqual(formset.form_kwargs, {'sport': self.ice_hockey})
+
+    def test_get_formset_prefix(self):
+        response = self.client.get(self._format_url('managers', pk=self.sr.id))
+        formset = response.context['formset']
+        self.assertEqual(formset.prefix, 'managers')
+
+    def test_get_model_class(self):
+        response = self.client.get(self._format_url('managers', pk=self.sr.id))
+        self.assertIs(response.context['formset'].model, Manager)
+
+    def test_get_formset_helper_class(self):
+        response = self.client.get(self._format_url('managers', pk=self.sr.id))
+        self.assertIs(response.context['helper'], ManagerFormSetHelper)
+
+    def test_get_role(self):
+        response = self.client.get(self._format_url('managers', pk=self.sr.id))
+        self.assertEqual(response.context['role'], 'Manager')
