@@ -2,6 +2,7 @@ from django import forms
 
 from escoresheet.utils import set_fields_disabled
 from escoresheet.utils.form_fields import TeamModelChoiceField
+from escoresheet.utils.formsets import BaseModelFormSet
 from teams.models import Team
 from .models import Coach
 
@@ -28,4 +29,19 @@ class CoachForm(forms.ModelForm):
 
     class Meta:
         model = Coach
-        fields = ['position', 'team']
+        fields = ['team', 'position']
+
+
+class CoachModelFormSet(BaseModelFormSet):
+    def clean(self):
+        super(CoachModelFormSet, self).clean()
+        teams_already_seen = []
+        for form in self.forms:
+            team = form.cleaned_data.get('team')
+            if team is not None:
+                if team.id in teams_already_seen:
+                    form.add_error('team',
+                                   '{} has already been selected. '
+                                   'Please choose another team or remove this form.'.format(team.name))
+                else:
+                    teams_already_seen.append(team.id)

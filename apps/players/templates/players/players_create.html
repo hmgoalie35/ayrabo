@@ -1,51 +1,5 @@
-{% extends 'site_base.html' %}
-{% load crispy_forms_tags static %}
+{% extends 'common/player_coach_referee_manager_create_base.html' %}
 
-{% block title %}{{ sport_name }} Player Registration{% endblock %}
-
-
-{% block content %}
-    <div class="container">
-
-        <div class="row">
-            <div class="col-sm-12">
-                <div class="text-center">
-                    <h2>{{ sport_name }} Player Registration</h2>
-                    <p>You may register for one or more teams.<br>Register for additional teams by pressing the <strong>Add player</strong> button below.</p>
-                </div>
-            </div>
-        </div>
-
-        <br>
-
-        <div class="row">
-            <div class="col-sm-offset-4 col-sm-4 col-sm-offset-4">
-                <div class="hidden" id="prefix" data-prefix="{{ formset.prefix }}"></div>
-                <form action="" method="post">
-                    {% csrf_token %}
-                    {% crispy formset helper %}
-                    <br>
-                    <div id="additional_forms"></div>
-                    <div id="empty_form" class="hidden">
-                        {{ formset.empty_form | crispy }}
-                    </div>
-                    <br>
-                    <div class="text-center">
-                        <button id="add_another_form_btn" class="btn btn-info" type="button" role="button"><span
-                                class="fa fa-fw fa-plus"></span>Add player
-                        </button>
-                        <input id="create_players_btn" type="submit" class="btn btn-success"
-                               value="Register and continue">
-                        <br>
-                    </div>
-                </form>
-            </div>
-        </div>
-
-    </div>
-{% endblock %}
-
-
-{% block extra_js %}
-    <script src="{% static 'javascripts/manage_formset_forms.js' %}"></script>
+{% block info_text %}
+    You may register for one or more teams.<br>Register for additional teams by pressing the <strong>Add player</strong> button below.
 {% endblock %}
