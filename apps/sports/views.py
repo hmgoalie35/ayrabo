@@ -9,7 +9,7 @@ from django.views.generic.base import ContextMixin
 
 from coaches import forms as coach_forms
 from coaches.models import Coach
-from escoresheet.utils import email_admins_sport_not_configured
+from escoresheet.utils import handle_sport_not_configured
 from escoresheet.utils.exceptions import SportNotConfiguredException
 from escoresheet.utils.mixins import AccountAndSportRegistrationCompleteMixin
 from managers import forms as manager_forms
@@ -101,10 +101,6 @@ class CreateSportRegistrationView(LoginRequiredMixin, ContextMixin, AccountAndSp
 class UpdateSportRegistrationView(LoginRequiredMixin, ContextMixin, generic.View):
     template_name = 'sports/sport_registration_update.html'
 
-    def _handle_sport_not_configured(self, e):
-        email_admins_sport_not_configured(e.sport, self)
-        return render(self.request, 'sport_not_configured_msg.html', {'message': e.message})
-
     def get_context_data(self, **kwargs):
         context = super(UpdateSportRegistrationView, self).get_context_data(**kwargs)
         sr = get_object_or_404(SportRegistration.objects.select_related('sport'), pk=kwargs.get('pk', None))
@@ -146,7 +142,7 @@ class UpdateSportRegistrationView(LoginRequiredMixin, ContextMixin, generic.View
         try:
             context = self.get_context_data(**kwargs)
         except SportNotConfiguredException as e:
-            return self._handle_sport_not_configured(e)
+            return handle_sport_not_configured(self.request, self, e)
 
         return render(request, self.template_name, context)
 
@@ -154,7 +150,7 @@ class UpdateSportRegistrationView(LoginRequiredMixin, ContextMixin, generic.View
         try:
             context = self.get_context_data(**kwargs)
         except SportNotConfiguredException as e:
-            return self._handle_sport_not_configured(e)
+            return handle_sport_not_configured(self.request, self, e)
 
         # Forms that were submitted are added to this list. Only check the forms in this list for validity
         forms_that_were_submitted = []

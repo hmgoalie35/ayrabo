@@ -5,7 +5,7 @@ from django.urls import reverse
 from django.views import generic
 from django.views.generic.base import ContextMixin
 
-from escoresheet.utils import email_admins_sport_not_configured
+from escoresheet.utils import handle_sport_not_configured
 from escoresheet.utils.exceptions import SportNotConfiguredException
 from escoresheet.utils.mixins import AccountAndSportRegistrationCompleteMixin
 from sports.models import SportRegistration
@@ -34,10 +34,6 @@ SPORT_PLAYER_FORMSET_HELPER_MAPPINGS = {
 
 class CreatePlayersView(LoginRequiredMixin, ContextMixin, AccountAndSportRegistrationCompleteMixin, generic.View):
     template_name = 'players/players_create.html'
-
-    def _handle_sport_not_configured(self, e):
-        email_admins_sport_not_configured(e.sport, self)
-        return render(self.request, 'sport_not_configured_msg.html', {'message': e.message})
 
     def get_context_data(self, **kwargs):
         context = super(CreatePlayersView, self).get_context_data(**kwargs)
@@ -69,7 +65,7 @@ class CreatePlayersView(LoginRequiredMixin, ContextMixin, AccountAndSportRegistr
         try:
             context = self.get_context_data(**kwargs)
         except SportNotConfiguredException as e:
-            return self._handle_sport_not_configured(e)
+            return handle_sport_not_configured(self.request, self, e)
 
         return render(self.request, self.template_name, context)
 
@@ -77,7 +73,7 @@ class CreatePlayersView(LoginRequiredMixin, ContextMixin, AccountAndSportRegistr
         try:
             context = self.get_context_data(**kwargs)
         except SportNotConfiguredException as e:
-            return self._handle_sport_not_configured(e)
+            return handle_sport_not_configured(self.request, self, e)
 
         formset = context.get('formset')
         sport_registration = context.get('sport_registration')
