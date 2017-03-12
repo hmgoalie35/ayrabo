@@ -128,12 +128,15 @@ class SportRegistrationModelTests(BaseTestCase):
         team = TeamFactory(name='Green Machine Icecats', division=division)
         sr = SportRegistrationFactory(user=user, sport=sport)
         sr.set_roles(SportRegistration.ROLES)
-        manager = ManagerFactory(user=user, team=team)
-        player = HockeyPlayerFactory(user=user, team=team, sport=sport)
-        coach = CoachFactory(user=user, team=team)
-        referee = RefereeFactory(user=user, league=league)
+        manager = [ManagerFactory(user=user, team=team)]
+        player = [HockeyPlayerFactory(user=user, team=team, sport=sport)]
+        coach = [CoachFactory(user=user, team=team)]
+        referee = [RefereeFactory(user=user, league=league)]
         result = sr.get_related_role_objects()
-        self.assertDictEqual({'Player': player, 'Coach': coach, 'Manager': manager, 'Referee': referee}, result)
+        self.assertListEqual(player, list(result.get('Player')))
+        self.assertListEqual(coach, list(result.get('Coach')))
+        self.assertListEqual(referee, list(result.get('Referee')))
+        self.assertListEqual(manager, list(result.get('Manager')))
 
     def test_get_related_role_objects_3_roles(self):
         user = UserFactory(email='testing@example.com')
@@ -143,11 +146,14 @@ class SportRegistrationModelTests(BaseTestCase):
         team = TeamFactory(name='Green Machine Icecats', division=division)
         sr = SportRegistrationFactory(user=user, sport=sport)
         sr.set_roles(['Player', 'Coach', 'Referee'])
-        player = HockeyPlayerFactory(user=user, team=team, sport=sport)
-        coach = CoachFactory(user=user, team=team)
-        referee = RefereeFactory(user=user, league=league)
+        player = [HockeyPlayerFactory(user=user, team=team, sport=sport)]
+        coach = [CoachFactory(user=user, team=team)]
+        referee = [RefereeFactory(user=user, league=league)]
         result = sr.get_related_role_objects()
-        self.assertDictEqual({'Player': player, 'Coach': coach, 'Referee': referee}, result)
+
+        self.assertListEqual(player, list(result.get('Player')))
+        self.assertListEqual(coach, list(result.get('Coach')))
+        self.assertListEqual(referee, list(result.get('Referee')))
 
     def test_get_related_role_objects_2_roles(self):
         user = UserFactory(email='testing@example.com')
@@ -157,10 +163,11 @@ class SportRegistrationModelTests(BaseTestCase):
         team = TeamFactory(name='Green Machine Icecats', division=division)
         sr = SportRegistrationFactory(user=user, sport=sport)
         sr.set_roles(['Player', 'Coach'])
-        player = HockeyPlayerFactory(user=user, team=team, sport=sport)
-        coach = CoachFactory(user=user, team=team)
+        player = [HockeyPlayerFactory(user=user, team=team, sport=sport)]
+        coach = [CoachFactory(user=user, team=team)]
         result = sr.get_related_role_objects()
-        self.assertDictEqual({'Player': player, 'Coach': coach}, result)
+        self.assertListEqual(player, list(result.get('Player')))
+        self.assertListEqual(coach, list(result.get('Coach')))
 
     def test_get_related_role_objects_1_role(self):
         user = UserFactory(email='testing@example.com')
@@ -170,9 +177,9 @@ class SportRegistrationModelTests(BaseTestCase):
         team = TeamFactory(name='Green Machine Icecats', division=division)
         sr = SportRegistrationFactory(user=user, sport=sport)
         sr.set_roles(['Manager'])
-        manager = ManagerFactory(user=user, team=team)
+        manager = [ManagerFactory(user=user, team=team)]
         result = sr.get_related_role_objects()
-        self.assertDictEqual({'Manager': manager}, result)
+        self.assertListEqual(manager, list(result.get('Manager')))
 
     def test_get_related_role_objects_no_roles(self):
         user = UserFactory(email='testing@example.com')
@@ -249,5 +256,5 @@ class SportRegistrationModelTests(BaseTestCase):
         sr.set_roles(['Player', 'Coach', 'Referee', 'Manager'])
         sr.save()
         sr.get_related_role_objects = Mock(
-            return_value={'Player': Mock(), 'Coach': Mock(), 'Referee': Mock(), 'Manager': Mock()})
+                return_value={'Player': Mock(), 'Coach': Mock(), 'Referee': Mock(), 'Manager': Mock()})
         self.assertIsNone(sr.get_next_namespace_for_registration())

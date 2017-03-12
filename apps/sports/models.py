@@ -145,23 +145,19 @@ class SportRegistration(models.Model):
                 if model_cls is not None:
                     players = model_cls.objects.filter(user=user, sport=self.sport).select_related('team',
                                                                                                    'team__division')
-
-                if players is not None:
-                    obj_role_mappings['Player'] = players.first()
-                else:
-                    obj_role_mappings['Player'] = players
+                obj_role_mappings['Player'] = players if players and players.exists() else None
             elif role == 'Coach':
                 coaches = coaches_app.models.Coach.objects.filter(
                         user=user, team__division__league__sport=self.sport).select_related('team', 'team__division')
-                obj_role_mappings['Coach'] = coaches.first()
+                obj_role_mappings['Coach'] = coaches if coaches.exists() else None
             elif role == 'Manager':
                 managers = managers_app.models.Manager.objects.filter(
                         user=user, team__division__league__sport=self.sport).select_related('team', 'team__division')
-                obj_role_mappings['Manager'] = managers.first()
+                obj_role_mappings['Manager'] = managers if managers.exists() else None
             elif role == 'Referee':
                 referees = referees_app.models.Referee.objects.filter(
                         user=user, league__sport=self.sport).select_related('league')
-                obj_role_mappings['Referee'] = referees.first()
+                obj_role_mappings['Referee'] = referees if referees.exists() else None
         return obj_role_mappings
 
     # TODO Figure out a better way to do this, it seems really inefficient to run get_related_objects on every request.
