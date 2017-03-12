@@ -33,7 +33,7 @@ class UpdateUserProfileView(LoginRequiredMixin, SuccessMessageMixin, generic.Upd
 
     def get_context_data(self, **kwargs):
         context = super(UpdateUserProfileView, self).get_context_data(**kwargs)
-        sport_registrations = SportRegistration.objects.filter(user=self.request.user).select_related('sport')
+        sport_registrations = SportRegistration.objects.filter(user=self.request.user).select_related('sport', 'user')
         data = {}
         for sport_registration in sport_registrations:
             data[sport_registration] = {'sport': sport_registration.sport, 'roles': sport_registration.roles,

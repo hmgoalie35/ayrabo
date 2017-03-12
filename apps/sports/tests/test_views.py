@@ -458,6 +458,7 @@ class AddSportRegistrationRoleViewTests(BaseTestCase):
 
     def test_get_when_sport_registration_already_has_role(self):
         self.sr.set_roles(['Manager'])
+        ManagerFactory(user=self.user, team=self.team)
         response = self.client.get(
                 reverse('sportregistrations:add_role', kwargs={'pk': self.sr.pk, 'role': 'manager'}), follow=True)
 
@@ -484,6 +485,7 @@ class AddSportRegistrationRoleViewTests(BaseTestCase):
 
     def test_post_when_sport_registration_already_has_role(self):
         self.sr.set_roles(['Manager'])
+        ManagerFactory(user=self.user, team=self.team)
         response = self.client.post(
                 reverse('sportregistrations:add_role', kwargs={'pk': self.sr.pk, 'role': 'manager'}),
                 data=self.manager_post_data, follow=True)

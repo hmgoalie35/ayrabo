@@ -105,9 +105,17 @@
                                             <div class="collapse" id="{{ data_dict.sport.slug }}">
                                                 <div class="list-group-item">
                                                 {% if data_dict.related_objects %}
-                                                    {% for role, object in data_dict.related_objects.items %}
-                                                        <strong>{{ role }}:</strong> {% if role == 'Referee' %}{{ object.league }}{% else %}{{ object.team }} - {{ object.team.division.name }}{% endif %}
-                                                        <br>
+                                                    {% for role, objects in data_dict.related_objects.items %}
+                                                        <strong>{{ role }}:</strong>
+                                                        {% for object in objects %}
+                                                            <div>
+                                                                {% if role == 'Referee' %}
+                                                                    {{ object.league }}
+                                                                {% else %}
+                                                                    {{ object.team }} - {{ object.team.division.name }}
+                                                                {% endif %}
+                                                            </div>
+                                                        {% endfor %}
                                                     {% endfor %}
                                                 {% else %}
                                                 {% endif %}

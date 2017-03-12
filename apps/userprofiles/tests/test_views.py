@@ -143,21 +143,20 @@ class UpdateUserProfileViewTests(BaseTestCase):
         team = TeamFactory(name='Green Machine Icecats', division=division)
         sr = SportRegistrationFactory(user=user, sport=self.sport)
         sr.set_roles(['Player', 'Coach', 'Manager', 'Referee'])
-        manager = ManagerFactory(user=user, team=team)
-        player = HockeyPlayerFactory(user=user, team=team, sport=self.sport)
-        coach = CoachFactory(user=user, team=team)
-        referee = RefereeFactory(user=user, league=league)
+        manager = [ManagerFactory(user=user, team=team)]
+        player = [HockeyPlayerFactory(user=user, team=team, sport=self.sport)]
+        coach = [CoachFactory(user=user, team=team)]
+        referee = [RefereeFactory(user=user, league=league)]
         response = self.client.get(reverse('account_home'))
-        result = {
-            sr:
-                {'sport': sr.sport,
-                 'roles': ['Player', 'Coach', 'Referee', 'Manager'],
-                 'related_objects':
-                     {'Player': player,
-                      'Coach': coach,
-                      'Manager': manager,
-                      'Referee': referee}}}
-        self.assertDictEqual(response.context['data'], result)
+
+        data = response.context['data'].get(sr)
+        self.assertEqual(data.get('sport'), sr.sport)
+        self.assertEqual(data.get('roles'), ['Player', 'Coach', 'Referee', 'Manager'])
+        related_objects = data.get('related_objects')
+        self.assertEqual(list(related_objects.get('Player')), player)
+        self.assertEqual(list(related_objects.get('Coach')), coach)
+        self.assertEqual(list(related_objects.get('Referee')), referee)
+        self.assertEqual(list(related_objects.get('Manager')), manager)
 
     # POST
     # No need to test invalid values for height, weight, etc. That is done above (the forms are almost identical)

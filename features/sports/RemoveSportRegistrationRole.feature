@@ -14,6 +14,18 @@ Feature: Remove roles from sport registration
 
   Scenario: Modal prompts user to confirm action
     Given "user@example.com" is completely registered for "Ice Hockey" with roles "Player, Coach, Referee, Manager"
+    And The following manager object exists
+      | username_or_email | team                  |
+      | user@example.com  | Green Machine IceCats |
+    And The following coach object exists
+      | username_or_email | position   | team                  |
+      | user@example.com  | Head Coach | Green Machine IceCats |
+    And The following player object exists
+      | username_or_email | sport      | team                  | jersey_number | position | handedness |
+      | user@example.com  | Ice Hockey | Green Machine IceCats | 35            | G        | Left       |
+    And The following referee object exists
+      | username_or_email | league                            |
+      | user@example.com  | Long Island Amateur Hockey League |
     And I am on the absolute url page for "sports.SportRegistration" and "user__email=user@example.com, sport__name=Ice Hockey"
     When I press "remove_player_icon"
     Then I should see "Are you sure?"
@@ -22,6 +34,18 @@ Feature: Remove roles from sport registration
 
   Scenario: Remove a role, user has all roles
     Given "user@example.com" is completely registered for "Ice Hockey" with roles "Player, Coach, Referee, Manager"
+    And The following manager object exists
+      | username_or_email | team                  |
+      | user@example.com  | Green Machine IceCats |
+    And The following coach object exists
+      | username_or_email | position   | team                  |
+      | user@example.com  | Head Coach | Green Machine IceCats |
+    And The following player object exists
+      | username_or_email | sport      | team                  | jersey_number | position | handedness |
+      | user@example.com  | Ice Hockey | Green Machine IceCats | 35            | G        | Left       |
+    And The following referee object exists
+      | username_or_email | league                            |
+      | user@example.com  | Long Island Amateur Hockey League |
     And I am on the absolute url page for "sports.SportRegistration" and "user__email=user@example.com, sport__name=Ice Hockey"
     And I press "remove_player_icon" which opens "remove_player_modal"
     And I press "remove_player_role_btn"
@@ -31,6 +55,9 @@ Feature: Remove roles from sport registration
 
   Scenario: Remove a role when only one role left
     Given "user@example.com" is completely registered for "Ice Hockey" with role "Player"
+    And The following player object exists
+      | username_or_email | sport      | team                  | jersey_number | position | handedness |
+      | user@example.com  | Ice Hockey | Green Machine IceCats | 35            | G        | Left       |
     And I am on the absolute url page for "sports.SportRegistration" and "user__email=user@example.com, sport__name=Ice Hockey"
     When I press "remove_player_icon_disabled"
     Then I should not see "Remove player role from Ice Hockey"

@@ -117,23 +117,22 @@ class UpdateSportRegistrationView(LoginRequiredMixin, ContextMixin, generic.View
         context['coach_read_only_fields'] = ['team']
         context['manager_read_only_fields'] = ['team']
         context['referee_read_only_fields'] = ['league']
-        for role, role_obj in related_objects.items():
+        for role, objs in related_objects.items():
             if role == 'Player':
                 form_cls = SPORT_PLAYER_FORM_MAPPINGS.get(sport_name)
                 if form_cls is None:
                     raise SportNotConfiguredException(sport_name)
-
-                context['player_form'] = form_cls(self.request.POST or None, instance=role_obj,
+                context['player_form'] = form_cls(self.request.POST or None, instance=objs.first(),
                                                   read_only_fields=context.get('player_read_only_fields'))
             elif role == 'Coach':
-                context['coach_form'] = coach_forms.CoachForm(self.request.POST or None, instance=role_obj,
+                context['coach_form'] = coach_forms.CoachForm(self.request.POST or None, instance=objs.first(),
                                                               read_only_fields=context.get('coach_read_only_fields'))
             elif role == 'Manager':
-                context['manager_form'] = manager_forms.ManagerForm(self.request.POST or None, instance=role_obj,
+                context['manager_form'] = manager_forms.ManagerForm(self.request.POST or None, instance=objs.first(),
                                                                     read_only_fields=context.get(
                                                                             'manager_read_only_fields'))
             elif role == 'Referee':
-                context['referee_form'] = referee_forms.RefereeForm(self.request.POST or None, instance=role_obj,
+                context['referee_form'] = referee_forms.RefereeForm(self.request.POST or None, instance=objs.first(),
                                                                     read_only_fields=context.get(
                                                                             'referee_read_only_fields'))
         return context
