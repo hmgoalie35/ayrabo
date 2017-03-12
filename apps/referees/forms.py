@@ -1,6 +1,7 @@
 from django import forms
 
 from escoresheet.utils import set_fields_disabled
+from escoresheet.utils.formsets import BaseModelFormSet
 from leagues.models import League
 from .models import Referee
 
@@ -20,10 +21,25 @@ class RefereeForm(forms.ModelForm):
         read_only_fields = kwargs.pop('read_only_fields', None)
         super(RefereeForm, self).__init__(*args, **kwargs)
         if sport is not None:
-            self.fields['league'].queryset = League.objects.filter(sport=sport)
+            self.fields['league'].queryset = League.objects.filter(sport=sport).select_related('sport')
         if read_only_fields is not None:
             set_fields_disabled(read_only_fields, self.fields)
 
     class Meta:
         model = Referee
         fields = ['league']
+
+
+class RefereeModelFormSet(BaseModelFormSet):
+    def clean(self):
+        super(RefereeModelFormSet, self).clean()
+        leagues_already_seen = []
+        for form in self.forms:
+            league = form.cleaned_data.get('league')
+            if league is not None:
+                if league.id in leagues_already_seen:
+                    form.add_error('league',
+                                   '{} has already been selected. '
+                                   'Please choose another league or remove this form.'.format(league.full_name))
+                else:
+                    leagues_already_seen.append(league.id)
