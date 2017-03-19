@@ -1,7 +1,7 @@
-Feature: Update sport registration
+Feature: Sport registration detail
   As a user of the site,
-  So that I can manage my sport registration
-  I want to be able to change my jersey number, position, etc.
+  So that I can see what roles I chose for a sport
+  I want to be able to see all roles and their details
 
   Background: User account exists
     Given The following confirmed user account exists
@@ -12,7 +12,7 @@ Feature: Update sport registration
       | Green Machine IceCats | Midget Minor AA | Long Island Amateur Hockey League | Ice Hockey |
     And The following sport registrations exist
       | username_or_email | sport      | roles                           | complete |
-      | user@example.com  | Ice Hockey | Player, Coach, Referee | true     |
+      | user@example.com  | Ice Hockey | Player, Coach, Referee          | true     |
       | user@example.com  | Baseball   | Player, Coach, Manager, Referee | true     |
     And The following player object exists
       | username_or_email | sport      | team                  | jersey_number | position | handedness |
@@ -27,27 +27,12 @@ Feature: Update sport registration
 
   Scenario: Informative text displayed to user
     Given I am on the absolute url page for "sports.SportRegistration" and "user@example.com Ice Hockey"
-    Then I should see "Update Ice Hockey Registration"
+    Then I should see "Manage Your Ice Hockey Registration"
+    And I should see "Choose a tab below to view and manage your roles."
     And I should see "Available Roles"
-    And I should see "Manager"
-    And I should see "Ice Hockey Player"
-    And I should see "Ice Hockey Coach"
-    And I should see "Ice Hockey Referee"
-    And I should see "Changing your team or league is not currently supported."
-    And "id_hockeyplayer-team" should be disabled
-    And "id_coach-team" should be disabled
-    And "id_referee-league" should be disabled
-
-  Scenario: Submit unchanged form
-    Given I am on the absolute url page for "sports.SportRegistration" and "user@example.com Ice Hockey"
-    When I press "update_sport_registration_btn"
-    Then I should be on the absolute url page for "sports.SportRegistration" and "user@example.com Ice Hockey"
-    And I should not see "Sport registration for Ice Hockey successfully updated."
-
-  Scenario: Submit changed form
-    Given I am on the absolute url page for "sports.SportRegistration" and "user@example.com Ice Hockey"
-    When I fill in "id_hockeyplayer-jersey_number" with "22"
-    And I select "Assistant Coach" from "id_coach-position"
-    And I press "update_sport_registration_btn"
-#    Then I should be on the "account_home" page
-    And I should see "Sport registration for Ice Hockey successfully updated."
+    And I should see "Coaches"
+    And I should see "Players"
+    And I should see "Referees"
+    And "Green Machine IceCats" should show up 2 times
+    And I should see "Long Island Amateur Hockey League"
+    And "Register" should show up 1 time

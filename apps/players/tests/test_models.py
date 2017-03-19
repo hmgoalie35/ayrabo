@@ -4,6 +4,7 @@ from django.db.utils import IntegrityError
 from accounts.tests import UserFactory
 from escoresheet.utils.testing_utils import BaseTestCase
 from sports.tests import SportRegistrationFactory
+from teams.tests import TeamFactory
 from .factories.PlayerFactory import HockeyPlayerFactory, BaseballPlayerFactory, BasketballPlayerFactory
 
 
@@ -52,6 +53,19 @@ class PlayerModelTests(BaseTestCase):
                                                        'player role assigned'.format(user=user.email, sport=sport)):
             player.clean()
 
+    def test_fields(self):
+        t = TeamFactory()
+        player = HockeyPlayerFactory(team=t)
+        expected = {
+            'Team': '{} - {}'.format(t.name, t.division),
+            'Jersey Number': player.jersey_number
+        }
+        fields = player.fields
+        # We only want to test the fields from the super class are returned.
+        del fields['Position']
+        del fields['Handedness']
+        self.assertDictEqual(expected, fields)
+
 
 class HockeyPlayerModelTests(BaseTestCase):
     def setUp(self):
@@ -79,6 +93,18 @@ class HockeyPlayerModelTests(BaseTestCase):
                                                        'the sportregistration object does not have the '
                                                        'player role assigned'.format(user=user.email, sport=sport)):
             player.clean()
+
+    def test_fields(self):
+        t = TeamFactory()
+        player = HockeyPlayerFactory(team=t)
+        expected = {
+            'Team': '{} - {}'.format(t.name, t.division),
+            'Jersey Number': player.jersey_number,
+            'Position': player.get_position_display(),
+            'Handedness': player.get_handedness_display()
+        }
+        fields = player.fields
+        self.assertDictEqual(expected, fields)
 
 
 class BaseballPlayerModelTests(BaseTestCase):
@@ -108,6 +134,19 @@ class BaseballPlayerModelTests(BaseTestCase):
                                                        'player role assigned'.format(user=user.email, sport=sport)):
             player.clean()
 
+    def test_fields(self):
+        t = TeamFactory()
+        player = BaseballPlayerFactory(team=t)
+        expected = {
+            'Team': '{} - {}'.format(t.name, t.division),
+            'Jersey Number': player.jersey_number,
+            'Position': player.get_position_display(),
+            'Catches': player.get_catches_display(),
+            'Bats': player.get_bats_display()
+        }
+        fields = player.fields
+        self.assertDictEqual(expected, fields)
+
 
 class BasketballPlayerModelTests(BaseTestCase):
     def setUp(self):
@@ -136,3 +175,15 @@ class BasketballPlayerModelTests(BaseTestCase):
                                                        'the sportregistration object does not have the '
                                                        'player role assigned'.format(user=user.email, sport=sport)):
             player.clean()
+
+    def test_fields(self):
+        t = TeamFactory()
+        player = BasketballPlayerFactory(team=t)
+        expected = {
+            'Team': '{} - {}'.format(t.name, t.division),
+            'Jersey Number': player.jersey_number,
+            'Position': player.get_position_display(),
+            'Shoots': player.get_shoots_display(),
+        }
+        fields = player.fields
+        self.assertDictEqual(expected, fields)

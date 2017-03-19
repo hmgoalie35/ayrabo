@@ -57,7 +57,7 @@ class SportRegistration(models.Model):
         )
 
     def get_absolute_url(self):
-        return reverse('sportregistrations:update', kwargs={'pk': self.pk})
+        return reverse('sportregistrations:detail', kwargs={'pk': self.pk})
 
     def set_roles(self, roles, append=False):
         """

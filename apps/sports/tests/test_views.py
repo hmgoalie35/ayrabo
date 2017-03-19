@@ -1,5 +1,4 @@
 import factory
-from django.core import mail
 from django.urls import reverse
 
 from accounts.tests import UserFactory
@@ -200,10 +199,10 @@ class CreateSportRegistrationViewTests(BaseTestCase):
         self.assertRedirects(response, reverse(url, kwargs={'pk': sr_id}))
 
 
-class UpdateSportRegistrationViewTests(BaseTestCase):
+class SportRegistrationDetailViewTests(BaseTestCase):
     @classmethod
     def setUpClass(cls):
-        super(UpdateSportRegistrationViewTests, cls).setUpClass()
+        super(SportRegistrationDetailViewTests, cls).setUpClass()
         cls.ice_hockey = SportFactory(name='Ice Hockey')
         cls.baseball = SportFactory(name='Baseball')
         cls.league = LeagueFactory(full_name='Long Island Amateur Hockey League', sport=cls.ice_hockey)
@@ -213,34 +212,32 @@ class UpdateSportRegistrationViewTests(BaseTestCase):
     def setUp(self):
         self.email = 'user@example.com'
         self.password = 'myweakpassword'
-        self.post_data = None
         self.user = UserFactory(email=self.email, password=self.password)
         self.sr = SportRegistrationFactory(user=self.user, sport=self.ice_hockey, is_complete=True, roles_mask=15)
-        self.url = reverse('sportregistrations:update', kwargs={'pk': self.sr.pk})
-        self.sr_2 = SportRegistrationFactory(user=self.user, sport=self.baseball, is_complete=True, roles_mask=15)
+        self.url = reverse('sportregistrations:detail', kwargs={'pk': self.sr.pk})
 
-        self.coach_post_data = {'user': self.user, 'team': self.team, 'position': 'Head Coach'}
-        self.player_post_data = {'user': self.user, 'team': self.team, 'jersey_number': 23, 'handedness': 'Right',
-                                 'position': 'G', 'sport': self.ice_hockey}
-        self.referee_post_data = {'user': self.user, 'league': self.league}
-        self.manager_post_data = {'user': self.user, 'team': self.team}
+        self.coach_data = {'user': self.user, 'team': self.team, 'position': 'Head Coach'}
+        self.player_data = {'user': self.user, 'team': self.team, 'jersey_number': 23, 'handedness': 'Right',
+                            'position': 'G', 'sport': self.ice_hockey}
+        self.referee_data = {'user': self.user, 'league': self.league}
+        self.manager_data = {'user': self.user, 'team': self.team}
 
         self.player, self.coach, self.referee, self.manager = self.create_related_objects(
-                player_args=self.player_post_data,
-                coach_args=self.coach_post_data,
-                referee_args=self.referee_post_data,
-                manager_args=self.manager_post_data)
+                player_args=self.player_data,
+                coach_args=self.coach_data,
+                referee_args=self.referee_data,
+                manager_args=self.manager_data)
 
         self.client.login(email=self.email, password=self.password)
 
     # GET
-    def test_get_anonymous_user(self):
+    def test_anonymous_user(self):
         self.client.logout()
         response = self.client.get(self.url)
         result_url = '%s?next=%s' % (reverse('account_login'), self.url)
         self.assertRedirects(response, result_url)
 
-    def test_get_not_object_owner(self):
+    def test_not_object_owner(self):
         self.client.logout()
         other_user = UserFactory(email='otheruser@example.com', password=self.password)
         SportRegistrationFactory(user=other_user, sport=self.ice_hockey, is_complete=True)
@@ -248,117 +245,22 @@ class UpdateSportRegistrationViewTests(BaseTestCase):
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 404)
 
-    def test_renders_correct_template(self):
+    def test_get_request(self):
         response = self.client.get(self.url)
-        self.assertTemplateUsed(response, 'sports/sport_registration_update.html')
-
-    def test_200_status_code(self):
-        response = self.client.get(self.url)
+        self.assertTemplateUsed(response, 'sports/sport_registration_detail.html')
         self.assertEqual(response.status_code, 200)
 
-    def test_get_invalid_obj_id(self):
-        response = self.client.get(reverse('sportregistrations:update', kwargs={'pk': 1000}))
+    def test_invalid_obj_id(self):
+        response = self.client.get(reverse('sportregistrations:detail', kwargs={'pk': 1000}))
         self.assertEqual(response.status_code, 404)
 
-    def test_role_forms_instantiated(self):
+    def test_context_populated(self):
         response = self.client.get(self.url)
-        self.assertIsNotNone(response.context['player_form'])
-        self.assertIsNotNone(response.context['coach_form'])
-        self.assertIsNotNone(response.context['referee_form'])
-        self.assertIsNotNone(response.context['manager_form'])
-
-    def test_get_sport_not_configured(self):
-        sr = SportRegistrationFactory(user=self.user)
-        sr.set_roles(['Player'])
-        response = self.client.get(reverse('sportregistrations:update', kwargs={'pk': sr.pk}))
-        self.assertTemplateUsed(response, 'sport_not_configured_msg.html')
-        msg = "{sport} hasn't been configured correctly in our system. " \
-              "If you believe this is an error please contact us.".format(sport=sr.sport.name)
-        self.assertEqual(response.context['message'], msg)
-        self.assertEqual(len(mail.outbox), 1)
-
-    # POST
-    def test_post_anonymous_user(self):
-        self.client.logout()
-        response = self.client.post(self.url, data={}, follow=True)
-        result_url = '%s?next=%s' % (reverse('account_login'), self.url)
-        self.assertRedirects(response, result_url)
-
-    def test_post_not_object_owner(self):
-        self.client.logout()
-        other_user = UserFactory(email='otheruser@example.com', password=self.password)
-        SportRegistrationFactory(user=other_user, sport=self.ice_hockey, is_complete=True)
-        self.client.login(email=other_user.email, password=self.password)
-        response = self.client.post(self.url, data={}, follow=True)
-        self.assertEqual(response.status_code, 404)
-
-    def test_post_sport_not_configured(self):
-        sr = SportRegistrationFactory(user=self.user)
-        sr.set_roles(['Player'])
-        response = self.client.post(reverse('sportregistrations:update', kwargs={'pk': sr.pk}), data={},
-                                    follow=True)
-        self.assertTemplateUsed(response, 'sport_not_configured_msg.html')
-        msg = "{sport} hasn't been configured correctly in our system. " \
-              "If you believe this is an error please contact us.".format(sport=sr.sport.name)
-        self.assertEqual(response.context['message'], msg)
-        self.assertEqual(len(mail.outbox), 1)
-
-    def test_post_changed_forms(self):
-        del self.coach_post_data['user']
-        del self.player_post_data['user']
-        del self.referee_post_data['user']
-        del self.manager_post_data['user']
-
-        del self.player_post_data['jersey_number']
-        del self.coach_post_data['position']
-
-        self.coach_post_data['coach-team'] = self.coach_post_data.pop('team').id
-        self.coach_post_data['coach-position'] = 'Assistant Coach'
-        self.referee_post_data['referee-league'] = str(self.referee_post_data.pop('league').id)
-        self.manager_post_data['manager-team'] = str(self.manager_post_data.pop('team').id)
-
-        self.player_post_data['hockeyplayer-team'] = str(self.player_post_data.pop('team').id)
-        self.player_post_data['hockeyplayer-position'] = self.player_post_data.pop('position')
-        self.player_post_data['hockeyplayer-jersey_number'] = 55
-        self.player_post_data['hockeyplayer-handedness'] = self.player_post_data.pop('handedness')
-
-        post_data = {}
-        post_data.update(self.coach_post_data)
-        post_data.update(self.referee_post_data)
-        post_data.update(self.manager_post_data)
-        post_data.update(self.player_post_data)
-
-        response = self.client.post(self.url, data=post_data, follow=True)
-
-        self.assertRedirects(response, reverse('account_home'))
-        self.assertHasMessage(response, 'Sport registration for {sport} successfully updated.'
-                              .format(sport=self.ice_hockey.name))
-
-    def test_post_unchanged_forms(self):
-        del self.coach_post_data['user']
-        del self.player_post_data['user']
-        del self.referee_post_data['user']
-        del self.manager_post_data['user']
-
-        self.coach_post_data['coach-team'] = self.coach_post_data.pop('team').id
-        self.coach_post_data['coach-position'] = self.coach_post_data.pop('position')
-        self.referee_post_data['referee-league'] = self.referee_post_data.pop('league').id
-        self.manager_post_data['manager-team'] = self.manager_post_data.pop('team').id
-
-        self.player_post_data['hockeyplayer-team'] = self.player_post_data.pop('team').id
-        self.player_post_data['hockeyplayer-position'] = self.player_post_data.pop('position')
-        self.player_post_data['hockeyplayer-jersey_number'] = self.player_post_data.pop('jersey_number')
-        self.player_post_data['hockeyplayer-handedness'] = self.player_post_data.pop('handedness')
-
-        post_data = {}
-        post_data.update(self.coach_post_data)
-        post_data.update(self.referee_post_data)
-        post_data.update(self.manager_post_data)
-        post_data.update(self.player_post_data)
-
-        response = self.client.post(self.url, data=post_data, follow=True)
-
-        self.assertTemplateUsed(response, 'sports/sport_registration_update.html')
+        context = response.context
+        self.assertIsNotNone(context['sport_registration'])
+        self.assertIsNotNone(context['sport_name'])
+        self.assertIsNotNone(context['sr_roles'])
+        self.assertIsNotNone(context['related_objects'])
 
 
 class AddSportRegistrationRoleViewTests(BaseTestCase):

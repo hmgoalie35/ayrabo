@@ -1,3 +1,5 @@
+from collections import OrderedDict
+
 from django import forms
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -9,8 +11,6 @@ from django.views.generic.base import ContextMixin
 
 from coaches import forms as coach_forms
 from coaches.models import Coach
-from escoresheet.utils import handle_sport_not_configured
-from escoresheet.utils.exceptions import SportNotConfiguredException
 from escoresheet.utils.mixins import AccountAndSportRegistrationCompleteMixin
 from managers import forms as manager_forms
 from managers.models import Manager
@@ -18,9 +18,9 @@ from players import forms as player_forms
 from players.models import HockeyPlayer, BasketballPlayer, BaseballPlayer
 from referees import forms as referee_forms
 from referees.models import Referee
-from .forms import CreateSportRegistrationForm, SportRegistrationModelFormSet
-from .formset_helpers import CreateSportRegistrationFormSetHelper
-from .models import SportRegistration, Sport
+from sports.forms import CreateSportRegistrationForm, SportRegistrationModelFormSet
+from sports.formset_helpers import CreateSportRegistrationFormSetHelper
+from sports.models import SportRegistration, Sport
 
 SPORT_PLAYER_FORM_MAPPINGS = {
     'Ice Hockey': player_forms.HockeyPlayerForm,
@@ -98,109 +98,29 @@ class CreateSportRegistrationView(LoginRequiredMixin, ContextMixin, AccountAndSp
         return render(request, self.template_name, context)
 
 
-class UpdateSportRegistrationView(LoginRequiredMixin, ContextMixin, generic.View):
-    template_name = 'sports/sport_registration_update.html'
+class SportRegistrationDetailView(LoginRequiredMixin, ContextMixin, generic.View):
+    template_name = 'sports/sport_registration_detail.html'
 
     def get_context_data(self, **kwargs):
-        context = super(UpdateSportRegistrationView, self).get_context_data(**kwargs)
-        sr = get_object_or_404(SportRegistration.objects.select_related('sport'), pk=kwargs.get('pk', None))
+        context = super().get_context_data(**kwargs)
+        sr = get_object_or_404(SportRegistration.objects.select_related('sport'), pk=self.kwargs.get('pk', None))
         if sr.user_id != self.request.user.id:
             raise Http404
+
         sport_name = sr.sport.name
-        context['sport_name'] = sport_name
+        sr_roles = sorted(sr.roles)
+        related_objects = OrderedDict(sorted(sr.get_related_role_objects().items(), key=lambda t: t[0]))
+
+        context['available_roles'] = sorted(set(SportRegistration.ROLES) - set(sr_roles))
         context['sport_registration'] = sr
-        related_objects = sr.get_related_role_objects()
-        context['remaining_roles'] = sorted(set(SportRegistration.ROLES) - set(sr.roles))
-        # Used to disable remove role links
-        context['has_one_role'] = len(sr.roles) == 1
-        context['player_read_only_fields'] = ['team']
-        context['coach_read_only_fields'] = ['team']
-        context['manager_read_only_fields'] = ['team']
-        context['referee_read_only_fields'] = ['league']
-        for role, objs in related_objects.items():
-            if role == 'Player':
-                form_cls = SPORT_PLAYER_FORM_MAPPINGS.get(sport_name)
-                if form_cls is None:
-                    raise SportNotConfiguredException(sport_name)
-                context['player_form'] = form_cls(self.request.POST or None, instance=objs.first(),
-                                                  read_only_fields=context.get('player_read_only_fields'))
-            elif role == 'Coach':
-                context['coach_form'] = coach_forms.CoachForm(self.request.POST or None, instance=objs.first(),
-                                                              read_only_fields=context.get('coach_read_only_fields'))
-            elif role == 'Manager':
-                context['manager_form'] = manager_forms.ManagerForm(self.request.POST or None, instance=objs.first(),
-                                                                    read_only_fields=context.get(
-                                                                            'manager_read_only_fields'))
-            elif role == 'Referee':
-                context['referee_form'] = referee_forms.RefereeForm(self.request.POST or None, instance=objs.first(),
-                                                                    read_only_fields=context.get(
-                                                                            'referee_read_only_fields'))
+        context['sr_roles'] = sr_roles
+        context['related_objects'] = related_objects
+        context['sport_name'] = sport_name
         return context
 
     def get(self, request, *args, **kwargs):
-        try:
-            context = self.get_context_data(**kwargs)
-        except SportNotConfiguredException as e:
-            return handle_sport_not_configured(self.request, self, e)
-
+        context = self.get_context_data(**kwargs)
         return render(request, self.template_name, context)
-
-    def post(self, request, *args, **kwargs):
-        try:
-            context = self.get_context_data(**kwargs)
-        except SportNotConfiguredException as e:
-            return handle_sport_not_configured(self.request, self, e)
-
-        # Forms that were submitted are added to this list. Only check the forms in this list for validity
-        forms_that_were_submitted = []
-        # If a form was submitted and is_valid is True, the corresponding value will be set to True
-        is_form_valid = {}
-
-        coach_form = context.get('coach_form', None)
-        player_form = context.get('player_form', None)
-        manager_form = context.get('manager_form', None)
-        referee_form = context.get('referee_form', None)
-
-        if coach_form is not None and coach_form.has_changed() and coach_form.changed_data != context.get(
-                'coach_read_only_fields', []):
-            forms_that_were_submitted.append(coach_form)
-            is_form_valid[coach_form] = coach_form.is_valid()
-
-        if manager_form is not None and manager_form.has_changed() and manager_form.changed_data != context.get(
-                'manager_read_only_fields', []):
-            forms_that_were_submitted.append(manager_form)
-            is_form_valid[manager_form] = manager_form.is_valid()
-
-        if referee_form is not None and referee_form.has_changed() and referee_form.changed_data != context.get(
-                'referee_read_only_fields', []):
-            forms_that_were_submitted.append(referee_form)
-            is_form_valid[referee_form] = referee_form.is_valid()
-
-        if player_form is not None and player_form.has_changed() and player_form.changed_data != context.get(
-                'player_read_only_fields', []):
-            forms_that_were_submitted.append(player_form)
-            is_form_valid[player_form] = False
-            if player_form.is_valid():
-                is_form_valid[player_form] = True
-
-        if len(forms_that_were_submitted) == 0:
-            return render(request, self.template_name, context)
-
-        # Check to see if all of the forms that were submitted are valid.
-        # If there is a non valid form that was submitted, redisplay the form with errors
-        for submitted_form in forms_that_were_submitted:
-            if not is_form_valid[submitted_form]:
-                return render(request, self.template_name, context)
-
-        # Need to make sure all submitted forms were valid before saving them, otherwise will have a bug where
-        # submitting a valid form for coach will create the object but any other invalid form will throw an error. When
-        # the user tries to resubmit the forms then will have integrity error because coach object was already created
-        for form, is_valid in is_form_valid.items():
-            if is_valid:
-                form.save()
-        messages.success(request, 'Sport registration for {sport} successfully updated.'.format(
-                sport=context['sport_registration'].sport.name))
-        return redirect(reverse('account_home'))
 
 
 class AddSportRegistrationRoleView(LoginRequiredMixin, ContextMixin, generic.View):

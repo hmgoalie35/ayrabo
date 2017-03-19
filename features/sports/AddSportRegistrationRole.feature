@@ -20,7 +20,8 @@ Feature: Add roles to a sport registration
       | username_or_email | team                  | position   |
       | user@example.com  | Green Machine IceCats | Head Coach |
     And I am on the absolute url page for "sports.SportRegistration" and "user__email=user@example.com, sport__name=Ice Hockey"
-    When I press "add_player_role_link"
+    When I press "Available Roles"
+    And I press "add_player_role_link"
     Then I should be on the "sports.SportRegistration" "user__email=user@example.com, sport__name=Ice Hockey" "sportregistrations:add_role" page with url kwargs "pk=pk, role=player"
 
   Scenario: Navigate to add coach role page
@@ -32,7 +33,8 @@ Feature: Add roles to a sport registration
       | username_or_email | sport      | team                  | jersey_number | position | handedness |
       | user@example.com  | Ice Hockey | Green Machine IceCats | 35            | G        | Left       |
     And I am on the absolute url page for "sports.SportRegistration" and "user__email=user@example.com, sport__name=Ice Hockey"
-    When I press "add_coach_role_link"
+    When I press "Available Roles"
+    And I press "add_coach_role_link"
     Then I should be on the "sports.SportRegistration" "user__email=user@example.com, sport__name=Ice Hockey" "sportregistrations:add_role" page with url kwargs "pk=pk, role=coach"
 
   Scenario: Navigate to add referee role page
@@ -47,7 +49,8 @@ Feature: Add roles to a sport registration
       | username_or_email | team                  |
       | user@example.com  | Green Machine IceCats |
     And I am on the absolute url page for "sports.SportRegistration" and "user__email=user@example.com, sport__name=Ice Hockey"
-    When I press "add_referee_role_link"
+    When I press "Available Roles"
+    And I press "add_referee_role_link"
     Then I should be on the "sports.SportRegistration" "user__email=user@example.com, sport__name=Ice Hockey" "sportregistrations:add_role" page with url kwargs "pk=pk, role=referee"
 
   Scenario: Navigate to add manager role page
@@ -56,7 +59,8 @@ Feature: Add roles to a sport registration
       | username_or_email | sport      | team                  | jersey_number | position | handedness |
       | user@example.com  | Ice Hockey | Green Machine IceCats | 35            | G        | Left       |
     And I am on the absolute url page for "sports.SportRegistration" and "user__email=user@example.com, sport__name=Ice Hockey"
-    When I press "add_manager_role_link"
+    When I press "Available Roles"
+    And I press "add_manager_role_link"
     Then I should be on the "sports.SportRegistration" "user__email=user@example.com, sport__name=Ice Hockey" "sportregistrations:add_role" page with url kwargs "pk=pk, role=manager"
 
   Scenario: Add player role, object dne

@@ -44,6 +44,8 @@ class BaseCreateRelatedObjectsView(LoginRequiredMixin, ContextMixin, AccountAndS
 
         sport_name = sr.sport.name
 
+        # TODO on POST if sr doesn't have the role, add it.
+
         form_cls = self.get_form_class(sport_name)
         model_cls = self.get_model_class(sport_name)
         formset_cls = self.get_formset_class(sport_name)

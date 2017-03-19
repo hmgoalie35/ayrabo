@@ -1,0 +1,20 @@
+<div class="table-responsive">
+    <table class="table">
+        <thead>
+        <tr>
+            <th></th>
+            <th>Team</th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for obj in related_objs %}
+            <tr>
+                <td></td>
+                <td class="text-left">{{ obj.team.name }} - {{ obj.team.division }}</td>
+                <td><a href="#"><span class="fa fa-pencil"></span></a></td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
