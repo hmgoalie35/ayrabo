@@ -23,3 +23,8 @@ def pluralize_roles(role, count=None):
         return SINGULAR_PLURAL_MAPPINGS.get(role)
     else:
         return role if count == 1 else SINGULAR_PLURAL_MAPPINGS.get(role)
+
+
+@register.filter
+def get(dictionary, key):
+    return dictionary.get(key)

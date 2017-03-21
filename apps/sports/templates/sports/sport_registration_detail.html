@@ -1,5 +1,5 @@
 {% extends 'site_base.html' %}
-{% load crispy_forms_tags static pluralize_roles %}
+{% load crispy_forms_tags static ess_utils %}
 
 {% block title %}Manage Your {{ sport_name }} Registration{% endblock %}
 
@@ -45,6 +45,13 @@
                                             You are a {{ role|lower }} for {{ count }} {% if role == 'Referee' %}league{% else %}team{% endif %}{{ count|pluralize }}
                                         {% endwith %}
                                     </div>
+
+                                    <div class="panel-body">
+                                        <div class="pull-right">
+                                            <a class="btn btn-sm btn-default" href="{{ role_url_mapping|get:role }}">New {{ role|lower }}</a>
+                                        </div>
+                                    </div>
+
                                     {% if role == 'Player' %}
                                         {% include 'players/_players.html' %}
                                     {% elif role == 'Coach' %}
@@ -82,7 +89,7 @@
                                             <tr>
                                                 <td></td>
                                                 <td class="text-left">{{ role }}</td>
-                                                <td class="text-left"><a href="{% url 'sportregistrations:add_role' sport_registration.pk role|lower %}" id="add_{{ role|lower }}_role_link">Register</a></td>
+                                                <td class="text-left"><a href="{{ role_url_mapping|get:role }}" id="add_{{ role|lower }}_role_link">Register</a></td>
                                             </tr>
                                         {% endfor %}
                                         </tbody>

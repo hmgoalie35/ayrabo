@@ -26,7 +26,7 @@ Feature: Sport registration detail
     And I login with "user@example.com" and "myweakpassword"
 
   Scenario: Informative text displayed to user
-    Given I am on the absolute url page for "sports.SportRegistration" and "user@example.com Ice Hockey"
+    Given I am on the absolute url page for "sports.SportRegistration" and "user__email=user@example.com, sport__name=Ice Hockey"
     Then I should see "Manage Your Ice Hockey Registration"
     And I should see "Choose a tab below to view and manage your roles."
     And I should see "Available Roles"

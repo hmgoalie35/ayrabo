@@ -1,6 +1,7 @@
 from django.urls import reverse
 
 from accounts.tests import UserFactory
+from coaches.tests import CoachFactory
 from divisions.tests import DivisionFactory
 from escoresheet.utils.testing_utils import BaseTestCase
 from leagues.tests import LeagueFactory
@@ -180,3 +181,37 @@ class CreateRefereesViewTests(BaseTestCase):
         response = self.client.post(self._format_url('referees', pk=self.sr_2.id), data=self.post_data, follow=True)
 
         self.assertRedirects(response, reverse('home'))
+
+    def test_post_add_referee_role_valid_form(self):
+        self.sr.set_roles(['Coach'])
+        self.sr.is_complete = True
+        self.sr.save()
+        CoachFactory(user=self.user)
+        self.sr_2.is_complete = True
+        self.sr_2.save()
+        form_data = {
+            'referees-0-league': self.league.id
+        }
+        self.post_data.update(form_data)
+        self.client.post(self._format_url('referees', pk=self.sr.id), data=self.post_data, follow=True)
+        referee = Referee.objects.filter(user=self.user, league=self.league)
+        self.assertTrue(referee.exists())
+        self.sr.refresh_from_db()
+        self.assertTrue(self.sr.has_role('Referee'))
+
+    def test_post_add_referee_role_invalid_form(self):
+        self.sr.set_roles(['Coach'])
+        self.sr.is_complete = True
+        self.sr.save()
+        CoachFactory(user=self.user)
+        self.sr_2.is_complete = True
+        self.sr_2.save()
+        form_data = {
+            'referees-0-league': -1
+        }
+        self.post_data.update(form_data)
+        self.client.post(self._format_url('referees', pk=self.sr.id), data=self.post_data, follow=True)
+        referee = Referee.objects.filter(user=self.user, league=self.league)
+        self.assertFalse(referee.exists())
+        self.sr.refresh_from_db()
+        self.assertFalse(self.sr.has_role('Referee'))

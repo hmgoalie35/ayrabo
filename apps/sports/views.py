@@ -9,15 +9,9 @@ from django.urls import reverse
 from django.views import generic
 from django.views.generic.base import ContextMixin
 
-from coaches import forms as coach_forms
-from coaches.models import Coach
 from escoresheet.utils.mixins import AccountAndSportRegistrationCompleteMixin
-from managers import forms as manager_forms
-from managers.models import Manager
 from players import forms as player_forms
 from players.models import HockeyPlayer, BasketballPlayer, BaseballPlayer
-from referees import forms as referee_forms
-from referees.models import Referee
 from sports.forms import CreateSportRegistrationForm, SportRegistrationModelFormSet
 from sports.formset_helpers import CreateSportRegistrationFormSetHelper
 from sports.models import SportRegistration, Sport
@@ -101,6 +95,19 @@ class CreateSportRegistrationView(LoginRequiredMixin, ContextMixin, AccountAndSp
 class SportRegistrationDetailView(LoginRequiredMixin, ContextMixin, generic.View):
     template_name = 'sports/sport_registration_detail.html'
 
+    def _get_namespace_for_role(self, role):
+        mappings = {
+            'Player': 'players',
+            'Coach': 'coaches',
+            'Referee': 'referees',
+            'Manager': 'managers'
+        }
+        return mappings.get(role, None)
+
+    def _get_url_for_role(self, role, **kwargs):
+        namespace = self._get_namespace_for_role(role)
+        return reverse('sportregistrations:{}:create'.format(namespace), kwargs=kwargs)
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         sr = get_object_or_404(SportRegistration.objects.select_related('sport'), pk=self.kwargs.get('pk', None))
@@ -110,97 +117,17 @@ class SportRegistrationDetailView(LoginRequiredMixin, ContextMixin, generic.View
         sport_name = sr.sport.name
         sr_roles = sorted(sr.roles)
         related_objects = OrderedDict(sorted(sr.get_related_role_objects().items(), key=lambda t: t[0]))
-
         context['available_roles'] = sorted(set(SportRegistration.ROLES) - set(sr_roles))
         context['sport_registration'] = sr
         context['sr_roles'] = sr_roles
         context['related_objects'] = related_objects
         context['sport_name'] = sport_name
+        role_url_mapping = {}
+        for role in SportRegistration.ROLES:
+            role_url_mapping[role] = self._get_url_for_role(role, pk=sr.pk)
+        context['role_url_mapping'] = role_url_mapping
         return context
 
     def get(self, request, *args, **kwargs):
         context = self.get_context_data(**kwargs)
-        return render(request, self.template_name, context)
-
-
-class AddSportRegistrationRoleView(LoginRequiredMixin, ContextMixin, generic.View):
-    template_name = 'sports/sport_registration_add_role.html'
-    success_message = '{role} role successfully added to {sport}.'
-
-    def get_context_data(self, **kwargs):
-        context = super(AddSportRegistrationRoleView, self).get_context_data(**kwargs)
-        sr = get_object_or_404(SportRegistration.objects.select_related('sport'), pk=kwargs.get('pk', None))
-        if sr.user_id != self.request.user.id:
-            raise Http404
-        form_class = None
-        role = kwargs.get('role', None)
-        sport = sr.sport
-        # This variable is used to determine if a coach, referee, etc. object has already been created for this
-        # user and sport this is possible because a user can unregister for a role and then re-register for
-        # that role again.
-        related_role_object = None
-        if role == 'player':
-            form_class = SPORT_PLAYER_FORM_MAPPINGS[sport.name]
-            model_class = SPORT_PLAYER_MODEL_MAPPINGS.get(sport.name)
-            related_role_object = model_class.objects.filter(user=self.request.user, sport=sport).first()
-        elif role == 'coach':
-            form_class = coach_forms.CoachForm
-            related_role_object = Coach.objects.filter(user=self.request.user,
-                                                       team__division__league__sport=sport).first()
-        elif role == 'referee':
-            form_class = referee_forms.RefereeForm
-            related_role_object = Referee.objects.filter(user=self.request.user, league__sport=sport).first()
-        elif role == 'manager':
-            form_class = manager_forms.ManagerForm
-            related_role_object = Manager.objects.filter(user=self.request.user,
-                                                         team__division__league__sport=sport).first()
-
-        # Show the user the object they had previously created for the given sport.
-        form_kwargs = {}
-        if related_role_object:
-            form_kwargs['instance'] = related_role_object
-            form_kwargs['read_only_fields'] = ['__all__']
-
-        form = form_class(self.request.POST or None, sport=sport, **form_kwargs)
-
-        context['related_role_object'] = related_role_object
-        context['form'] = form
-        context['role'] = role
-        context['sport_registration'] = sr
-        return context
-
-    def get(self, request, *args, **kwargs):
-        context = self.get_context_data(**kwargs)
-        sr = context.get('sport_registration')
-        role = context.get('role')
-        if sr.has_role(role):
-            messages.info(request, 'You are already registered as a {role}.'.format(role=role))
-            return redirect(sr.get_absolute_url())
-        return render(request, self.template_name, context)
-
-    def post(self, request, *args, **kwargs):
-        context = self.get_context_data(**kwargs)
-        form = context.get('form', None)
-        role = context.get('role', None)
-        sr = context.get('sport_registration', None)
-        if sr.has_role(role):
-            messages.info(request, 'You are already registered as a {role}.'.format(role=role))
-            return redirect(sr.get_absolute_url())
-        form.instance.user = request.user
-        form.instance.sport_id = sr.sport_id
-
-        # NOTE player, coach, etc. objects check to make sure the sport registration has the specified role in
-        # the .clean method, so set the role before saving the object so this check is valid
-        sr.set_roles([role.title()], append=True)
-
-        if context.get('related_role_object', None) is not None:
-            messages.success(request, self.success_message.format(role=role.title(), sport=sr.sport))
-            return redirect(sr.get_absolute_url())
-
-        if form.is_valid():
-            form.save()
-            messages.success(request, self.success_message.format(role=role.title(), sport=sr.sport))
-            return redirect(sr.get_absolute_url())
-        # Remove the role that was added if the form wasn't valid.
-        sr.remove_role(role)
         return render(request, self.template_name, context)

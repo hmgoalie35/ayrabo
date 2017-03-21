@@ -9,6 +9,7 @@ from escoresheet.utils.testing_utils import BaseTestCase
 from leagues.tests import LeagueFactory
 from sports.tests import SportFactory, SportRegistrationFactory
 from teams.tests import TeamFactory
+from referees.tests import RefereeFactory
 
 
 class CreateCoachesViewTests(BaseTestCase):
@@ -203,3 +204,39 @@ class CreateCoachesViewTests(BaseTestCase):
         response = self.client.post(self._format_url('coaches', pk=self.sr_2.id), data=self.post_data, follow=True)
 
         self.assertRedirects(response, reverse('home'))
+
+    def test_post_add_coach_role_valid_form(self):
+        self.sr.set_roles(['Referee'])
+        self.sr.is_complete = True
+        self.sr.save()
+        RefereeFactory(user=self.user, league=self.league)
+        self.sr_2.is_complete = True
+        self.sr_2.save()
+        form_data = {
+            'coaches-0-team': self.team.id,
+            'coaches-0-position': 'Head Coach',
+        }
+        self.post_data.update(form_data)
+        self.client.post(self._format_url('coaches', pk=self.sr.id), data=self.post_data, follow=True)
+        coach = Coach.objects.filter(user=self.user, team=self.team)
+        self.assertTrue(coach.exists())
+        self.sr.refresh_from_db()
+        self.assertTrue(self.sr.has_role('Coach'))
+
+    def test_post_add_coach_role_invalid_form(self):
+        self.sr.set_roles(['Referee'])
+        self.sr.is_complete = True
+        self.sr.save()
+        RefereeFactory(user=self.user, league=self.league)
+        self.sr_2.is_complete = True
+        self.sr_2.save()
+        form_data = {
+            'coaches-0-team': self.team.id,
+            'coaches-0-position': '',
+        }
+        self.post_data.update(form_data)
+        self.client.post(self._format_url('coaches', pk=self.sr.id), data=self.post_data, follow=True)
+        coach = Coach.objects.filter(user=self.user, team=self.team)
+        self.assertFalse(coach.exists())
+        self.sr.refresh_from_db()
+        self.assertFalse(self.sr.has_role('Coach'))

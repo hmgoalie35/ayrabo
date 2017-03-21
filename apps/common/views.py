@@ -43,9 +43,6 @@ class BaseCreateRelatedObjectsView(LoginRequiredMixin, ContextMixin, AccountAndS
             raise Http404
 
         sport_name = sr.sport.name
-
-        # TODO on POST if sr doesn't have the role, add it.
-
         form_cls = self.get_form_class(sport_name)
         model_cls = self.get_model_class(sport_name)
         formset_cls = self.get_formset_class(sport_name)
@@ -81,6 +78,10 @@ class BaseCreateRelatedObjectsView(LoginRequiredMixin, ContextMixin, AccountAndS
 
         formset = context.get('formset')
         sport_registration = context.get('sport_registration')
+        role = context.get('role')
+        if role is not None and role not in sport_registration.roles:
+            sport_registration.set_roles([role], append=True)
+            self.request.session['was_role_added'] = True
         user = self.request.user
         for form in formset:
             form.instance.user = user
@@ -88,6 +89,7 @@ class BaseCreateRelatedObjectsView(LoginRequiredMixin, ContextMixin, AccountAndS
                 form.instance.sport = sport_registration.sport
         if formset.is_valid():
             formset.save()
+            self.request.session.pop('was_role_added', None)
             next_role = sport_registration.get_next_namespace_for_registration()
             if next_role is None:
                 # No remaining roles need to be filled out for this sport registration, mark as complete.
@@ -105,4 +107,6 @@ class BaseCreateRelatedObjectsView(LoginRequiredMixin, ContextMixin, AccountAndS
             else:
                 url = 'sportregistrations:{role}:create'.format(role=next_role)
                 return redirect(reverse(url, kwargs={'pk': sport_registration.id}))
+        if self.request.session.pop('was_role_added', False):
+            sport_registration.remove_role(role)
         return render(self.request, self.get_template_name(), context)

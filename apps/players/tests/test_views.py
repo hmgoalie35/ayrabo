@@ -10,6 +10,7 @@ from players.formset_helpers import HockeyPlayerFormSetHelper
 from players.models import HockeyPlayer
 from sports.tests import SportFactory, SportRegistrationFactory
 from teams.tests import TeamFactory
+from referees.tests import RefereeFactory
 
 
 class CreatePlayersViewTests(BaseTestCase):
@@ -261,3 +262,43 @@ class CreatePlayersViewTests(BaseTestCase):
         response = self.client.post(self._format_url('players', pk=self.sr_2.id), data=self.post_data, follow=True)
 
         self.assertRedirects(response, reverse('home'))
+
+    def test_post_add_player_role_valid_form(self):
+        self.sr.set_roles(['Referee'])
+        self.sr.is_complete = True
+        self.sr.save()
+        RefereeFactory(user=self.user, league=self.league)
+        self.sr_2.is_complete = True
+        self.sr_2.save()
+        form_data = {
+            'players-0-team': self.team.id,
+            'players-0-jersey_number': 33,
+            'players-0-position': 'G',
+            'players-0-handedness': 'Left'
+        }
+        self.post_data.update(form_data)
+        self.client.post(self._format_url('players', pk=self.sr.id), data=self.post_data, follow=True)
+        player = HockeyPlayer.objects.filter(user=self.user, team=self.team)
+        self.assertTrue(player.exists())
+        self.sr.refresh_from_db()
+        self.assertTrue(self.sr.has_role('Player'))
+
+    def test_post_add_player_role_invalid_form(self):
+        self.sr.set_roles(['Referee'])
+        self.sr.is_complete = True
+        self.sr.save()
+        RefereeFactory(user=self.user, league=self.league)
+        self.sr_2.is_complete = True
+        self.sr_2.save()
+        form_data = {
+            'players-0-team': -1,
+            'players-0-jersey_number': 33,
+            'players-0-position': 'G',
+            'players-0-handedness': 'Left'
+        }
+        self.post_data.update(form_data)
+        self.client.post(self._format_url('players', pk=self.sr.id), data=self.post_data, follow=True)
+        player = HockeyPlayer.objects.filter(user=self.user, team=self.team)
+        self.assertFalse(player.exists())
+        self.sr.refresh_from_db()
+        self.assertFalse(self.sr.has_role('Player'))
