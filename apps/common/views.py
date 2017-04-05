@@ -1,4 +1,5 @@
 from django import forms
+from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render, get_object_or_404, Http404, redirect
 from django.urls import reverse
@@ -8,12 +9,16 @@ from django.views.generic.base import ContextMixin
 from escoresheet.utils import handle_sport_not_configured
 from escoresheet.utils.exceptions import SportNotConfiguredException
 from escoresheet.utils.mixins import AccountAndSportRegistrationCompleteMixin
+from leagues.models import League
 from players.models import AbstractPlayer
 from sports.models import SportRegistration
+from teams.models import Team
 
 
 class BaseCreateRelatedObjectsView(LoginRequiredMixin, ContextMixin, AccountAndSportRegistrationCompleteMixin,
                                    generic.View):
+    already_registered_msg = 'You have already registered for all available {}.'
+
     def get_template_name(self):
         raise NotImplementedError()
 
@@ -50,16 +55,37 @@ class BaseCreateRelatedObjectsView(LoginRequiredMixin, ContextMixin, AccountAndS
         if form_cls is None or model_cls is None or formset_helper_cls is None:
             raise SportNotConfiguredException(sport_name)
 
+        role = self.get_role()
+
         FormSet = forms.modelformset_factory(model_cls, form=form_cls, formset=formset_cls, extra=0,
                                              min_num=1, max_num=10, validate_min=True, validate_max=True,
                                              can_delete=False)
-        context['formset'] = FormSet(self.request.POST or None, queryset=model_cls.objects.none(),
+        filter_kwargs = {'user': self.request.user}
+        if role == 'Referee':
+            field = 'league'
+            count = League.objects.filter(sport=sr.sport).count()
+            filter_kwargs['league__sport'] = sr.sport
+        else:
+            field = 'team'
+            count = Team.objects.filter(division__league__sport=sr.sport).count()
+            if role == 'Player':
+                filter_kwargs['sport'] = sr.sport
+            else:
+                filter_kwargs['team__division__league__sport'] = sr.sport
+        already_registered_for = model_cls.objects.filter(**filter_kwargs).only(field).values_list(field, flat=True)
+        context['user_registered_for_all'] = already_registered_for.count() == count
+        context['formset'] = FormSet(self.request.POST or None,
+                                     queryset=model_cls.objects.none(),
                                      prefix=self.get_formset_prefix(),
-                                     form_kwargs={'sport': sr.sport})
+                                     form_kwargs={'sport': sr.sport,
+                                                  'user': self.request.user,
+                                                  'already_registered_for': already_registered_for
+                                                  }
+                                     )
         context['helper'] = formset_helper_cls
         context['sport_name'] = sport_name
         context['sport_registration'] = sr
-        context['role'] = self.get_role()
+        context['role'] = role
         return context
 
     def get(self, *args, **kwargs):
@@ -67,6 +93,11 @@ class BaseCreateRelatedObjectsView(LoginRequiredMixin, ContextMixin, AccountAndS
             context = self.get_context_data(**kwargs)
         except SportNotConfiguredException as e:
             return handle_sport_not_configured(self.request, self, e)
+        if context.get('user_registered_for_all', False):
+            role = self.get_role()
+            sr = context.get('sport_registration')
+            messages.info(self.request, self.already_registered_msg.format('leagues' if role == 'Referee' else 'teams'))
+            return redirect(sr.get_absolute_url())
 
         return render(self.request, self.get_template_name(), context)
 
@@ -76,15 +107,19 @@ class BaseCreateRelatedObjectsView(LoginRequiredMixin, ContextMixin, AccountAndS
         except SportNotConfiguredException as e:
             return handle_sport_not_configured(self.request, self, e)
 
+        if context.get('user_registered_for_all', False):
+            role = self.get_role()
+            sr = context.get('sport_registration')
+            messages.info(self.request, self.already_registered_msg.format('leagues' if role == 'Referee' else 'teams'))
+            return redirect(sr.get_absolute_url())
+
         formset = context.get('formset')
         sport_registration = context.get('sport_registration')
         role = context.get('role')
         if role is not None and role not in sport_registration.roles:
             sport_registration.set_roles([role], append=True)
             self.request.session['was_role_added'] = True
-        user = self.request.user
         for form in formset:
-            form.instance.user = user
             if isinstance(form.instance, AbstractPlayer):
                 form.instance.sport = sport_registration.sport
         if formset.is_valid():

@@ -4,6 +4,8 @@ from escoresheet.utils.testing_utils import BaseTestCase
 from leagues.tests import LeagueFactory
 from sports.tests import SportFactory
 from teams.tests import TeamFactory
+from coaches.tests import CoachFactory
+from accounts.tests import UserFactory
 
 
 class CoachFormTests(BaseTestCase):
@@ -33,3 +35,14 @@ class CoachFormTests(BaseTestCase):
     def test_sets_fields_disabled(self):
         form = self.form_cls(read_only_fields=['position'])
         self.assertTrue(form.fields['position'].disabled)
+
+    def test_teams_already_registered_for(self):
+        """
+        Teams already registered for should be excluded
+        """
+        user = UserFactory()
+        teams = TeamFactory.create_batch(5)
+        CoachFactory(user=user, team=teams[0])
+        form = self.form_cls(already_registered_for=[teams[0].id])
+        team_field = form.fields['team']
+        self.assertNotIn(teams[0], team_field.queryset)

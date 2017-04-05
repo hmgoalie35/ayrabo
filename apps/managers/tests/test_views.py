@@ -97,11 +97,16 @@ class CreateManagersViewTests(BaseTestCase):
         self.division = DivisionFactory(name='Midget Minor AA', league=self.league)
         self.team = TeamFactory(name='Green Machine IceCats', division=self.division)
 
+        self.baseball_league = LeagueFactory(full_name='Major League Baseball', sport=self.baseball)
+        self.baseball_division = DivisionFactory(name='American League East', league=self.baseball_league)
+        self.baseball_team = TeamFactory(name='New York Yankees', division=self.baseball_division)
+
         self.sr = SportRegistrationFactory(user=self.user, sport=self.ice_hockey, is_complete=False)
         self.sr_2 = SportRegistrationFactory(user=self.user, sport=self.baseball, is_complete=False)
         self.sr.set_roles(['Manager'])
         self.client.login(email=self.email, password=self.password)
 
+    # GET
     def test_get_template_name(self):
         response = self.client.get(self._format_url('managers', pk=self.sr.id))
         self.assertEqual(response.status_code, 200)
@@ -129,6 +134,18 @@ class CreateManagersViewTests(BaseTestCase):
         response = self.client.get(self._format_url('managers', pk=self.sr.id))
         self.assertEqual(response.context['role'], 'Manager')
 
+    def test_get_registered_for_all(self):
+        self.sr.set_roles(['Manager'])
+        self.sr.is_complete = True
+        self.sr.save()
+        ManagerFactory(user=self.user, team=self.team)
+        self.sr_2.is_complete = True
+        self.sr_2.save()
+        response = self.client.get(self._format_url('managers', pk=self.sr.id), follow=True)
+        self.assertHasMessage(response, 'You have already registered for all available teams.')
+        self.assertRedirects(response, self.sr.get_absolute_url())
+
+    # POST
     def test_post_two_forms_same_team(self):
         form_data = {
             'managers-0-team': self.team.id,
@@ -140,6 +157,24 @@ class CreateManagersViewTests(BaseTestCase):
         self.assertFormsetError(response, 'formset', 1, 'team',
                                 '{} has already been selected. Please choose another team or remove this form.'.format(
                                         self.team.name))
+
+    def test_post_already_registered_for_team(self):
+        self.sr.set_roles(['Manager'])
+        TeamFactory(name='My Team', division=self.division)
+        ManagerFactory(user=self.user, team=self.team)
+        self.sr.is_complete = True
+        self.sr.save()
+        ManagerFactory(user=self.user, team=self.baseball_team)
+        self.sr_2.is_complete = True
+        self.sr_2.save()
+        form_data = {
+            'managers-0-team': self.team.id,
+            'managers-0-position': 'Head Coach',
+        }
+        self.post_data.update(form_data)
+        response = self.client.post(self._format_url('managers', pk=self.sr.id), data=self.post_data, follow=True)
+        self.assertFormsetError(response, 'formset', 0, 'team',
+                                'Select a valid choice. That choice is not one of the available choices.')
 
     def test_post_one_valid_form(self):
         form_data = {
@@ -280,3 +315,14 @@ class CreateManagersViewTests(BaseTestCase):
         self.assertFalse(manager.exists())
         self.sr.refresh_from_db()
         self.assertFalse(self.sr.has_role('Manager'))
+
+    def test_post_registered_for_all(self):
+        self.sr.set_roles(['Manager'])
+        self.sr.is_complete = True
+        self.sr.save()
+        ManagerFactory(user=self.user, team=self.team)
+        self.sr_2.is_complete = True
+        self.sr_2.save()
+        response = self.client.post(self._format_url('managers', pk=self.sr.id), data={}, follow=True)
+        self.assertHasMessage(response, 'You have already registered for all available teams.')
+        self.assertRedirects(response, self.sr.get_absolute_url())

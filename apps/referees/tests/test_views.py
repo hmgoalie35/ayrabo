@@ -8,7 +8,9 @@ from leagues.tests import LeagueFactory
 from referees.forms import RefereeForm
 from referees.formset_helpers import RefereeFormSetHelper
 from referees.models import Referee
+from referees.tests import RefereeFactory
 from sports.tests import SportFactory, SportRegistrationFactory
+from teams.tests import TeamFactory
 
 
 class CreateRefereesViewTests(BaseTestCase):
@@ -38,11 +40,16 @@ class CreateRefereesViewTests(BaseTestCase):
         self.league = LeagueFactory(full_name='Long Island Amateur Hockey League', sport=self.ice_hockey)
         self.division = DivisionFactory(name='Midget Minor AA', league=self.league)
 
+        self.baseball_league = LeagueFactory(full_name='Major League Baseball', sport=self.baseball)
+        self.baseball_division = DivisionFactory(name='American League East', league=self.baseball_league)
+        self.baseball_team = TeamFactory(name='New York Yankees', division=self.baseball_division)
+
         self.sr = SportRegistrationFactory(user=self.user, sport=self.ice_hockey, is_complete=False)
         self.sr_2 = SportRegistrationFactory(user=self.user, sport=self.baseball, is_complete=False)
         self.sr.set_roles(['Referee'])
         self.client.login(email=self.email, password=self.password)
 
+    # GET
     def test_get_template_name(self):
         response = self.client.get(self._format_url('referees', pk=self.sr.id))
         self.assertEqual(response.status_code, 200)
@@ -70,6 +77,18 @@ class CreateRefereesViewTests(BaseTestCase):
         response = self.client.get(self._format_url('referees', pk=self.sr.id))
         self.assertEqual(response.context['role'], 'Referee')
 
+    def test_get_registered_for_all(self):
+        self.sr.set_roles(['Referee'])
+        self.sr.is_complete = True
+        self.sr.save()
+        RefereeFactory(user=self.user, league=self.league)
+        self.sr_2.is_complete = True
+        self.sr_2.save()
+        response = self.client.get(self._format_url('referees', pk=self.sr.id), follow=True)
+        self.assertHasMessage(response, 'You have already registered for all available leagues.')
+        self.assertRedirects(response, self.sr.get_absolute_url())
+
+    # POST
     def test_post_two_forms_same_league(self):
         form_data = {
             'referees-0-league': self.league.id,
@@ -81,6 +100,23 @@ class CreateRefereesViewTests(BaseTestCase):
         self.assertFormsetError(response, 'formset', 1, 'league', '{} has already been selected. '
                                                                   'Please choose another league or remove this form.'
                                 .format(self.league.full_name))
+
+    def test_post_already_registered_for_league(self):
+        self.sr.set_roles(['Referee'])
+        LeagueFactory(full_name='My League', sport=self.ice_hockey)
+        RefereeFactory(user=self.user, league=self.league)
+        self.sr.is_complete = True
+        self.sr.save()
+        RefereeFactory(user=self.user, league=self.baseball_league)
+        self.sr_2.is_complete = True
+        self.sr_2.save()
+        form_data = {
+            'referees-0-league': self.league.id,
+        }
+        self.post_data.update(form_data)
+        response = self.client.post(self._format_url('referees', pk=self.sr.id), data=self.post_data, follow=True)
+        self.assertFormsetError(response, 'formset', 0, 'league',
+                                'Select a valid choice. That choice is not one of the available choices.')
 
     def test_post_one_valid_form(self):
         form_data = {
@@ -215,3 +251,14 @@ class CreateRefereesViewTests(BaseTestCase):
         self.assertFalse(referee.exists())
         self.sr.refresh_from_db()
         self.assertFalse(self.sr.has_role('Referee'))
+
+    def test_post_registered_for_all(self):
+        self.sr.set_roles(['Referee'])
+        self.sr.is_complete = True
+        self.sr.save()
+        RefereeFactory(user=self.user, league=self.league)
+        self.sr_2.is_complete = True
+        self.sr_2.save()
+        response = self.client.post(self._format_url('referees', pk=self.sr.id), data={}, follow=True)
+        self.assertHasMessage(response, 'You have already registered for all available leagues.')
+        self.assertRedirects(response, self.sr.get_absolute_url())

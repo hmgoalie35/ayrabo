@@ -14,6 +14,9 @@ class CreateSportRegistrationViewTests(BaseTestCase):
     def setUpClass(cls):
         super(CreateSportRegistrationViewTests, cls).setUpClass()
         cls.ice_hockey = SportFactory(name='Ice Hockey')
+        cls.league = LeagueFactory(full_name='Long Island Amateur Hockey League', sport=cls.ice_hockey)
+        cls.division = DivisionFactory(name='Midget Minor AA', league=cls.league)
+        TeamFactory(name='Green Machine IceCats', division=cls.division)
         cls.baseball = SportFactory(name='Baseball')
         cls.basketball = SportFactory(name='Basketball')
 

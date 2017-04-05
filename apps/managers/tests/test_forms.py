@@ -4,6 +4,8 @@ from leagues.tests import LeagueFactory
 from managers.forms import ManagerForm
 from sports.tests import SportFactory
 from teams.tests import TeamFactory
+from accounts.tests import UserFactory
+from managers.tests import ManagerFactory
 
 
 class ManagerFormTests(BaseTestCase):
@@ -33,3 +35,14 @@ class ManagerFormTests(BaseTestCase):
     def test_sets_fields_disabled(self):
         form = self.form_cls(read_only_fields=['team'])
         self.assertTrue(form.fields['team'].disabled)
+
+    def test_teams_already_registered_for(self):
+        """
+        Teams already registered for should be excluded
+        """
+        user = UserFactory()
+        teams = TeamFactory.create_batch(5)
+        ManagerFactory(user=user, team=teams[0])
+        form = self.form_cls(already_registered_for=[teams[0].id])
+        team_field = form.fields['team']
+        self.assertNotIn(teams[0], team_field.queryset)
