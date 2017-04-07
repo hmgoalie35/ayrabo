@@ -1,0 +1,26 @@
+<div class="table-responsive">
+    <table class="table update-sport-registration-table">
+        <thead>
+        {% with first_obj=related_objs|first %}
+            <tr>
+                <th></th>
+                {% for field in first_obj.fields.keys %}
+                    <th>{{ field }}</th>
+                {% endfor %}
+                <th></th>
+            </tr>
+        {% endwith %}
+        </thead>
+        <tbody>
+        {% for obj in related_objs %}
+            <tr>
+                <td></td>
+                {% for field_name, field_value in obj.fields.items %}
+                    <td class="text-left">{{ field_value }}</td>
+                {% endfor %}
+                <td><a href="#"><span class="fa fa-pencil"></span></a></td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>

@@ -2,6 +2,8 @@ from escoresheet.utils.testing_utils import BaseTestCase
 from leagues.tests import LeagueFactory
 from referees.forms import RefereeForm
 from sports.tests import SportFactory
+from accounts.tests import UserFactory
+from referees.tests import RefereeFactory
 
 
 class RefereeFormTests(BaseTestCase):
@@ -29,3 +31,14 @@ class RefereeFormTests(BaseTestCase):
     def test_sets_fields_disabled(self):
         form = self.form_cls(read_only_fields=['league'])
         self.assertTrue(form.fields['league'].disabled)
+
+    def test_leagues_already_registered_for(self):
+        """
+        Leagues already registered for should be excluded
+        """
+        user = UserFactory()
+        leagues = LeagueFactory.create_batch(5)
+        RefereeFactory(user=user, league=leagues[0])
+        form = self.form_cls(already_registered_for=[leagues[0].id])
+        league_field = form.fields['league']
+        self.assertNotIn(leagues[0], league_field.queryset)

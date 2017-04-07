@@ -1,7 +1,7 @@
 {% extends 'site_base.html' %}
 {% load crispy_forms_tags static %}
 
-{% block title %}Manage Your Account{% endblock %}
+{% block title %}My Account{% endblock %}
 
 
 {% block content %}
@@ -14,7 +14,7 @@
                                                class="nav-tab"><i class="fa fa-user"></i>&nbsp;My Account</a>
                     </li>
                     <li role="presentation"><a href="#my_sport_registrations" role="tab" data-toggle="tab"
-                                                              class="nav-tab"><i class="fa fa-list"></i>&nbsp;My Sport Registrations</a>
+                                                              class="nav-tab"><i class="fa fa-list"></i>&nbsp;My Sports</a>
                     </li>
                 </ul>
 
@@ -81,7 +81,7 @@
                         <div class="panel panel-primary">
                             <div class="panel-heading">
                                 <div class="text-center">
-                                    <h1 class="panel-title">Manage Sport Registrations</h1>
+                                    <h1 class="panel-title">Sport Registration Information</h1>
                                 </div>
                             </div>
                             <div class="panel-body">
@@ -100,11 +100,12 @@
                                                 {% endfor %}
 
                                                 <span class="pull-right fa fa-fw fa-caret-down more-sport-info-fa-caret"></span>
-                                                <a name="edit_registration_link" id="edit-{{ sport_registration.id }}" href="{% url 'sportregistrations:update' sport_registration.pk %}" class="pull-right ">Edit Registration</a>
+                                                <a name="edit_registration_link" id="edit-{{ sport_registration.id }}" href="{% url 'sportregistrations:detail' sport_registration.pk %}" class="pull-right ">Manage</a>
                                             </li>
                                             <div class="collapse" id="{{ data_dict.sport.slug }}">
                                                 <div class="list-group-item">
                                                 {% if data_dict.related_objects %}
+                                                    <h4 class="text-center">At a glance</h4>
                                                     {% for role, objects in data_dict.related_objects.items %}
                                                         <strong>{{ role }}:</strong>
                                                         {% for object in objects %}

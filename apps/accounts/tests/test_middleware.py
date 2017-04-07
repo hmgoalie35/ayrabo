@@ -9,11 +9,17 @@ from players.tests import HockeyPlayerFactory
 from referees.tests import RefereeFactory
 from sports.tests import SportFactory, SportRegistrationFactory
 from ..middleware import AccountAndSportRegistrationCompleteMiddleware
+from teams.tests import TeamFactory
+from leagues.tests import LeagueFactory
+from divisions.tests import DivisionFactory
 
 
 class AccountAndSportRegistrationCompleteMiddlewareTests(BaseTestCase):
     def setUp(self):
         self.ice_hockey = SportFactory(name='Ice Hockey')
+        self.league = LeagueFactory(full_name='Long Island Amateur Hockey League', sport=self.ice_hockey)
+        self.division = DivisionFactory(name='Midget Minor AA', league=self.league)
+        TeamFactory(name='Green Machine IceCats', division=self.division)
         self.baseball = SportFactory(name='Baseball')
         self.password = 'myweakpassword'
         self.user_with_profile = UserFactory(password=self.password)

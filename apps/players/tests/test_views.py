@@ -10,6 +10,8 @@ from players.formset_helpers import HockeyPlayerFormSetHelper
 from players.models import HockeyPlayer
 from sports.tests import SportFactory, SportRegistrationFactory
 from teams.tests import TeamFactory
+from referees.tests import RefereeFactory
+from players.tests import HockeyPlayerFactory, BaseballPlayerFactory
 
 
 class CreatePlayersViewTests(BaseTestCase):
@@ -40,11 +42,16 @@ class CreatePlayersViewTests(BaseTestCase):
         self.division = DivisionFactory(name='Midget Minor AA', league=self.league)
         self.team = TeamFactory(name='Green Machine IceCats', division=self.division)
 
+        self.baseball_league = LeagueFactory(full_name='Major League Baseball', sport=self.baseball)
+        self.baseball_division = DivisionFactory(name='American League East', league=self.baseball_league)
+        self.baseball_team = TeamFactory(name='New York Yankees', division=self.baseball_division)
+
         self.sr = SportRegistrationFactory(user=self.user, sport=self.ice_hockey, is_complete=False)
         self.sr_2 = SportRegistrationFactory(user=self.user, sport=self.baseball, is_complete=False)
         self.sr.set_roles(['Player', 'Coach'])
         self.client.login(email=self.email, password=self.password)
 
+    # GET
     def test_get_template_name(self):
         response = self.client.get(self._format_url('players', pk=self.sr.id))
         self.assertEqual(response.status_code, 200)
@@ -72,7 +79,17 @@ class CreatePlayersViewTests(BaseTestCase):
         response = self.client.get(self._format_url('players', pk=self.sr.id))
         self.assertEqual(response.context['role'], 'Player')
 
-    # GET
+    def test_get_registered_for_all(self):
+        self.sr.set_roles(['Player'])
+        self.sr.is_complete = True
+        self.sr.save()
+        HockeyPlayerFactory(user=self.user, team=self.team, sport=self.ice_hockey)
+        self.sr_2.is_complete = True
+        self.sr_2.save()
+        response = self.client.get(self._format_url('players', pk=self.sr.id), follow=True)
+        self.assertHasMessage(response, 'You have already registered for all available teams.')
+        self.assertRedirects(response, self.sr.get_absolute_url())
+
     def test_get_sport_not_configured(self):
         self.sr.is_complete = True
         self.sr.save()
@@ -175,6 +192,23 @@ class CreatePlayersViewTests(BaseTestCase):
                                 '{} has already been selected. Please choose another team or remove this form.'.format(
                                         self.team.name))
 
+    def test_post_already_registered_for_team(self):
+        self.sr.set_roles(['Player'])
+        TeamFactory(name='My Team', division=self.division)
+        HockeyPlayerFactory(user=self.user, team=self.team, sport=self.ice_hockey)
+        self.sr.is_complete = True
+        self.sr.save()
+        BaseballPlayerFactory(user=self.user, team=self.team, sport=self.baseball)
+        self.sr_2.is_complete = True
+        self.sr_2.save()
+        form_data = {
+            'players-0-team': self.team.id,
+        }
+        self.post_data.update(form_data)
+        response = self.client.post(self._format_url('players', pk=self.sr.id), data=self.post_data, follow=True)
+        self.assertFormsetError(response, 'formset', 0, 'team',
+                                'Select a valid choice. That choice is not one of the available choices.')
+
     def test_post_one_invalid_form(self):
         form_data = {
             'players-0-position': 'LW',
@@ -261,3 +295,54 @@ class CreatePlayersViewTests(BaseTestCase):
         response = self.client.post(self._format_url('players', pk=self.sr_2.id), data=self.post_data, follow=True)
 
         self.assertRedirects(response, reverse('home'))
+
+    def test_post_add_player_role_valid_form(self):
+        self.sr.set_roles(['Referee'])
+        self.sr.is_complete = True
+        self.sr.save()
+        RefereeFactory(user=self.user, league=self.league)
+        self.sr_2.is_complete = True
+        self.sr_2.save()
+        form_data = {
+            'players-0-team': self.team.id,
+            'players-0-jersey_number': 33,
+            'players-0-position': 'G',
+            'players-0-handedness': 'Left'
+        }
+        self.post_data.update(form_data)
+        self.client.post(self._format_url('players', pk=self.sr.id), data=self.post_data, follow=True)
+        player = HockeyPlayer.objects.filter(user=self.user, team=self.team)
+        self.assertTrue(player.exists())
+        self.sr.refresh_from_db()
+        self.assertTrue(self.sr.has_role('Player'))
+
+    def test_post_add_player_role_invalid_form(self):
+        self.sr.set_roles(['Referee'])
+        self.sr.is_complete = True
+        self.sr.save()
+        RefereeFactory(user=self.user, league=self.league)
+        self.sr_2.is_complete = True
+        self.sr_2.save()
+        form_data = {
+            'players-0-team': -1,
+            'players-0-jersey_number': 33,
+            'players-0-position': 'G',
+            'players-0-handedness': 'Left'
+        }
+        self.post_data.update(form_data)
+        self.client.post(self._format_url('players', pk=self.sr.id), data=self.post_data, follow=True)
+        player = HockeyPlayer.objects.filter(user=self.user, team=self.team)
+        self.assertFalse(player.exists())
+        self.sr.refresh_from_db()
+        self.assertFalse(self.sr.has_role('Player'))
+
+    def test_post_registered_for_all(self):
+        self.sr.set_roles(['Player'])
+        self.sr.is_complete = True
+        self.sr.save()
+        HockeyPlayerFactory(user=self.user, team=self.team, sport=self.ice_hockey)
+        self.sr_2.is_complete = True
+        self.sr_2.save()
+        response = self.client.post(self._format_url('players', pk=self.sr.id), data={}, follow=True)
+        self.assertHasMessage(response, 'You have already registered for all available teams.')
+        self.assertRedirects(response, self.sr.get_absolute_url())

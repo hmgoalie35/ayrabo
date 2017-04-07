@@ -1,0 +1,20 @@
+<div class="table-responsive">
+    <table class="table update-sport-registration-table">
+        <thead>
+        <tr>
+            <th></th>
+            <th>League</th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for obj in related_objs %}
+            <tr>
+                <td></td>
+                <td class="text-left">{{ obj.league }}</td>
+                <td><a href="#"><span class="fa fa-pencil"></span></a></td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>

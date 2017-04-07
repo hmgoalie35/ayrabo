@@ -4,9 +4,11 @@ from accounts.tests import UserFactory
 from coaches.forms import CoachForm
 from coaches.formset_helpers import CoachFormSetHelper
 from coaches.models import Coach
+from coaches.tests import CoachFactory
 from divisions.tests import DivisionFactory
 from escoresheet.utils.testing_utils import BaseTestCase
 from leagues.tests import LeagueFactory
+from referees.tests import RefereeFactory
 from sports.tests import SportFactory, SportRegistrationFactory
 from teams.tests import TeamFactory
 
@@ -39,11 +41,16 @@ class CreateCoachesViewTests(BaseTestCase):
         self.division = DivisionFactory(name='Midget Minor AA', league=self.league)
         self.team = TeamFactory(name='Green Machine IceCats', division=self.division)
 
+        self.baseball_league = LeagueFactory(full_name='Major League Baseball', sport=self.baseball)
+        self.baseball_division = DivisionFactory(name='American League East', league=self.baseball_league)
+        self.baseball_team = TeamFactory(name='New York Yankees', division=self.baseball_division)
+
         self.sr = SportRegistrationFactory(user=self.user, sport=self.ice_hockey, is_complete=False)
         self.sr_2 = SportRegistrationFactory(user=self.user, sport=self.baseball, is_complete=False)
         self.sr.set_roles(['Coach', 'Referee'])
         self.client.login(email=self.email, password=self.password)
 
+    # GET
     def test_get_template_name(self):
         response = self.client.get(self._format_url('coaches', pk=self.sr.id))
         self.assertEqual(response.status_code, 200)
@@ -71,6 +78,18 @@ class CreateCoachesViewTests(BaseTestCase):
         response = self.client.get(self._format_url('coaches', pk=self.sr.id))
         self.assertEqual(response.context['role'], 'Coach')
 
+    def test_get_registered_for_all(self):
+        self.sr.set_roles(['Coach'])
+        self.sr.is_complete = True
+        self.sr.save()
+        CoachFactory(user=self.user, team=self.team)
+        self.sr_2.is_complete = True
+        self.sr_2.save()
+        response = self.client.get(self._format_url('coaches', pk=self.sr.id), follow=True)
+        self.assertHasMessage(response, 'You have already registered for all available teams.')
+        self.assertRedirects(response, self.sr.get_absolute_url())
+
+    # POST
     def test_post_two_forms_same_team(self):
         form_data = {
             'coaches-0-team': self.team.id,
@@ -84,6 +103,24 @@ class CreateCoachesViewTests(BaseTestCase):
         self.assertFormsetError(response, 'formset', 1, 'team',
                                 '{} has already been selected. Please choose another team or remove this form.'.format(
                                         self.team.name))
+
+    def test_post_already_registered_for_team(self):
+        self.sr.set_roles(['Coach'])
+        TeamFactory(name='My Team', division=self.division)
+        CoachFactory(user=self.user, team=self.team)
+        self.sr.is_complete = True
+        self.sr.save()
+        CoachFactory(user=self.user, team=self.baseball_team)
+        self.sr_2.is_complete = True
+        self.sr_2.save()
+        form_data = {
+            'coaches-0-team': self.team.id,
+            'coaches-0-position': 'Head Coach',
+        }
+        self.post_data.update(form_data)
+        response = self.client.post(self._format_url('coaches', pk=self.sr.id), data=self.post_data, follow=True)
+        self.assertFormsetError(response, 'formset', 0, 'team',
+                                'Select a valid choice. That choice is not one of the available choices.')
 
     def test_post_one_valid_form(self):
         form_data = {
@@ -203,3 +240,50 @@ class CreateCoachesViewTests(BaseTestCase):
         response = self.client.post(self._format_url('coaches', pk=self.sr_2.id), data=self.post_data, follow=True)
 
         self.assertRedirects(response, reverse('home'))
+
+    def test_post_add_coach_role_valid_form(self):
+        self.sr.set_roles(['Referee'])
+        self.sr.is_complete = True
+        self.sr.save()
+        RefereeFactory(user=self.user, league=self.league)
+        self.sr_2.is_complete = True
+        self.sr_2.save()
+        form_data = {
+            'coaches-0-team': self.team.id,
+            'coaches-0-position': 'Head Coach',
+        }
+        self.post_data.update(form_data)
+        self.client.post(self._format_url('coaches', pk=self.sr.id), data=self.post_data, follow=True)
+        coach = Coach.objects.filter(user=self.user, team=self.team)
+        self.assertTrue(coach.exists())
+        self.sr.refresh_from_db()
+        self.assertTrue(self.sr.has_role('Coach'))
+
+    def test_post_add_coach_role_invalid_form(self):
+        self.sr.set_roles(['Referee'])
+        self.sr.is_complete = True
+        self.sr.save()
+        RefereeFactory(user=self.user, league=self.league)
+        self.sr_2.is_complete = True
+        self.sr_2.save()
+        form_data = {
+            'coaches-0-team': self.team.id,
+            'coaches-0-position': '',
+        }
+        self.post_data.update(form_data)
+        self.client.post(self._format_url('coaches', pk=self.sr.id), data=self.post_data, follow=True)
+        coach = Coach.objects.filter(user=self.user, team=self.team)
+        self.assertFalse(coach.exists())
+        self.sr.refresh_from_db()
+        self.assertFalse(self.sr.has_role('Coach'))
+
+    def test_post_registered_for_all(self):
+        self.sr.set_roles(['Coach'])
+        self.sr.is_complete = True
+        self.sr.save()
+        CoachFactory(user=self.user, team=self.team)
+        self.sr_2.is_complete = True
+        self.sr_2.save()
+        response = self.client.post(self._format_url('coaches', pk=self.sr.id), data={}, follow=True)
+        self.assertHasMessage(response, 'You have already registered for all available teams.')
+        self.assertRedirects(response, self.sr.get_absolute_url())

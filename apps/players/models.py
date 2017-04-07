@@ -1,3 +1,5 @@
+from collections import OrderedDict
+
 from django.contrib.auth.models import User
 from django.core.validators import MinValueValidator, MaxValueValidator, ValidationError
 from django.db import models
@@ -33,6 +35,22 @@ class AbstractPlayer(models.Model):
     @property
     def division(self):
         return self.team.division.name
+
+    @property
+    def fields(self):
+        """
+        Utility function used to display this model's fields and values in an html friendly way. This is needed due to
+        subclasses having different names for fields.
+
+        All subclasses shall override this function, call super and update the result of the super call with any extra
+        fields. The `@property` decorator must also be applied.
+
+        :return: OrderedDict where the keys are user friendly display names and the values are the value of the field.
+        """
+        fields = OrderedDict()
+        fields['Team'] = '{} - {}'.format(self.team, self.division)
+        fields['Jersey Number'] = self.jersey_number
+        return fields
 
     def clean(self):
         # hasattr is needed for when the admin panel is used, where an object w/o a user or team may be created by
@@ -79,8 +97,15 @@ class HockeyPlayer(AbstractPlayer):
 
     # might need to move jersey_number into this model
 
+    @property
+    def fields(self):
+        fields = super().fields
+        fields['Position'] = self.get_position_display()
+        fields['Handedness'] = self.get_handedness_display()
+        return fields
+
     def clean(self):
-        super(HockeyPlayer, self).clean()
+        super().clean()
         if hasattr(self, 'team'):
             # If we do not exclude the current user this validation error will always be triggered.
             qs = HockeyPlayer.objects.filter(team=self.team, jersey_number=self.jersey_number).exclude(user=self.user)
@@ -123,8 +148,16 @@ class BaseballPlayer(AbstractPlayer):
     catches = models.CharField(max_length=255, choices=CATCHES, verbose_name='Catches')
     bats = models.CharField(max_length=255, choices=BATS, verbose_name='Bats')
 
+    @property
+    def fields(self):
+        fields = super().fields
+        fields['Position'] = self.get_position_display()
+        fields['Catches'] = self.get_catches_display()
+        fields['Bats'] = self.get_bats_display()
+        return fields
+
     def clean(self):
-        super(BaseballPlayer, self).clean()
+        super().clean()
         if hasattr(self, 'team'):
             # If we do not exclude the current user this validation error will always be triggered.
             qs = BaseballPlayer.objects.filter(team=self.team, jersey_number=self.jersey_number).exclude(user=self.user)
@@ -152,8 +185,15 @@ class BasketballPlayer(AbstractPlayer):
     position = models.CharField(max_length=255, choices=POSITIONS, verbose_name='Position')
     shoots = models.CharField(max_length=255, choices=SHOOTS, verbose_name='Shoots')
 
+    @property
+    def fields(self):
+        fields = super().fields
+        fields['Position'] = self.get_position_display()
+        fields['Shoots'] = self.get_shoots_display()
+        return fields
+
     def clean(self):
-        super(BasketballPlayer, self).clean()
+        super().clean()
         if hasattr(self, 'team'):
             # If we do not exclude the current user this validation error will always be triggered.
             qs = BasketballPlayer.objects.filter(team=self.team, jersey_number=self.jersey_number).exclude(

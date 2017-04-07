@@ -62,8 +62,12 @@ footer {
 }
 
 // For non-field errors
-div.alert.alert-block.alert-danger > ul > li {
-  list-style: none;
+div.alert.alert-block.alert-danger > ul {
+  padding-left: 22px;
+
+  li {
+    list-style: none;
+  }
 }
 
 .asteriskField {
@@ -105,4 +109,11 @@ div.alert.alert-block.alert-danger > ul > li {
 
 .password-guidelines {
   margin-right: 5px;
+}
+
+.table.update-sport-registration-table {
+  th {
+    // This is a bootstrap defined color
+    border-bottom: 1px solid $table-border-color;
+  }
 }

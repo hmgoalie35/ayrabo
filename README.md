@@ -20,7 +20,7 @@ A license has been intentionally excluded. See http://choosealicense.com/no-lice
 
 See the `setup_dev_env.sh` file for packages that will be installed, etc.
 
-*This project uses pre-commit, whenever you commit files a few optimizers, code checkers, etc. will be run to check the committed files for any errors/potential bugs*
+This project uses pre-commit, whenever you commit files flake8 and some other code quality tools will run to help prevent bugs/errors.
 
 1. Clone the repo
 2. Run `bash setup_dev_env.sh`
@@ -47,6 +47,5 @@ See the `setup_dev_env.sh` file for packages that will be installed, etc.
 2. Run `python manage.py test`
     * You can specify specific test files or test classes for an app i.e. `python manage.py test userprofiles.tests.test_models.UserProfileModelTests`
 
-# Running tests with coverage
-* `coverage run manage.py test --parallel && coverage html`
-* `coverage run manage.py behave && coverage html`
+# Running the test suite
+* Run the `run_tests.sh` file. This will run coverage on unit/functional tests and simply run the integration tests.
