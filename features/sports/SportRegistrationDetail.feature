@@ -7,9 +7,10 @@ Feature: Sport registration detail
     Given The following confirmed user account exists
       | first_name | last_name | email            | password       |
       | John       | Doe       | user@example.com | myweakpassword |
-    And The following team object exists
+    And The following team objects exist
       | name                  | division        | league                            | sport      |
       | Green Machine IceCats | Midget Minor AA | Long Island Amateur Hockey League | Ice Hockey |
+      | Long Island Edge | Midget Minor AA | Long Island Amateur Hockey League | Ice Hockey |
     And The following sport registrations exist
       | username_or_email | sport      | roles                           | complete |
       | user@example.com  | Ice Hockey | Player, Coach, Referee          | true     |
@@ -36,3 +37,8 @@ Feature: Sport registration detail
     And "Green Machine IceCats" should show up 2 times
     And I should see "Long Island Amateur Hockey League"
     And "Register" should show up 1 time
+
+  Scenario: Add another coach
+    Given I am on the absolute url page for "sports.SportRegistration" and "user__email=user@example.com, sport__name=Ice Hockey"
+    And I press "create_new_coach_btn"
+    Then I should be on the "sports.SportRegistration" "" "sportregistrations:coaches:create" page with url kwargs "pk=pk"

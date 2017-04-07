@@ -7,6 +7,9 @@ Feature: Register for a sport
     Given The following confirmed user account exists
       | first_name | last_name | email            | password       |
       | John       | Doe       | user@example.com | myweakpassword |
+    And The following team object exists
+      | name                  | division        | league                            | sport      |
+      | Green Machine IceCats | Midget Minor AA | Long Island Amateur Hockey League | Ice Hockey |
     And The following sport exists "Ice Hockey"
     And The following sport exists "Baseball"
     And The following sport exists "Basketball"
