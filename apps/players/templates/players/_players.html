@@ -18,7 +18,7 @@
                 {% for field_name, field_value in obj.fields.items %}
                     <td class="text-left">{{ field_value }}</td>
                 {% endfor %}
-                <td><a href="#"><span class="fa fa-pencil"></span></a></td>
+                <td><a id="update_player_link" href="{% url 'sportregistrations:players:update' sport_registration.id obj.id %}"><span class="fa fa-pencil"></span></a></td>
             </tr>
         {% endfor %}
         </tbody>
