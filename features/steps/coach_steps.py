@@ -23,11 +23,13 @@ def step_impl(context):
         user = get_user(username_or_email)
         team = data.get('team', None)
         position = data.get('position', None)
+        obj_id = data.get('id', None)
 
         teams = Team.objects.filter(name=team)
 
-        if teams.exists():
-            team = teams.first()
-        else:
-            team = TeamFactory(name=team)
-        CoachFactory(user=user, team=team, position=position)
+        kwargs = {'user': user, 'position': position,
+                  'team': teams.first() if teams.exists() else TeamFactory(name=team)}
+        if obj_id is not None:
+            kwargs['id'] = obj_id
+
+        CoachFactory(**kwargs)

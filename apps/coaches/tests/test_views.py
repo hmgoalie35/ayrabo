@@ -287,3 +287,86 @@ class CreateCoachesViewTests(BaseTestCase):
         response = self.client.post(self._format_url('coaches', pk=self.sr.id), data={}, follow=True)
         self.assertHasMessage(response, 'You have already registered for all available teams.')
         self.assertRedirects(response, self.sr.get_absolute_url())
+
+
+class UpdateCoachViewTests(BaseTestCase):
+    def _format_url(self, **kwargs):
+        return reverse(self.url, kwargs=kwargs)
+
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls.ice_hockey = SportFactory(name='Ice Hockey')
+        cls.url = 'sportregistrations:coaches:update'
+        cls.email = 'user@example.com'
+        cls.password = 'myweakpassword'
+        cls.user = UserFactory(email=cls.email, password=cls.password)
+        cls.league = LeagueFactory(full_name='Long Island Amateur Hockey League', sport=cls.ice_hockey)
+        cls.division = DivisionFactory(name='Midget Minor AA', league=cls.league)
+        cls.team = TeamFactory(name='Green Machine IceCats', division=cls.division)
+
+        cls.sr = SportRegistrationFactory(user=cls.user, sport=cls.ice_hockey, is_complete=True)
+        cls.sr.set_roles(['Coach'])
+
+    def setUp(self):
+        self.post_data = {
+            'position': 'Head Coach'
+        }
+        self.coach = CoachFactory(user=self.user, team=self.team, **self.post_data)
+        self.coach_url = self._format_url(pk=self.sr.pk, coach_pk=self.coach.pk)
+
+        self.client.login(email=self.email, password=self.password)
+
+    # GET
+    def test_get_anonymous(self):
+        self.client.logout()
+        response = self.client.get(self.coach_url)
+        result_url = '{}?next={}'.format(reverse('account_login'), self.coach_url)
+        self.assertRedirects(response, result_url)
+
+    def test_get(self):
+        response = self.client.get(self.coach_url)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'coaches/coaches_update.html')
+        context = response.context
+        self.assertIsNotNone(context['coach'])
+        self.assertIsNotNone(context['sport_registration'])
+        self.assertIsNotNone(context['form'])
+
+    def test_get_sport_reg_dne(self):
+        response = self.client.get(self._format_url(pk=99, coach_pk=self.coach.pk))
+        self.assertEqual(response.status_code, 404)
+
+    def test_get_coach_obj_dne(self):
+        response = self.client.get(self._format_url(pk=self.sr.pk, coach_pk=99))
+        self.assertEqual(response.status_code, 404)
+
+    def test_get_not_obj_owner(self):
+        self.client.logout()
+        user = UserFactory(password=self.password)
+        SportRegistrationFactory(user=user, sport=self.ice_hockey)
+        self.client.login(email=user.email, password=self.password)
+        response = self.client.get(self.coach_url)
+        self.assertEqual(response.status_code, 404)
+
+    # POST
+    def test_post(self):
+        self.post_data.update({'position': 'Assistant Coach'})
+        response = self.client.post(self.coach_url, data=self.post_data, follow=True)
+        self.assertHasMessage(response, 'Your coach information has been updated.')
+        self.coach.refresh_from_db()
+        self.assertEqual(self.coach.position, 'Assistant Coach')
+        self.assertRedirects(response, self.sr.get_absolute_url())
+
+    def test_post_nothing_changed(self):
+        response = self.client.post(self.coach_url, data=self.post_data, follow=True)
+        self.assertNoMessage(response, 'Your coach information has been updated.')
+        self.coach.refresh_from_db()
+        self.assertEqual(self.coach.position, 'Head Coach')
+        self.assertRedirects(response, self.sr.get_absolute_url())
+
+    def test_post_invalid(self):
+        self.post_data.update({'position': ''})
+        response = self.client.post(self.coach_url, data=self.post_data, follow=True)
+        self.assertFormError(response, 'form', 'position', 'This field is required.')
+        self.assertTemplateUsed('coaches/coaches_update.html')
