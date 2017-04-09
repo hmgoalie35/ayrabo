@@ -8,10 +8,10 @@ from managers.forms import ManagerForm
 from managers.formset_helpers import ManagerFormSetHelper
 from managers.models import Manager
 from managers.tests import ManagerFactory
+from referees.tests import RefereeFactory
 from seasons.tests import SeasonFactory
 from sports.tests import SportFactory, SportRegistrationFactory
 from teams.tests import TeamFactory
-from referees.tests import RefereeFactory
 
 
 class ManagerHomeViewTests(BaseTestCase):
@@ -185,6 +185,7 @@ class CreateManagersViewTests(BaseTestCase):
         manager = Manager.objects.filter(user=self.user, team=self.team)
         self.assertTrue(manager.exists())
         self.assertRedirects(response, self._format_url('players', pk=self.sr_2.id))
+        self.assertHasMessage(response, 'You have been registered as a manager for the Green Machine IceCats.')
 
     def test_post_two_valid_forms(self):
         t1 = TeamFactory(division__league__sport=self.ice_hockey)
@@ -198,6 +199,9 @@ class CreateManagersViewTests(BaseTestCase):
         managers = Manager.objects.filter(user=self.user)
         self.assertEqual(managers.count(), 2)
         self.assertRedirects(response, self._format_url('players', pk=self.sr_2.id))
+        self.assertHasMessage(response,
+                              'You have been registered as a manager for the Green Machine IceCats, {}.'.format(
+                                  t1.name))
 
     def test_post_three_valid_forms(self):
         l1 = LeagueFactory(full_name='National Hockey League', sport=self.ice_hockey)
@@ -217,6 +221,9 @@ class CreateManagersViewTests(BaseTestCase):
         managers = Manager.objects.filter(user=self.user)
         self.assertEqual(managers.count(), 3)
         self.assertRedirects(response, self._format_url('players', pk=self.sr_2.id))
+        self.assertHasMessage(response,
+                              'You have been registered as a manager for the Green Machine IceCats, {}, {}.'.format(
+                                      t1.name, t2.name))
 
     def test_post_one_invalid_form(self):
         form_data = {
@@ -293,11 +300,12 @@ class CreateManagersViewTests(BaseTestCase):
             'managers-0-team': self.team.id
         }
         self.post_data.update(form_data)
-        self.client.post(self._format_url('managers', pk=self.sr.id), data=self.post_data, follow=True)
+        response = self.client.post(self._format_url('managers', pk=self.sr.id), data=self.post_data, follow=True)
         manager = Manager.objects.filter(user=self.user, team=self.team)
         self.assertTrue(manager.exists())
         self.sr.refresh_from_db()
         self.assertTrue(self.sr.has_role('Manager'))
+        self.assertHasMessage(response, 'You have been registered as a manager for the Green Machine IceCats.')
 
     def test_post_add_manager_role_invalid_form(self):
         self.sr.set_roles(['Referee'])

@@ -132,6 +132,7 @@ class CreateCoachesViewTests(BaseTestCase):
         coach = Coach.objects.filter(user=self.user, team=self.team)
         self.assertTrue(coach.exists())
         self.assertRedirects(response, self._format_url('referees', pk=self.sr.id))
+        self.assertHasMessage(response, 'You have been registered as a coach for the Green Machine IceCats.')
 
     def test_post_two_valid_forms(self):
         t1 = TeamFactory(division__league__sport=self.ice_hockey)
@@ -147,6 +148,8 @@ class CreateCoachesViewTests(BaseTestCase):
         coaches = Coach.objects.filter(user=self.user)
         self.assertEqual(coaches.count(), 2)
         self.assertRedirects(response, self._format_url('referees', pk=self.sr.id))
+        self.assertHasMessage(response,
+                              'You have been registered as a coach for the Green Machine IceCats, {}.'.format(t1.name))
 
     def test_post_three_valid_forms(self):
         l1 = LeagueFactory(full_name='National Hockey League', sport=self.ice_hockey)
@@ -169,6 +172,9 @@ class CreateCoachesViewTests(BaseTestCase):
         coaches = Coach.objects.filter(user=self.user)
         self.assertEqual(coaches.count(), 3)
         self.assertRedirects(response, self._format_url('referees', pk=self.sr.id))
+        self.assertHasMessage(response,
+                              'You have been registered as a coach for the Green Machine IceCats, {}, {}.'.format(
+                                  t1.name, t2.name))
 
     def test_post_one_invalid_form(self):
         form_data = {
@@ -253,11 +259,12 @@ class CreateCoachesViewTests(BaseTestCase):
             'coaches-0-position': 'Head Coach',
         }
         self.post_data.update(form_data)
-        self.client.post(self._format_url('coaches', pk=self.sr.id), data=self.post_data, follow=True)
+        response = self.client.post(self._format_url('coaches', pk=self.sr.id), data=self.post_data, follow=True)
         coach = Coach.objects.filter(user=self.user, team=self.team)
         self.assertTrue(coach.exists())
         self.sr.refresh_from_db()
         self.assertTrue(self.sr.has_role('Coach'))
+        self.assertHasMessage(response, 'You have been registered as a coach for the Green Machine IceCats.')
 
     def test_post_add_coach_role_invalid_form(self):
         self.sr.set_roles(['Referee'])

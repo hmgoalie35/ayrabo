@@ -39,6 +39,8 @@ Feature: Register for a sport
     And I press "id_sportregistrations-0-roles_2"
     And I press "sport_registration_next_step_btn"
     Then I should be on the "sports.SportRegistration" "" "sportregistrations:players:create" page with url kwargs "pk=pk"
+    And I should see "You have been registered for Ice Hockey."
+
 
   Scenario: Submit one invalid form
     Given I am on the "sportregistrations:create" page
@@ -83,6 +85,7 @@ Feature: Register for a sport
     And I press "id_sportregistrations-1-roles_2"
     And I press "sport_registration_next_step_btn"
     Then I should be on the "sports.SportRegistration" "" "sportregistrations:players:create" page with url kwargs "pk=pk"
+    And I should see "You have been registered for Ice Hockey, Baseball."
 
 
   Scenario: Already registered for all 3 sports

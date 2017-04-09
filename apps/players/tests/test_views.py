@@ -120,6 +120,7 @@ class CreatePlayersViewTests(BaseTestCase):
         player = HockeyPlayer.objects.filter(user=self.user, team=self.team)
         self.assertTrue(player.exists())
         self.assertRedirects(response, self._format_url('coaches', pk=self.sr.id))
+        self.assertHasMessage(response, 'You have been registered as a player for the Green Machine IceCats.')
 
     def test_post_two_valid_forms(self):
         """
@@ -142,6 +143,8 @@ class CreatePlayersViewTests(BaseTestCase):
         players = HockeyPlayer.objects.filter(user=self.user)
         self.assertEqual(players.count(), 2)
         self.assertRedirects(response, self._format_url('coaches', pk=self.sr.id))
+        self.assertHasMessage(response,
+                              'You have been registered as a player for the Green Machine IceCats, {}.'.format(t1.name))
 
     def test_post_three_valid_forms(self):
         """
@@ -173,6 +176,9 @@ class CreatePlayersViewTests(BaseTestCase):
         players = HockeyPlayer.objects.filter(user=self.user)
         self.assertEqual(players.count(), 3)
         self.assertRedirects(response, self._format_url('coaches', pk=self.sr.id))
+        self.assertHasMessage(response,
+                              'You have been registered as a player for the Green Machine IceCats, {}, {}.'.format(
+                                  t1.name, t2.name))
 
     def test_post_two_forms_same_team(self):
         form_data = {
@@ -310,11 +316,12 @@ class CreatePlayersViewTests(BaseTestCase):
             'players-0-handedness': 'Left'
         }
         self.post_data.update(form_data)
-        self.client.post(self._format_url('players', pk=self.sr.id), data=self.post_data, follow=True)
+        response = self.client.post(self._format_url('players', pk=self.sr.id), data=self.post_data, follow=True)
         player = HockeyPlayer.objects.filter(user=self.user, team=self.team)
         self.assertTrue(player.exists())
         self.sr.refresh_from_db()
         self.assertTrue(self.sr.has_role('Player'))
+        self.assertHasMessage(response, 'You have been registered as a player for the Green Machine IceCats.')
 
     def test_post_add_player_role_invalid_form(self):
         self.sr.set_roles(['Referee'])

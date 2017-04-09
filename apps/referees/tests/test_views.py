@@ -127,6 +127,7 @@ class CreateRefereesViewTests(BaseTestCase):
         manager = Referee.objects.filter(user=self.user, league=self.league)
         self.assertTrue(manager.exists())
         self.assertRedirects(response, self._format_url('players', pk=self.sr_2.id))
+        self.assertHasMessage(response, 'You have been registered as a referee for the LIAHL.')
 
     def test_post_two_valid_forms(self):
         l1 = LeagueFactory(sport=self.ice_hockey)
@@ -140,6 +141,8 @@ class CreateRefereesViewTests(BaseTestCase):
         referees = Referee.objects.filter(user=self.user)
         self.assertEqual(referees.count(), 2)
         self.assertRedirects(response, self._format_url('players', pk=self.sr_2.id))
+        self.assertHasMessage(response,
+                              'You have been registered as a referee for the LIAHL, {}.'.format(l1.abbreviated_name))
 
     def test_post_three_valid_forms(self):
         l1 = LeagueFactory(full_name='National Hockey League', sport=self.ice_hockey)
@@ -155,6 +158,10 @@ class CreateRefereesViewTests(BaseTestCase):
         referees = Referee.objects.filter(user=self.user)
         self.assertEqual(referees.count(), 3)
         self.assertRedirects(response, self._format_url('players', pk=self.sr_2.id))
+        self.assertHasMessage(response,
+                              'You have been registered as a referee for the LIAHL, {}, {}.'.format(l1.abbreviated_name,
+                                                                                                    l2.abbreviated_name)
+                              )
 
     def test_post_one_invalid_form(self):
         form_data = {
@@ -229,11 +236,12 @@ class CreateRefereesViewTests(BaseTestCase):
             'referees-0-league': self.league.id
         }
         self.post_data.update(form_data)
-        self.client.post(self._format_url('referees', pk=self.sr.id), data=self.post_data, follow=True)
+        response = self.client.post(self._format_url('referees', pk=self.sr.id), data=self.post_data, follow=True)
         referee = Referee.objects.filter(user=self.user, league=self.league)
         self.assertTrue(referee.exists())
         self.sr.refresh_from_db()
         self.assertTrue(self.sr.has_role('Referee'))
+        self.assertHasMessage(response, 'You have been registered as a referee for the LIAHL.')
 
     def test_post_add_referee_role_invalid_form(self):
         self.sr.set_roles(['Coach'])
