@@ -17,6 +17,7 @@ class SeasonAdminForm(forms.ModelForm):
         fields = ['league', 'start_date', 'end_date', 'teams']
 
     def clean(self):
+        super().clean()
         league = self.cleaned_data.get('league', None)
         teams = self.cleaned_data.get('teams', [])
         errors = {'teams': []}
