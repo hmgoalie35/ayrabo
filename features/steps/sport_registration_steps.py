@@ -6,7 +6,7 @@ from sports.tests import SportRegistrationFactory
 
 
 @step(
-        '"(?P<username_or_email>.*)" is (?P<is_complete>completely )?registered for "(?P<sport_name>.*)" with roles? "(?P<roles>.*)"') # noqa
+        '"(?P<username_or_email>.*)" is (?P<is_complete>completely )?registered for "(?P<sport_name>.*)" with roles? "(?P<roles>.*)"')  # noqa
 def step_impl(context, username_or_email, is_complete, sport_name, roles):
     split_roles = roles.split(',')
     if ',' not in roles and len(split_roles) > 1:
@@ -39,15 +39,22 @@ def step_impl(context):
         sport_name = data.get('sport', None)
         roles = data.get('roles', [])
         complete = data.get('complete', 'false').lower() == 'true'
+        id = data.get('id', None)
 
         if username_or_email is None or sport_name is None or roles is None:
             raise Exception('You must specify user, sport and roles')
 
         user = get_user(username_or_email)
         sport = Sport.objects.filter(name=sport_name)
+        kwargs = {'user': user, 'is_complete': complete}
         if sport.exists():
-            sr = SportRegistrationFactory(user=user, sport=sport.first(), is_complete=complete)
+            kwargs['sport'] = sport.first()
         else:
-            sr = SportRegistrationFactory(user=user, sport__name=sport_name, is_complete=complete)
+            kwargs['sport__name'] = sport_name
+
+        if id is not None:
+            kwargs['id'] = id
+
+        sr = SportRegistrationFactory(**kwargs)
         sr.set_roles([role.strip() for role in roles.split(',')])
         context.url_kwargs.update({sr.sport.name: sr.pk})
