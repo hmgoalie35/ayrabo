@@ -21,7 +21,7 @@ def step_impl(context):
         except User.DoesNotExist:
             user = UserFactory(username=username_or_email, email=username_or_email)
 
-        id = data.get('id', None)
+        obj_id = data.get('id', None)
         sport = data.get('sport', None)
         team = data.get('team', None)
         jersey_number = data.get('jersey_number', None)
@@ -46,7 +46,7 @@ def step_impl(context):
 
         if jersey_number is not None:
             kwargs['jersey_number'] = jersey_number
-        if id is not None:
-            kwargs['id'] = id
+        if obj_id is not None:
+            kwargs['id'] = obj_id
 
         HockeyPlayerFactory(**kwargs)

@@ -47,6 +47,12 @@ class CoachForm(forms.ModelForm):
         fields = ['user', 'team', 'position']
 
 
+class UpdateCoachForm(forms.ModelForm):
+    class Meta:
+        model = Coach
+        fields = ('position',)
+
+
 class CoachModelFormSet(BaseModelFormSet):
     def clean(self):
         teams_already_seen = []

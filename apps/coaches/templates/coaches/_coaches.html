@@ -14,7 +14,8 @@
                 <td></td>
                 <td class="text-left">{{ obj.team.name }} - {{ obj.team.division.name }}</td>
                 <td class="text-left">{{ obj.get_position_display }}</td>
-                <td><a href="#"><span class="fa fa-pencil"></span></a></td>
+                <td><a id="update_coach_link" href="{% url 'sportregistrations:coaches:update' sport_registration.pk obj.pk %}"><span
+                        class="fa fa-pencil"></span></a></td>
             </tr>
         {% endfor %}
         </tbody>
