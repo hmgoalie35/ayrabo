@@ -41,12 +41,9 @@ class CreateSportRegistrationViewTests(BaseTestCase):
         result_url = '%s?next=%s' % (reverse('account_login'), self.url)
         self.assertRedirects(response, result_url)
 
-    def test_renders_correct_template(self):
+    def test_get(self):
         response = self.client.get(self.url)
         self.assertTemplateUsed(response, 'sports/sport_registration_create.html')
-
-    def test_200_status_code(self):
-        response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
 
     def test_get_redirects_already_registered_for_all_sports(self):
@@ -100,6 +97,7 @@ class CreateSportRegistrationViewTests(BaseTestCase):
         self.assertEqual(sr.first().roles, ['Player', 'Coach'])
         url = 'sportregistrations:{role}:create'.format(role='players')
         self.assertRedirects(response, reverse(url, kwargs={'pk': sr.first().id}))
+        self.assertHasMessage(response, 'You have been registered for Ice Hockey.')
 
     def test_valid_post_two_forms(self):
         form_data = {
@@ -118,6 +116,7 @@ class CreateSportRegistrationViewTests(BaseTestCase):
         self.assertEqual(sr[1].roles, ['Player', 'Referee'])
         url = 'sportregistrations:{role}:create'.format(role='players')
         self.assertRedirects(response, reverse(url, kwargs={'pk': sr.first().id}))
+        self.assertHasMessage(response, 'You have been registered for Ice Hockey, Basketball.')
 
     def test_valid_post_three_forms(self):
         form_data = {
@@ -136,6 +135,7 @@ class CreateSportRegistrationViewTests(BaseTestCase):
         self.assertEqual(sr.count(), 3)
         url = 'sportregistrations:{role}:create'.format(role='players')
         self.assertRedirects(response, reverse(url, kwargs={'pk': sr.first().id}))
+        self.assertHasMessage(response, 'You have been registered for Ice Hockey, Basketball, Baseball.')
 
     def test_post_two_forms_same_sport(self):
         form_data = {

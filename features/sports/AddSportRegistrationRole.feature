@@ -76,7 +76,7 @@ Feature: Add roles to a sport registration
     And I select "LW" from "id_players-0-position"
     And I select "Left" from "id_players-0-handedness"
     And I press "create_objects_btn"
-    Then I should be on the "home" page
+    Then I should be on the absolute url page for "sports.SportRegistration" and "user__email=user@example.com, sport__name=Ice Hockey"
 
   Scenario: Add coach role
     Given "user@example.com" is completely registered for "Ice Hockey" with roles "Player, Referee"
@@ -90,7 +90,7 @@ Feature: Add roles to a sport registration
     And I select "Head Coach" from "id_coaches-0-position"
     And I select "Green Machine IceCats - Midget Minor AA" from "id_coaches-0-team"
     And I press "create_objects_btn"
-    Then I should be on the "home" page
+    Then I should be on the absolute url page for "sports.SportRegistration" and "user__email=user@example.com, sport__name=Ice Hockey"
 
   Scenario: Add referee role
     Given "user@example.com" is completely registered for "Ice Hockey" with role "Coach"
@@ -100,7 +100,7 @@ Feature: Add roles to a sport registration
     And I am on the "sports.SportRegistration" "" "sportregistrations:referees:create" page with url kwargs "pk=pk"
     And I select "Long Island Amateur Hockey League" from "id_referees-0-league"
     And I press "create_objects_btn"
-    Then I should be on the "home" page
+    Then I should be on the absolute url page for "sports.SportRegistration" and "user__email=user@example.com, sport__name=Ice Hockey"
 
   Scenario: Add manager role
     Given "user@example.com" is completely registered for "Ice Hockey" with role "Player, Coach"
@@ -113,4 +113,4 @@ Feature: Add roles to a sport registration
     And I am on the "sports.SportRegistration" "" "sportregistrations:managers:create" page with url kwargs "pk=pk"
     And I select "Green Machine IceCats - Midget Minor AA" from "id_managers-0-team"
     And I press "create_objects_btn"
-    Then I should be on the "home" page
+    Then I should be on the absolute url page for "sports.SportRegistration" and "user__email=user@example.com, sport__name=Ice Hockey"

@@ -123,7 +123,13 @@ class BaseCreateRelatedObjectsView(LoginRequiredMixin, ContextMixin, AccountAndS
             if isinstance(form.instance, AbstractPlayer):
                 form.instance.sport = sport_registration.sport
         if formset.is_valid():
-            formset.save()
+            instances = formset.save()
+            if role == 'Referee':
+                names = [obj.league.abbreviated_name for obj in instances]
+            else:
+                names = [obj.team.name for obj in instances]
+            messages.success(self.request,
+                             'You have been registered as a {} for the {}.'.format(role.lower(), ', '.join(names)))
             self.request.session.pop('was_role_added', None)
             next_role = sport_registration.get_next_namespace_for_registration()
             if next_role is None:
@@ -138,7 +144,9 @@ class BaseCreateRelatedObjectsView(LoginRequiredMixin, ContextMixin, AccountAndS
                     url = 'sportregistrations:{role}:create'.format(role=next_sr_role)
                     return redirect(reverse(url, kwargs={'pk': next_sr_id}))
                 # All incomplete sport registrations have been completed.
-                return redirect('home')
+                return redirect('home') if self.request.session.get('is_user_currently_registering',
+                                                                    False) else redirect(
+                    sport_registration.get_absolute_url())
             else:
                 url = 'sportregistrations:{role}:create'.format(role=next_role)
                 return redirect(reverse(url, kwargs={'pk': sport_registration.id}))

@@ -38,7 +38,6 @@ class SignupForm(allauth_forms.SignupForm):
                         </ul>
                 """),
                 Field('password2'),
-                Field('timezone'),
                 HTML('<br>'),
                 Div(Submit('id_submit', 'Register',
                            css_class='btn btn-success', css_id="id_submit"),
