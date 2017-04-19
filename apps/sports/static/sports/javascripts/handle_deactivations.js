@@ -1,13 +1,8 @@
 $(function () {
     "use strict";
-    $("[name='remove_role_btn']").click(function (event) {
-        event.preventDefault();
-        event.stopPropagation();
-
-        var promise = $.ajax({
-            url: $(this).attr("data-url"),
-            method: "PATCH"
-        });
+    $("[name='deactivate_btn']").click(function (e) {
+        e.preventDefault();
+        e.stopPropagation();
 
         var onSuccess = function (data, textStatus, jqXHR) {
             window.location.reload(true);
@@ -17,7 +12,12 @@ $(function () {
             console.error(textStatus, data.responseText);
         };
 
-        promise.then(onSuccess, onFailure);
+        $.ajax({
+                url: $(this).attr("data-url"),
+                method: "PATCH"
+            })
+            .done(onSuccess)
+            .fail(onFailure);
 
         return false;
     });

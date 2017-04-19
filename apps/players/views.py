@@ -1,14 +1,15 @@
+from django.contrib import messages
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import get_object_or_404, render, redirect, Http404
 from django.views import generic
 from django.views.generic import base
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib import messages
 
 from common.views import BaseCreateRelatedObjectsView
+from escoresheet.utils.mappings import SPORT_PLAYER_MODEL_MAPPINGS
 from sports.models import SportRegistration
 from . import forms
 from .formset_helpers import HockeyPlayerFormSetHelper, BaseballPlayerFormSetHelper
-from .models import HockeyPlayer, BasketballPlayer, BaseballPlayer
+from .models import BasketballPlayer
 
 SPORT_CREATE_PLAYER_FORM_MAPPINGS = {
     'Ice Hockey': forms.HockeyPlayerForm,
@@ -20,13 +21,6 @@ SPORT_UPDATE_PLAYER_FORM_MAPPINGS = {
     'Ice Hockey': forms.UpdateHockeyPlayerForm,
     'Baseball': forms.UpdateBaseballPlayerForm,
     'Basketball': forms.UpdateBasketballPlayerForm
-}
-
-
-SPORT_PLAYER_MODEL_MAPPINGS = {
-    'Ice Hockey': HockeyPlayer,
-    'Basketball': BasketballPlayer,
-    'Baseball': BaseballPlayer
 }
 
 SPORT_PLAYER_FORMSET_HELPER_MAPPINGS = {

@@ -5,6 +5,7 @@ from django.core.validators import MinValueValidator, MaxValueValidator, Validat
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
+from common import managers
 from sports.models import Sport, SportRegistration
 from teams.models import Team
 
@@ -27,6 +28,9 @@ class AbstractPlayer(models.Model):
                                              validators=[MinValueValidator(MIN_JERSEY_NUMBER),
                                                          MaxValueValidator(MAX_JERSEY_NUMBER)])
     created = models.DateTimeField(auto_now_add=True, verbose_name='Created')
+    is_active = models.BooleanField(default=True, verbose_name='Is Active')
+
+    objects = managers.IsActiveManager()
 
     @property
     def league(self):

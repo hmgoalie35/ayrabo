@@ -2,6 +2,7 @@ from django.contrib.auth.models import User
 from django.core.validators import ValidationError
 from django.db import models
 
+from common import managers
 from sports.models import SportRegistration
 from teams.models import Team
 
@@ -20,10 +21,13 @@ class Coach(models.Model):
         (ASSISTANT_COACH, ASSISTANT_COACH)
     )
 
-    user = models.ForeignKey(User)
+    user = models.ForeignKey(User, related_name='coaches')
     position = models.CharField(max_length=255, verbose_name='Position', choices=POSITIONS)
     team = models.ForeignKey(Team)
     created = models.DateTimeField(auto_now_add=True, verbose_name='Created')
+    is_active = models.BooleanField(default=True, verbose_name='Is Active')
+
+    objects = managers.IsActiveManager()
 
     class Meta:
         verbose_name = 'Coach'

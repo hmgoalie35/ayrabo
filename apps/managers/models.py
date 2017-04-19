@@ -2,6 +2,7 @@ from django.contrib.auth.models import User
 from django.core.validators import ValidationError
 from django.db import models
 
+from common import managers
 from sports.models import SportRegistration
 from teams.models import Team
 
@@ -12,9 +13,12 @@ class Manager(models.Model):
     object is for a different team.
     TLDR; A user can be a manager for multiple teams and a new manager object is created for each team.
     """
-    user = models.ForeignKey(User)
+    user = models.ForeignKey(User, related_name='managers')
     team = models.ForeignKey(Team)
     created = models.DateTimeField(auto_now_add=True, verbose_name='Created')
+    is_active = models.BooleanField(default=True, verbose_name='Is Active')
+
+    objects = managers.IsActiveManager()
 
     class Meta:
         unique_together = (('user', 'team'),)

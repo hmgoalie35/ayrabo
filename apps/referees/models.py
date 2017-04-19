@@ -2,6 +2,7 @@ from django.contrib.auth.models import User
 from django.core.validators import ValidationError
 from django.db import models
 
+from common import managers
 from leagues.models import League
 from sports.models import SportRegistration
 
@@ -12,9 +13,12 @@ class Referee(models.Model):
     is for a different league.
     TLDR; A user can be a referee for multiple leagues and a new referee object is created for each league.
     """
-    user = models.ForeignKey(User)
+    user = models.ForeignKey(User, related_name='referees')
     league = models.ForeignKey(League)
     created = models.DateTimeField(auto_now_add=True, verbose_name='Created')
+    is_active = models.BooleanField(default=True, verbose_name='Is Active')
+
+    objects = managers.IsActiveManager()
 
     class Meta:
         unique_together = (('user', 'league'),)

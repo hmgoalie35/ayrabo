@@ -21,9 +21,10 @@
                     <br><br>
                     <ul class="nav nav-tabs nav-justified" role="tablist">
                         {% for role in sr_roles %}
-                            <li role="presentation" class="{% if forloop.first %}active{% endif %}"><a
-                                    href="#id_{{ role|lower }}" role="tab"
-                                    data-toggle="tab" class="nav-tab">{% pluralize_roles role %}</a>
+                            <li role="presentation" class="{% if forloop.first %}active{% endif %}">
+                                <a id="{{ role|lower }}_tab" href="#id_{{ role|lower }}" role="tab" data-toggle="tab" class="nav-tab">
+                                    {% pluralize_roles role %}
+                                </a>
                             </li>
                         {% endfor %}
                         {% if available_roles %}
@@ -107,5 +108,5 @@
 
 
 {% block extra_js %}
-    <script src="{% static 'sports/javascripts/remove_sport_registration_roles.js' %}"></script>
+    <script src="{% static 'sports/javascripts/handle_deactivations.js' %}"></script>
 {% endblock %}

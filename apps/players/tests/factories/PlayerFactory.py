@@ -16,6 +16,7 @@ class PlayerFactory(django.DjangoModelFactory):
     sport = factory.SubFactory(SportFactory)
     team = factory.SubFactory(TeamFactory)
     jersey_number = fuzzy.FuzzyChoice(range(0, 99))
+    is_active = True
 
 
 class HockeyPlayerFactory(PlayerFactory):
