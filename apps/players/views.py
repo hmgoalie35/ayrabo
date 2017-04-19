@@ -9,7 +9,6 @@ from escoresheet.utils.mappings import SPORT_PLAYER_MODEL_MAPPINGS
 from sports.models import SportRegistration
 from . import forms
 from .formset_helpers import HockeyPlayerFormSetHelper, BaseballPlayerFormSetHelper
-from .models import BasketballPlayer
 
 SPORT_CREATE_PLAYER_FORM_MAPPINGS = {
     'Ice Hockey': forms.HockeyPlayerForm,
@@ -25,7 +24,7 @@ SPORT_UPDATE_PLAYER_FORM_MAPPINGS = {
 
 SPORT_PLAYER_FORMSET_HELPER_MAPPINGS = {
     'Ice Hockey': HockeyPlayerFormSetHelper,
-    'Basketball': BasketballPlayer,
+    'Basketball': None,
     'Baseball': BaseballPlayerFormSetHelper
 }
 
