@@ -3,7 +3,7 @@ from players.models import HockeyPlayer, BaseballPlayer, BasketballPlayer
 from players.tests import HockeyPlayerFactory, BaseballPlayerFactory, BasketballPlayerFactory
 
 
-class IsActiveManagerTests(BaseTestCase):
+class ActiveManagerTests(BaseTestCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
@@ -17,10 +17,10 @@ class IsActiveManagerTests(BaseTestCase):
         cls.o2 = BaseballPlayerFactory(is_active=False)
 
     def test_excludes_inactive_hockey(self):
-        self.assertNotIn(self.p2, HockeyPlayer.objects.all())
+        self.assertNotIn(self.p2, HockeyPlayer.objects.active())
 
     def test_excludes_inactive_basketball(self):
-        self.assertNotIn(self.b2, BasketballPlayer.objects.all())
+        self.assertNotIn(self.b2, BasketballPlayer.objects.active())
 
     def test_excludes_inactive_baseball(self):
-        self.assertNotIn(self.o2, BaseballPlayer.objects.all())
+        self.assertNotIn(self.o2, BaseballPlayer.objects.active())

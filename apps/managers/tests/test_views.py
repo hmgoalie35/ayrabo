@@ -64,6 +64,7 @@ class ManagerHomeViewTests(BaseTestCase):
         self.assertHasMessage(response, 'You do not have permission to perform this action.')
 
     def test_context_dict_populated(self):
+        ManagerFactory(user=self.user, is_active=False)
         response = self.client.get(self.url)
         context = response.context
         self.assertEqual(list(context['teams']), [self.icecats, self.yankees])

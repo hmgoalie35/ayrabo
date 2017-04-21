@@ -80,7 +80,11 @@ class HockeyPlayerModelTests(BaseTestCase):
 
     def test_different_jersey_numbers(self):
         jersey_number = 23
+        # Error shouldn't be thrown...
+        p = HockeyPlayerFactory(team=self.hockey_player.team, jersey_number=jersey_number, is_active=False)
+        p.clean()
         another_hockey_player = HockeyPlayerFactory(team=self.hockey_player.team, jersey_number=jersey_number)
+        another_hockey_player.clean()
         self.assertEqual(another_hockey_player.jersey_number, jersey_number)
 
     def test_create_player_user_missing_player_role(self):
@@ -120,7 +124,10 @@ class BaseballPlayerModelTests(BaseTestCase):
 
     def test_different_jersey_numbers(self):
         jersey_number = 23
+        b = BaseballPlayerFactory(team=self.baseball_player.team, jersey_number=jersey_number, is_active=False)
+        b.clean()
         another_baseball_player = BaseballPlayerFactory(team=self.baseball_player.team, jersey_number=jersey_number)
+        another_baseball_player.clean()
         self.assertEqual(another_baseball_player.jersey_number, jersey_number)
 
     def test_create_player_user_missing_player_role(self):
@@ -161,8 +168,11 @@ class BasketballPlayerModelTests(BaseTestCase):
 
     def test_different_jersey_numbers(self):
         jersey_number = 23
+        b = BasketballPlayerFactory(team=self.basketball_player.team, jersey_number=jersey_number, is_active=False)
+        b.clean()
         another_basketball_player = BasketballPlayerFactory(team=self.basketball_player.team,
                                                             jersey_number=jersey_number)
+        another_basketball_player.clean()
         self.assertEqual(another_basketball_player.jersey_number, jersey_number)
 
     def test_create_player_user_missing_player_role(self):

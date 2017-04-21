@@ -143,19 +143,19 @@ class SportRegistration(models.Model):
                 players = None
                 model_cls = SPORT_MODEL_MAPPINGS.get(sport_name)
                 if model_cls is not None:
-                    players = model_cls.objects.filter(user=user, sport=self.sport).select_related('team',
-                                                                                                   'team__division')
+                    players = model_cls.objects.active().filter(
+                            user=user, sport=self.sport).select_related('team', 'team__division')
                 obj_role_mappings['Player'] = players if players and players.exists() else None
             elif role == 'Coach':
-                coaches = coaches_app.models.Coach.objects.filter(
+                coaches = coaches_app.models.Coach.objects.active().filter(
                         user=user, team__division__league__sport=self.sport).select_related('team', 'team__division')
                 obj_role_mappings['Coach'] = coaches if coaches.exists() else None
             elif role == 'Manager':
-                managers = managers_app.models.Manager.objects.filter(
+                managers = managers_app.models.Manager.objects.active().filter(
                         user=user, team__division__league__sport=self.sport).select_related('team', 'team__division')
                 obj_role_mappings['Manager'] = managers if managers.exists() else None
             elif role == 'Referee':
-                referees = referees_app.models.Referee.objects.filter(
+                referees = referees_app.models.Referee.objects.active().filter(
                         user=user, league__sport=self.sport).select_related('league')
                 obj_role_mappings['Referee'] = referees if referees.exists() else None
         return obj_role_mappings

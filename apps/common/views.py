@@ -72,6 +72,7 @@ class BaseCreateRelatedObjectsView(LoginRequiredMixin, ContextMixin, AccountAndS
                 filter_kwargs['sport'] = sr.sport
             else:
                 filter_kwargs['team__division__league__sport'] = sr.sport
+        # We want to include inactive objects in this query.
         already_registered_for = model_cls.objects.filter(**filter_kwargs).only(field).values_list(field, flat=True)
         context['user_registered_for_all'] = already_registered_for.count() == count
         context['formset'] = FormSet(self.request.POST or None,

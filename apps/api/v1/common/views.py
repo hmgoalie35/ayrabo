@@ -48,7 +48,7 @@ class BaseDeactivateApiView(views.APIView):
         else:
             filter_kwargs['team__division__league__sport'] = sport_registration.sport
 
-        active_objs = model_cls.objects.filter(**filter_kwargs)
+        active_objs = model_cls.objects.active().filter(**filter_kwargs)
         if not active_objs.exists():
             try:
                 sport_registration.remove_role(role)

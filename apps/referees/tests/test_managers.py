@@ -3,7 +3,7 @@ from referees.models import Referee
 from referees.tests import RefereeFactory
 
 
-class IsActiveManagerTests(BaseTestCase):
+class ActiveManagerTests(BaseTestCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
@@ -11,4 +11,4 @@ class IsActiveManagerTests(BaseTestCase):
         cls.r2 = RefereeFactory(is_active=False)
 
     def test_excludes_inactive(self):
-        self.assertNotIn(self.r2, Referee.objects.all())
+        self.assertNotIn(self.r2, Referee.objects.active())

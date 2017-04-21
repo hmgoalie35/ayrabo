@@ -46,7 +46,7 @@ class HockeySeasonRosterAdminForm(forms.ModelForm):
             queryset=Team.objects.filter(division__league__sport__name__icontains=sport_name).select_related(
                     'division'))
 
-    players = forms.ModelMultipleChoiceField(queryset=HockeyPlayer.objects.all().select_related('user'),
+    players = forms.ModelMultipleChoiceField(queryset=HockeyPlayer.objects.active().select_related('user'),
                                              widget=widgets.FilteredSelectMultiple(verbose_name='Players',
                                                                                    is_stacked=False))
 
@@ -87,10 +87,10 @@ class CreateHockeySeasonRosterForm(forms.ModelForm):
                     division__league__full_name=league).select_related('division')
 
         if team:
-            self.fields['players'].queryset = HockeyPlayer.objects.filter(team=team).select_related('user')
+            self.fields['players'].queryset = HockeyPlayer.objects.active().filter(team=team).select_related('user')
 
     season = SeasonModelChoiceField(queryset=Season.objects.all().select_related('league'))
-    players = forms.ModelMultipleChoiceField(queryset=HockeyPlayer.objects.all().select_related('user'))
+    players = forms.ModelMultipleChoiceField(queryset=HockeyPlayer.objects.active().select_related('user'))
 
     def clean_default(self):
         team = self.cleaned_data.get('team')
@@ -115,9 +115,9 @@ class UpdateHockeySeasonRosterForm(forms.ModelForm):
         team = kwargs.pop('team', None)
         super(UpdateHockeySeasonRosterForm, self).__init__(*args, **kwargs)
         if team:
-            self.fields['players'].queryset = HockeyPlayer.objects.filter(team=team).select_related('user')
+            self.fields['players'].queryset = HockeyPlayer.objects.active().filter(team=team).select_related('user')
 
-    players = forms.ModelMultipleChoiceField(queryset=HockeyPlayer.objects.all().select_related('user'))
+    players = forms.ModelMultipleChoiceField(queryset=HockeyPlayer.objects.active().select_related('user'))
 
     def clean_default(self):
         team = self.instance.team

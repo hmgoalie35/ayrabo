@@ -3,7 +3,6 @@ from rest_framework.reverse import reverse
 from rest_framework.test import APITestCase
 
 from accounts.tests import UserFactory
-from coaches.models import Coach
 from coaches.tests import CoachFactory
 from sports.tests import SportRegistrationFactory
 
@@ -55,9 +54,8 @@ class DeactivateCoachApiViewTests(APITestCase):
     def test_deactivates_coach(self):
         response = self.client.patch(self._format_url(pk=self.sr.pk, coach_pk=self.coach.pk))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        # Due to the overriding of objects.all(), the obj won't show up when trying to refresh from db
-        with self.assertRaises(Coach.DoesNotExist):
-            self.coach.refresh_from_db(fields=['is_active'])
+        self.coach.refresh_from_db(fields=['is_active'])
+        self.assertFalse(self.coach.is_active)
 
     def test_last_coach_registration_remove_role(self):
         """

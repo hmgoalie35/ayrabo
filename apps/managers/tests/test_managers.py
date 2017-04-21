@@ -3,7 +3,7 @@ from managers.models import Manager
 from managers.tests import ManagerFactory
 
 
-class IsActiveManagerTests(BaseTestCase):
+class ActiveManagerTests(BaseTestCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
@@ -11,4 +11,4 @@ class IsActiveManagerTests(BaseTestCase):
         cls.m2 = ManagerFactory(is_active=False)
 
     def test_excludes_inactive(self):
-        self.assertNotIn(self.m2, Manager.objects.all())
+        self.assertNotIn(self.m2, Manager.objects.active())

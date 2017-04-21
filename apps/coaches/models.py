@@ -27,7 +27,7 @@ class Coach(models.Model):
     created = models.DateTimeField(auto_now_add=True, verbose_name='Created')
     is_active = models.BooleanField(default=True, verbose_name='Is Active')
 
-    objects = managers.IsActiveManager()
+    objects = managers.ActiveManager()
 
     class Meta:
         verbose_name = 'Coach'

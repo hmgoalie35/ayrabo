@@ -5,7 +5,6 @@ from rest_framework.test import APITestCase
 from accounts.tests import UserFactory
 from divisions.tests import DivisionFactory
 from leagues.tests import LeagueFactory
-from players.models import HockeyPlayer
 from players.tests import HockeyPlayerFactory
 from sports.tests import SportRegistrationFactory, SportFactory
 from teams.tests import TeamFactory
@@ -64,9 +63,8 @@ class DeactivatePlayerApiViewTests(APITestCase):
     def test_deactivates_player(self):
         response = self.client.patch(self._format_url(pk=self.sr.pk, player_pk=self.player.pk))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        # Due to the overriding of objects.all(), the obj won't show up when trying to refresh from db
-        with self.assertRaises(HockeyPlayer.DoesNotExist):
-            self.player.refresh_from_db(fields=['is_active'])
+        self.player.refresh_from_db(fields=['is_active'])
+        self.assertFalse(self.player.is_active)
 
     def test_last_player_registration_remove_role(self):
         """

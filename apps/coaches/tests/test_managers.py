@@ -3,7 +3,7 @@ from coaches.tests import CoachFactory
 from escoresheet.utils.testing_utils import BaseTestCase
 
 
-class IsActiveManagerTests(BaseTestCase):
+class ActiveManagerTests(BaseTestCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
@@ -11,4 +11,4 @@ class IsActiveManagerTests(BaseTestCase):
         cls.c2 = CoachFactory(is_active=False)
 
     def test_excludes_inactive(self):
-        self.assertNotIn(self.c2, Coach.objects.all())
+        self.assertNotIn(self.c2, Coach.objects.active())
