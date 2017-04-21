@@ -13,6 +13,7 @@ def step_impl(context):
         username_or_email = data.get('username_or_email')
         user = get_user(username_or_email)
         league = data.get('league', None)
+        obj_id = data.get('id', None)
 
         leagues = League.objects.filter(full_name=league)
 
@@ -20,4 +21,9 @@ def step_impl(context):
             league = leagues.first()
         else:
             league = LeagueFactory(full_name=league)
-        RefereeFactory(user=user, league=league)
+
+        kwargs = {'user': user, 'league': league}
+        if obj_id is not None:
+            kwargs['id'] = obj_id
+
+        RefereeFactory(**kwargs)

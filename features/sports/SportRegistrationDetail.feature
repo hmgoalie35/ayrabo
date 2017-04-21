@@ -34,7 +34,7 @@ Feature: Sport registration detail
     And I should see "Coaches"
     And I should see "Players"
     And I should see "Referees"
-    And "Green Machine IceCats" should show up 2 times
+    And "Green Machine IceCats" should show up 4 times
     And I should see "Long Island Amateur Hockey League"
     And "Register" should show up 1 time
 

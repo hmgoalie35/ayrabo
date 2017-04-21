@@ -12,3 +12,4 @@ class ManagerFactory(django.DjangoModelFactory):
 
     user = factory.SubFactory(UserFactory)
     team = factory.SubFactory(TeamFactory)
+    is_active = True

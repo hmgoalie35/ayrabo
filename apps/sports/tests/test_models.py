@@ -128,15 +128,33 @@ class SportRegistrationModelTests(BaseTestCase):
         team = TeamFactory(name='Green Machine Icecats', division=division)
         sr = SportRegistrationFactory(user=user, sport=sport)
         sr.set_roles(SportRegistration.ROLES)
+
+        m = ManagerFactory(user=user, team__division__league__sport=sport, is_active=False)
+        p = HockeyPlayerFactory(user=user, sport=sport, is_active=False)
+        c = CoachFactory(user=user, team__division__league__sport=sport, is_active=False)
+        r = RefereeFactory(user=user, league__sport=sport, is_active=False)
+
         manager = [ManagerFactory(user=user, team=team)]
         player = [HockeyPlayerFactory(user=user, team=team, sport=sport)]
         coach = [CoachFactory(user=user, team=team)]
         referee = [RefereeFactory(user=user, league=league)]
+
         result = sr.get_related_role_objects()
-        self.assertListEqual(player, list(result.get('Player')))
-        self.assertListEqual(coach, list(result.get('Coach')))
-        self.assertListEqual(referee, list(result.get('Referee')))
-        self.assertListEqual(manager, list(result.get('Manager')))
+
+        players = list(result.get('Player'))
+        coaches = list(result.get('Coach'))
+        referees = list(result.get('Referee'))
+        managers = list(result.get('Manager'))
+
+        self.assertListEqual(player, players)
+        self.assertListEqual(coach, coaches)
+        self.assertListEqual(referee, referees)
+        self.assertListEqual(manager, managers)
+
+        self.assertNotIn(m, managers)
+        self.assertNotIn(p, players)
+        self.assertNotIn(c, coaches)
+        self.assertNotIn(r, referees)
 
     def test_get_related_role_objects_3_roles(self):
         user = UserFactory(email='testing@example.com')

@@ -12,3 +12,4 @@ class RefereeFactory(django.DjangoModelFactory):
 
     user = factory.SubFactory(UserFactory)
     league = factory.SubFactory(LeagueFactory)
+    is_active = True

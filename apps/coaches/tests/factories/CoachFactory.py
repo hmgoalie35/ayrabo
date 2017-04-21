@@ -13,3 +13,4 @@ class CoachFactory(django.DjangoModelFactory):
     user = factory.SubFactory(UserFactory)
     position = fuzzy.FuzzyChoice([position[0] for position in Coach.POSITIONS])
     team = factory.SubFactory(TeamFactory)
+    is_active = True

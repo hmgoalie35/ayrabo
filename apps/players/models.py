@@ -5,6 +5,7 @@ from django.core.validators import MinValueValidator, MaxValueValidator, Validat
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
+from common import managers
 from sports.models import Sport, SportRegistration
 from teams.models import Team
 
@@ -27,6 +28,9 @@ class AbstractPlayer(models.Model):
                                              validators=[MinValueValidator(MIN_JERSEY_NUMBER),
                                                          MaxValueValidator(MAX_JERSEY_NUMBER)])
     created = models.DateTimeField(auto_now_add=True, verbose_name='Created')
+    is_active = models.BooleanField(default=True, verbose_name='Is Active')
+
+    objects = managers.ActiveManager()
 
     @property
     def league(self):
@@ -108,7 +112,8 @@ class HockeyPlayer(AbstractPlayer):
         super().clean()
         if hasattr(self, 'team'):
             # If we do not exclude the current user this validation error will always be triggered.
-            qs = HockeyPlayer.objects.filter(team=self.team, jersey_number=self.jersey_number).exclude(user=self.user)
+            qs = HockeyPlayer.objects.active().filter(team=self.team, jersey_number=self.jersey_number).exclude(
+                user=self.user)
             if qs.exists():
                 error_msg = 'Please choose another number, {jersey_number} is currently unavailable for {team}'.format(
                         jersey_number=self.jersey_number, team=self.team.name)
@@ -160,7 +165,8 @@ class BaseballPlayer(AbstractPlayer):
         super().clean()
         if hasattr(self, 'team'):
             # If we do not exclude the current user this validation error will always be triggered.
-            qs = BaseballPlayer.objects.filter(team=self.team, jersey_number=self.jersey_number).exclude(user=self.user)
+            qs = BaseballPlayer.objects.active().filter(team=self.team, jersey_number=self.jersey_number).exclude(
+                    user=self.user)
             if qs.exists():
                 error_msg = 'Please choose another number, {jersey_number} is currently unavailable for {team}'.format(
                         jersey_number=self.jersey_number, team=self.team.name)
@@ -196,7 +202,7 @@ class BasketballPlayer(AbstractPlayer):
         super().clean()
         if hasattr(self, 'team'):
             # If we do not exclude the current user this validation error will always be triggered.
-            qs = BasketballPlayer.objects.filter(team=self.team, jersey_number=self.jersey_number).exclude(
+            qs = BasketballPlayer.objects.active().filter(team=self.team, jersey_number=self.jersey_number).exclude(
                     user=self.user)
             if qs.exists():
                 error_msg = 'Please choose another number, {jersey_number} is currently unavailable for {team}'.format(

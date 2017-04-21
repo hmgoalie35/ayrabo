@@ -14,10 +14,17 @@ def step_impl(context):
         username_or_email = data.get('username_or_email')
         user = get_user(username_or_email)
         team = data.get('team', None)
+        obj_id = data.get('id', None)
+
         teams = Team.objects.filter(name=team)
 
         if teams.exists():
             team = teams.first()
         else:
             team = TeamFactory(name=team)
-        ManagerFactory(user=user, team=team)
+
+        kwargs = {'user': user, 'team': team}
+        if obj_id is not None:
+            kwargs['id'] = obj_id
+
+        ManagerFactory(**kwargs)

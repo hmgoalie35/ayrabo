@@ -5,7 +5,7 @@ from .models import Manager
 
 @admin.register(Manager)
 class ManagerAdmin(admin.ModelAdmin):
-    list_display = ['id', 'name', 'user', 'team', 'division', 'league', 'sport']
+    list_display = ['id', 'name', 'user', 'team', 'division', 'league', 'sport', 'is_active']
     list_display_links = ['name']
     search_fields = ['user__email', 'team__name']
 

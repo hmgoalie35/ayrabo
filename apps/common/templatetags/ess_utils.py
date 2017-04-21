@@ -2,6 +2,13 @@ from django import template
 
 register = template.Library()
 
+SINGULAR_PLURAL_MAPPINGS = {
+    'Player': 'Players',
+    'Coach': 'Coaches',
+    'Referee': 'Referees',
+    'Manager': 'Managers'
+}
+
 
 @register.simple_tag
 def pluralize_roles(role, count=None):
@@ -13,12 +20,6 @@ def pluralize_roles(role, count=None):
     :param count: Used to decide if the role should be pluralized if specified. Default: None
     :return: The role, pluralized or just the role if it doesn't meet pluralization criteria.
     """
-    SINGULAR_PLURAL_MAPPINGS = {
-        'Player': 'Players',
-        'Coach': 'Coaches',
-        'Referee': 'Referees',
-        'Manager': 'Managers'
-    }
     if count is None:
         return SINGULAR_PLURAL_MAPPINGS.get(role)
     else:
@@ -28,3 +29,9 @@ def pluralize_roles(role, count=None):
 @register.filter
 def get(dictionary, key):
     return dictionary.get(key)
+
+
+@register.filter
+def pluralize_role(value, role):
+    role_pluralized = SINGULAR_PLURAL_MAPPINGS.get(role, None)
+    return '{}{}'.format(value, role_pluralized.lower() if role_pluralized is not None else role_pluralized)

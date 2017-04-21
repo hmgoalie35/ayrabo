@@ -15,8 +15,8 @@ class ManagerHomeView(LoginRequiredMixin, UserHasRolesMixin, generic.TemplateVie
     def get_context_data(self, **kwargs):
         context = super(ManagerHomeView, self).get_context_data(**kwargs)
         # A user has many manager objects, with each manager object being tied to a team
-        manager_objects = Manager.objects.filter(user=self.request.user).select_related('team',
-                                                                                        'team__division__league__sport')
+        manager_objects = Manager.objects.active().filter(user=self.request.user).select_related(
+                'team', 'team__division__league__sport')
         context['teams'] = [manager.team for manager in manager_objects]
         return context
 

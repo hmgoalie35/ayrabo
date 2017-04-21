@@ -8,6 +8,7 @@
                     <th>{{ field }}</th>
                 {% endfor %}
                 <th></th>
+                <th></th>
             </tr>
         {% endwith %}
         </thead>
@@ -18,8 +19,30 @@
                 {% for field_name, field_value in obj.fields.items %}
                     <td class="text-left">{{ field_value }}</td>
                 {% endfor %}
-                <td><a id="update_player_link" href="{% url 'sportregistrations:players:update' sport_registration.id obj.id %}"><span class="fa fa-pencil"></span></a></td>
+                <td><a id="update_player_link"
+                       href="{% url 'sportregistrations:players:update' sport_registration.id obj.id %}"><span
+                        class="fa fa-pencil"></span></a></td>
+                <td>
+                    {% if sr_roles|length > 1 or related_objs|length > 1 %}
+                        <span data-toggle="tooltip" data-placement="top" title="Deactivate">
+                            <a id="deactivate-{{ obj.team|slugify }}-{{ role|lower }}-link" data-toggle="modal"
+                               data-target="#{{ role|lower }}-{{ obj.id }}-modal">
+                                <span class="fa fa-times-circle fa-times-circle-red"></span>
+                            </a>
+                        </span>
+                    {% else %}
+                        <span data-toggle="tooltip" data-placement="top"
+                              title="You cannot deactivate this {{ role|lower }}. You must be registered for at least one role.">
+                            <a><span class="fa fa-times-circle fa-times-circle-red"></span></a>
+                        </span>
+                    {% endif %}
+                </td>
             </tr>
+
+            {% if sr_roles|length > 1 or related_objs|length > 1 %}
+                {% include 'sports/deactivation_modal.html' %}
+            {% endif %}
+
         {% endfor %}
         </tbody>
     </table>

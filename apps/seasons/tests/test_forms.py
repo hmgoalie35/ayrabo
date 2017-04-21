@@ -54,11 +54,13 @@ class CreateHockeySeasonRosterFormTests(BaseTestCase):
 
     def test_hockeyplayers_filtered_by_team(self):
         HockeyPlayerFactory.create_batch(5, team=self.teams[0], sport=self.sport)
+        inactive_player = HockeyPlayerFactory(team=self.teams[0], sport=self.sport, is_active=False)
         hockeyplayer_different_team = HockeyPlayerFactory(sport=self.sport)
 
         form = self.form_cls(team=self.teams[0])
         players_field = form.fields['players']
         self.assertNotIn(hockeyplayer_different_team, players_field.queryset)
+        self.assertNotIn(inactive_player, players_field.queryset)
 
 
 class UpdateHockeySeasonRosterFormTests(BaseTestCase):
@@ -72,7 +74,9 @@ class UpdateHockeySeasonRosterFormTests(BaseTestCase):
     def test_hockeyplayers_filtered_by_team(self):
         HockeyPlayerFactory.create_batch(5, team=self.team, sport=self.sport)
         hockeyplayer_different_team = HockeyPlayerFactory(sport=self.sport)
+        inactive_player = HockeyPlayerFactory(team=self.team, sport=self.sport, is_active=False)
 
         form = self.form_cls(team=self.team)
         players_field = form.fields['players']
         self.assertNotIn(hockeyplayer_different_team, players_field.queryset)
+        self.assertNotIn(inactive_player, players_field.queryset)

@@ -227,13 +227,25 @@ class ListSeasonRosterViewTests(BaseTestCase):
         response = self.client.get(reverse('teams:season_rosters:list', kwargs={'team_pk': team.pk}))
         self.assertEqual(response.status_code, 404)
 
+    def test_get_inactive_manager(self):
+        self.hockey_manager.is_active = False
+        self.hockey_manager.save()
+        response = self.client.get(reverse('teams:season_rosters:list', kwargs={'team_pk': self.icecats.pk}))
+        self.assertEqual(response.status_code, 404)
+
     def test_get_context_populated(self):
         season_rosters = HockeySeasonRosterFactory.create_batch(5, season=self.liahl_season, team=self.icecats)
+        players = HockeyPlayerFactory.create_batch(4)
+        players[0].is_active = False
+        players[0].save()
+        season_rosters[0].players.set(players)
         response = self.client.get(self.url)
         context = response.context
         self.assertEqual(context['team'].pk, self.icecats.pk)
 
         self.assertEqual(set(context['season_rosters']), set(season_rosters))
+
+        self.assertEqual(context['season_rosters'][season_rosters[0]].count(), 3)
 
 
 class UpdateSeasonRosterViewTests(BaseTestCase):
@@ -300,6 +312,14 @@ class UpdateSeasonRosterViewTests(BaseTestCase):
         team = TeamFactory(division=self.mm_aa)
         response = self.client.get(
                 reverse('teams:season_rosters:update', kwargs={'team_pk': team.pk, 'pk': self.season_roster.pk}))
+        self.assertEqual(response.status_code, 404)
+
+    def test_get_inactive_manager(self):
+        self.hockey_manager.is_active = False
+        self.hockey_manager.save()
+        response = self.client.get(
+                reverse('teams:season_rosters:update',
+                        kwargs={'team_pk': self.icecats.pk, 'pk': self.season_roster.pk}))
         self.assertEqual(response.status_code, 404)
 
     def test_get_invalid_season_roster_pk(self):
