@@ -36,7 +36,10 @@
                         </button>
                         <input id="create_objects_btn" type="submit" class="btn btn-success"
                                value="Register and continue">
-                        <br>
+                        <br><br>
+                        <p class="text-muted text-sm">
+                            Trying to reactivate your {% if role == 'Referee' %}league{% else %}team{% endif %} registration?<br><a href="{% url 'contact_us' %}">Contact Us</a>
+                        </p>
                     </div>
                 </form>
             </div>
