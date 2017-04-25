@@ -19,7 +19,13 @@ class AccountAndSportRegistrationCompleteMiddleware(MiddlewareMixin):
     """
     complete_registration_url = reverse_lazy('account_complete_registration')
     create_sport_registration_url = reverse_lazy('sportregistrations:create')
-    whitelisted_urls = [reverse_lazy('account_logout'), complete_registration_url, create_sport_registration_url]
+    whitelisted_urls = [
+        reverse_lazy('account_logout'),
+        complete_registration_url,
+        create_sport_registration_url,
+        reverse_lazy('contact_us'),
+        reverse_lazy('about_us')
+    ]
 
     def _is_whitelisted_url(self, path):
         if path in self.whitelisted_urls:
