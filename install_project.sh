@@ -14,7 +14,7 @@ print_step "Installing npm packages"
 npm install
 
 print_step "Installing virtualenv"
-sudo pip install virtualenv
+sudo pip3 install virtualenv
 
 print_step "Creating virtualenv with python3 interpreter"
 virtualenv venv -p $(which python3)
@@ -30,8 +30,8 @@ print_step "Symlinking local_settings file"
 cd escoresheet/settings/ && ln -s local_settings.py.dev local_settings.py ; cd ../../
 
 print_step "Starting postgres docker container"
+cd devops/docker && docker-compose up -d && cd ../../
 sleep 8
-cd devops/docker && docker-compose up -d
 
 print_step "Running migrations"
 python manage.py migrate

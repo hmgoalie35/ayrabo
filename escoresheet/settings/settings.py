@@ -166,6 +166,9 @@ DATABASES = {
         'CONN_MAX_AGE': 0,
         'OPTIONS': {
             'client_encoding': 'UTF8',
+        },
+        'TEST': {
+            'CHARSET': 'UTF8'
         }
     }
 }

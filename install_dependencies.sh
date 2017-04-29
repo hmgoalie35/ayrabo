@@ -50,7 +50,8 @@ sudo apt-get install -y nodejs
 print_step "Installing Docker and Docker compose"
 sudo apt-get install -y docker-ce
 sudo groupadd docker ; sudo usermod -aG docker $USER
-sudo pip install docker-compose -y
+sudo pip3 install -U pip
+sudo pip3 install docker-compose
 
 print_step "Rebooting so Docker works, after reboot run bash install_project.sh"
 sleep 3
