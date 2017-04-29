@@ -140,12 +140,32 @@ WSGI_APPLICATION = 'escoresheet.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/1.9/ref/settings/#databases
+ENV_SETTINGS = {}
 
-# TODO setup postgres, see if postgres can read username, etc. from file
+dot_env_path = os.path.join(BASE_DIR, '.env')
+if os.path.exists(dot_env_path):
+    with open(dot_env_path) as f:
+        for line in f:
+            k, v = line.strip().split('=')
+            ENV_SETTINGS[k] = v
+POSTGRES_NAME = ENV_SETTINGS.get('POSTGRES_NAME', None)
+POSTGRES_USER = ENV_SETTINGS.get('POSTGRES_USER', None)
+POSTGRES_PASSWORD = ENV_SETTINGS.get('POSTGRES_PASSWORD', None)
+
+# TODO Final prod check for postgres
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'prod_db.sqlite3'),
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.environ.get('DB_NAME', POSTGRES_NAME),
+        'USER': os.environ.get('DB_USER', POSTGRES_USER),
+        'PASSWORD': os.environ.get('DB_PASSWORD', POSTGRES_PASSWORD),
+        'HOST': os.environ.get('DB_HOST', 'localhost'),
+        'PORT': os.environ.get('DB_PORT', 5432),
+        # For now leave as the default
+        'CONN_MAX_AGE': 0,
+        'OPTIONS': {
+            'client_encoding': 'UTF8',
+        }
     }
 }
 

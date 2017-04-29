@@ -10,15 +10,6 @@ print_step () {
     printf "\n\n>>> $1\n\n"
 }
 
-print_step "Updating/upgrading apt packages"
-sudo apt-get update && sudo apt-get upgrade -y && sudo apt-get autoremove -y
-
-print_step "Fetching nodejs"
-curl -sL https://deb.nodesource.com/setup_6.x | sudo -E bash -
-
-print_step "Installing apt packages"
-sudo apt-get install python3-pip python-pip nodejs -y
-
 print_step "Installing npm packages"
 npm install
 
@@ -38,11 +29,15 @@ pre-commit install
 print_step "Symlinking local_settings file"
 cd escoresheet/settings/ && ln -s local_settings.py.dev local_settings.py ; cd ../../
 
-if grep -q django.db.backends.sqlite3 escoresheet/settings/local_settings.py ; then
-    print_step "Detected local sqlite3 database, running initial migrations and loading test data"
-    python manage.py migrate
-    python manage.py loaddata dev_fixtures
-fi
+print_step "Starting postgres docker container"
+sleep 8
+cd devops/docker && docker-compose up -d
+
+print_step "Running migrations"
+python manage.py migrate
+
+print_step "Loading test data"
+python manage.py loaddata dev_fixtures
 
 print_step "Running tests..."
 

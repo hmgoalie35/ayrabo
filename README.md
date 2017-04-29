@@ -18,14 +18,16 @@ A license has been intentionally excluded. See http://choosealicense.com/no-lice
 
 # Installation
 
-See the `setup_dev_env.sh` file for packages that will be installed, etc.
+See the `install_*.sh` scripts for packages that will be installed, etc.
 
 This project uses pre-commit, whenever you commit files flake8 and some other code quality tools will run to help prevent bugs/errors.
 
-1. Clone the repo
-2. Run `bash setup_dev_env.sh`
-    * This will install everything for you.
-3. The last part of the above script runs the test suite, it might take a few minutes
+1. Clone the repo and cd into it.
+2. Run `cp .env.example .env`. Add in values for `POSTGRES_PASSWORD`, `POSTGRES_USER`, `POSTGRES_DB`
+3. Run the following:
+    * `bash install_dependencies.sh` -- Your system will reboot after this is finished.
+    * `bash install_project.sh` -- Run this after system reboot.
+    * The last part of the above script runs the test suite, it might take a few minutes
 
 # Integration Tests
 
