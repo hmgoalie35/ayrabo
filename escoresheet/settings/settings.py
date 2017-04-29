@@ -148,7 +148,8 @@ if os.path.exists(dot_env_path):
         for line in f:
             k, v = line.strip().split('=')
             ENV_SETTINGS[k] = v
-POSTGRES_NAME = ENV_SETTINGS.get('POSTGRES_NAME', None)
+
+POSTGRES_DB = ENV_SETTINGS.get('POSTGRES_DB', None)
 POSTGRES_USER = ENV_SETTINGS.get('POSTGRES_USER', None)
 POSTGRES_PASSWORD = ENV_SETTINGS.get('POSTGRES_PASSWORD', None)
 
@@ -156,11 +157,11 @@ POSTGRES_PASSWORD = ENV_SETTINGS.get('POSTGRES_PASSWORD', None)
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.environ.get('DB_NAME', POSTGRES_NAME),
-        'USER': os.environ.get('DB_USER', POSTGRES_USER),
-        'PASSWORD': os.environ.get('DB_PASSWORD', POSTGRES_PASSWORD),
-        'HOST': os.environ.get('DB_HOST', 'localhost'),
-        'PORT': os.environ.get('DB_PORT', 5432),
+        'NAME': os.environ.get('POSTGRES_DB', POSTGRES_DB),
+        'USER': os.environ.get('POSTGRES_USER', POSTGRES_USER),
+        'PASSWORD': os.environ.get('POSTGRES_PASSWORD', POSTGRES_PASSWORD),
+        'HOST': os.environ.get('POSTGRES_HOST', 'localhost'),
+        'PORT': os.environ.get('POSTGRES_PORT', 5432),
         # For now leave as the default
         'CONN_MAX_AGE': 0,
         'OPTIONS': {

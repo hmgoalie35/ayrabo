@@ -37,7 +37,12 @@ print_step "Running migrations"
 python manage.py migrate
 
 print_step "Loading test data"
-python manage.py loaddata dev_fixtures
+if [ -d /var/lib/ess ]; then
+    echo "Found existing database, skipping fixture loading"
+    echo "You can delete existing postgres db files by running `sudo rm -r /var/lib/ess`"
+else
+    python manage.py loaddata dev_fixtures
+fi
 
 print_step "Running tests..."
 
