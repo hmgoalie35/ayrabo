@@ -5,8 +5,7 @@ from players.tests import HockeyPlayerFactory, BaseballPlayerFactory, Basketball
 
 class ActiveManagerTests(BaseTestCase):
     @classmethod
-    def setUpClass(cls):
-        super().setUpClass()
+    def setUpTestData(cls):
         cls.p1 = HockeyPlayerFactory()
         cls.p2 = HockeyPlayerFactory(is_active=False)
 

@@ -1,6 +1,4 @@
-import os
-
-from .settings import DATABASES, CACHES, BASE_DIR, REST_FRAMEWORK
+from .settings import DATABASES, CACHES, REST_FRAMEWORK
 
 DEBUG = True
 
@@ -11,12 +9,10 @@ SESSION_COOKIE_SECURE = False
 SECURE_SSL_REDIRECT = False
 SECURE_PROXY_SSL_HEADER = None
 
-DATABASES['default'] = {
-    'ENGINE': 'django.db.backends.sqlite3',
-    'NAME': os.path.join(BASE_DIR, 'dev_db.sqlite3'),
-}
+# https://docs.djangoproject.com/en/1.10/ref/databases/#caveats
+DATABASES['default']['CONN_MAX_AGE'] = 0
 
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_USE_SSL = False
 
 CACHES['default'] = {
     'BACKEND': 'django.core.cache.backends.dummy.DummyCache',

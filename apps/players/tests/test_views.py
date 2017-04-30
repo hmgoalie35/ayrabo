@@ -19,8 +19,7 @@ class CreatePlayersViewTests(BaseTestCase):
         return reverse(self.url.format(role=role), kwargs=kwargs)
 
     @classmethod
-    def setUpClass(cls):
-        super().setUpClass()
+    def setUpTestData(cls):
         cls.ice_hockey = SportFactory(name='Ice Hockey')
         cls.baseball = SportFactory(name='Baseball')
         cls.basketball = SportFactory(name='Basketball')
@@ -253,14 +252,10 @@ class CreatePlayersViewTests(BaseTestCase):
             'players-1-handedness': '',
             'players-TOTAL_FORMS': 2,
         }
-
-        # Could do an ORM call to grab the created obj, but its id is going to be 1.
-        sr_id = 1
-
         self.post_data.update(form_data)
         response = self.client.post(self._format_url('players', pk=self.sr.id), data=self.post_data, follow=True)
         url = 'sportregistrations:{role}:create'.format(role='coaches')
-        self.assertRedirects(response, reverse(url, kwargs={'pk': sr_id}))
+        self.assertRedirects(response, reverse(url, kwargs={'pk': self.sr.id}))
 
     def test_next_sport_registration_fetched(self):
         self.sr.set_roles(['Player'])
@@ -360,8 +355,7 @@ class UpdatePlayerViewTests(BaseTestCase):
         return reverse(self.url, kwargs=kwargs)
 
     @classmethod
-    def setUpClass(cls):
-        super().setUpClass()
+    def setUpTestData(cls):
         cls.ice_hockey = SportFactory(name='Ice Hockey')
         cls.baseball = SportFactory(name='Baseball')
         cls.url = 'sportregistrations:players:update'

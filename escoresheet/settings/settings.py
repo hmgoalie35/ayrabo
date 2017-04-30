@@ -23,6 +23,14 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__fil
 ESCORESHEET_MODULE_ROOT = os.path.join(BASE_DIR, 'escoresheet')
 NODE_MODULES_ROOT = os.path.join(BASE_DIR, 'node_modules')
 
+ENV_SETTINGS = {}
+dot_env_path = os.path.join(BASE_DIR, '.env')
+if os.path.exists(dot_env_path):
+    with open(dot_env_path) as f:
+        for line in f:
+            k, v = line.strip().split('=')
+            ENV_SETTINGS[k] = v
+
 # Custom django apps are in apps/ directory, so add it to path
 sys.path.append(os.path.join(BASE_DIR, 'apps'))
 
@@ -141,11 +149,23 @@ WSGI_APPLICATION = 'escoresheet.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/1.9/ref/settings/#databases
 
-# TODO setup postgres, see if postgres can read username, etc. from file
+# TODO Final prod check for postgres
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'prod_db.sqlite3'),
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.environ.get('POSTGRES_DB', ENV_SETTINGS.get('POSTGRES_DB')),
+        'USER': os.environ.get('POSTGRES_USER', ENV_SETTINGS.get('POSTGRES_USER')),
+        'PASSWORD': os.environ.get('POSTGRES_PASSWORD', ENV_SETTINGS.get('POSTGRES_PASSWORD')),
+        'HOST': os.environ.get('POSTGRES_HOST', 'localhost'),
+        'PORT': os.environ.get('POSTGRES_PORT', 5432),
+        # For now leave as the default
+        'CONN_MAX_AGE': 0,
+        'OPTIONS': {
+            'client_encoding': 'UTF8',
+        },
+        'TEST': {
+            'CHARSET': 'UTF8'
+        }
     }
 }
 
@@ -289,10 +309,10 @@ DEFAULT_FROM_EMAIL = 'webmaster@localhost'
 
 # TODO configure this for prod
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'localhost'
-EMAIL_HOST_USER = ''
-EMAIL_HOST_PASSWORD = ''
-EMAIL_PORT = 25
+EMAIL_HOST = os.environ.get('EMAIL_HOST', ENV_SETTINGS.get('EMAIL_HOST'))
+EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', ENV_SETTINGS.get('EMAIL_HOST_USER'))
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', ENV_SETTINGS.get('EMAIL_HOST_PASSWORD'))
+EMAIL_PORT = os.environ.get('EMAIL_PORT', ENV_SETTINGS.get('EMAIL_PORT'))
 # Only set one of these to True at a time, if have problems try setting the other one
 # EMAIL_USE_TLS = True
 EMAIL_USE_SSL = True

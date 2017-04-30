@@ -29,7 +29,7 @@ class CreateSportRegistrationForm(forms.ModelForm):
         sports_already_registered_for = kwargs.pop('sports_already_registered_for', None)
         super(CreateSportRegistrationForm, self).__init__(*args, **kwargs)
         if sports_already_registered_for is not None:
-            self.fields['sport'].queryset = Sport.objects.all().exclude(id__in=sports_already_registered_for)
+            self.fields['sport'].queryset = Sport.objects.exclude(id__in=sports_already_registered_for)
 
     roles = forms.MultipleChoiceField(choices=[(role, role) for role in SportRegistration.ROLES],
                                       widget=forms.CheckboxSelectMultiple)

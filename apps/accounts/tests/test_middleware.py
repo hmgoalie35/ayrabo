@@ -177,8 +177,7 @@ class MiddlewareAddsRolesToSessionTests(BaseTestCase):
     """
 
     @classmethod
-    def setUpClass(cls):
-        super(MiddlewareAddsRolesToSessionTests, cls).setUpClass()
+    def setUpTestData(cls):
         cls.user = UserFactory(email='user@example.com', password='myweakpassword')
         cls.ice_hockey = SportFactory(name='Ice Hockey')
         cls.baseball = SportFactory(name='Baseball')

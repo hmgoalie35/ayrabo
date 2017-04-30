@@ -11,8 +11,7 @@ from teams.tests import TeamFactory
 
 class CreateSportRegistrationViewTests(BaseTestCase):
     @classmethod
-    def setUpClass(cls):
-        super(CreateSportRegistrationViewTests, cls).setUpClass()
+    def setUpTestData(cls):
         cls.ice_hockey = SportFactory(name='Ice Hockey')
         cls.league = LeagueFactory(full_name='Long Island Amateur Hockey League', sport=cls.ice_hockey)
         cls.division = DivisionFactory(name='Midget Minor AA', league=cls.league)
@@ -178,21 +177,16 @@ class CreateSportRegistrationViewTests(BaseTestCase):
             'sportregistrations-0-roles': ['Player', 'Coach'],
             'sportregistrations-1-sport': [''],
         }
-
-        # Could do an ORM call to grab the created obj, but its id is going to be 1.
-        sr_id = 1
-
         self.post_data.update(form_data)
         self.post_data['sportregistrations-TOTAL_FORMS'] = 2
         response = self.client.post(self.url, data=self.post_data, follow=True)
         url = 'sportregistrations:{role}:create'.format(role='players')
-        self.assertRedirects(response, reverse(url, kwargs={'pk': sr_id}))
+        self.assertRedirects(response, reverse(url, kwargs={'pk': SportRegistration.objects.first().pk}))
 
 
 class SportRegistrationDetailViewTests(BaseTestCase):
     @classmethod
-    def setUpClass(cls):
-        super(SportRegistrationDetailViewTests, cls).setUpClass()
+    def setUpTestData(cls):
         cls.ice_hockey = SportFactory(name='Ice Hockey')
         cls.baseball = SportFactory(name='Baseball')
         cls.league = LeagueFactory(full_name='Long Island Amateur Hockey League', sport=cls.ice_hockey)
