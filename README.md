@@ -23,8 +23,9 @@ See the `install_*.sh` scripts for packages that will be installed, etc.
 This project uses pre-commit, whenever you commit files flake8 and some other code quality tools will run to help prevent bugs/errors.
 
 1. Clone the repo and cd into it.
-2. Run `cp .env.example .env`. Add in values for `POSTGRES_PASSWORD`, `POSTGRES_USER`, `POSTGRES_DB`
-3. Run the following:
+2. Signup for mailtrap https://mailtrap.io/ Emails sent during development will go to mailtrap.
+3. Run `cp .env.example .env`. Add in the appropriate values.
+4. Run the following:
     * `bash install_dependencies.sh` -- Your system will reboot after this is finished.
     * `bash install_project.sh` -- Run this after system reboot.
     * The last part of the above script runs the test suite, it might take a few minutes
