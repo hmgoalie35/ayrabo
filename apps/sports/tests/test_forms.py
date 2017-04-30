@@ -16,7 +16,7 @@ class CreateSportRegistrationFormTests(BaseTestCase):
         self.form_cls = CreateSportRegistrationForm
 
     def test_sets_fields_disabled(self):
-        form = self.form_cls(sports_already_registered_for=[self.hockey_reg.id, self.soccer_reg.id])
+        form = self.form_cls(sports_already_registered_for=[self.hockey.pk, self.soccer.pk])
 
         sport_field = form.fields['sport']
         qs = sport_field.queryset

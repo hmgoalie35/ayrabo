@@ -5,8 +5,7 @@ from managers.tests import ManagerFactory
 
 class ActiveManagerTests(BaseTestCase):
     @classmethod
-    def setUpClass(cls):
-        super().setUpClass()
+    def setUpTestData(cls):
         cls.m1 = ManagerFactory()
         cls.m2 = ManagerFactory(is_active=False)
 

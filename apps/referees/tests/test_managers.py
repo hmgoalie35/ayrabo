@@ -5,8 +5,7 @@ from referees.tests import RefereeFactory
 
 class ActiveManagerTests(BaseTestCase):
     @classmethod
-    def setUpClass(cls):
-        super().setUpClass()
+    def setUpTestData(cls):
         cls.r1 = RefereeFactory()
         cls.r2 = RefereeFactory(is_active=False)
 

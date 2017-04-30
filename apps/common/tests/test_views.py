@@ -14,8 +14,7 @@ class BaseCreateRelatedObjectsViewTests(BaseTestCase):
         return reverse(self.url.format(role=role), kwargs=kwargs)
 
     @classmethod
-    def setUpClass(cls):
-        super(BaseCreateRelatedObjectsViewTests, cls).setUpClass()
+    def setUpTestData(cls):
         cls.ice_hockey = SportFactory(name='Ice Hockey')
         cls.baseball = SportFactory(name='Baseball')
         cls.basketball = SportFactory(name='Basketball')

@@ -16,8 +16,7 @@ from teams.tests import TeamFactory
 
 class ManagerHomeViewTests(BaseTestCase):
     @classmethod
-    def setUpClass(cls):
-        super(ManagerHomeViewTests, cls).setUpClass()
+    def setUpTestData(cls):
         cls.ice_hockey = SportFactory(name='Ice Hockey')
         cls.liahl = LeagueFactory(full_name='Long Island Amateur Hockey League', sport=cls.ice_hockey)
         cls.mm_aa = DivisionFactory(name='Midget Minor AA', league=cls.liahl)
@@ -75,8 +74,7 @@ class CreateManagersViewTests(BaseTestCase):
         return reverse(self.url.format(role=role), kwargs=kwargs)
 
     @classmethod
-    def setUpClass(cls):
-        super(CreateManagersViewTests, cls).setUpClass()
+    def setUpTestData(cls):
         cls.ice_hockey = SportFactory(name='Ice Hockey')
         cls.baseball = SportFactory(name='Baseball')
         cls.basketball = SportFactory(name='Basketball')

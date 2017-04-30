@@ -5,8 +5,7 @@ from escoresheet.utils.testing_utils import BaseTestCase
 
 class ActiveManagerTests(BaseTestCase):
     @classmethod
-    def setUpClass(cls):
-        super().setUpClass()
+    def setUpTestData(cls):
         cls.c1 = CoachFactory()
         cls.c2 = CoachFactory(is_active=False)
 

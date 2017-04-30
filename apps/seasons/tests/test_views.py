@@ -15,8 +15,7 @@ from teams.tests import TeamFactory
 
 class CreateSeasonRosterViewTests(BaseTestCase):
     @classmethod
-    def setUpClass(cls):
-        super(CreateSeasonRosterViewTests, cls).setUpClass()
+    def setUpTestData(cls):
         cls.ice_hockey = SportFactory(name='Ice Hockey')
         cls.liahl = LeagueFactory(full_name='Long Island Amateur Hockey League', sport=cls.ice_hockey)
         cls.mm_aa = DivisionFactory(name='Midget Minor AA', league=cls.liahl)
@@ -105,8 +104,9 @@ class CreateSeasonRosterViewTests(BaseTestCase):
         HockeyPlayerFactory.create_batch(5, sport=self.ice_hockey, team=li_edge)
         response = self.client.get(self.url)
         form = response.context['form']
-        form_player_qs = form.fields['players'].queryset
-        self.assertListEqual(list(form_player_qs), self.hockey_players)
+        form_players = list(form.fields['players'].queryset)
+        form_players = sorted(form_players, key=lambda obj: obj.pk)
+        self.assertListEqual(list(form_players), sorted(self.hockey_players, key=lambda obj: obj.pk))
 
     # POST
     def test_post_redirects_if_no_manager_role(self):
@@ -170,8 +170,7 @@ class CreateSeasonRosterViewTests(BaseTestCase):
 
 class ListSeasonRosterViewTests(BaseTestCase):
     @classmethod
-    def setUpClass(cls):
-        super(ListSeasonRosterViewTests, cls).setUpClass()
+    def setUpTestData(cls):
         cls.ice_hockey = SportFactory(name='Ice Hockey')
         cls.liahl = LeagueFactory(full_name='Long Island Amateur Hockey League', sport=cls.ice_hockey)
         cls.mm_aa = DivisionFactory(name='Midget Minor AA', league=cls.liahl)
@@ -250,8 +249,7 @@ class ListSeasonRosterViewTests(BaseTestCase):
 
 class UpdateSeasonRosterViewTests(BaseTestCase):
     @classmethod
-    def setUpClass(cls):
-        super(UpdateSeasonRosterViewTests, cls).setUpClass()
+    def setUpTestData(cls):
         cls.ice_hockey = SportFactory(name='Ice Hockey')
         cls.liahl = LeagueFactory(full_name='Long Island Amateur Hockey League', sport=cls.ice_hockey)
         cls.mm_aa = DivisionFactory(name='Midget Minor AA', league=cls.liahl)
@@ -343,7 +341,8 @@ class UpdateSeasonRosterViewTests(BaseTestCase):
         self.assertIsNotNone(context['form'])
         self.assertEqual(context['form'].instance.pk, self.season_roster.pk)
         qs = context['form'].fields['players'].queryset
-        self.assertListEqual(list(qs), list(self.hockey_players))
+        players = sorted(list(qs), key=lambda obj: obj.pk)
+        self.assertListEqual(players, sorted(self.hockey_players, key=lambda obj: obj.pk))
 
     # POST
     def test_post_sport_not_configured(self):
