@@ -46,6 +46,7 @@ Pygments==2.2.0
 pyparsing==2.2.0
 pyterminalsize==0.1.0
 python-dateutil==2.6.0
+python-memcached==1.58
 python3-openid==3.1.0
 pytz==2017.2
 PyYAML==3.12

@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/1.9/ref/settings/
 
 import os
 import sys
+import re
 
 import pytz
 from django.urls import reverse_lazy
@@ -34,25 +35,35 @@ if os.path.exists(dot_env_path):
 # Custom django apps are in apps/ directory, so add it to path
 sys.path.append(os.path.join(BASE_DIR, 'apps'))
 
-ADMINS = [('Harris', 'hpittin1@binghamton.edu'), ]
+ADMINS = [('Harris Pittinsky', 'harris@pittinsky.com'), ]
 MANAGERS = ADMINS
 
-# TODO add caching (redis or memcached)
+IGNORABLE_404_URLS = [
+    re.compile(r'^/apple-touch-icon.*\.png$'),
+    re.compile(r'^/favicon\.ico$'),
+    re.compile(r'^/robots\.txt$'),
+]
+
+# Caching
 CACHES = {
     'default': {
-        'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
+        'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
+        # TODO Change to socket
+        'LOCATION': 'localhost:11211',
     }
 }
 
 CSRF_COOKIE_SECURE = True
+SECURE_BROWSER_XSS_FILTER = True
+SECURE_CONTENT_TYPE_NOSNIFF = True
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+SECURE_HSTS_SECONDS = 120
+
 SECURE_SSL_REDIRECT = True
 SESSION_COOKIE_SECURE = True
 
-# TODO See warning on https://docs.djangoproject.com/en/1.9/ref/settings/#secure-proxy-ssl-header.
-# TODO Need to have proxy strip X-Forwarded-Proto header and then set it myself so nobody can spoof the header
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
-# TODO regenerate new key, export as env var on servers
 # SECURITY WARNING: keep the secret key used in production secret!
 DEV_KEY = '9(31c+k9q8p++7a46ite17(@a3os_*)gg@+yqn4_5isb^v5=tr'
 SECRET_KEY = os.environ.get('SECRET_KEY', DEV_KEY)
@@ -60,11 +71,10 @@ SECRET_KEY = os.environ.get('SECRET_KEY', DEV_KEY)
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
+# TODO Set to domain name, set to empty list for testing/dev and remove corresponding setting from those settings files
 ALLOWED_HOSTS = ['*']
 
 # Application definition
-
-# TODO move dev/test only dependencies to correct settings files, requirements files
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -88,7 +98,7 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'django_filters',
 
-    # custom apps
+    # Custom apps
     'home.apps.HomeConfig',
     'accounts.apps.AccountsConfig',
     'userprofiles.apps.UserprofilesConfig',
@@ -107,8 +117,11 @@ INSTALLED_APPS = [
 
 CRISPY_TEMPLATE_PACK = 'bootstrap3'
 
+# NOTE: The ordering of the middleware is important, do not rearrange things unless you know what you are doing.
 MIDDLEWARE = [
+    'django.middleware.cache.UpdateCacheMiddleware',
     'debug_toolbar.middleware.DebugToolbarMiddleware',
+    'django.middleware.common.BrokenLinkEmailsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.locale.LocaleMiddleware',
@@ -120,7 +133,8 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'escoresheet.middleware.TranslationMiddleware',
     'escoresheet.middleware.TimezoneMiddleware',
-    'accounts.middleware.AccountAndSportRegistrationCompleteMiddleware'
+    'accounts.middleware.AccountAndSportRegistrationCompleteMiddleware',
+    'django.middleware.cache.FetchFromCacheMiddleware',
 ]
 
 ROOT_URLCONF = 'escoresheet.urls'
@@ -149,7 +163,6 @@ WSGI_APPLICATION = 'escoresheet.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/1.9/ref/settings/#databases
 
-# TODO Final prod check for postgres
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
@@ -206,11 +219,6 @@ USE_I18N = True
 USE_L10N = True
 
 USE_TZ = True
-
-# TODO look into rotating file handler
-# TODO add in other needed loggers to files and add in any useful django custom logger formatters, etc.
-# https://docs.python.org/3.4/library/logging.handlers.html
-# https://docs.djangoproject.com/en/1.9/topics/logging/#django-s-logging-extensions
 
 DJANGO_LOGS_DIR = os.path.join(BASE_DIR, 'logs')
 if not os.path.exists(DJANGO_LOGS_DIR):
@@ -287,8 +295,8 @@ LOGGING = {
             'propagate': True,
         },
         'django.request': {
-            'handlers': ['mail_admins'],
-            'level': 'ERROR',
+            'handlers': ['file_verbose', 'mail_admins'],
+            'level': 'WARNING',
             'propagate': False,
         },
         '': {
@@ -300,12 +308,10 @@ LOGGING = {
 }
 
 # Email address admins/managers receive mail from
-# TODO change this
-SERVER_EMAIL = 'root@localhost'
-
+# TODO update both of these
+SERVER_EMAIL = 'noreply@ess.com'
 # Email address regular users receive mail from
-# TODO change this
-DEFAULT_FROM_EMAIL = 'webmaster@localhost'
+DEFAULT_FROM_EMAIL = 'noreply@ess.com'
 
 # TODO configure this for prod
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
@@ -315,7 +321,7 @@ EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', ENV_SETTINGS.get('EM
 EMAIL_PORT = os.environ.get('EMAIL_PORT', ENV_SETTINGS.get('EMAIL_PORT'))
 # Only set one of these to True at a time, if have problems try setting the other one
 # EMAIL_USE_TLS = True
-EMAIL_USE_SSL = True
+EMAIL_USE_SSL = os.environ.get('EMAIL_USE_SSL', 'false').lower() == 'true'
 EMAIL_SSL_CERTFILE = None
 EMAIL_SSL_KEYFILE = None
 
@@ -327,7 +333,7 @@ EMAIL_SSL_KEYFILE = None
 # The actual uri staticfiles are served from (localhost:8000/static/)
 STATIC_URL = '/static/'
 # The folder on the filesystem staticfiles are stored
-STATIC_ROOT = os.path.join(BASE_DIR, 'production_static')
+STATIC_ROOT = os.path.join(BASE_DIR, 'dist')
 # Location to find extra static files (Django automatically looks in static/ subdirectories of all apps)
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 STATICFILES_FINDERS = ['django.contrib.staticfiles.finders.FileSystemFinder',
@@ -351,8 +357,7 @@ BOWER_INSTALLED_APPS = [
     'bootstrap-select'
 ]
 
-# Django compressor related
-# TODO add in other minifiers, etc. for scss, css, js. Look into settings for yuglify
+# Django compressor
 COMPRESS_PRECOMPILERS = [('text/scss', 'sassc {infile} {outfile} -p 8')]
 COMPRESS_CSS_FILTERS = ['compressor.filters.css_default.CssAbsoluteFilter',
                         'compressor.filters.yuglify.YUglifyCSSFilter',
@@ -361,12 +366,9 @@ COMPRESS_YUGLIFY_BINARY = os.path.join(NODE_MODULES_ROOT, 'yuglify/bin/yuglify')
 COMPRESS_JS_FILTERS = ['compressor.filters.yuglify.YUglifyJSFilter']
 COMPRESS_AUTOPREFIXER_BINARY = os.path.join(NODE_MODULES_ROOT, 'postcss-cli/bin/postcss')
 COMPRESS_AUTOPREFIXER_ARGS = '--use autoprefixer -c {}'.format(os.path.join(BASE_DIR, 'post_css_config.json'))
-COMPRESS_ROOT = STATICFILES_DIRS[0]
-
-# User account related
+COMPRESS_OFFLINE = True
 
 # Django all auth
-
 ACCOUNT_AUTHENTICATION_METHOD = 'email'
 ACCOUNT_DEFAULT_HTTP_PROTOCOL = 'https'  # This is `http` for local dev.
 ACCOUNT_EMAIL_REQUIRED = True
@@ -420,8 +422,6 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 25,
 }
 
-# TODO run through Django settings docs again to see if missing any settings
-
 try:
     # Running in dev mode
     from .local_settings import *  # noqa
@@ -429,6 +429,6 @@ except ImportError as e:
     # Running in production mode
     pass
 finally:
-    # Running in testing mode
+    # Running in testing mode, inherits settings from local_settings.
     if len(sys.argv) > 1 and ('test' in sys.argv or 'behave' in sys.argv):
         from .testing_settings import *  # noqa
