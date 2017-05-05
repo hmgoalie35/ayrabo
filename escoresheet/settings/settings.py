@@ -315,9 +315,9 @@ LOGGING = {
 
 # Email address admins/managers receive mail from
 # TODO update both of these
-SERVER_EMAIL = 'noreply@ess.com'
+SERVER_EMAIL = 'no.reply@ess.com'
 # Email address regular users receive mail from
-DEFAULT_FROM_EMAIL = 'noreply@ess.com'
+DEFAULT_FROM_EMAIL = 'no.reply@ess.com'
 
 # TODO configure this for prod
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
