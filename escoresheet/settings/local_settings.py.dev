@@ -7,12 +7,9 @@ ACCOUNT_DEFAULT_HTTP_PROTOCOL = 'http'
 CSRF_COOKIE_SECURE = False
 SESSION_COOKIE_SECURE = False
 SECURE_SSL_REDIRECT = False
-SECURE_PROXY_SSL_HEADER = None
 
 # https://docs.djangoproject.com/en/1.10/ref/databases/#caveats
 DATABASES['default']['CONN_MAX_AGE'] = 0
-
-EMAIL_USE_SSL = False
 
 CACHES['default'] = {
     'BACKEND': 'django.core.cache.backends.dummy.DummyCache',

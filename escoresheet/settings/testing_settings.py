@@ -15,7 +15,7 @@ COMPRESS_OFFLINE = False
 CSRF_COOKIE_SECURE = False
 SESSION_COOKIE_SECURE = False
 SECURE_SSL_REDIRECT = False
-SECURE_PROXY_SSL_HEADER = None
+
 
 DATABASES['default'] = {
     'ENGINE': 'django.db.backends.sqlite3',

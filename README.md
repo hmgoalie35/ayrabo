@@ -30,6 +30,8 @@ This project uses pre-commit, whenever you commit files flake8 and some other co
     * `bash install_project.sh` -- Run this after system reboot.
     * The last part of the above script runs the test suite, it might take a few minutes
 
+Docker is being used to run a postgres db server. You can start the postgres by running `docker-compose up -d` from the `devops/docker` directory.
+
 # Integration Tests
 
 ### Writing Integration Tests
