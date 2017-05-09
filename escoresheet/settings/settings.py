@@ -47,9 +47,7 @@ IGNORABLE_404_URLS = [
 # Caching
 CACHES = {
     'default': {
-        'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
-        # TODO Change to socket
-        'LOCATION': 'localhost:11211',
+        'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
     }
 }
 
@@ -120,7 +118,6 @@ CRISPY_TEMPLATE_PACK = 'bootstrap3'
 
 # NOTE: The ordering of the middleware is important, do not rearrange things unless you know what you are doing.
 MIDDLEWARE = [
-    'django.middleware.cache.UpdateCacheMiddleware',
     'debug_toolbar.middleware.DebugToolbarMiddleware',
     'django.middleware.common.BrokenLinkEmailsMiddleware',
     'django.middleware.security.SecurityMiddleware',
@@ -135,7 +132,6 @@ MIDDLEWARE = [
     'escoresheet.middleware.TranslationMiddleware',
     'escoresheet.middleware.TimezoneMiddleware',
     'accounts.middleware.AccountAndSportRegistrationCompleteMiddleware',
-    'django.middleware.cache.FetchFromCacheMiddleware',
 ]
 
 ROOT_URLCONF = 'escoresheet.urls'
@@ -429,12 +425,12 @@ REST_FRAMEWORK = {
 }
 
 try:
-    # Running in dev mode
-    from .local_settings import *  # noqa
+    # Running in testing mode
+    if len(sys.argv) > 1 and ('test' in sys.argv or 'behave' in sys.argv):
+        from .testing_settings import *  # noqa
+    else:
+        # Running in dev mode
+        from .local_settings import *  # noqa
 except ImportError as e:
     # Running in production mode
     pass
-finally:
-    # Running in testing mode, inherits settings from local_settings.
-    if len(sys.argv) > 1 and ('test' in sys.argv or 'behave' in sys.argv):
-        from .testing_settings import *  # noqa

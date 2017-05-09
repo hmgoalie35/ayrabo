@@ -3,9 +3,19 @@ import os
 
 from .settings import CACHES, DATABASES, BASE_DIR
 
-# This file inherits settings from local_settings.py
+# Django automatically sets DEBUG = False when running tests
 
 logging.disable(logging.CRITICAL)
+
+ACCOUNT_DEFAULT_HTTP_PROTOCOL = 'http'
+
+COMPRESS_ENABLED = False
+COMPRESS_OFFLINE = False
+
+CSRF_COOKIE_SECURE = False
+SESSION_COOKIE_SECURE = False
+SECURE_SSL_REDIRECT = False
+
 
 DATABASES['default'] = {
     'ENGINE': 'django.db.backends.sqlite3',
