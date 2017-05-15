@@ -27,10 +27,9 @@
     - python-dev
     - python-pip
     - python-virtualenv
-
-- name: Intall global python packages
-  pip:
-    name: "{{ item }}"
-    state: present
-  with_items:
     - supervisor
+
+- name: Update pip
+  pip:
+    name: pip
+    state: latest

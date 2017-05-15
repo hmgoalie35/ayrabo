@@ -1,7 +1,0 @@
-- name: Apply common to all host groups
-  hosts: all
-  remote_user: ess
-  become: yes
-
-  roles:
-    - common
