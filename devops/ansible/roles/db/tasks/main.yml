@@ -9,9 +9,7 @@
     url: "https://www.postgresql.org/media/keys/ACCC4CF8.asc"
     state: present
 
-- name: Update apt cache
-  apt:
-    update_cache: yes
+- include: ../../../utils/update_apt_cache.yml
 
 - name: Install postgres
   apt:
@@ -44,6 +42,8 @@
     path: "/etc/postgresql/9.6/main/postgresql.conf"
     insertafter: EOF
     # TODO Add webserver ip addresses here, or just change to *.
+    # If it is desired to have people connect to the db via pgadmin, etc. Set this to * and limit who can connect
+    # with pg_hba.conf.
     # This setting specifies the TCP/IP address(es) on which the server is to listen for connections.
     # pg_hba.conf deals with allowing/denying the connections.
     line: "listen_addresses = 'localhost'"
@@ -56,7 +56,8 @@
     insertafter: EOF
     line: "host    {{ db_name }}             {{ db_user }}             {{ item }}                   md5"
     state: present
-  # TODO Add webserver ip addresses here.
+  # TODO Add webserver ip addresses here, will want to loop over list of users to add to this if connecting via
+  # pgadmin or something.
   with_items:
     - "0.0.0.0/0"
     - "::0/0"

@@ -3,9 +3,7 @@
     repo: ppa:git-core/ppa
     state: present
 
-- name: Update apt cache
-  apt:
-    update_cache: yes
+- include: ../../../utils/update_apt_cache.yml
 
 - name: Upgrade system packages
   apt:
