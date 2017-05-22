@@ -1,3 +1,14 @@
+- name: Set static ip
+  template:
+    src: interfaces.j2
+    dest: /etc/network/interfaces
+    backup: yes
+
+- name: Restart networking
+  service:
+    name: networking
+    state: restarted
+
 - name: Add git PPA
   apt_repository:
     repo: ppa:git-core/ppa
@@ -26,6 +37,7 @@
     - python-pip
     - python-virtualenv
     - supervisor
+    - htop
 
 - name: Update pip
   pip:
