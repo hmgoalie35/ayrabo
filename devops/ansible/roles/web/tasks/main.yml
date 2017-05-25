@@ -1,3 +1,5 @@
+- include: nodejs.yml
+
 - name: Add nginx ppa
   apt_repository:
     repo: ppa:nginx/stable
@@ -44,15 +46,3 @@
 - include: ../../../utils/reload_nginx_conf.yml
 
 # Supervisor for nginx, gunicorn.
-
-
-# Clone project, install npm, node
-
-#apt_repository: curl -sL https://deb.nodesource.com/setup_6.x | sudo -E bash -
-
-
-# This should be done after code is checked out.
-#- name: Copy over env vars
-#  template:
-#    src: .env.example.j2
-#    dest: ../../../../../.env

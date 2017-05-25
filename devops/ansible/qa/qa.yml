@@ -16,6 +16,20 @@
   roles:
     - db
 
+- name: Deploy code to webserver
+  hosts: webservers
+  remote_user: ess
+  vars_prompt:
+    - name: deployment_version
+      prompt: Branch name, SHA hash, release version
+      default: master
+      private: no
+  vars_files:
+    - vars.yml
+
+  roles:
+    - deploy
+
 - name: Provision web server
   hosts: webservers
   remote_user: ess

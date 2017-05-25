@@ -1,0 +1,9 @@
+- name: Create deployments directory
+  file:
+    path: "{{ all_deployments_dir }}"
+    state: directory
+
+- name: Create sites directory
+  file:
+    path: "{{ sites_dir }}"
+    state: directory

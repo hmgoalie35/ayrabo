@@ -1,0 +1,8 @@
+all_deployments_dir: ~/deployments
+deployment_history_file: "{{ all_deployments_dir }}/history.txt"
+ongoing_deployment: "{{ all_deployments_dir }}/{{ deployment_version }}_{{ ansible_date_time.iso8601_basic_short }}"
+venv_path: "{{ ongoing_deployment }}/venv"
+venv_python_version: python3.5
+sites_dir: ~/sites # Where current & previous symlinks live
+repo: https://github.com/hmgoalie35/escoresheet.git
+max_deployment_dirs: 10

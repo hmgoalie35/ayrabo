@@ -1,0 +1,83 @@
+- include: pre_deploy.yml
+
+# TODO setup github keys https://docs.ansible.com/ansible/github_key_module.html
+- name:
+  git:
+    accept_hostkey: yes
+    repo: "{{ repo }}"
+    clone: yes
+    update: yes
+    version: "{{ deployment_version }}"
+    dest: "{{ ongoing_deployment }}"
+
+- name: Copy over env vars
+  template:
+    src: .env.example.j2
+    dest: "{{ ongoing_deployment }}/.env"
+
+- name: Create {{ venv_path }} and install requirements
+  pip:
+    chdir: "{{ ongoing_deployment }}"
+    virtualenv: "{{ venv_path }}"
+    virtualenv_python: "{{ venv_python_version }}"
+    state: present
+    requirements: "requirements.txt"
+
+- name: Install npm packages
+  npm:
+    path: "{{ ongoing_deployment }}"
+    production: no
+    state: present
+
+- name: Collect static
+  django_manage:
+    app_path: "{{ ongoing_deployment }}"
+    command: "collectstatic --noinput"
+    virtualenv: "{{ venv_path }}"
+
+- name: Compress static assets
+  django_manage:
+    app_path: "{{ ongoing_deployment }}"
+    command: "compress"
+    virtualenv: "{{ venv_path }}"
+
+- name: Run migrations
+  django_manage:
+    app_path: "{{ ongoing_deployment }}"
+    command: "migrate --noinput"
+    virtualenv: "{{ venv_path }}"
+
+# if build fails, dont run rest of plays, register error --> https://docs.ansible.com/ansible/deploy_helper_module.html
+# how to run cleanup???
+
+# change previous to where current is pointing, change current to {{ ongoing_deployment }}
+
+- name: Save current deployment to deployment history file
+  lineinfile:
+    create: yes
+    insertafter: EOF
+    line: "{{ ongoing_deployment }}"
+    path: "{{ deployment_history_file }}"
+    state: present
+
+# TODO only do below if not deployment_failed
+
+# If want a catch all that will delete all old deployment dirs, see https://docs.ansible.com/ansible/playbooks_filters.html#extracting-values-from-containers
+# Use map, extract, difference
+- name: Get current deployment history
+  shell: "cat {{ deployment_history_file }}"
+  register: deployment_history
+
+# First line in file is the oldest deployment directory
+- name: Remove oldest deployment directory
+  file:
+    path: "{{ deployment_history.stdout_lines|first }}"
+    state: absent
+  when: "deployment_history.stdout_lines|length > max_deployment_dirs"
+
+- name: Remove oldest deployment directory from history file
+  lineinfile:
+    path: "{{ deployment_history_file }}"
+    line: "{{ deployment_history.stdout_lines|first }}"
+    state: absent
+  when: "deployment_history.stdout_lines|length > max_deployment_dirs"
