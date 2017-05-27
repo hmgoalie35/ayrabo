@@ -1,83 +1,155 @@
 - include: pre_deploy.yml
 
-# TODO setup github keys https://docs.ansible.com/ansible/github_key_module.html
-- name:
-  git:
-    accept_hostkey: yes
-    repo: "{{ repo }}"
-    clone: yes
-    update: yes
-    version: "{{ deployment_version }}"
-    dest: "{{ ongoing_deployment }}"
+- block:
+    # TODO setup github keys https://docs.ansible.com/ansible/github_key_module.html
+    - name: "git Starting deployment for {{ deployment_version }}: {{ ongoing_deployment|basename }}"
+      git:
+        accept_hostkey: yes
+        repo: "{{ repo }}"
+        clone: yes
+        update: yes
+        version: "{{ deployment_version }}"
+        dest: "{{ ongoing_deployment }}"
 
-- name: Copy over env vars
-  template:
-    src: .env.example.j2
-    dest: "{{ ongoing_deployment }}/.env"
+    - name: Copy over env vars
+      template:
+        src: .env.example.j2
+        dest: "{{ ongoing_deployment }}/.env"
 
-- name: Create {{ venv_path }} and install requirements
-  pip:
-    chdir: "{{ ongoing_deployment }}"
-    virtualenv: "{{ venv_path }}"
-    virtualenv_python: "{{ venv_python_version }}"
-    state: present
-    requirements: "requirements.txt"
+    - name: Create venv and install requirements
+      pip:
+        chdir: "{{ ongoing_deployment }}"
+        virtualenv: "{{ venv_path }}"
+        virtualenv_python: "{{ venv_python_version }}"
+        state: present
+        requirements: "requirements.txt"
 
-- name: Install npm packages
-  npm:
-    path: "{{ ongoing_deployment }}"
-    production: no
-    state: present
+    - name: Install npm packages
+      npm:
+        path: "{{ ongoing_deployment }}"
+        production: no
+        state: present
 
-- name: Collect static
-  django_manage:
-    app_path: "{{ ongoing_deployment }}"
-    command: "collectstatic --noinput"
-    virtualenv: "{{ venv_path }}"
+    - name: Collect static
+      django_manage:
+        app_path: "{{ ongoing_deployment }}"
+        command: "collectstatic --noinput"
+        virtualenv: "{{ venv_path }}"
 
-- name: Compress static assets
-  django_manage:
-    app_path: "{{ ongoing_deployment }}"
-    command: "compress"
-    virtualenv: "{{ venv_path }}"
+    - name: Compress static assets
+      django_manage:
+        app_path: "{{ ongoing_deployment }}"
+        command: "compress"
+        virtualenv: "{{ venv_path }}"
 
-- name: Run migrations
-  django_manage:
-    app_path: "{{ ongoing_deployment }}"
-    command: "migrate --noinput"
-    virtualenv: "{{ venv_path }}"
+    - name: Run migrations
+      django_manage:
+        app_path: "{{ ongoing_deployment }}"
+        command: "migrate --noinput"
+        virtualenv: "{{ venv_path }}"
 
-# if build fails, dont run rest of plays, register error --> https://docs.ansible.com/ansible/deploy_helper_module.html
-# how to run cleanup???
+    - name: Get stats for current symlink
+      stat:
+        follow: yes
+        path: "{{ current_symlink }}"
+      register: current_symlink_stat
 
-# change previous to where current is pointing, change current to {{ ongoing_deployment }}
+    # If current and previous symlinks dne
+    - name: Create current symlink
+      file:
+        path: "{{ current_symlink }}"
+        src: "{{ ongoing_deployment }}"
+        state: link
+      when: not current_symlink_stat.stat.exists
 
-- name: Save current deployment to deployment history file
-  lineinfile:
-    create: yes
-    insertafter: EOF
-    line: "{{ ongoing_deployment }}"
-    path: "{{ deployment_history_file }}"
-    state: present
+    - name: Create previous symlink
+      file:
+        path: "{{ previous_symlink }}"
+        src: "{{ ongoing_deployment }}"
+        state: link
+      when: not current_symlink_stat.stat.exists
 
-# TODO only do below if not deployment_failed
+    # If current and previous symlinks exist
+    - name: Read current symlink value
+      shell: "readlink {{ current_symlink }}"
+      register: current_symlink_dir
+      when: current_symlink_stat.stat.exists
 
-# If want a catch all that will delete all old deployment dirs, see https://docs.ansible.com/ansible/playbooks_filters.html#extracting-values-from-containers
-# Use map, extract, difference
-- name: Get current deployment history
-  shell: "cat {{ deployment_history_file }}"
-  register: deployment_history
+    - name: Update previous symlink to point to current deployment dir
+      file:
+        path: "{{ previous_symlink }}"
+        src: "{{ current_symlink_dir.stdout }}"
+        force: yes
+        state: link
+      when: current_symlink_stat.stat.exists
 
-# First line in file is the oldest deployment directory
-- name: Remove oldest deployment directory
-  file:
-    path: "{{ deployment_history.stdout_lines|first }}"
-    state: absent
-  when: "deployment_history.stdout_lines|length > max_deployment_dirs"
+    - name: Update current symlink to point to ongoing deployment dir
+      file:
+        path: "{{ current_symlink }}"
+        src: "{{ ongoing_deployment }}"
+        force: yes
+        state: link
+      when: current_symlink_stat.stat.exists
 
-- name: Remove oldest deployment directory from history file
-  lineinfile:
-    path: "{{ deployment_history_file }}"
-    line: "{{ deployment_history.stdout_lines|first }}"
-    state: absent
-  when: "deployment_history.stdout_lines|length > max_deployment_dirs"
+    # TODO reload gunicorn/supervisor
+
+    - name: Save current deployment to deployment history file
+      lineinfile:
+        create: yes
+        insertafter: EOF
+        line: "{{ ongoing_deployment }}"
+        path: "{{ deployment_history_file }}"
+        state: present
+
+    # If want a catch all that will delete all old deployment dirs, see https://docs.ansible.com/ansible/playbooks_filters.html#extracting-values-from-containers
+    # Use map, extract, difference
+    - name: Get current deployment history
+      shell: "cat {{ deployment_history_file }}"
+      register: deployment_history
+
+    # First line in file is the oldest deployment directory
+    - name: Remove oldest deployment directory
+      file:
+        path: "{{ deployment_history.stdout_lines|first }}"
+        state: absent
+      when: "deployment_history.stdout_lines|length > max_deployment_dirs"
+
+    - name: Remove oldest deployment directory from history file
+      lineinfile:
+        path: "{{ deployment_history_file }}"
+        line: "{{ deployment_history.stdout_lines|first }}"
+        state: absent
+      when: "deployment_history.stdout_lines|length > max_deployment_dirs"
+
+  rescue:
+    - name: Remove current symlink if was just created
+      file:
+        path: "{{ current_symlink }}"
+        state: absent
+      when: current_symlink_stat is defined and not current_symlink_stat.stat.exists
+
+    - name: Remove previous symlink if was just created
+      file:
+        path: "{{ previous_symlink }}"
+        state: absent
+      when: current_symlink_stat is defined and not current_symlink_stat.stat.exists
+
+    - name: Read previous symlink value
+      shell: "readlink {{ previous_symlink }}"
+      register: previous_symlink_dir
+      when: current_symlink_stat is defined and current_symlink_stat.stat.exists
+
+    - name: Have current symlink point to previous
+      file:
+        path: "{{ current_symlink }}"
+        src: "{{ previous_symlink_dir.stdout }}"
+        force: yes
+        state: link
+      when: current_symlink_stat is defined and current_symlink_stat.stat.exists
+
+    # TODO Clean up failed_deployments/ dir (cron?)
+    - name: "Moving {{ ongoing_deployment|basename }} to {{ failed_deployments_dir|basename }}/"
+      command: "mv {{ ongoing_deployment }} {{ failed_deployments_dir }}/{{ ongoing_deployment|basename }}"
+      args:
+        creates: "{{ failed_deployments_dir }}/{{ ongoing_deployment|basename }}"
+        removes: "{{ ongoing_deployment }}"
