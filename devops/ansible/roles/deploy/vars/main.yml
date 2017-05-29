@@ -1,6 +1,6 @@
 repo: https://github.com/hmgoalie35/escoresheet.git
 
-all_deployments_dir: ~/deployments
+all_deployments_dir: "{{ ansible_env.HOME }}/deployments"
 failed_deployments_dir: "{{ all_deployments_dir }}/failed_deployments"
 
 deployment_history_file: "{{ all_deployments_dir }}/history.txt"
@@ -10,6 +10,6 @@ ongoing_deployment: "{{ all_deployments_dir }}/{{ deployment_version }}_{{ ansib
 venv_path: "{{ ongoing_deployment }}/venv"
 venv_python_version: python3.5
 
-sites_dir: ~/sites
+sites_dir: "{{ ansible_env.HOME }}/sites"
 current_symlink: "{{ sites_dir }}/current"
 previous_symlink: "{{ sites_dir }}/previous"

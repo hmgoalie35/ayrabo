@@ -33,9 +33,9 @@
 - name: Provision web server
   hosts: webservers
   remote_user: ess
-  become: yes
   vars_files:
     - vars.yml
+    - ../roles/deploy/vars/main.yml
 
   roles:
     - web

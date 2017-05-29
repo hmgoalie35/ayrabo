@@ -29,3 +29,5 @@
 #### Nginx
 * When deploying to multiple servers, take one nginx out of the load balancer, or maybe shut down that server?
     * https://www.nginx.com/resources/wiki/start/topics/tutorials/commandline/#stopping-or-restarting-nginx
+* Caching: https://www.nginx.com/resources/admin-guide/content-caching/
+* Actual ssl certificate, not snakeoil...

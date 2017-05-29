@@ -1,0 +1,6 @@
+[program:gunicorn]
+command={{ current_symlink }}/venv/bin/gunicorn -c {{ sites_dir }}/gunicorn.conf escoresheet.wsgi
+user={{ ansible_env['USER'] }}
+autostart=true
+autorestart=true
+redirect_stderr=true
