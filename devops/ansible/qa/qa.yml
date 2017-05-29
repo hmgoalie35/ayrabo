@@ -16,6 +16,16 @@
   roles:
     - db
 
+- name: Provision web server
+  hosts: webservers
+  remote_user: ess
+  vars_files:
+    - vars.yml
+    - ../roles/deploy/vars/main.yml
+
+  roles:
+    - web
+
 - name: Deploy code to webserver
   hosts: webservers
   remote_user: ess
@@ -29,13 +39,3 @@
 
   roles:
     - deploy
-
-- name: Provision web server
-  hosts: webservers
-  remote_user: ess
-  vars_files:
-    - vars.yml
-    - ../roles/deploy/vars/main.yml
-
-  roles:
-    - web

@@ -32,9 +32,3 @@
   supervisorctl:
     name: gunicorn
     state: present
-
-- name: Start supervisor gunicorn
-  become: yes
-  supervisorctl:
-    name: gunicorn
-    state: started

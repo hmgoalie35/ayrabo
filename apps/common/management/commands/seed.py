@@ -12,6 +12,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         for sport in SPORTS:
             obj, created = Sport.objects.get_or_create(name=sport)
+            obj.clean()
             print('{}: Created: {}'.format(obj, created))
 
         try:

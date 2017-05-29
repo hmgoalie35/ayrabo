@@ -1,4 +1,8 @@
-- include: pre_deploy.yml
+- name: Perform dist upgrade
+  become: yes
+  apt:
+    update_cache: yes
+    upgrade: dist
 
 - block:
     # TODO setup github keys https://docs.ansible.com/ansible/github_key_module.html
@@ -97,7 +101,7 @@
         state: link
       when: current_symlink_stat.stat.exists
 
-    # TODO reload gunicorn/supervisor
+    - include: ../../utils/restart_gunicorn.yml
 
     - name: Save current deployment to deployment history file
       lineinfile:
@@ -151,6 +155,9 @@
         src: "{{ previous_symlink_dir.stdout }}"
         force: yes
         state: link
+      when: current_symlink_stat is defined and current_symlink_stat.stat.exists
+
+    - include: ../../utils/restart_gunicorn.yml
       when: current_symlink_stat is defined and current_symlink_stat.stat.exists
 
     # TODO Clean up failed_deployments/ dir (cron?)

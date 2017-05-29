@@ -6,7 +6,7 @@ failed_deployments_dir: "{{ all_deployments_dir }}/failed_deployments"
 deployment_history_file: "{{ all_deployments_dir }}/history.txt"
 max_deployment_dirs: 10
 
-ongoing_deployment: "{{ all_deployments_dir }}/{{ deployment_version }}_{{ ansible_date_time.iso8601_basic_short }}"
+ongoing_deployment: "{{ all_deployments_dir }}/{{ deployment_version|e }}_{{ ansible_date_time.iso8601_basic_short }}"
 venv_path: "{{ ongoing_deployment }}/venv"
 venv_python_version: python3.5
 

@@ -1,3 +1,19 @@
 - include: nodejs.yml
-- include: gunicorn.yml
 - include: nginx.yml
+
+- name: Create all deployments directory
+  file:
+    path: "{{ all_deployments_dir }}"
+    state: directory
+
+- name: Create failed deployments directory
+  file:
+    path: "{{ failed_deployments_dir }}"
+    state: directory
+
+- name: Create sites directory
+  file:
+    path: "{{ sites_dir }}"
+    state: directory
+
+- include: gunicorn.yml
