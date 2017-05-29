@@ -48,6 +48,12 @@
         command: "migrate --noinput"
         virtualenv: "{{ venv_path }}"
 
+    - name: Run seeds
+      django_manage:
+        app_path: "{{ ongoing_deployment }}"
+        command: "seed"
+        virtualenv: "{{ venv_path }}"
+
     - name: Get stats for current symlink
       stat:
         follow: yes
