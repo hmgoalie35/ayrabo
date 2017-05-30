@@ -17,8 +17,11 @@ class Devops(object):
 
     def __init__(self):
         self.args = {}
-        self.sudo_required = False
-        self.vault_required = False
+        self.playbook = None
+        self.inventory_file = None
+        self.deployment_version = None
+        self.server_type = None
+        self.mode = None
 
     def get_parser(self):
         parser = argparse.ArgumentParser(description='Wrapper around using ansible-playbook on the command line')
@@ -26,6 +29,22 @@ class Devops(object):
         parser.add_argument('server_type', choices=SERVER_TYPES, help='The type of server to work with')
         parser.add_argument('-d', '--deployment_version', help='Branch name, SHA hash, release version')
         return parser
+
+    def _build_command(self):
+        command = BASE_COMMAND
+        command.append(self.playbook)
+        command.append('-i')
+        command.append(self.inventory_file)
+
+        if self.mode in ['provision', 'deploy']:
+            command.append('-K')
+            command.append('--vault-password-file')
+            command.append(VAULT_PASSWORD_FILE)
+            command.append('--extra-vars')
+            command.append('deployment_version={}'.format(self.deployment_version))
+            command.append('--extra-vars')
+            command.append('server_type={}'.format(self.server_type))
+        return command
 
     def init(self):
         """
@@ -38,33 +57,15 @@ class Devops(object):
         """
         parser = self.get_parser()
         self.args = vars(parser.parse_args())
-        server_type = self.args.get('server_type')
-        deployment_version = self.args.get('deployment_version')
-        mode = self.args.get('mode')
-        inventory_file = 'hosts/{}'.format(server_type)
-        playbook = '{}.yml'.format(mode)
+        self.server_type = self.args.get('server_type')
+        self.deployment_version = self.args.get('deployment_version')
+        self.mode = self.args.get('mode')
+        self.inventory_file = 'hosts/{}'.format(self.server_type)
+        self.playbook = '{}.yml'.format(self.mode)
 
-        if mode in ['provision', 'deploy']:
-            self.sudo_required = True
-        if mode in ['provision', 'deploy']:
-            self.vault_required = True
+        command = self._build_command()
 
-        command = BASE_COMMAND
-        command.append(playbook)
-        command.append('-i')
-        command.append(inventory_file)
-        if self.sudo_required:
-            command.append('-K')
-        if self.vault_required:
-            command.append('--vault-password-file')
-            command.append(VAULT_PASSWORD_FILE)
-
-        command.append('--extra-vars')
-        command.append('deployment_version={}'.format(deployment_version))
-        command.append('--extra-vars')
-        command.append('server_type={}'.format(server_type))
-
-        print('Running {}...\n\n'.format(' '.join(command)))
+        print('Running "{}"\n'.format(' '.join(command)))
         result = subprocess.run(command)
         print('Return Code: {}'.format(result.returncode))
         print('Stdout: {}'.format(result.stdout))
