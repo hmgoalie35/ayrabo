@@ -1,0 +1,76 @@
+##
+# You should look at the following URL's in order to grasp a solid understanding
+# of Nginx configuration files in order to fully unleash the power of Nginx.
+# https://www.nginx.com/resources/wiki/start/
+# https://www.nginx.com/resources/wiki/start/topics/tutorials/config_pitfalls/
+# https://wiki.debian.org/Nginx/DirectoryStructure
+#
+# In most cases, administrators will remove this file from sites-enabled/ and
+# leave it as reference inside of sites-available where it will continue to be
+# updated by the nginx packaging team.
+#
+# This file will automatically load configuration files provided by other
+# applications, such as Drupal or Wordpress. These applications will be made
+# available underneath a path with that package name, such as /drupal8.
+#
+# Please see /usr/share/doc/nginx-doc/examples/ for more detailed examples.
+##
+
+# Default server configuration
+
+server {
+    listen 80;
+    listen [::]:80;
+    return 301 https://$host$request_uri;
+}
+
+server {
+    listen 443 default_server;
+    listen [::]:443 default_server;
+    server_name "";
+
+    gzip off;
+    include snippets/snakeoil.conf;
+    return 444;
+}
+
+server {
+    listen 443 ssl;
+    listen [::]:443 ssl;
+    server_name {{ ansible_default_ipv4.address }};
+
+    gzip off;
+    include snippets/snakeoil.conf;
+
+    client_max_body_size 1G;
+    keepalive_timeout 70;
+
+    location /static/ {
+        alias {{ current_symlink }}/dist/;
+     }
+
+    location /media/ {
+        alias {{ current_symlink }}/media/;
+    }
+
+    location / {
+        try_files $uri @proxy_server;
+    }
+
+    location @proxy_server {
+        include proxy_params;
+
+        # proxy_redirect off;
+        proxy_pass   http://app_server;
+    }
+
+    # deny access to .htaccess files, if Apache's document root
+    # concurs with nginx's one
+    #location ~ /\.ht {
+    #     deny all;
+    #}
+}
+
+upstream app_server {
+    server {{ gunicorn_socket }} fail_timeout=0;
+}

@@ -87,3 +87,5 @@ ENV/
 
 # Node js dependencies
 node_modules/
+
+*.retry

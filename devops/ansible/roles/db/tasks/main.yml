@@ -1,0 +1,89 @@
+- name: Add postgres apt repository
+  apt_repository:
+    filename: pgdg
+    repo: "deb http://apt.postgresql.org/pub/repos/apt/ {{ ansible_distribution_release }}-pgdg main"
+    state: present
+
+- name: Add postgres apt signing key
+  apt_key:
+    url: "https://www.postgresql.org/media/keys/ACCC4CF8.asc"
+    state: present
+
+- include: ../../../utils/update_apt_cache.yml
+
+- name: Install postgres
+  apt:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - postgresql-9.6
+    - libpq-dev
+
+- name: Install psycopg2 for ansible
+  pip:
+    name: psycopg2
+    state: present
+
+- name: Remove default postgres timezone setting
+  lineinfile:
+    path: "/etc/postgresql/9.6/main/postgresql.conf"
+    regexp: "^timezone = 'localtime'$"
+    state: absent
+
+- name: Configure timezone for postgres
+  lineinfile:
+    path: "/etc/postgresql/9.6/main/postgresql.conf"
+    insertafter: EOF
+    line: "timezone = 'UTC'"
+    state: present
+
+- name: Configure listen addresses for postgres
+  lineinfile:
+    path: "/etc/postgresql/9.6/main/postgresql.conf"
+    insertafter: EOF
+    # TODO Add webserver ip addresses here, or just change to *.
+    # If it is desired to have people connect to the db via pgadmin, etc. Set this to * and limit who can connect
+    # with pg_hba.conf.
+    # This setting specifies the TCP/IP address(es) on which the server is to listen for connections.
+    # pg_hba.conf deals with allowing/denying the connections.
+    line: "listen_addresses = 'localhost'"
+    state: present
+
+# https://www.postgresql.org/docs/current/static/auth-pg-hba-conf.html
+- name: Permit {{ db_user }} to connect to postgres
+  lineinfile:
+    path: "/etc/postgresql/9.6/main/pg_hba.conf"
+    insertafter: EOF
+    line: "host    {{ db_name }}             {{ db_user }}             {{ item }}                   md5"
+    state: present
+  # TODO Add webserver ip addresses here, will want to loop over list of users to add to this if connecting via
+  # pgadmin or something.
+  with_items:
+    - "0.0.0.0/0"
+    - "::0/0"
+
+- name: Restart postgres
+  service:
+    name: postgresql
+    state: restarted
+
+- name: Create database
+  become_user: postgres
+  postgresql_db:
+    name: "{{ db_name }}"
+    encoding: UTF8
+    state: present
+
+- name: Add database users
+  become_user: postgres
+  postgresql_user:
+    db: "{{ db_name }}"
+    encrypted: yes
+    name: "{{ db_user }}"
+    password: "{{ db_password }}"
+    role_attr_flags: CREATEDB
+    state: present
+
+# TODO Add supervisor, was having trouble with upstart/systemv/systemd and supervisor.
+# Maybe remove postresql from upstart, have supervisor run /usr/lib/postgresql/9.6/bin/postgres -D /var/lib/postgresql/9.6/main -c config_file=/etc/postgresql/9.6/main/postgresql.conf or use pg_ctl in the dir /usr/lib/postgresql/9.6/bin.
+# See https://www.postgresql.org/docs/9.6/static/reference-client.html and https://www.postgresql.org/docs/current/static/reference-server.html

@@ -1,0 +1,30 @@
+- include: nodejs.yml
+- include: nginx.yml
+
+- name: Create all deployments directory
+  file:
+    path: "{{ all_deployments_dir }}"
+    state: directory
+
+- name: Create failed deployments directory
+  file:
+    path: "{{ failed_deployments_dir }}"
+    state: directory
+
+- name: Create sites directory
+  file:
+    path: "{{ sites_dir }}"
+    state: directory
+
+- include: gunicorn.yml
+
+- name: Add cron job to clear sessions
+  # every monday @ 10:00pm
+  cron:
+    name: clear_django_sessions
+    job: "source {{ current_symlink }}/venv/bin/activate && python {{ current_symlink }}/manage.py clearsessions && deactivate"
+    minute: 0
+    hour: 22
+    weekday: 1
+    user: "{{ ansible_env['USER'] }}"
+    state: present

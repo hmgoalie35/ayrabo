@@ -65,13 +65,12 @@ SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 # SECURITY WARNING: keep the secret key used in production secret!
 DEV_KEY = '9(31c+k9q8p++7a46ite17(@a3os_*)gg@+yqn4_5isb^v5=tr'
-SECRET_KEY = os.environ.get('SECRET_KEY', DEV_KEY)
+SECRET_KEY = ENV_SETTINGS.get('SECRET_KEY', DEV_KEY)
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-# TODO Set to domain name, set to empty list for testing/dev and remove corresponding setting from those settings files
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = [host.strip() for host in ENV_SETTINGS.get('ALLOWED_HOSTS', '').split(',')]
 
 # Application definition
 INSTALLED_APPS = [
@@ -168,11 +167,11 @@ WSGI_APPLICATION = 'escoresheet.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.environ.get('POSTGRES_DB', ENV_SETTINGS.get('POSTGRES_DB')),
-        'USER': os.environ.get('POSTGRES_USER', ENV_SETTINGS.get('POSTGRES_USER')),
-        'PASSWORD': os.environ.get('POSTGRES_PASSWORD', ENV_SETTINGS.get('POSTGRES_PASSWORD')),
-        'HOST': os.environ.get('POSTGRES_HOST', 'localhost'),
-        'PORT': os.environ.get('POSTGRES_PORT', 5432),
+        'NAME': ENV_SETTINGS.get('POSTGRES_DB'),
+        'USER': ENV_SETTINGS.get('POSTGRES_USER'),
+        'PASSWORD': ENV_SETTINGS.get('POSTGRES_PASSWORD'),
+        'HOST': ENV_SETTINGS.get('POSTGRES_HOST', 'localhost'),
+        'PORT': ENV_SETTINGS.get('POSTGRES_PORT', 5432),
         # For now leave as the default
         'CONN_MAX_AGE': 0,
         'OPTIONS': {
@@ -311,19 +310,19 @@ LOGGING = {
 
 # Email address admins/managers receive mail from
 # TODO update both of these
-SERVER_EMAIL = 'noreply@ess.com'
+SERVER_EMAIL = 'no.reply@ess.com'
 # Email address regular users receive mail from
-DEFAULT_FROM_EMAIL = 'noreply@ess.com'
+DEFAULT_FROM_EMAIL = 'no.reply@ess.com'
 
 # TODO configure this for prod
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = os.environ.get('EMAIL_HOST', ENV_SETTINGS.get('EMAIL_HOST'))
-EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', ENV_SETTINGS.get('EMAIL_HOST_USER'))
-EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', ENV_SETTINGS.get('EMAIL_HOST_PASSWORD'))
-EMAIL_PORT = os.environ.get('EMAIL_PORT', ENV_SETTINGS.get('EMAIL_PORT'))
+EMAIL_HOST = ENV_SETTINGS.get('EMAIL_HOST')
+EMAIL_HOST_USER = ENV_SETTINGS.get('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = ENV_SETTINGS.get('EMAIL_HOST_PASSWORD')
+EMAIL_PORT = ENV_SETTINGS.get('EMAIL_PORT')
 # Only set one of these to True at a time, if have problems try setting the other one
 # EMAIL_USE_TLS = True
-EMAIL_USE_SSL = os.environ.get('EMAIL_USE_SSL', 'false').lower() == 'true'
+EMAIL_USE_SSL = ENV_SETTINGS.get('EMAIL_USE_SSL', 'false').lower() == 'true'
 EMAIL_SSL_CERTFILE = None
 EMAIL_SSL_KEYFILE = None
 
