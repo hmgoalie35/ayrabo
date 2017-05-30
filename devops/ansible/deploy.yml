@@ -1,0 +1,18 @@
+- name: Deploy code to webserver
+  hosts: webservers
+  remote_user: ess
+  vars_prompt:
+    - name: server_type
+      prompt: The server type to work with
+      private: no
+
+    - name: deployment_version
+      prompt: Branch name, SHA hash, release version
+      default: master
+      private: no
+  vars_files:
+    - "{{ server_type }}_vars.yml"
+    - "roles/deploy/vars/main.yml"
+
+  roles:
+    - deploy

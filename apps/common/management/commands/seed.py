@@ -10,6 +10,7 @@ class Command(BaseCommand):
     help = 'Configures the project with sports, etc.'
 
     def handle(self, *args, **options):
+        # TODO Create leagues/teams, seasons... Cron job for seasons?
         for sport in SPORTS:
             obj, created = Sport.objects.get_or_create(name=sport)
             obj.clean()

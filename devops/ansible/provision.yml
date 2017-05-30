@@ -11,31 +11,27 @@
   remote_user: ess
   become: yes
   vars_files:
-    - vars.yml
+    - "{{ server_type }}_vars.yml"
 
   roles:
     - db
 
-- name: Provision web server
-  hosts: webservers
-  remote_user: ess
-  vars_files:
-    - vars.yml
-    - ../roles/deploy/vars/main.yml
-
-  roles:
-    - web
-
-- name: Deploy code to webserver
+- name: Provision web server and deploy code
   hosts: webservers
   remote_user: ess
   vars_prompt:
+    - name: server_type
+      prompt: The server type to work with
+      private: no
+
     - name: deployment_version
       prompt: Branch name, SHA hash, release version
       default: master
       private: no
   vars_files:
-    - vars.yml
+    - "{{ server_type }}_vars.yml"
+    - "roles/deploy/vars/main.yml"
 
   roles:
+    - web
     - deploy

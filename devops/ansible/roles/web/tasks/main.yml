@@ -17,3 +17,14 @@
     state: directory
 
 - include: gunicorn.yml
+
+- name: Add cron job to clear sessions
+  # every monday @ 10:00pm
+  cron:
+    name: clear_django_sessions
+    job: "source {{ current_symlink }}/venv/bin/activate && python {{ current_symlink }}/manage.py clearsessions && deactivate"
+    minute: 0
+    hour: 22
+    weekday: 1
+    user: "{{ ansible_env['USER'] }}"
+    state: present
