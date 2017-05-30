@@ -14,6 +14,7 @@
 * Backup db before deployments
 * gunicorn forwarded allow ips, make sure django knows https
 * lets encrypt
+* supervisor for postgres, nginx
 
 ### Usage
 * A few preconditions must be met on the remote hosts before running the playbooks
