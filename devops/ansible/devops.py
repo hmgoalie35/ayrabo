@@ -36,8 +36,9 @@ class Devops(object):
         command.append('-i')
         command.append(self.inventory_file)
 
-        if self.mode in ['provision', 'deploy']:
+        if self.mode in ['provision', 'deploy', 'local_dev']:
             command.append('-K')
+        if self.mode in ['provision', 'deploy']:
             command.append('--vault-password-file')
             command.append(VAULT_PASSWORD_FILE)
             command.append('--extra-vars')
