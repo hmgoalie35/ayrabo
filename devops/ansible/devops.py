@@ -6,8 +6,8 @@ import subprocess
 
 BASE_COMMAND = ['ansible-playbook']
 VAULT_PASSWORD_FILE = os.path.expanduser('~/ansible-vault.txt')
-SERVER_TYPES = ['qa', 'staging', 'prod']
-MODES = ['deploy', 'maintenance', 'provision', 'rollback', 'db_backup', 'db_restore']
+SERVER_TYPES = ['dev', 'qa', 'staging', 'prod']
+MODES = ['deploy', 'maintenance', 'provision', 'rollback', 'db_backup', 'db_restore', 'local_dev']
 
 
 class Devops(object):

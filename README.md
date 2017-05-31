@@ -24,11 +24,16 @@ This project uses pre-commit, whenever you commit files flake8 and some other co
 
 1. Clone the repo and cd into it.
 2. Signup for mailtrap https://mailtrap.io/ Emails sent during development will go to mailtrap.
-3. Run `cp .env.example .env`. Add in the appropriate values.
+3. Run `cp devops/ansible/roles/deploy/templates/.env.example.j2 .env`. Add in the appropriate values.
 4. Run the following:
     * `bash install_dependencies.sh` -- Your system will reboot after this is finished.
     * `bash install_project.sh` -- Run this after system reboot.
     * The last part of the above script runs the test suite, it might take a few minutes
+
+WIP:
+
+* `cd devops/ansible`
+* `./devops.py local_dev dev -d dev`
 
 Docker is being used to run a postgres db server. You can start the postgres container by running `docker-compose up -d` from the `devops/docker` directory.
 
