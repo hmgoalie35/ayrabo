@@ -24,7 +24,9 @@
     src: "{{ project_root }}/escoresheet/settings/local_settings.py.dev"
     state: link
 
-- name: Start docker containers
-  docker_service:
-    project_src: "{{ project_root }}/devops/docker"
-    state: present
+# If getting errors make sure have latest docker-py, docker-compose, PyYAML, docker for pip2 and pip3. Use -U
+- name: Build and start docker containers in detached mode
+  shell: "docker-compose up -d"
+  args:
+    chdir: "{{ project_root }}/devops/docker"
+    executable: "/bin/bash"
