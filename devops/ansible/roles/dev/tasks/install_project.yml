@@ -1,0 +1,26 @@
+- name: Create venv and install requirements
+  pip:
+    virtualenv: "{{ venv_path }}"
+    virtualenv_python: "{{ venv_python_version }}"
+    state: present
+    requirements: "requirements.txt"
+
+- name: Install npm packages
+  npm:
+    path: "{{ project_root }}"
+    production: no
+    state: present
+
+- name: Install pre-commit
+  command: pre-commit install
+
+- name: Symlinking local settings file
+  file:
+    path: "{{ project_root }}/escoresheet/settings/local_settings.py"
+    src: "{{ project_root }}/escoresheet/settings/local_settings.py.dev"
+    state: link
+
+- name: Start docker containers
+  docker_service:
+    project_src: "{{ project_root }}/devops/docker"
+    state: present

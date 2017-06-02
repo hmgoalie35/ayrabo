@@ -72,11 +72,20 @@
     name: pip
     state: latest
 
-- name: Install docker compose
+- name: Install pip packages
   become: yes
   pip:
-    name: docker-compose
+    name: "{{ item }}"
     state: present
+  with_items:
+    - docker-compose
+    - docker-py
+    - PyYAML
+    - virtualenv
+
+- name: Rebooting in 5 seconds...
+  pause:
+    seconds: 5
 
 - name: Reboot
   become: yes

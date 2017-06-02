@@ -32,8 +32,18 @@ This project uses pre-commit, whenever you commit files flake8 and some other co
 
 WIP:
 
+* Install: `python python-dev python-pip libssl-dev`.
+* Install ansible: `sudo pip install ansible`
+* Run `cp devops/ansible/roles/deploy/templates/.env.example.j2 .env`.
+    * Fill in the email values with your mailtrap settings.
+    * Set `ALLOWED_HOSTS` TO `*`.
+    * Remove the `SECRET_KEY` line.
+    * Fill in the remaining values.
+    * **NOTE:** Do not surround the values in `''` or `""`.
 * `cd devops/ansible`
-* `./devops.py local_dev dev -d dev`
+* `./devops.py -m dev -s dev -d dev -t install_dependencies`
+    * Your computer will reboot.
+* Run `./devops.py -m dev -s dev -d dev -t install_project` from the `devops/ansible` directory.
 
 Docker is being used to run a postgres db server. You can start the postgres container by running `docker-compose up -d` from the `devops/docker` directory.
 
