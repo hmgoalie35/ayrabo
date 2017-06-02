@@ -13,7 +13,7 @@
     state: present
 
 - name: Install pre-commit
-  command: "source {{ venv_path }}/bin/activate && pre-commit install"
+  shell: "source {{ venv_path }}/bin/activate && pre-commit install"
   args:
     chdir: "{{ project_root }}"
 
