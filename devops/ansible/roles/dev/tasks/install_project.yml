@@ -1,5 +1,6 @@
 - name: Create venv and install requirements
   pip:
+    chdir: "{{ project_root }}"
     virtualenv: "{{ venv_path }}"
     virtualenv_python: "{{ venv_python_version }}"
     state: present
