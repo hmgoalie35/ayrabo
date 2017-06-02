@@ -14,6 +14,8 @@
 
 - name: Install pre-commit
   command: pre-commit install
+  args:
+    chdir: "{{ project_root }}"
 
 - name: Symlinking local settings file
   file:

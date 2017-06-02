@@ -40,7 +40,8 @@ class Devops(object):
         command.append(self.inventory_file)
 
         if self.mode == 'dev':
-            command.append('-K')
+            if self.tags == 'install_dependencies':
+                command.append('-K')
             if self.tags:
                 command.append('-t')
                 command.append(self.tags)
