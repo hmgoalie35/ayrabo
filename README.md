@@ -23,27 +23,19 @@ See the `install_*.sh` scripts for packages that will be installed, etc.
 This project uses pre-commit, whenever you commit files flake8 and some other code quality tools will run to help prevent bugs/errors.
 
 1. Clone the repo and cd into it.
-2. Signup for mailtrap https://mailtrap.io/ Emails sent during development will go to mailtrap.
-3. Run `cp devops/ansible/roles/deploy/templates/.env.example.j2 .env`. Add in the appropriate values.
-4. Run the following:
-    * `bash install_dependencies.sh` -- Your system will reboot after this is finished.
-    * `bash install_project.sh` -- Run this after system reboot.
-    * The last part of the above script runs the test suite, it might take a few minutes
-
-WIP:
-
-* Install: `python python-dev python-pip libssl-dev`.
-* Install ansible: `sudo pip install ansible`
-* Run `cp devops/ansible/roles/deploy/templates/.env.example.j2 .env`.
+2. Signup for mailtrap https://mailtrap.io/. Emails sent during development will go to mailtrap.
+3. Make sure `python python-dev python-pip libssl-dev` are installed.
+4. Install ansible: `sudo pip install ansible`
+5. Run `cp devops/ansible/roles/deploy/templates/.env.example.j2 .env`.
     * Fill in the email values with your mailtrap settings.
     * Set `ALLOWED_HOSTS` TO `*`.
     * Remove the `SECRET_KEY` line.
     * Fill in the remaining values.
     * **NOTE:** Do not surround the values in `''` or `""`.
-* `cd devops/ansible`
-* `./devops.py -m dev -s dev -d dev -t install_dependencies`
+6. Run `devops/ansible/devops.py -m dev -s dev -d dev -t install_dependencies`
     * Your computer will reboot.
-* Run `./devops.py -m dev -s dev -d dev -t install_project` from the `devops/ansible` directory.
+7. After reboot run `devops/ansible/devops.py -m dev -s dev -d dev -t install_project`.
+8. Run the test suite via `bash run_tests.sh`.
 
 Docker is being used to run a postgres db server. You can start the postgres container by running `docker-compose up -d` from the `devops/docker` directory.
 

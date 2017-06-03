@@ -30,3 +30,21 @@
   args:
     chdir: "{{ project_root }}/devops/docker"
     executable: "/bin/bash"
+
+- name: Wait for postgres container to start up
+  pause:
+    seconds: 8
+
+- name: Run migrations
+  django_manage:
+    app_path: "{{ project_root }}"
+    command: "migrate --noinput"
+    virtualenv: "{{ venv_path }}"
+
+- name: Load dev fixtures
+  django_manage:
+    app_path: "{{ project_root }}"
+    command: "loaddata dev_fixtures"
+    virtualenv: "{{ venv_path }}"
+
+# Don't use ansible to run the test suite because the user should really see all stdout while the tests are running.

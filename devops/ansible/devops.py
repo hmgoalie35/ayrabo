@@ -8,6 +8,7 @@ BASE_COMMAND = ['ansible-playbook']
 VAULT_PASSWORD_FILE = os.path.expanduser('~/ansible-vault.txt')
 SERVER_TYPES = ['dev', 'qa', 'staging', 'prod']
 MODES = ['deploy', 'maintenance', 'provision', 'rollback', 'db_backup', 'db_restore', 'dev']
+HOSTS_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'hosts')
 
 
 class Devops(object):
@@ -69,7 +70,7 @@ class Devops(object):
         self.deployment_version = self.args.get('deployment_version')
         self.mode = self.args.get('mode')
         self.tags = self.args.get('tags')
-        self.inventory_file = 'hosts/{}'.format(self.server_type)
+        self.inventory_file = os.path.join(HOSTS_DIR, self.server_type)
         self.playbook = '{}.yml'.format(self.mode)
 
         command = self._build_command()
