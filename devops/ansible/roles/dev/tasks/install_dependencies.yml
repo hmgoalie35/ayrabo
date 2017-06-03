@@ -1,0 +1,83 @@
+#- name: Remove existing docker packages
+##  apt:
+#    name: "{{ item }}"
+#    state: absent
+#  with_items:
+#    - docker
+#    - docker-engine
+
+- include: ../../db/tasks/add_postgres_apt.yml
+
+- name: Update/upgrade system dependencies
+  apt:
+    update_cache: yes
+    upgrade: dist
+    autoremove: yes
+
+- name: Install packages
+  apt:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - python3-pip
+    - python-pip
+    - "linux-image-extra-{{ ansible_kernel }}"
+    - linux-image-extra-virtual
+    - apt-transport-https
+    - ca-certificates
+    - curl
+    - software-properties-common
+    - git
+    - vim
+    - postgresql-client-9.6
+
+- include: ../../web/tasks/nodejs.yml
+
+- name: Add docker apt key
+  apt_key:
+    url: "https://download.docker.com/linux/ubuntu/gpg"
+    state: present
+
+- name: Add docker apt repository
+  apt_repository:
+    repo: "deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ ansible_distribution_release }} stable"
+    update_cache: yes
+    state: present
+
+- name: Install docker-ce
+  apt:
+    name: docker-ce
+    state: present
+
+- name: Add docker group
+  group:
+    name: docker
+    state: present
+
+- name: Add user to docker group
+  user:
+    name: "{{ ansible_env.USER }}"
+    append: yes
+    createhome: no
+    groups: docker
+
+- name: Update pip
+  pip:
+    name: pip
+    state: latest
+
+- name: Install pip packages
+  pip:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - docker-compose
+    - PyYAML
+    - virtualenv
+
+- name: Rebooting in 5 seconds...
+  pause:
+    seconds: 5
+
+- name: Reboot
+  shell: reboot

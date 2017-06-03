@@ -1,0 +1,6 @@
+- name: Set up local dev environment
+  hosts: all
+  connection: local
+
+  roles:
+    - dev
