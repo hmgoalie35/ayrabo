@@ -25,7 +25,7 @@ This project uses pre-commit, whenever you commit files flake8 and some other co
 1. Clone the repo and cd into it.
 2. Checkout the latest dev branch.
 3. Signup for mailtrap https://mailtrap.io/. Emails sent during development will go to mailtrap.
-4. Make sure `python python-dev python-pip libssl-dev` are installed.
+4. Make sure `python python-dev python-pip libssl-dev libfontconfig` are installed.
 5. Install ansible: `sudo pip install ansible`
 6. Run `cp devops/ansible/roles/deploy/templates/.env.example.j2 .env`.
     * Fill in the email values with your mailtrap settings.
@@ -36,7 +36,8 @@ This project uses pre-commit, whenever you commit files flake8 and some other co
 7. Run `devops/ansible/devops.py -m dev -s dev -t install_dependencies`
     * Your computer will reboot.
 8. After reboot run `devops/ansible/devops.py -m dev -s dev -t install_project`.
-9. Run the test suite via `bash run_tests.sh`.
+9. Run the test suite
+    * `source venv/bin/activate && bash run_tests.sh`.
 
 Docker is being used to run a postgres db server. You can start the postgres container by running `docker-compose up -d` from the `devops/docker` directory.
 
