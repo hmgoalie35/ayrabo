@@ -25,7 +25,7 @@
     state: link
 
 # If getting errors make sure have latest docker-py, docker-compose, PyYAML, docker for pip2 and pip3. Use -U
-- name: Build and start docker containers in detached mode
+- name: Build and start docker containers in detached mode (this may take a while)
   shell: "docker-compose up -d"
   args:
     chdir: "{{ project_root }}/devops/docker"
