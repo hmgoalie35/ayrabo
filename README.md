@@ -18,12 +18,10 @@ A license has been intentionally excluded. See http://choosealicense.com/no-lice
 
 # Installation
 
-See the `install_*.sh` scripts for packages that will be installed, etc.
-
 This project uses pre-commit, whenever you commit files flake8 and some other code quality tools will run to help prevent bugs/errors.
 
 1. Clone the repo and cd into it.
-2. Checkout the latest dev branch.
+2. Checkout the latest `dev` branch.
 3. Signup for mailtrap https://mailtrap.io/. Emails sent during development will go to mailtrap.
 4. Make sure `python python-dev python-pip libssl-dev libfontconfig` are installed.
 5. Install ansible: `sudo pip install ansible`
