@@ -1,4 +1,9 @@
 ## TODO
+
+#### General:
+* Add loadbalancing role
+* Break tasks into reusable roles (nodejs), installing virtualenv, npm packages, etc.
+
 #### Deployment:
 * ~~Run dist upgrade.~~
 * ~~Create new directory for each deployment and venv in directory~~
@@ -21,6 +26,8 @@
 * clean up `dist/`. Only files needed should be in there...
 * fix up error pages
 * Need to have proxy strip X-Forwarded-Proto header and then set it myself so nobody can spoof the header
+* Speed up virtualenv, npm installs
+* On single server setup, when gunicorn restarts at end of deployment, you get 502 bad gateway. But maintenance mode and multiple app servers should mitigate this. Looking into sending SIGHUP or how to hot swap gunicorn binaries might be a good additive measure.
 
 ### Usage
 * A few preconditions must be met on the remote hosts before running the playbooks
@@ -40,3 +47,4 @@
     * https://www.nginx.com/resources/wiki/start/topics/tutorials/commandline/#stopping-or-restarting-nginx
 * Caching: https://www.nginx.com/resources/admin-guide/content-caching/
 * Actual ssl certificate, not snakeoil...
+    * `sudo mkdir /etc/nginx/ssl && sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/nginx/ssl/nginx.key -out /etc/nginx/ssl/nginx.crt`
