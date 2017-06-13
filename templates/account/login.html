@@ -6,67 +6,67 @@
 {% block title %}Login{% endblock %}
 
 {% block content %}
-    <div class="container">
-        <div class="row">
-            <div class="col-sm-offset-4 col-sm-4 col-sm-offset-4">
-                <h1 class="text-center">{% trans "Login" %}</h1>
+  <div class="container" >
+    <div class="row" >
+      <div class="col-sm-offset-4 col-sm-4 col-sm-offset-4" >
+        <h1 class="text-center" >{% trans "Login" %}</h1 >
 
-                <br>
+        <br >
 
-                {% get_providers as socialaccount_providers %}
-                {% if socialaccount_providers %}
-                    <p>
-                        {% blocktrans with site.name as site_name %}
-                            Please sign in with one of your existing third party accounts. Or,
-                            <a href="{{ signup_url }}">sign up</a> for a {{ site_name }} account and sign in below:
-                        {% endblocktrans %}
-                    </p>
-                    <div class="socialaccount_ballot">
-                        <ul class="socialaccount_providers">
-                            {% include "socialaccount/snippets/provider_list.html" with process="login" %}
-                        </ul>
-                        <div class="login-or">{% trans 'or' %}</div>
-                    </div>
-                    {% include "socialaccount/snippets/login_extra.html" %}
-                {% endif %}
+        {% get_providers as socialaccount_providers %}
+        {% if socialaccount_providers %}
+          <p >
+            {% blocktrans with site.name as site_name %}
+              Please sign in with one of your existing third party accounts. Or,
+              <a href="{{ signup_url }}" >sign up</a > for a {{ site_name }} account and sign in below:
+            {% endblocktrans %}
+          </p >
+          <div class="socialaccount_ballot" >
+            <ul class="socialaccount_providers" >
+              {% include "socialaccount/snippets/provider_list.html" with process="login" %}
+            </ul >
+            <div class="login-or" >{% trans 'or' %}</div >
+          </div >
+          {% include "socialaccount/snippets/login_extra.html" %}
+        {% endif %}
 
-                <form class="login" method="POST" action="{% url 'account_login' %}">
-                    {% csrf_token %}
+        <form class="login" method="POST" action="{% url 'account_login' %}" >
+          {% csrf_token %}
 
-                    {% crispy form %}
+          {% crispy form %}
 
-                    {% if redirect_field_value %}
-                        <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}"/>
-                    {% endif %}
-                </form>
+          {% if redirect_field_value %}
+            <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+          {% endif %}
+        </form >
 
-                <div class="modal fade" tabindex="-1" role="dialog" id="password_guidelines">
-                    <div class="modal-dialog">
-                        <br><br><br>
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
-                                        aria-hidden="true">&times;</span></button>
-                                <h4 class="modal-title">Password Guidelines</h4>
-                            </div>
-                            <div class="modal-body">
-                                <ul class="list-unstyled">
-                                    {% for help_text in form.password_validator_help_text %}
-                                        <li>{{ help_text }}</li>
-                                    {% endfor %}
-                                </ul>
-                                <br>
-                                <p class="text-muted">Not jogging your memory?<br><a
-                                        href="{% url 'account_reset_password' %}">Request a password reset link</a></p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+        <div class="modal fade" tabindex="-1" role="dialog" id="password_guidelines" >
+          <div class="modal-dialog" >
+            <br ><br ><br >
+            <div class="modal-content" >
+              <div class="modal-header" >
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" ><span
+                        aria-hidden="true" >&times;</span ></button >
+                <h4 class="modal-title" >Password Guidelines</h4 >
+              </div >
+              <div class="modal-body" >
+                <ul class="list-unstyled" >
+                  {% for help_text in form.password_validator_help_text %}
+                    <li >{{ help_text }}</li >
+                  {% endfor %}
+                </ul >
+                <br >
+                <p class="text-muted" >Not jogging your memory?<br ><a
+                        href="{% url 'account_reset_password' %}" >Request a password reset link</a ></p >
+              </div >
+            </div >
+          </div >
+        </div >
 
-                <div class="text-center">
-                    {% include 'account/links.html' %}
-                </div>
-            </div>
-        </div>
-    </div>
+        <div class="text-center" >
+          {% include 'account/links.html' %}
+        </div >
+      </div >
+    </div >
+  </div >
 {% endblock %}

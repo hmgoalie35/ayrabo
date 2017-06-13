@@ -2,70 +2,70 @@
 {% load account %}
 
 {% block title %}
-    {% if user.is_authenticated %}
-        Already Logged In
-    {% else %}
-        {% if confirmation %}Confirm E-mail{% else %}Request New Email Confirmation Link{% endif %}
-    {% endif %}
+  {% if user.is_authenticated %}
+    Already Logged In
+  {% else %}
+    {% if confirmation %}Confirm E-mail{% else %}Request New Email Confirmation Link{% endif %}
+  {% endif %}
 {% endblock %}
 
 {% block content %}
-    <div class="container">
-        <div class="row">
-            <div class="col-sm-12">
-                <div class="text-center">
-                    {% if user.is_anonymous %}
-                        {% if confirmation %}
-                            <br>
-                            <h1>Confirm Your E-mail Address</h1>
-                            <br>
-                            <p>
-                                {% with confirmation.email_address.email as email %}
-                                    Confirm <strong>{{ email }}</strong> by clicking the button below.
-                                {% endwith %}
-                            </p>
-                            <br>
-                            <form method="post" action="{% url 'account_confirm_email' confirmation.key %}">
-                                {% csrf_token %}
-                                <button class="btn btn-success" id="confirm_email_btn" type="submit">Confirm</button>
-                            </form>
-                        {% else %}
-                            <br>
-                            <h1>Request New Email Confirmation Link</h1>
-                            <br>
-                            <p>
-                                This confirmation link is invalid or has expired.
-                                <br>
-                                Please request a new confirmation link by entering your email address below.
-                            </p>
-                            <br>
-                            <div class="col-sm-offset-4 col-sm-4 col-sm-offset-4">
-                                <form method="post" action="{% url 'account_new_email_confirmation' %}">
-                                    {% csrf_token %}
-                                    <input name="request_path" type="hidden" value="{{ request.path }}">
-                                    <div class="form-group">
-                                        <label for="new_email_confirmation" class="control-label">Email Address<span
-                                                class="asteriskField">*</span></label>
-                                        <input class="form-control" id="new_email_confirmation" type="email"
-                                               name="email" autofocus required>
-                                    </div>
-                                    <br>
-                                    <button id="request_new_confirmation_email" class="btn btn-success" type="submit">
-                                        Request new confirmation email
-                                    </button>
-                                </form>
-                            </div>
-                        {% endif %}
-                    {% else %}
-                        <br>
-                        <h1>Already Logged In</h1>
-                        <br>
-                        <p>You have already confirmed your e-mail address.</p>
-                        <br>
-                        <a href="{% url 'home' %}" class="btn btn-success">Home</a>
-                    {% endif %}
-                </div>
-            </div>
-        </div>
-    </div>
+  <div class="container" >
+    <div class="row" >
+      <div class="col-sm-12" >
+        <div class="text-center" >
+          {% if user.is_anonymous %}
+            {% if confirmation %}
+              <br >
+              <h1 >Confirm Your E-mail Address</h1 >
+              <br >
+              <p >
+                {% with confirmation.email_address.email as email %}
+                  Confirm <strong >{{ email }}</strong > by clicking the button below.
+                {% endwith %}
+              </p >
+              <br >
+              <form method="post" action="{% url 'account_confirm_email' confirmation.key %}" >
+                {% csrf_token %}
+                <button class="btn btn-success" id="confirm_email_btn" type="submit" >Confirm</button >
+              </form >
+            {% else %}
+              <br >
+              <h1 >Request New Email Confirmation Link</h1 >
+              <br >
+              <p >
+                This confirmation link is invalid or has expired.
+                <br >
+                Please request a new confirmation link by entering your email address below.
+              </p >
+              <br >
+              <div class="col-sm-offset-4 col-sm-4 col-sm-offset-4" >
+                <form method="post" action="{% url 'account_new_email_confirmation' %}" >
+                  {% csrf_token %}
+                  <input name="request_path" type="hidden" value="{{ request.path }}" >
+                  <div class="form-group" >
+                    <label for="new_email_confirmation" class="control-label" >Email Address<span
+                            class="asteriskField" >*</span ></label >
+                    <input class="form-control" id="new_email_confirmation" type="email"
+                           name="email" autofocus required >
+                  </div >
+                  <br >
+                  <button id="request_new_confirmation_email" class="btn btn-success" type="submit" >
+                    Request new confirmation email
+                  </button >
+                </form >
+              </div >
+            {% endif %}
+          {% else %}
+            <br >
+            <h1 >Already Logged In</h1 >
+            <br >
+            <p >You have already confirmed your e-mail address.</p >
+            <br >
+            <a href="{% url 'home' %}" class="btn btn-success" >Home</a >
+          {% endif %}
+        </div >
+      </div >
+    </div >
+  </div >
 {% endblock %}
