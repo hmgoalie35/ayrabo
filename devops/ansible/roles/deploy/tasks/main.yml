@@ -36,6 +36,7 @@
         production: no
         state: present
 
+    # TODO Ignore certain directories? -i flag
     - name: Collect static
       django_manage:
         app_path: "{{ ongoing_deployment }}"
