@@ -1,47 +1,47 @@
 {% load ess_utils %}
 
 <div class="modal fade" id="{{ role|lower }}-{{ obj.id }}-modal" tabindex="-1" role="dialog">
-    <div class="modal-dialog" role="document">
-        <br><br>
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
-                        aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title pull-left text-danger">Are You Sure?</h4>
+  <div class="modal-dialog" role="document">
+    <br><br>
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title pull-left text-danger">Are You Sure?</h4>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-sm-12">
+            <div class="text-center">
+              <p>You will no longer be a {{ role|lower }} for the {% if role == 'Referee' %}{{ obj.league }}{% else %}{{ obj.team }}{% endif %}.</p>
+              {% if related_objs|length_is:1 %}
+                <p>You are about to deactivate your last {{ sport_name|lower }} {{ role|lower }} registration.<br>This will additionally revoke your {{ sport_name|lower }} {{ role|lower }} privileges.</p>
+              {% endif %}
             </div>
-            <div class="modal-body">
-                <div class="row">
-                    <div class="col-sm-12">
-                        <div class="text-center">
-                            <p>You will no longer be a {{ role|lower }} for the {% if role == 'Referee' %}{{ obj.league }}{% else %}{{ obj.team }}{% endif %}.</p>
-                            {% if related_objs|length_is:1 %}
-                                <p>You are about to deactivate your last {{ sport_name|lower }} {{ role|lower }} registration.<br>This will additionally revoke your {{ sport_name|lower }} {{ role|lower }} privileges.</p>
-                            {% endif %}
-                        </div>
-                    </div>
-                </div>
-                <br>
-                <div class="row">
-                    <div class="col-sm-12">
-                        <div class="pull-right">
-                            <button type="button" class="btn btn-sm btn-default" data-dismiss="modal">
-                                Cancel
-                            </button>
-                            {% with api_url="v1:sportregistrations:"|pluralize_role:role|add:":deactivate" %}
-                                <button
-                                        type="button"
-                                        class="btn btn-sm btn-danger"
-                                        name="deactivate_btn"
-                                        id="deactivate-{% if role == 'Referee' %}{{ obj.league|slugify }}{% else %}{{ obj.team|slugify }}{% endif %}-{{ role|lower }}-btn"
-                                        data-url="{% url api_url sport_registration.pk obj.pk %}"
-                                >
-                                    Deactivate
-                                </button>
-                            {% endwith %}
-                        </div>
-                    </div>
-                </div>
-            </div>
+          </div>
         </div>
+        <br>
+        <div class="row">
+          <div class="col-sm-12">
+            <div class="pull-right">
+              <button type="button" class="btn btn-sm btn-default" data-dismiss="modal">
+                Cancel
+              </button>
+              {% with api_url="v1:sportregistrations:"|pluralize_role:role|add:":deactivate" %}
+                <button
+                        type="button"
+                        class="btn btn-sm btn-danger"
+                        name="deactivate_btn"
+                        id="deactivate-{% if role == 'Referee' %}{{ obj.league|slugify }}{% else %}{{ obj.team|slugify }}{% endif %}-{{ role|lower }}-btn"
+                        data-url="{% url api_url sport_registration.pk obj.pk %}"
+                >
+                  Deactivate
+                </button>
+              {% endwith %}
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
+  </div>
 </div>

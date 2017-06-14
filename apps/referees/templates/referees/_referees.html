@@ -1,38 +1,38 @@
 <div class="table-responsive">
-    <table class="table update-sport-registration-table">
-        <thead>
-        <tr>
-            <th></th>
-            <th>League</th>
-            <th></th>
-        </tr>
-        </thead>
-        <tbody>
-        {% for obj in related_objs %}
-            <tr>
-                <td></td>
-                <td class="text-left">{{ obj.league }}</td>
-                <td>
-                    {% if sr_roles|length > 1 or related_objs|length > 1 %}
-                        <span data-toggle="tooltip" data-placement="top" title="Deactivate">
+  <table class="table update-sport-registration-table">
+    <thead>
+    <tr>
+      <th></th>
+      <th>League</th>
+      <th></th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for obj in related_objs %}
+      <tr>
+        <td></td>
+        <td class="text-left">{{ obj.league }}</td>
+        <td>
+          {% if sr_roles|length > 1 or related_objs|length > 1 %}
+            <span data-toggle="tooltip" data-placement="top" title="Deactivate">
                             <a id="deactivate-{{ obj.league|slugify }}-{{ role|lower }}-link" data-toggle="modal"
                                data-target="#{{ role|lower }}-{{ obj.id }}-modal">
                                 <span class="fa fa-times-circle fa-times-circle-red"></span>
                             </a>
                         </span>
-                    {% else %}
-                        <span data-toggle="tooltip" data-placement="top" title="You cannot deactivate this {{ role|lower }}. You must be registered for at least one role.">
-                            <a><span class="fa fa-times-circle fa-times-circle-red"></span></a>
+          {% else %}
+            <span data-toggle="tooltip" data-placement="top" title="You cannot deactivate this {{ role|lower }}. You must be registered for at least one role.">
+              <a><span class="fa fa-times-circle fa-times-circle-red"></span></a>
                         </span>
-                    {% endif %}
-                </td>
-            </tr>
+          {% endif %}
+        </td>
+      </tr>
 
-            {% if sr_roles|length > 1 or related_objs|length > 1 %}
-                {% include 'sports/deactivation_modal.html' %}
-            {% endif %}
+      {% if sr_roles|length > 1 or related_objs|length > 1 %}
+        {% include 'sports/deactivation_modal.html' %}
+      {% endif %}
 
-        {% endfor %}
-        </tbody>
-    </table>
+    {% endfor %}
+    </tbody>
+  </table>
 </div>
