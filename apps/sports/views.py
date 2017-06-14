@@ -28,6 +28,8 @@ SPORT_PLAYER_MODEL_MAPPINGS = {
     'Baseball': BaseballPlayer
 }
 
+MIN_FORMS = 1
+
 
 # TODO Add API endpoints to do this, so don't have to deal with the formset stuff
 class CreateSportRegistrationView(LoginRequiredMixin, ContextMixin, AccountAndSportRegistrationCompleteMixin,
@@ -45,8 +47,11 @@ class CreateSportRegistrationView(LoginRequiredMixin, ContextMixin, AccountAndSp
                                                               formset=SportRegistrationModelFormSet,
                                                               fields=('sport', 'roles'),
                                                               extra=0,
-                                                              min_num=1, max_num=remaining_sport_count,
-                                                              validate_min=True, validate_max=True, can_delete=False)
+                                                              min_num=MIN_FORMS,
+                                                              max_num=remaining_sport_count,
+                                                              validate_min=True,
+                                                              validate_max=True,
+                                                              can_delete=False)
 
         context['remaining_sport_count'] = remaining_sport_count
         context['user_registered_for_all_sports'] = context.get('remaining_sport_count') == 0

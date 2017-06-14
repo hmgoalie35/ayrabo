@@ -14,6 +14,9 @@ from players.models import AbstractPlayer
 from sports.models import SportRegistration
 from teams.models import Team
 
+MIN_FORMS = 1
+MAX_FORMS = 10
+
 
 class BaseCreateRelatedObjectsView(LoginRequiredMixin, ContextMixin, AccountAndSportRegistrationCompleteMixin,
                                    generic.View):
@@ -58,7 +61,7 @@ class BaseCreateRelatedObjectsView(LoginRequiredMixin, ContextMixin, AccountAndS
         role = self.get_role()
 
         FormSet = forms.modelformset_factory(model_cls, form=form_cls, formset=formset_cls, extra=0,
-                                             min_num=1, max_num=10, validate_min=True, validate_max=True,
+                                             min_num=MIN_FORMS, max_num=MAX_FORMS, validate_min=True, validate_max=True,
                                              can_delete=False)
         filter_kwargs = {'user': self.request.user}
         if role == 'Referee':
@@ -145,9 +148,8 @@ class BaseCreateRelatedObjectsView(LoginRequiredMixin, ContextMixin, AccountAndS
                     url = 'sportregistrations:{role}:create'.format(role=next_sr_role)
                     return redirect(reverse(url, kwargs={'pk': next_sr_id}))
                 # All incomplete sport registrations have been completed.
-                return redirect('home') if self.request.session.get('is_user_currently_registering',
-                                                                    False) else redirect(
-                    sport_registration.get_absolute_url())
+                return redirect('home') if self.request.session.get('is_user_currently_registering', False) \
+                    else redirect(sport_registration.get_absolute_url())
             else:
                 url = 'sportregistrations:{role}:create'.format(role=next_role)
                 return redirect(reverse(url, kwargs={'pk': sport_registration.id}))
