@@ -23,6 +23,6 @@ DEBUG_TOOLBAR_CONFIG = {
 
 # If INTERNAL_IPS becomes a problem, can override SHOW_TOOLBAR_CALLBACK function
 # See https://django-debug-toolbar.readthedocs.io/en/stable/configuration.html#debug-toolbar-config
-INTERNAL_IPS = ['127.0.0.1']
+INTERNAL_IPS = ['127.0.0.1', 'localhost']
 
 REST_FRAMEWORK['DEFAULT_AUTHENTICATION_CLASSES'].append('rest_framework.authentication.BasicAuthentication')

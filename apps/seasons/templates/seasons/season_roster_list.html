@@ -3,94 +3,94 @@
 {% block title %}List Season Rosters{% endblock %}
 
 {% block content %}
-    <div class="container">
-        <div class="row">
-            <div class="col-sm-12">
-                <div class="text-center">
-                    <h1>Season Rosters for {{ team }}</h1>
-                    <h4 class="text-muted">{{ team.division }} - {{ team.division.league }}</h4>
-                </div>
-            </div>
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-12">
+        <div class="text-center">
+          <h1>Season Rosters for {{ team }}</h1>
+          <h4 class="text-muted">{{ team.division }} - {{ team.division.league }}</h4>
         </div>
-
-        <br>
-
-        <div class="row">
-            <div class="col-sm-offset-3 col-sm-6 col-sm-offset-3">
-                <div class="text-center">
-                    {% if season_rosters %}
-                        {% for season_roster, players in season_rosters.items %}
-                            <div class="panel panel-primary">
-                                <div class="panel-heading">
-                                    <h3 class="text-center panel-title">
-                                        {{ season_roster.season }}
-                                    </h3>
-                                </div>
-                                <div class="panel-body">
-                                    <div class="text-left"><strong>Default:&nbsp;</strong>
-                                        {% if season_roster.default %}
-                                            <span class="fa fa-check fa-check-green"></span>
-                                        {% else %}
-                                            <span class="fa fa-close fa-close-red"></span>
-                                        {% endif %}
-                                    </div>
-                                    <div class="text-left"><strong>Created:&nbsp;</strong>{{ season_roster.created }}
-                                    </div>
-
-
-                                    <div class="text-left">
-                                        <strong>Players:&nbsp;</strong>
-                                        <a href="#" data-toggle="modal"
-                                           data-target="#{{ season_roster.id }}-modal">View</a>
-                                    </div>
-
-                                    <div class="modal fade" tabindex="-1" role="dialog"
-                                         id="{{ season_roster.id }}-modal">
-                                        <br>
-                                        <div class="modal-dialog modal-sm" role="document">
-                                            <div class="modal-content">
-                                                <div class="modal-header">
-                                                    <button type="button" class="close" data-dismiss="modal"
-                                                            aria-label="Close"><span aria-hidden="true">&times;</span>
-                                                    </button>
-                                                    <h4 class="modal-title">Players At A Glance</h4>
-                                                </div>
-                                                <div class="modal-body text-left">
-                                                    {% for player in players %}
-                                                        {{ player.jersey_number }} - {{ player }} - {{ player.position }}
-                                                        <br>
-                                                    {% endfor %}
-                                                    <br>
-                                                    <div class="pull-left">{{ players.count }}
-                                                        Player{{ players.count|pluralize }}</div>
-                                                    <br>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-
-                                    <div class="pull-right">
-                                        <a name="update_link" id="update_{{ season_roster.pk }}_link"
-                                           href="{% url 'teams:season_rosters:update' team.pk season_roster.pk %}"
-                                           title="Update season roster">
-                                            <span class="fa fa-fw fa-lg fa-pencil"></span>
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-                        {% endfor %}
-
-                    {% else %}
-                        <div class="alert alert-warning">
-                            A season roster has not been created for this team yet.<br>You can create a season roster
-                            <a class="alert-link" href="{% url 'teams:season_rosters:create' team.pk %}">here.</a>
-                        </div>
-                    {% endif %}
-                </div>
-
-            </div>
-        </div>
-
+      </div>
     </div>
+
+    <br>
+
+    <div class="row">
+      <div class="col-sm-offset-3 col-sm-6 col-sm-offset-3">
+        <div class="text-center">
+          {% if season_rosters %}
+            {% for season_roster, players in season_rosters.items %}
+              <div class="panel panel-primary">
+                <div class="panel-heading">
+                  <h3 class="text-center panel-title">
+                    {{ season_roster.season }}
+                  </h3>
+                </div>
+                <div class="panel-body">
+                  <div class="text-left"><strong>Default:&nbsp;</strong>
+                    {% if season_roster.default %}
+                      <span class="fa fa-check fa-check-green"></span>
+                    {% else %}
+                      <span class="fa fa-close fa-close-red"></span>
+                    {% endif %}
+                  </div>
+                  <div class="text-left"><strong>Created:&nbsp;</strong>{{ season_roster.created }}
+                  </div>
+
+
+                  <div class="text-left">
+                    <strong>Players:&nbsp;</strong>
+                    <a href="#" data-toggle="modal"
+                       data-target="#{{ season_roster.id }}-modal">View</a>
+                  </div>
+
+                  <div class="modal fade" tabindex="-1" role="dialog"
+                       id="{{ season_roster.id }}-modal">
+                    <br>
+                    <div class="modal-dialog modal-sm" role="document">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <button type="button" class="close" data-dismiss="modal"
+                                  aria-label="Close"><span aria-hidden="true">&times;</span>
+                          </button>
+                          <h4 class="modal-title">Players At A Glance</h4>
+                        </div>
+                        <div class="modal-body text-left">
+                          {% for player in players %}
+                            {{ player.jersey_number }} - {{ player }} - {{ player.position }}
+                            <br>
+                          {% endfor %}
+                          <br>
+                          <div class="pull-left">{{ players.count }}
+                            Player{{ players.count|pluralize }}</div>
+                          <br>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+
+                  <div class="pull-right">
+                    <a name="update_link" id="update_{{ season_roster.pk }}_link"
+                       href="{% url 'teams:season_rosters:update' team.pk season_roster.pk %}"
+                       title="Update season roster">
+                      <span class="fa fa-fw fa-lg fa-pencil"></span>
+                    </a>
+                  </div>
+                </div>
+              </div>
+            {% endfor %}
+
+          {% else %}
+            <div class="alert alert-warning">
+              A season roster has not been created for this team yet.<br>You can create a season roster
+              <a class="alert-link" href="{% url 'teams:season_rosters:create' team.pk %}">here.</a>
+            </div>
+          {% endif %}
+        </div>
+
+      </div>
+    </div>
+
+  </div>
 {% endblock %}

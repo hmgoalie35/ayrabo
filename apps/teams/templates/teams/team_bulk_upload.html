@@ -1,40 +1,40 @@
 {% extends 'admin/base_site.html' %}
 {% load crispy_forms_tags static %}
 {% block extrastyle %}
-    {{ block.super }}
-    <style>
-        .text-center{
-            text-align: center;
-        }
-    </style>
+  {{ block.super }}
+  <style>
+    .text-center {
+      text-align: center;
+    }
+  </style>
 {% endblock %}
 
 {% block title %}Admin - Bulk Upload Teams{% endblock %}
 
 {% block breadcrumbs %}
-    <div class="breadcrumbs">
-        <a href="{% url 'admin:index' %}">Home</a>
-        /
-        <a href="{% url 'admin:teams_team_changelist' %}">Back to team list display</a>
-    </div>
+  <div class="breadcrumbs">
+    <a href="{% url 'admin:index' %}">Home</a>
+    /
+    <a href="{% url 'admin:teams_team_changelist' %}">Back to team list display</a>
+  </div>
 {% endblock %}
 
 {% block content %}
-    <div class="text-center">
-        <br><br>
-        <h1>This page is staff only</h1>
-        <h3>Choose a file that contains teams you want to upload in bulk</h3>
-        <br>
-        <ul class="errorlist">
-            {% for error in errors %}
-                <li>{{ error }}</li>
-            {% endfor %}
-        </ul>
-        <form action="" method="post" enctype="multipart/form-data">
-            {% csrf_token %}
-            {{ form | crispy }}
-            <br>
-            <input id="bulk_upload_submit_btn" type="submit" value="Upload">
-        </form>
-    </div>
+  <div class="text-center">
+    <br><br>
+    <h1>This page is staff only</h1>
+    <h3>Choose a file that contains teams you want to upload in bulk</h3>
+    <br>
+    <ul class="errorlist">
+      {% for error in errors %}
+        <li>{{ error }}</li>
+      {% endfor %}
+    </ul>
+    <form action="" method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+      {{ form | crispy }}
+      <br>
+      <input id="bulk_upload_submit_btn" type="submit" value="Upload">
+    </form>
+  </div>
 {% endblock %}

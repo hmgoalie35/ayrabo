@@ -1,32 +1,32 @@
 {# Can create own theme, see noty/demo/themeCss.html #}
 {% if messages %}
-    <script type="text/javascript">
-        var isMobileDevice = function () {
-            return (/android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(navigator.userAgent.toLowerCase()));
-        };
-        {% for msg in messages %}
-            (function () {
-                var duration = (parseInt('{{ msg.message|length }}') >= 100) ? 6000 : 4000;
-                var layout = isMobileDevice() ? "top" : "topRight";
-                var openAnimation = isMobileDevice() ? "bounceInDown" : "bounceInRight";
-                var closeAnimation = isMobileDevice() ? "bounceOutUp" : "bounceOutRight";
-                noty({
-                    theme: 'relax',
-                    type: '{{msg.level_tag}}',
-                    text: '{{msg.message}}',
-                    layout: layout,
-                    timeout: duration,
-                    force: true,
-                    closeWith: ['click', 'button'],
-                    progressBar: true,
-                    animation: {
-                        open: 'animated ' + openAnimation,
-                        close: 'animated ' + closeAnimation,
-                        easing: 'swing',
-                        speed: 500
-                    }
-                });
-            })();
-        {% endfor %}
-    </script>
+  <script type="text/javascript">
+    var isMobileDevice = function () {
+      return (/android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(navigator.userAgent.toLowerCase()));
+    };
+    {% for msg in messages %}
+      (function () {
+        var duration = (parseInt("{{ msg.message|length }}") >= 100) ? 6000 : 4000;
+        var layout = isMobileDevice() ? "top" : "topRight";
+        var openAnimation = isMobileDevice() ? "bounceInDown" : "bounceInRight";
+        var closeAnimation = isMobileDevice() ? "bounceOutUp" : "bounceOutRight";
+        noty({
+          theme: "relax",
+          type: "{{msg.level_tag}}",
+          text: "{{msg.message}}",
+          layout: layout,
+          timeout: duration,
+          force: true,
+          closeWith: ["click", "button"],
+          progressBar: true,
+          animation: {
+            open: "animated " + openAnimation,
+            close: "animated " + closeAnimation,
+            easing: "swing",
+            speed: 500
+          }
+        });
+      })();
+    {% endfor %}
+  </script>
 {% endif %}

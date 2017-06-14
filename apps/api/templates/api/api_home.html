@@ -3,75 +3,75 @@
 {% block title %}API{% endblock %}
 
 {% block content %}
-    <div class="container">
-        <div class="row">
-            <div class="col-sm-12">
-                <div class="text-center">
-                    <h1>Welcome to the escoresheet API documentation</h1>
-                    <h2 class="text-danger">This documentation is a work in progress</h2>
-                </div>
-            </div>
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-12">
+        <div class="text-center">
+          <h1>Welcome to the escoresheet API documentation</h1>
+          <h2 class="text-danger">This documentation is a work in progress</h2>
         </div>
+      </div>
+    </div>
 
-        <div class="row">
-            <div class="col-sm-12">
-                <div class="text-center">
-                    <h2>Getting Started</h2>
-                    <h3>Authentication</h3>
-                    <p>All endpoints require authentication. This can be achieved through email/password or an api
-                       token.</p>
-                    <p>Login and choose an api version below to start exploring the api.</p>
-                    <p>You can also obtain an api token by POSTing your email and password
-                       to {{ obtain_api_token_path }}</p>
-                    <p>Example request (your username is the same as your e-mail)</p>
-                    <code>curl -X POST {{ obtain_api_token_path }} -d '{"username": "email-address","password":
-                          "password"}' -H "Content-Type: application/json"</code>
-                    <br><br>
-                    <p>Example response</p>
-                    <code>{"token": "myapitoken"}</code>
-                    <br><br>
-                    <p>You can then use <code>myapitoken</code> as follows</p>
-                    <code>curl -X GET /api/v1/endpoint/ -H 'Authorization: Token myapitoken'</code>
-                    <br><br>
-                    <p>Your api token will also be available on your <a href="{% url 'account_home' %}">account
-                                                                                                      information
-                                                                                                      page.</a></p>
+    <div class="row">
+      <div class="col-sm-12">
+        <div class="text-center">
+          <h2>Getting Started</h2>
+          <h3>Authentication</h3>
+          <p>All endpoints require authentication. This can be achieved through email/password or an api
+             token.</p>
+          <p>Login and choose an api version below to start exploring the api.</p>
+          <p>You can also obtain an api token by POSTing your email and password
+             to {{ obtain_api_token_path }}</p>
+          <p>Example request (your username is the same as your e-mail)</p>
+          <code>curl -X POST {{ obtain_api_token_path }} -d '{"username": "email-address","password":
+                "password"}' -H "Content-Type: application/json"</code>
+          <br><br>
+          <p>Example response</p>
+          <code>{"token": "myapitoken"}</code>
+          <br><br>
+          <p>You can then use <code>myapitoken</code> as follows</p>
+          <code>curl -X GET /api/v1/endpoint/ -H 'Authorization: Token myapitoken'</code>
+          <br><br>
+          <p>Your api token will also be available on your <a href="{% url 'account_home' %}">account
+                                                                                              information
+                                                                                              page.</a></p>
 
-                    <p>All requests against the api <strong>MUST</strong> have a trailing slash</p>
-
-
-                    <h3>Endpoints not tied to versions</h3>
-                    {% for endpoint in generic_endpoints %}
-                        <code>{{ endpoint }}</code><br>
-                    {% endfor %}
+          <p>All requests against the api <strong>MUST</strong> have a trailing slash</p>
 
 
-                </div>
-            </div>
+          <h3>Endpoints not tied to versions</h3>
+          {% for endpoint in generic_endpoints %}
+            <code>{{ endpoint }}</code><br>
+          {% endfor %}
+
+
+        </div>
+      </div>
+    </div>
+
+    <br>
+
+    <div class="row">
+      <div class="col-sm-offset-4 col-sm-4 col-sm-offset-4">
+        <div class="text-center">
+          <h2>Available API Versions</h2>
+          <h5 class="text-muted">Click on a version below to play with the browsable api and see all endpoints</h5>
         </div>
 
         <br>
 
-        <div class="row">
-            <div class="col-sm-offset-4 col-sm-4 col-sm-offset-4">
-                <div class="text-center">
-                    <h2>Available API Versions</h2>
-                    <h5 class="text-muted">Click on a version below to play with the browsable api and see all endpoints</h5>
-                </div>
-
-                <br>
-
-                <ul class="list-group">
-                    {% for api_version, link_url in api_versions.items %}
-                        <li class="list-group-item">
-                            <a href="{{ link_url }}">{{ api_version }}</a>
-                            {% if api_version == default_api_version %}
-                                <span class="badge">Most Recent Version</span>
-                            {% endif %}
-                        </li>
-                    {% endfor %}
-                </ul>
-            </div>
-        </div>
+        <ul class="list-group">
+          {% for api_version, link_url in api_versions.items %}
+            <li class="list-group-item">
+              <a href="{{ link_url }}">{{ api_version }}</a>
+              {% if api_version == default_api_version %}
+                <span class="badge">Most Recent Version</span>
+              {% endif %}
+            </li>
+          {% endfor %}
+        </ul>
+      </div>
     </div>
+  </div>
 {% endblock %}

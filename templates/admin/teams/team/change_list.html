@@ -3,12 +3,13 @@
 
 {% block object-tools-items %}
 
-    {{ block.super }}
+  {{ block.super }}
 
-    <li>
-        <a id="bulk_upload_teams_btn" href="{% url 'bulk_upload_teams' %}" class="addlink">Bulk Upload Teams</a>
-        &nbsp;
-        <a id="download_example_csv_btn" href="{% static 'csv_examples/Bulk Upload Teams Example.csv' %}" class="addLink" style="margin-left: 5px;">Download Example .csv</a>
-    </li>
+  <li>
+    <a id="bulk_upload_teams_btn" href="{% url 'bulk_upload_teams' %}" class="addlink">Bulk Upload Teams</a>
+    &nbsp;
+    <a id="download_example_csv_btn" href="{% static 'csv_examples/Bulk Upload Teams Example.csv' %}" class="addLink"
+       style="margin-left: 5px;">Download Example .csv</a>
+  </li>
 
 {% endblock %}

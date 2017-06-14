@@ -3,73 +3,73 @@
 <!DOCTYPE html>
 <html lang="{{ LANGUAGE_CODE }}">
 <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>escoresheet | {% block title %}Sport scoresheets for the digital age{% endblock %}</title>
-    <!--[if lt IE 9]>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>escoresheet | {% block title %}Sport scoresheets for the digital age{% endblock %}</title>
+  <!--[if lt IE 9]>
       <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
       <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
 
-    {% compress css %}
-        <link rel="stylesheet" type="text/scss" href="{% static 'stylesheets/main.scss' %}">
-        <link rel="stylesheet" href="{% static 'font-awesome/css/font-awesome.min.css' %}">
-        <link rel="stylesheet" href="{% static 'animate.css/animate.min.css' %}">
-        <link rel="stylesheet" href="{% static 'bootstrap-select/dist/css/bootstrap-select.min.css' %}">
+  {% compress css %}
+    <link rel="stylesheet" type="text/scss" href="{% static 'stylesheets/main.scss' %}">
+    <link rel="stylesheet" href="{% static 'font-awesome/css/font-awesome.min.css' %}">
+    <link rel="stylesheet" href="{% static 'animate.css/animate.min.css' %}">
+    <link rel="stylesheet" href="{% static 'bootstrap-select/dist/css/bootstrap-select.min.css' %}">
 
-        {% block extra_style %}
-        {% endblock %}
+    {% block extra_style %}
+    {% endblock %}
 
-    {% endcompress %}
+  {% endcompress %}
 
 </head>
 <body>
 
 {% block navbar %}
-    {% include 'navbar.html' %}
+  {% include 'navbar.html' %}
 {% endblock %}
 
 {% block content %}
 {% endblock %}
 
 {% block footer %}
-    <footer>
-        <ol class="breadcrumb text-center">
+  <footer>
+    <ol class="breadcrumb text-center">
 
-            {% url 'about_us' as about_us_url %}
-            {% if request.path == about_us_url %}
-                <li class='active'>About</li>
-            {% else %}
-                <li><a id='about_us' href='{% url 'about_us' %}'>About</a></li>
-            {% endif %}
+      {% url 'about_us' as about_us_url %}
+      {% if request.path == about_us_url %}
+        <li class='active'>About</li>
+      {% else %}
+        <li><a id='about_us' href='{% url 'about_us' %}'>About</a></li>
+      {% endif %}
 
-            {% url 'contact_us' as contact_us_url %}
-            {% if request.path == contact_us_url %}
-                <li class='active'>Contact</li>
-            {% else %}
-                <li><a id='contact_us' href='{% url 'contact_us' %}'>Contact</a></li>
-            {% endif %}
-        </ol>
-    </footer>
+      {% url 'contact_us' as contact_us_url %}
+      {% if request.path == contact_us_url %}
+        <li class='active'>Contact</li>
+      {% else %}
+        <li><a id='contact_us' href='{% url 'contact_us' %}'>Contact</a></li>
+      {% endif %}
+    </ol>
+  </footer>
 {% endblock %}
 
 {% compress js %}
 
-    <script src="{% static 'jquery/dist/jquery.min.js' %}"></script>
-    <script src="{% static 'bootstrap-sass/assets/javascripts/bootstrap.min.js' %}"></script>
-    <script src="{% static 'noty/js/noty/packaged/jquery.noty.packaged.min.js' %}"></script>
-    <script src="{% static 'bootstrap-select/dist/js/bootstrap-select.min.js' %}"></script>
-    <script src="{% static 'javascripts/main.js' %}"></script>
+  <script src="{% static 'jquery/dist/jquery.min.js' %}"></script>
+  <script src="{% static 'bootstrap-sass/assets/javascripts/bootstrap.min.js' %}"></script>
+  <script src="{% static 'noty/js/noty/packaged/jquery.noty.packaged.min.js' %}"></script>
+  <script src="{% static 'bootstrap-select/dist/js/bootstrap-select.min.js' %}"></script>
+  <script src="{% static 'javascripts/main.js' %}"></script>
 
-    {% block extra_js %}
-    {% endblock %}
+  {% block extra_js %}
+  {% endblock %}
 
 {% endcompress %}
 
 {% block messages %}
-    {# noty needs jquery to be loaded #}
-    {% include 'messages.html' %}
+  {# noty needs jquery to be loaded #}
+  {% include 'messages.html' %}
 {% endblock %}
 
 </body>
