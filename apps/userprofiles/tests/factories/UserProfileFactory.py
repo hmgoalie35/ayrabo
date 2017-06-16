@@ -22,7 +22,7 @@ class UserProfileFactory(django.DjangoModelFactory):
         model = UserProfile
 
     user = factory.SubFactory('accounts.tests.factories.UserFactory.UserFactory', userprofile=None)
-    gender = fuzzy.FuzzyChoice(['Male', 'Female'])
+    gender = fuzzy.FuzzyChoice(['male', 'female'])
     birthday = factory.LazyFunction(generate_birthday)
     height = factory.LazyFunction(generate_height)
     weight = fuzzy.FuzzyInteger(UserProfile.MIN_WEIGHT, UserProfile.MAX_WEIGHT)

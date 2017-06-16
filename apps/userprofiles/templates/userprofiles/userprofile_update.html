@@ -32,7 +32,7 @@
               <div class="panel-body">
                 <h4>Name: {{ user.get_full_name }}</h4>
                 <h4>Email: {{ user.email }}</h4>
-                <h4>Gender: {{ userprofile.gender | title }}</h4>
+                <h4>Gender: {{ userprofile.get_gender_display }}</h4>
                 <h4>Birthday: {{ userprofile.birthday }}</h4>
                 <a id="change_password_link" href="{% url 'account_change_password' %}">Change Password</a>
                 {% if api_token %}

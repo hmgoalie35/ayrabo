@@ -155,7 +155,7 @@ def create_users():
         if qs.exists():
             up = qs.first()
         else:
-            up = UserProfile.objects.create(user=user, gender='Male',
+            up = UserProfile.objects.create(user=user, gender='male',
                                             birthday=datetime.datetime.now(), height=generate_height(),
                                             weight=130)
 
