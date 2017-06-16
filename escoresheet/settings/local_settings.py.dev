@@ -1,4 +1,4 @@
-from .settings import DATABASES, CACHES, REST_FRAMEWORK
+from .settings import DATABASES, CACHES, REST_FRAMEWORK, TEMPLATES
 
 DEBUG = True
 
@@ -14,6 +14,9 @@ DATABASES['default']['CONN_MAX_AGE'] = 0
 CACHES['default'] = {
     'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
 }
+
+TEMPLATES[0]['OPTIONS'].pop('loaders')
+TEMPLATES[0]['APP_DIRS'] = True
 
 DEBUG_TOOLBAR_CONFIG = {
     'SHOW_COLLAPSED': True,

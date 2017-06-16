@@ -20,7 +20,7 @@ Feature: Sport registration detail
       | user@example.com  | Ice Hockey | Green Machine IceCats | 35            | G        | Left       |
     And The following coach object exists
       | username_or_email | position   | team                  |
-      | user@example.com  | Head Coach | Green Machine IceCats |
+      | user@example.com  | head_coach | Green Machine IceCats |
     And The following referee object exists
       | username_or_email | league                            |
       | user@example.com  | Long Island Amateur Hockey League |

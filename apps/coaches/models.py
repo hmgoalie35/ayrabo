@@ -17,8 +17,8 @@ class Coach(models.Model):
     ASSISTANT_COACH = 'Assistant Coach'
 
     POSITIONS = (
-        (HEAD_COACH, HEAD_COACH),
-        (ASSISTANT_COACH, ASSISTANT_COACH)
+        ('head_coach', HEAD_COACH),
+        ('assistant_coach', ASSISTANT_COACH)
     )
 
     user = models.ForeignKey(User, related_name='coaches')

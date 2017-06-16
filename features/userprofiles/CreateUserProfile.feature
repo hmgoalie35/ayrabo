@@ -24,7 +24,7 @@ Feature: User profiles
 
   Scenario: Fill out with invalid height
     Given I am on the "account_complete_registration" page
-    When I select "Male" from "id_gender"
+    When I select "male" from "id_gender"
     And I fill in "id_height" with "5' 7"
     And I fill in "id_weight" with "130"
     And I press "create_userprofile_btn"
@@ -32,7 +32,7 @@ Feature: User profiles
 
   Scenario: Fill out with invalid weight
     Given I am on the "account_complete_registration" page
-    When I select "Male" from "id_gender"
+    When I select "male" from "id_gender"
     And I fill in "id_height" with "5' 7""
     And I fill in "id_weight" with "-1"
     And I press "create_userprofile_btn"
@@ -40,7 +40,7 @@ Feature: User profiles
 
   Scenario: Fill out with invalid birthday
     Given I am on the "account_complete_registration" page
-    When I select "Male" from "id_gender"
+    When I select "male" from "id_gender"
     And I fill in "id_height" with "5' 7""
     And I fill in "id_weight" with "100"
     And I press "create_userprofile_btn"
@@ -53,7 +53,7 @@ Feature: User profiles
 
   Scenario: Submit valid form
     Given I am on the "account_complete_registration" page
-    When I select "Male" from "id_gender"
+    When I select "male" from "id_gender"
     And I select "April" from "id_birthday_month"
     And I select "4" from "id_birthday_day"
     And I select "1994" from "id_birthday_year"

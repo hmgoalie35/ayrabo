@@ -200,7 +200,7 @@ class SportRegistrationDetailViewTests(BaseTestCase):
         self.sr = SportRegistrationFactory(user=self.user, sport=self.ice_hockey, is_complete=True, roles_mask=15)
         self.url = reverse('sportregistrations:detail', kwargs={'pk': self.sr.pk})
 
-        self.coach_data = {'user': self.user, 'team': self.team, 'position': 'Head Coach'}
+        self.coach_data = {'user': self.user, 'team': self.team, 'position': 'head_coach'}
         self.player_data = {'user': self.user, 'team': self.team, 'jersey_number': 23, 'handedness': 'Right',
                             'position': 'G', 'sport': self.ice_hockey}
         self.referee_data = {'user': self.user, 'league': self.league}

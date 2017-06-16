@@ -10,7 +10,7 @@ Feature: Edit information associated with my account
       | John       | Doe       | user@example.com | myweakpassword | false              |
     And The following userprofile exists for "user@example.com"
       | gender | birthday   |
-      | Male   | 1996-02-12 |
+      | male   | 1996-02-12 |
     And "user@example.com" is completely registered for "Ice Hockey" with roles "Coach, Referee"
 
   Scenario: Navigate to edit account page when authenticated

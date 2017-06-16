@@ -16,7 +16,7 @@ Feature: Remove roles from sport registration
     Given "user@example.com" is completely registered for "Ice Hockey" with roles "Player, Coach"
     And The following coach object exists
       | username_or_email | position   | team                  | id |
-      | user@example.com  | Head Coach | Green Machine IceCats | 1  |
+      | user@example.com  | head_coach | Green Machine IceCats | 1  |
     And The following player object exists
       | username_or_email | sport      | team                  | jersey_number | position | handedness | id |
       | user@example.com  | Ice Hockey | Green Machine IceCats | 35            | G        | Left       | 1  |
@@ -55,7 +55,7 @@ Feature: Remove roles from sport registration
     Given "user@example.com" is completely registered for "Ice Hockey" with roles "Player, Coach"
     And The following coach object exists
       | username_or_email | position   | team                  | id |
-      | user@example.com  | Head Coach | Green Machine IceCats | 1  |
+      | user@example.com  | head_coach | Green Machine IceCats | 1  |
     And The following player object exists
       | username_or_email | sport      | team                  | jersey_number | position | handedness | id |
       | user@example.com  | Ice Hockey | Green Machine IceCats | 35            | G        | Left       | 1  |
@@ -95,7 +95,7 @@ Feature: Remove roles from sport registration
     Given "user@example.com" is completely registered for "Ice Hockey" with roles "Coach"
     And The following coach object exists
       | username_or_email | position   | team                  | id |
-      | user@example.com  | Head Coach | Green Machine IceCats | 1  |
+      | user@example.com  | head_coach | Green Machine IceCats | 1  |
     And I am on the absolute url page for "sports.SportRegistration" and "user__email=user@example.com, sport__name=Ice Hockey"
     Then I should see "You cannot deactivate this coach. You must be registered for at least one role."
 
@@ -131,9 +131,9 @@ Feature: Remove roles from sport registration
       | Nassau County Lions | Midget Minor AA | Long Island Amateur Hockey League | Ice Hockey |
     And The following coach object exists
       | username_or_email | position        | team                  | id |
-      | user@example.com  | Head Coach      | Green Machine IceCats | 1  |
-      | user@example.com  | Assistant Coach | Long Island Edge      | 2  |
-      | user@example.com  | Head Coach      | Nassau County Lions   | 3  |
+      | user@example.com  | head_coach      | Green Machine IceCats | 1  |
+      | user@example.com  | assistant_coach | Long Island Edge      | 2  |
+      | user@example.com  | head_coach      | Nassau County Lions   | 3  |
     And The following player object exists
       | username_or_email | sport      | team                  | jersey_number | position | handedness | id |
       | user@example.com  | Ice Hockey | Green Machine IceCats | 35            | G        | Left       | 1  |

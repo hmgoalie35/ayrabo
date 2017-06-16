@@ -83,12 +83,12 @@ class HockeyPlayer(AbstractPlayer):
     """
 
     POSITIONS = (
-        ('C', 'C'),
-        ('LW', 'LW'),
-        ('RW', 'RW'),
-        ('LD', 'LD'),
-        ('RD', 'RD'),
-        ('G', 'G'),
+        ('C', 'Center'),
+        ('LW', 'Left Wing'),
+        ('RW', 'Right Wing'),
+        ('LD', 'Left Defense'),
+        ('RD', 'Right Defense'),
+        ('G', 'Goaltender'),
     )
 
     HANDEDNESS = (

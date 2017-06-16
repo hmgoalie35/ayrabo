@@ -14,7 +14,7 @@ Feature: Update coach information
       | 1  | user@example.com  | Ice Hockey | Coach | true     |
     And The following coach object exists
       | id | username_or_email | team                  | position   |
-      | 1  | user@example.com  | Green Machine IceCats | Head Coach |
+      | 1  | user@example.com  | Green Machine IceCats | head_coach |
     And I login with "user@example.com" and "myweakpassword"
 
   Scenario: Navigate to the coach update page
@@ -26,7 +26,7 @@ Feature: Update coach information
 
   Scenario: Submit changed form
     Given I am on the "/sport-registrations/1/coaches/1/update/" page
-    And I select "Assistant Coach" from "id_position"
+    And I select "assistant_coach" from "id_position"
     And I press "update_coach_btn"
     Then I should see "Your coach information has been updated."
     And I should be on the absolute url page for "sports.SportRegistration" and "user__email=user@example.com, sport__name=Ice Hockey"

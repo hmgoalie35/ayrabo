@@ -5330,7 +5330,7 @@
     "pk": 1,
     "fields": {
       "user": 1,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "5' 0\"",
       "weight": 130,
@@ -5343,7 +5343,7 @@
     "pk": 2,
     "fields": {
       "user": 2,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "5' 5\"",
       "weight": 130,
@@ -5356,7 +5356,7 @@
     "pk": 3,
     "fields": {
       "user": 3,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "2' 0\"",
       "weight": 130,
@@ -5369,7 +5369,7 @@
     "pk": 4,
     "fields": {
       "user": 4,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "1' 4\"",
       "weight": 130,
@@ -5382,7 +5382,7 @@
     "pk": 5,
     "fields": {
       "user": 5,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "3' 6\"",
       "weight": 130,
@@ -5395,7 +5395,7 @@
     "pk": 6,
     "fields": {
       "user": 6,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "2' 6\"",
       "weight": 130,
@@ -5408,7 +5408,7 @@
     "pk": 7,
     "fields": {
       "user": 7,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "8' 11\"",
       "weight": 130,
@@ -5421,7 +5421,7 @@
     "pk": 8,
     "fields": {
       "user": 8,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "5' 11\"",
       "weight": 130,
@@ -5434,7 +5434,7 @@
     "pk": 9,
     "fields": {
       "user": 9,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "3' 0\"",
       "weight": 130,
@@ -5447,7 +5447,7 @@
     "pk": 10,
     "fields": {
       "user": 10,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "1' 10\"",
       "weight": 130,
@@ -5460,7 +5460,7 @@
     "pk": 11,
     "fields": {
       "user": 11,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "5' 10\"",
       "weight": 130,
@@ -5473,7 +5473,7 @@
     "pk": 12,
     "fields": {
       "user": 12,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "2' 9\"",
       "weight": 130,
@@ -5486,7 +5486,7 @@
     "pk": 13,
     "fields": {
       "user": 13,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "4' 5\"",
       "weight": 130,
@@ -5499,7 +5499,7 @@
     "pk": 14,
     "fields": {
       "user": 14,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "8' 7\"",
       "weight": 130,
@@ -5512,7 +5512,7 @@
     "pk": 15,
     "fields": {
       "user": 15,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "1' 7\"",
       "weight": 130,
@@ -5525,7 +5525,7 @@
     "pk": 16,
     "fields": {
       "user": 16,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "1' 9\"",
       "weight": 130,
@@ -5538,7 +5538,7 @@
     "pk": 17,
     "fields": {
       "user": 17,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "3' 9\"",
       "weight": 130,
@@ -5551,7 +5551,7 @@
     "pk": 18,
     "fields": {
       "user": 18,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "1' 5\"",
       "weight": 130,
@@ -5564,7 +5564,7 @@
     "pk": 19,
     "fields": {
       "user": 19,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "6' 6\"",
       "weight": 130,
@@ -5577,7 +5577,7 @@
     "pk": 20,
     "fields": {
       "user": 20,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "6' 8\"",
       "weight": 130,
@@ -5590,7 +5590,7 @@
     "pk": 21,
     "fields": {
       "user": 21,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "7' 5\"",
       "weight": 130,
@@ -5603,7 +5603,7 @@
     "pk": 22,
     "fields": {
       "user": 22,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "3' 10\"",
       "weight": 130,
@@ -5616,7 +5616,7 @@
     "pk": 23,
     "fields": {
       "user": 23,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "4' 4\"",
       "weight": 130,
@@ -5629,7 +5629,7 @@
     "pk": 24,
     "fields": {
       "user": 24,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "8' 3\"",
       "weight": 130,
@@ -5642,7 +5642,7 @@
     "pk": 25,
     "fields": {
       "user": 25,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "1' 5\"",
       "weight": 130,
@@ -5655,7 +5655,7 @@
     "pk": 26,
     "fields": {
       "user": 26,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "4' 1\"",
       "weight": 130,
@@ -5668,7 +5668,7 @@
     "pk": 27,
     "fields": {
       "user": 27,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "6' 9\"",
       "weight": 130,
@@ -5681,7 +5681,7 @@
     "pk": 28,
     "fields": {
       "user": 28,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "1' 9\"",
       "weight": 130,
@@ -5694,7 +5694,7 @@
     "pk": 29,
     "fields": {
       "user": 29,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "4' 5\"",
       "weight": 130,
@@ -5707,7 +5707,7 @@
     "pk": 30,
     "fields": {
       "user": 30,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "5' 5\"",
       "weight": 130,
@@ -5720,7 +5720,7 @@
     "pk": 31,
     "fields": {
       "user": 31,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "7' 6\"",
       "weight": 130,
@@ -5733,7 +5733,7 @@
     "pk": 32,
     "fields": {
       "user": 32,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "4' 2\"",
       "weight": 130,
@@ -5746,7 +5746,7 @@
     "pk": 33,
     "fields": {
       "user": 33,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "5' 2\"",
       "weight": 130,
@@ -5759,7 +5759,7 @@
     "pk": 34,
     "fields": {
       "user": 34,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "4' 9\"",
       "weight": 130,
@@ -5772,7 +5772,7 @@
     "pk": 35,
     "fields": {
       "user": 35,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "3' 7\"",
       "weight": 130,
@@ -5785,7 +5785,7 @@
     "pk": 36,
     "fields": {
       "user": 36,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "7' 3\"",
       "weight": 130,
@@ -5798,7 +5798,7 @@
     "pk": 37,
     "fields": {
       "user": 37,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "6' 0\"",
       "weight": 130,
@@ -5811,7 +5811,7 @@
     "pk": 38,
     "fields": {
       "user": 38,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "5' 2\"",
       "weight": 130,
@@ -5824,7 +5824,7 @@
     "pk": 39,
     "fields": {
       "user": 39,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "3' 0\"",
       "weight": 130,
@@ -5837,7 +5837,7 @@
     "pk": 40,
     "fields": {
       "user": 40,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "6' 2\"",
       "weight": 130,
@@ -5850,7 +5850,7 @@
     "pk": 41,
     "fields": {
       "user": 41,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "5' 7\"",
       "weight": 130,
@@ -5863,7 +5863,7 @@
     "pk": 42,
     "fields": {
       "user": 42,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "2' 9\"",
       "weight": 130,
@@ -5876,7 +5876,7 @@
     "pk": 43,
     "fields": {
       "user": 43,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "4' 8\"",
       "weight": 130,
@@ -5889,7 +5889,7 @@
     "pk": 44,
     "fields": {
       "user": 44,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "2' 2\"",
       "weight": 130,
@@ -5902,7 +5902,7 @@
     "pk": 45,
     "fields": {
       "user": 45,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "4' 6\"",
       "weight": 130,
@@ -5915,7 +5915,7 @@
     "pk": 46,
     "fields": {
       "user": 46,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "8' 9\"",
       "weight": 130,
@@ -5928,7 +5928,7 @@
     "pk": 47,
     "fields": {
       "user": 47,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "2' 10\"",
       "weight": 130,
@@ -5941,7 +5941,7 @@
     "pk": 48,
     "fields": {
       "user": 48,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "6' 9\"",
       "weight": 130,
@@ -5954,7 +5954,7 @@
     "pk": 49,
     "fields": {
       "user": 49,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "6' 11\"",
       "weight": 130,
@@ -5967,7 +5967,7 @@
     "pk": 50,
     "fields": {
       "user": 50,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "7' 0\"",
       "weight": 130,
@@ -5980,7 +5980,7 @@
     "pk": 51,
     "fields": {
       "user": 51,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "5' 3\"",
       "weight": 130,
@@ -5993,7 +5993,7 @@
     "pk": 52,
     "fields": {
       "user": 52,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "8' 5\"",
       "weight": 130,
@@ -6006,7 +6006,7 @@
     "pk": 53,
     "fields": {
       "user": 53,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "1' 4\"",
       "weight": 130,
@@ -6019,7 +6019,7 @@
     "pk": 54,
     "fields": {
       "user": 54,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "6' 8\"",
       "weight": 130,
@@ -6032,7 +6032,7 @@
     "pk": 55,
     "fields": {
       "user": 55,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "1' 4\"",
       "weight": 130,
@@ -6045,7 +6045,7 @@
     "pk": 56,
     "fields": {
       "user": 56,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "6' 1\"",
       "weight": 130,
@@ -6058,7 +6058,7 @@
     "pk": 57,
     "fields": {
       "user": 57,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "1' 1\"",
       "weight": 130,
@@ -6071,7 +6071,7 @@
     "pk": 58,
     "fields": {
       "user": 58,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "3' 6\"",
       "weight": 130,
@@ -6084,7 +6084,7 @@
     "pk": 59,
     "fields": {
       "user": 59,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "7' 5\"",
       "weight": 130,
@@ -6097,7 +6097,7 @@
     "pk": 60,
     "fields": {
       "user": 60,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "5' 1\"",
       "weight": 130,
@@ -6110,7 +6110,7 @@
     "pk": 61,
     "fields": {
       "user": 61,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "1' 7\"",
       "weight": 130,
@@ -6123,7 +6123,7 @@
     "pk": 62,
     "fields": {
       "user": 62,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "2' 4\"",
       "weight": 130,
@@ -6136,7 +6136,7 @@
     "pk": 63,
     "fields": {
       "user": 63,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "6' 6\"",
       "weight": 130,
@@ -6149,7 +6149,7 @@
     "pk": 64,
     "fields": {
       "user": 64,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "7' 1\"",
       "weight": 130,
@@ -6162,7 +6162,7 @@
     "pk": 65,
     "fields": {
       "user": 65,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "4' 9\"",
       "weight": 130,
@@ -6175,7 +6175,7 @@
     "pk": 66,
     "fields": {
       "user": 66,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "7' 6\"",
       "weight": 130,
@@ -6188,7 +6188,7 @@
     "pk": 67,
     "fields": {
       "user": 67,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "8' 2\"",
       "weight": 130,
@@ -6201,7 +6201,7 @@
     "pk": 68,
     "fields": {
       "user": 68,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "4' 2\"",
       "weight": 130,
@@ -6214,7 +6214,7 @@
     "pk": 69,
     "fields": {
       "user": 69,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "4' 9\"",
       "weight": 130,
@@ -6227,7 +6227,7 @@
     "pk": 70,
     "fields": {
       "user": 70,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "5' 9\"",
       "weight": 130,
@@ -6240,7 +6240,7 @@
     "pk": 71,
     "fields": {
       "user": 71,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "3' 0\"",
       "weight": 130,
@@ -6253,7 +6253,7 @@
     "pk": 72,
     "fields": {
       "user": 72,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "2' 11\"",
       "weight": 130,
@@ -6266,7 +6266,7 @@
     "pk": 73,
     "fields": {
       "user": 73,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "7' 1\"",
       "weight": 130,
@@ -6279,7 +6279,7 @@
     "pk": 74,
     "fields": {
       "user": 74,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "2' 0\"",
       "weight": 130,
@@ -6292,7 +6292,7 @@
     "pk": 75,
     "fields": {
       "user": 75,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "5' 9\"",
       "weight": 130,
@@ -6305,7 +6305,7 @@
     "pk": 76,
     "fields": {
       "user": 76,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "2' 3\"",
       "weight": 130,
@@ -6318,7 +6318,7 @@
     "pk": 77,
     "fields": {
       "user": 77,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "5' 6\"",
       "weight": 130,
@@ -6331,7 +6331,7 @@
     "pk": 78,
     "fields": {
       "user": 78,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "5' 10\"",
       "weight": 130,
@@ -6344,7 +6344,7 @@
     "pk": 79,
     "fields": {
       "user": 79,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "7' 10\"",
       "weight": 130,
@@ -6357,7 +6357,7 @@
     "pk": 80,
     "fields": {
       "user": 80,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "4' 8\"",
       "weight": 130,
@@ -6370,7 +6370,7 @@
     "pk": 81,
     "fields": {
       "user": 81,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "2' 6\"",
       "weight": 130,
@@ -6383,7 +6383,7 @@
     "pk": 82,
     "fields": {
       "user": 82,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "2' 8\"",
       "weight": 130,
@@ -6396,7 +6396,7 @@
     "pk": 83,
     "fields": {
       "user": 83,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "1' 2\"",
       "weight": 130,
@@ -6409,7 +6409,7 @@
     "pk": 84,
     "fields": {
       "user": 84,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "8' 0\"",
       "weight": 130,
@@ -6422,7 +6422,7 @@
     "pk": 85,
     "fields": {
       "user": 85,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "3' 11\"",
       "weight": 130,
@@ -6435,7 +6435,7 @@
     "pk": 86,
     "fields": {
       "user": 86,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "1' 3\"",
       "weight": 130,
@@ -6448,7 +6448,7 @@
     "pk": 87,
     "fields": {
       "user": 87,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "5' 11\"",
       "weight": 130,
@@ -6461,7 +6461,7 @@
     "pk": 88,
     "fields": {
       "user": 88,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "5' 1\"",
       "weight": 130,
@@ -6474,7 +6474,7 @@
     "pk": 89,
     "fields": {
       "user": 89,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "7' 2\"",
       "weight": 130,
@@ -6487,7 +6487,7 @@
     "pk": 90,
     "fields": {
       "user": 90,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "3' 8\"",
       "weight": 130,
@@ -6500,7 +6500,7 @@
     "pk": 91,
     "fields": {
       "user": 91,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "2' 6\"",
       "weight": 130,
@@ -6513,7 +6513,7 @@
     "pk": 92,
     "fields": {
       "user": 92,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "8' 6\"",
       "weight": 130,
@@ -6526,7 +6526,7 @@
     "pk": 93,
     "fields": {
       "user": 93,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "8' 4\"",
       "weight": 130,
@@ -6539,7 +6539,7 @@
     "pk": 94,
     "fields": {
       "user": 94,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "1' 9\"",
       "weight": 130,
@@ -6552,7 +6552,7 @@
     "pk": 95,
     "fields": {
       "user": 95,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "8' 10\"",
       "weight": 130,
@@ -6565,7 +6565,7 @@
     "pk": 96,
     "fields": {
       "user": 96,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "4' 4\"",
       "weight": 130,
@@ -6578,7 +6578,7 @@
     "pk": 97,
     "fields": {
       "user": 97,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "2' 0\"",
       "weight": 130,
@@ -6591,7 +6591,7 @@
     "pk": 98,
     "fields": {
       "user": 98,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "3' 2\"",
       "weight": 130,
@@ -6604,7 +6604,7 @@
     "pk": 99,
     "fields": {
       "user": 99,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "8' 1\"",
       "weight": 130,
@@ -6617,7 +6617,7 @@
     "pk": 100,
     "fields": {
       "user": 100,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "6' 4\"",
       "weight": 130,
@@ -6630,7 +6630,7 @@
     "pk": 101,
     "fields": {
       "user": 101,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "8' 5\"",
       "weight": 130,
@@ -6643,7 +6643,7 @@
     "pk": 102,
     "fields": {
       "user": 102,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "7' 2\"",
       "weight": 130,
@@ -6656,7 +6656,7 @@
     "pk": 103,
     "fields": {
       "user": 103,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "6' 6\"",
       "weight": 130,
@@ -6669,7 +6669,7 @@
     "pk": 104,
     "fields": {
       "user": 104,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "2' 6\"",
       "weight": 130,
@@ -6682,7 +6682,7 @@
     "pk": 105,
     "fields": {
       "user": 105,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "8' 8\"",
       "weight": 130,
@@ -6695,7 +6695,7 @@
     "pk": 106,
     "fields": {
       "user": 106,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "2' 2\"",
       "weight": 130,
@@ -6708,7 +6708,7 @@
     "pk": 107,
     "fields": {
       "user": 107,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "4' 0\"",
       "weight": 130,
@@ -6721,7 +6721,7 @@
     "pk": 108,
     "fields": {
       "user": 108,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "8' 3\"",
       "weight": 130,
@@ -6734,7 +6734,7 @@
     "pk": 109,
     "fields": {
       "user": 109,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "2' 7\"",
       "weight": 130,
@@ -6747,7 +6747,7 @@
     "pk": 110,
     "fields": {
       "user": 110,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "8' 7\"",
       "weight": 130,
@@ -6760,7 +6760,7 @@
     "pk": 111,
     "fields": {
       "user": 111,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "3' 0\"",
       "weight": 130,
@@ -6773,7 +6773,7 @@
     "pk": 112,
     "fields": {
       "user": 112,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "5' 4\"",
       "weight": 130,
@@ -6786,7 +6786,7 @@
     "pk": 113,
     "fields": {
       "user": 113,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "7' 10\"",
       "weight": 130,
@@ -6799,7 +6799,7 @@
     "pk": 114,
     "fields": {
       "user": 114,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "1' 8\"",
       "weight": 130,
@@ -6812,7 +6812,7 @@
     "pk": 115,
     "fields": {
       "user": 115,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "4' 5\"",
       "weight": 130,
@@ -6825,7 +6825,7 @@
     "pk": 116,
     "fields": {
       "user": 116,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "2' 2\"",
       "weight": 130,
@@ -6838,7 +6838,7 @@
     "pk": 117,
     "fields": {
       "user": 117,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "3' 5\"",
       "weight": 130,
@@ -6851,7 +6851,7 @@
     "pk": 118,
     "fields": {
       "user": 118,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "5' 8\"",
       "weight": 130,
@@ -6864,7 +6864,7 @@
     "pk": 119,
     "fields": {
       "user": 119,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "6' 11\"",
       "weight": 130,
@@ -6877,7 +6877,7 @@
     "pk": 120,
     "fields": {
       "user": 120,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "3' 5\"",
       "weight": 130,
@@ -6890,7 +6890,7 @@
     "pk": 121,
     "fields": {
       "user": 121,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "3' 9\"",
       "weight": 130,
@@ -6903,7 +6903,7 @@
     "pk": 122,
     "fields": {
       "user": 122,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "4' 2\"",
       "weight": 130,
@@ -6916,7 +6916,7 @@
     "pk": 123,
     "fields": {
       "user": 123,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "7' 7\"",
       "weight": 130,
@@ -6929,7 +6929,7 @@
     "pk": 124,
     "fields": {
       "user": 124,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "2' 4\"",
       "weight": 130,
@@ -6942,7 +6942,7 @@
     "pk": 125,
     "fields": {
       "user": 125,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "3' 8\"",
       "weight": 130,
@@ -6955,7 +6955,7 @@
     "pk": 126,
     "fields": {
       "user": 126,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "1' 9\"",
       "weight": 130,
@@ -6968,7 +6968,7 @@
     "pk": 127,
     "fields": {
       "user": 127,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "6' 9\"",
       "weight": 130,
@@ -6981,7 +6981,7 @@
     "pk": 128,
     "fields": {
       "user": 128,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "2' 10\"",
       "weight": 130,
@@ -6994,7 +6994,7 @@
     "pk": 129,
     "fields": {
       "user": 129,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "4' 11\"",
       "weight": 130,
@@ -7007,7 +7007,7 @@
     "pk": 130,
     "fields": {
       "user": 130,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "4' 11\"",
       "weight": 130,
@@ -7020,7 +7020,7 @@
     "pk": 131,
     "fields": {
       "user": 131,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "7' 6\"",
       "weight": 130,
@@ -7033,7 +7033,7 @@
     "pk": 132,
     "fields": {
       "user": 132,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "1' 0\"",
       "weight": 130,
@@ -7046,7 +7046,7 @@
     "pk": 133,
     "fields": {
       "user": 133,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "8' 11\"",
       "weight": 130,
@@ -7059,7 +7059,7 @@
     "pk": 134,
     "fields": {
       "user": 134,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "2' 0\"",
       "weight": 130,
@@ -7072,7 +7072,7 @@
     "pk": 135,
     "fields": {
       "user": 135,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "4' 7\"",
       "weight": 130,
@@ -7085,7 +7085,7 @@
     "pk": 136,
     "fields": {
       "user": 136,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "1' 9\"",
       "weight": 130,
@@ -7098,7 +7098,7 @@
     "pk": 137,
     "fields": {
       "user": 137,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "2' 4\"",
       "weight": 130,
@@ -7111,7 +7111,7 @@
     "pk": 138,
     "fields": {
       "user": 138,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "6' 7\"",
       "weight": 130,
@@ -7124,7 +7124,7 @@
     "pk": 139,
     "fields": {
       "user": 139,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "2' 10\"",
       "weight": 130,
@@ -7137,7 +7137,7 @@
     "pk": 140,
     "fields": {
       "user": 140,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "4' 8\"",
       "weight": 130,
@@ -7150,7 +7150,7 @@
     "pk": 141,
     "fields": {
       "user": 141,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "8' 2\"",
       "weight": 130,
@@ -7163,7 +7163,7 @@
     "pk": 142,
     "fields": {
       "user": 142,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "3' 9\"",
       "weight": 130,
@@ -7176,7 +7176,7 @@
     "pk": 143,
     "fields": {
       "user": 143,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "4' 3\"",
       "weight": 130,
@@ -7189,7 +7189,7 @@
     "pk": 144,
     "fields": {
       "user": 144,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "3' 5\"",
       "weight": 130,
@@ -7202,7 +7202,7 @@
     "pk": 145,
     "fields": {
       "user": 145,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "6' 3\"",
       "weight": 130,
@@ -7215,7 +7215,7 @@
     "pk": 146,
     "fields": {
       "user": 146,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "6' 11\"",
       "weight": 130,
@@ -7228,7 +7228,7 @@
     "pk": 147,
     "fields": {
       "user": 147,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "8' 7\"",
       "weight": 130,
@@ -7241,7 +7241,7 @@
     "pk": 148,
     "fields": {
       "user": 148,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "4' 11\"",
       "weight": 130,
@@ -7254,7 +7254,7 @@
     "pk": 149,
     "fields": {
       "user": 149,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "7' 4\"",
       "weight": 130,
@@ -7267,7 +7267,7 @@
     "pk": 150,
     "fields": {
       "user": 150,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "7' 4\"",
       "weight": 130,
@@ -7280,7 +7280,7 @@
     "pk": 151,
     "fields": {
       "user": 151,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "3' 2\"",
       "weight": 130,
@@ -7293,7 +7293,7 @@
     "pk": 152,
     "fields": {
       "user": 152,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "3' 0\"",
       "weight": 130,
@@ -7306,7 +7306,7 @@
     "pk": 153,
     "fields": {
       "user": 153,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "8' 11\"",
       "weight": 130,
@@ -7319,7 +7319,7 @@
     "pk": 154,
     "fields": {
       "user": 154,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "4' 1\"",
       "weight": 130,
@@ -7332,7 +7332,7 @@
     "pk": 155,
     "fields": {
       "user": 155,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "3' 7\"",
       "weight": 130,
@@ -7345,7 +7345,7 @@
     "pk": 156,
     "fields": {
       "user": 156,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "3' 9\"",
       "weight": 130,
@@ -7358,7 +7358,7 @@
     "pk": 157,
     "fields": {
       "user": 157,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "1' 0\"",
       "weight": 130,
@@ -7371,7 +7371,7 @@
     "pk": 158,
     "fields": {
       "user": 158,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "4' 8\"",
       "weight": 130,
@@ -7384,7 +7384,7 @@
     "pk": 159,
     "fields": {
       "user": 159,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "4' 1\"",
       "weight": 130,
@@ -7397,7 +7397,7 @@
     "pk": 160,
     "fields": {
       "user": 160,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "7' 0\"",
       "weight": 130,
@@ -7410,7 +7410,7 @@
     "pk": 161,
     "fields": {
       "user": 161,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "5' 0\"",
       "weight": 130,
@@ -7423,7 +7423,7 @@
     "pk": 162,
     "fields": {
       "user": 162,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "3' 6\"",
       "weight": 130,
@@ -7436,7 +7436,7 @@
     "pk": 163,
     "fields": {
       "user": 163,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "5' 6\"",
       "weight": 130,
@@ -7449,7 +7449,7 @@
     "pk": 164,
     "fields": {
       "user": 164,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "3' 2\"",
       "weight": 130,
@@ -7462,7 +7462,7 @@
     "pk": 165,
     "fields": {
       "user": 165,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "4' 6\"",
       "weight": 130,
@@ -7475,7 +7475,7 @@
     "pk": 166,
     "fields": {
       "user": 166,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "7' 8\"",
       "weight": 130,
@@ -7488,7 +7488,7 @@
     "pk": 167,
     "fields": {
       "user": 167,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "6' 9\"",
       "weight": 130,
@@ -7501,7 +7501,7 @@
     "pk": 168,
     "fields": {
       "user": 168,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "6' 2\"",
       "weight": 130,
@@ -7514,7 +7514,7 @@
     "pk": 169,
     "fields": {
       "user": 169,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "1' 10\"",
       "weight": 130,
@@ -7527,7 +7527,7 @@
     "pk": 170,
     "fields": {
       "user": 170,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "7' 6\"",
       "weight": 130,
@@ -7540,7 +7540,7 @@
     "pk": 171,
     "fields": {
       "user": 171,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "3' 4\"",
       "weight": 130,
@@ -7553,7 +7553,7 @@
     "pk": 172,
     "fields": {
       "user": 172,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "3' 0\"",
       "weight": 130,
@@ -7566,7 +7566,7 @@
     "pk": 173,
     "fields": {
       "user": 173,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "6' 9\"",
       "weight": 130,
@@ -7579,7 +7579,7 @@
     "pk": 174,
     "fields": {
       "user": 174,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "5' 10\"",
       "weight": 130,
@@ -7592,7 +7592,7 @@
     "pk": 175,
     "fields": {
       "user": 175,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "1' 9\"",
       "weight": 130,
@@ -7605,7 +7605,7 @@
     "pk": 176,
     "fields": {
       "user": 176,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "2' 4\"",
       "weight": 130,
@@ -7618,7 +7618,7 @@
     "pk": 177,
     "fields": {
       "user": 177,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "5' 4\"",
       "weight": 130,
@@ -7631,7 +7631,7 @@
     "pk": 178,
     "fields": {
       "user": 178,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "6' 5\"",
       "weight": 130,
@@ -7644,7 +7644,7 @@
     "pk": 179,
     "fields": {
       "user": 179,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "1' 6\"",
       "weight": 130,
@@ -7657,7 +7657,7 @@
     "pk": 180,
     "fields": {
       "user": 180,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "6' 8\"",
       "weight": 130,
@@ -7670,7 +7670,7 @@
     "pk": 181,
     "fields": {
       "user": 181,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "8' 9\"",
       "weight": 130,
@@ -7683,7 +7683,7 @@
     "pk": 182,
     "fields": {
       "user": 182,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "6' 2\"",
       "weight": 130,
@@ -7696,7 +7696,7 @@
     "pk": 183,
     "fields": {
       "user": 183,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "7' 6\"",
       "weight": 130,
@@ -7709,7 +7709,7 @@
     "pk": 184,
     "fields": {
       "user": 184,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "8' 9\"",
       "weight": 130,
@@ -7722,7 +7722,7 @@
     "pk": 185,
     "fields": {
       "user": 185,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "6' 6\"",
       "weight": 130,
@@ -7735,7 +7735,7 @@
     "pk": 186,
     "fields": {
       "user": 186,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "1' 2\"",
       "weight": 130,
@@ -7748,7 +7748,7 @@
     "pk": 187,
     "fields": {
       "user": 187,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "8' 7\"",
       "weight": 130,
@@ -7761,7 +7761,7 @@
     "pk": 188,
     "fields": {
       "user": 188,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "6' 3\"",
       "weight": 130,
@@ -7774,7 +7774,7 @@
     "pk": 189,
     "fields": {
       "user": 189,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "8' 0\"",
       "weight": 130,
@@ -7787,7 +7787,7 @@
     "pk": 190,
     "fields": {
       "user": 190,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "5' 2\"",
       "weight": 130,
@@ -7800,7 +7800,7 @@
     "pk": 191,
     "fields": {
       "user": 191,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "7' 10\"",
       "weight": 130,
@@ -7813,7 +7813,7 @@
     "pk": 192,
     "fields": {
       "user": 192,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "1' 2\"",
       "weight": 130,
@@ -7826,7 +7826,7 @@
     "pk": 193,
     "fields": {
       "user": 193,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "3' 2\"",
       "weight": 130,
@@ -7839,7 +7839,7 @@
     "pk": 194,
     "fields": {
       "user": 194,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "2' 3\"",
       "weight": 130,
@@ -7852,7 +7852,7 @@
     "pk": 195,
     "fields": {
       "user": 195,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "4' 1\"",
       "weight": 130,
@@ -7865,7 +7865,7 @@
     "pk": 196,
     "fields": {
       "user": 196,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "6' 2\"",
       "weight": 130,
@@ -7878,7 +7878,7 @@
     "pk": 197,
     "fields": {
       "user": 197,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "7' 4\"",
       "weight": 130,
@@ -7891,7 +7891,7 @@
     "pk": 198,
     "fields": {
       "user": 198,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "7' 7\"",
       "weight": 130,
@@ -7904,7 +7904,7 @@
     "pk": 199,
     "fields": {
       "user": 199,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "3' 5\"",
       "weight": 130,
@@ -7917,7 +7917,7 @@
     "pk": 200,
     "fields": {
       "user": 200,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "2' 1\"",
       "weight": 130,
@@ -7930,7 +7930,7 @@
     "pk": 201,
     "fields": {
       "user": 201,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "2' 3\"",
       "weight": 130,
@@ -7943,7 +7943,7 @@
     "pk": 202,
     "fields": {
       "user": 202,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "8' 0\"",
       "weight": 130,
@@ -7956,7 +7956,7 @@
     "pk": 203,
     "fields": {
       "user": 203,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "8' 6\"",
       "weight": 130,
@@ -7969,7 +7969,7 @@
     "pk": 204,
     "fields": {
       "user": 204,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "3' 5\"",
       "weight": 130,
@@ -7982,7 +7982,7 @@
     "pk": 205,
     "fields": {
       "user": 205,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "7' 11\"",
       "weight": 130,
@@ -7995,7 +7995,7 @@
     "pk": 206,
     "fields": {
       "user": 206,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "2' 11\"",
       "weight": 130,
@@ -8008,7 +8008,7 @@
     "pk": 207,
     "fields": {
       "user": 207,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "8' 2\"",
       "weight": 130,
@@ -8021,7 +8021,7 @@
     "pk": 208,
     "fields": {
       "user": 208,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "1' 8\"",
       "weight": 130,
@@ -8034,7 +8034,7 @@
     "pk": 209,
     "fields": {
       "user": 209,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "4' 5\"",
       "weight": 130,
@@ -8047,7 +8047,7 @@
     "pk": 210,
     "fields": {
       "user": 210,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "5' 8\"",
       "weight": 130,
@@ -8060,7 +8060,7 @@
     "pk": 211,
     "fields": {
       "user": 211,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "3' 2\"",
       "weight": 130,
@@ -8073,7 +8073,7 @@
     "pk": 212,
     "fields": {
       "user": 212,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "7' 11\"",
       "weight": 130,
@@ -8086,7 +8086,7 @@
     "pk": 213,
     "fields": {
       "user": 213,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "4' 3\"",
       "weight": 130,
@@ -8099,7 +8099,7 @@
     "pk": 214,
     "fields": {
       "user": 214,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "3' 7\"",
       "weight": 130,
@@ -8112,7 +8112,7 @@
     "pk": 215,
     "fields": {
       "user": 215,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "4' 0\"",
       "weight": 130,
@@ -8125,7 +8125,7 @@
     "pk": 216,
     "fields": {
       "user": 216,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "4' 3\"",
       "weight": 130,
@@ -8138,7 +8138,7 @@
     "pk": 217,
     "fields": {
       "user": 217,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "8' 1\"",
       "weight": 130,
@@ -8151,7 +8151,7 @@
     "pk": 218,
     "fields": {
       "user": 218,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "4' 3\"",
       "weight": 130,
@@ -8164,7 +8164,7 @@
     "pk": 219,
     "fields": {
       "user": 219,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "2' 1\"",
       "weight": 130,
@@ -8177,7 +8177,7 @@
     "pk": 220,
     "fields": {
       "user": 220,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "6' 0\"",
       "weight": 130,
@@ -8190,7 +8190,7 @@
     "pk": 221,
     "fields": {
       "user": 221,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "5' 7\"",
       "weight": 130,
@@ -8203,7 +8203,7 @@
     "pk": 222,
     "fields": {
       "user": 222,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "6' 7\"",
       "weight": 130,
@@ -8216,7 +8216,7 @@
     "pk": 223,
     "fields": {
       "user": 223,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "1' 0\"",
       "weight": 130,
@@ -8229,7 +8229,7 @@
     "pk": 224,
     "fields": {
       "user": 224,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "5' 0\"",
       "weight": 130,
@@ -8242,7 +8242,7 @@
     "pk": 225,
     "fields": {
       "user": 225,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "6' 1\"",
       "weight": 130,
@@ -8255,7 +8255,7 @@
     "pk": 226,
     "fields": {
       "user": 226,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "6' 2\"",
       "weight": 130,
@@ -8268,7 +8268,7 @@
     "pk": 227,
     "fields": {
       "user": 227,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "1' 7\"",
       "weight": 130,
@@ -8281,7 +8281,7 @@
     "pk": 228,
     "fields": {
       "user": 228,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "4' 0\"",
       "weight": 130,
@@ -8294,7 +8294,7 @@
     "pk": 229,
     "fields": {
       "user": 229,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "7' 11\"",
       "weight": 130,
@@ -8307,7 +8307,7 @@
     "pk": 230,
     "fields": {
       "user": 230,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "6' 8\"",
       "weight": 130,
@@ -8320,7 +8320,7 @@
     "pk": 231,
     "fields": {
       "user": 231,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "1' 11\"",
       "weight": 130,
@@ -8333,7 +8333,7 @@
     "pk": 232,
     "fields": {
       "user": 232,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "7' 11\"",
       "weight": 130,
@@ -8346,7 +8346,7 @@
     "pk": 233,
     "fields": {
       "user": 233,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "6' 0\"",
       "weight": 130,
@@ -8359,7 +8359,7 @@
     "pk": 234,
     "fields": {
       "user": 234,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "1' 10\"",
       "weight": 130,
@@ -8372,7 +8372,7 @@
     "pk": 235,
     "fields": {
       "user": 235,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "4' 4\"",
       "weight": 130,
@@ -8385,7 +8385,7 @@
     "pk": 236,
     "fields": {
       "user": 236,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "7' 4\"",
       "weight": 130,
@@ -8398,7 +8398,7 @@
     "pk": 237,
     "fields": {
       "user": 237,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "1' 11\"",
       "weight": 130,
@@ -8411,7 +8411,7 @@
     "pk": 238,
     "fields": {
       "user": 238,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "5' 10\"",
       "weight": 130,
@@ -8424,7 +8424,7 @@
     "pk": 239,
     "fields": {
       "user": 239,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "3' 7\"",
       "weight": 130,
@@ -8437,7 +8437,7 @@
     "pk": 240,
     "fields": {
       "user": 240,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "2' 7\"",
       "weight": 130,
@@ -8450,7 +8450,7 @@
     "pk": 241,
     "fields": {
       "user": 241,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "5' 2\"",
       "weight": 130,
@@ -8463,7 +8463,7 @@
     "pk": 242,
     "fields": {
       "user": 242,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2016-10-03",
       "height": "7' 4\"",
       "weight": 130,
@@ -8476,7 +8476,7 @@
     "pk": 243,
     "fields": {
       "user": 243,
-      "gender": "Male",
+      "gender": "male",
       "birthday": "2014-02-18",
       "height": "4' 3\"",
       "weight": 88,
@@ -8489,7 +8489,7 @@
     "pk": 1,
     "fields": {
       "user": 243,
-      "position": "Head Coach",
+      "position": "head_coach",
       "team": 61,
       "created": "2016-10-03T21:31:40.279Z"
     }
@@ -8499,7 +8499,7 @@
     "pk": 2,
     "fields": {
       "user": 243,
-      "position": "Head Coach",
+      "position": "head_coach",
       "team": 32,
       "created": "2016-10-03T21:31:52.517Z"
     }
