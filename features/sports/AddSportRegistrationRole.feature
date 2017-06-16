@@ -17,7 +17,7 @@ Feature: Add roles to a sport registration
     Given "user@example.com" is completely registered for "Ice Hockey" with role "Coach"
     And The following coach object exists
       | username_or_email | team                  | position   |
-      | user@example.com  | Green Machine IceCats | Head Coach |
+      | user@example.com  | Green Machine IceCats | head_coach |
     And I am on the absolute url page for "sports.SportRegistration" and "user__email=user@example.com, sport__name=Ice Hockey"
     When I press "Available Roles"
     And I press "add_player_role_link"
@@ -40,7 +40,7 @@ Feature: Add roles to a sport registration
     Given "user@example.com" is completely registered for "Ice Hockey" with role "Player, Coach, Manager"
     And The following coach object exists
       | username_or_email | team                  | position   |
-      | user@example.com  | Green Machine IceCats | Head Coach |
+      | user@example.com  | Green Machine IceCats | head_coach |
     And The following player object exists
       | username_or_email | sport      | team                  | jersey_number | position | handedness |
       | user@example.com  | Ice Hockey | Green Machine IceCats | 35            | G        | Left       |
@@ -69,7 +69,7 @@ Feature: Add roles to a sport registration
     Given "user@example.com" is completely registered for "Ice Hockey" with role "Coach"
     And The following coach object exists
       | username_or_email | team                  | position   |
-      | user@example.com  | Green Machine IceCats | Head Coach |
+      | user@example.com  | Green Machine IceCats | head_coach |
     And I am on the "sports.SportRegistration" "" "sportregistrations:players:create" page with url kwargs "pk=pk"
     And I select "Green Machine IceCats - Midget Minor AA" from "id_players-0-team"
     And I fill in "id_players-0-jersey_number" with "35"
@@ -87,7 +87,7 @@ Feature: Add roles to a sport registration
       | username_or_email | sport      | team                  | jersey_number | position | handedness |
       | user@example.com  | Ice Hockey | Green Machine IceCats | 35            | G        | Left       |
     And I am on the "sports.SportRegistration" "" "sportregistrations:coaches:create" page with url kwargs "pk=pk"
-    And I select "Head Coach" from "id_coaches-0-position"
+    And I select "head_coach" from "id_coaches-0-position"
     And I select "Green Machine IceCats - Midget Minor AA" from "id_coaches-0-team"
     And I press "create_objects_btn"
     Then I should be on the absolute url page for "sports.SportRegistration" and "user__email=user@example.com, sport__name=Ice Hockey"
@@ -96,7 +96,7 @@ Feature: Add roles to a sport registration
     Given "user@example.com" is completely registered for "Ice Hockey" with role "Coach"
     And The following coach object exists
       | username_or_email | team                  | position   |
-      | user@example.com  | Green Machine IceCats | Head Coach |
+      | user@example.com  | Green Machine IceCats | head_coach |
     And I am on the "sports.SportRegistration" "" "sportregistrations:referees:create" page with url kwargs "pk=pk"
     And I select "Long Island Amateur Hockey League" from "id_referees-0-league"
     And I press "create_objects_btn"
@@ -106,7 +106,7 @@ Feature: Add roles to a sport registration
     Given "user@example.com" is completely registered for "Ice Hockey" with role "Player, Coach"
     And The following coach object exists
       | username_or_email | team                  | position   |
-      | user@example.com  | Green Machine IceCats | Head Coach |
+      | user@example.com  | Green Machine IceCats | head_coach |
     And The following player object exists
       | username_or_email | sport      | team                  | jersey_number | position | handedness |
       | user@example.com  | Ice Hockey | Green Machine IceCats | 35            | G        | Left       |

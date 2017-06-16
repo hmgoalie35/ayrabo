@@ -8489,7 +8489,7 @@
     "pk": 1,
     "fields": {
       "user": 243,
-      "position": "Head Coach",
+      "position": "head_coach",
       "team": 61,
       "created": "2016-10-03T21:31:40.279Z"
     }
@@ -8499,7 +8499,7 @@
     "pk": 2,
     "fields": {
       "user": 243,
-      "position": "Head Coach",
+      "position": "head_coach",
       "team": 32,
       "created": "2016-10-03T21:31:52.517Z"
     }

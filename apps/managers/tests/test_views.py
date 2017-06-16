@@ -168,7 +168,7 @@ class CreateManagersViewTests(BaseTestCase):
         self.sr_2.save()
         form_data = {
             'managers-0-team': self.team.id,
-            'managers-0-position': 'Head Coach',
+            'managers-0-position': 'head_coach',
         }
         self.post_data.update(form_data)
         response = self.client.post(self._format_url('managers', pk=self.sr.id), data=self.post_data, follow=True)

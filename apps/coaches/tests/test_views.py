@@ -92,9 +92,9 @@ class CreateCoachesViewTests(BaseTestCase):
     def test_post_two_forms_same_team(self):
         form_data = {
             'coaches-0-team': self.team.id,
-            'coaches-0-position': "Head Coach",
+            'coaches-0-position': "head_coach",
             'coaches-1-team': self.team.id,
-            'coaches-1-position': "Assistant Coach",
+            'coaches-1-position': "assistant_coach",
             'coaches-TOTAL_FORMS': 2,
         }
         self.post_data.update(form_data)
@@ -114,7 +114,7 @@ class CreateCoachesViewTests(BaseTestCase):
         self.sr_2.save()
         form_data = {
             'coaches-0-team': self.team.id,
-            'coaches-0-position': 'Head Coach',
+            'coaches-0-position': 'head_coach',
         }
         self.post_data.update(form_data)
         response = self.client.post(self._format_url('coaches', pk=self.sr.id), data=self.post_data, follow=True)
@@ -124,7 +124,7 @@ class CreateCoachesViewTests(BaseTestCase):
     def test_post_one_valid_form(self):
         form_data = {
             'coaches-0-team': self.team.id,
-            'coaches-0-position': 'Head Coach',
+            'coaches-0-position': 'head_coach',
         }
         self.post_data.update(form_data)
         response = self.client.post(self._format_url('coaches', pk=self.sr.id), data=self.post_data, follow=True)
@@ -137,9 +137,9 @@ class CreateCoachesViewTests(BaseTestCase):
         t1 = TeamFactory(division__league__sport=self.ice_hockey)
         form_data = {
             'coaches-0-team': self.team.id,
-            'coaches-0-position': 'Head Coach',
+            'coaches-0-position': 'head_coach',
             'coaches-1-team': t1.id,
-            'coaches-1-position': 'Assistant Coach',
+            'coaches-1-position': 'assistant_coach',
             'coaches-TOTAL_FORMS': 2,
         }
         self.post_data.update(form_data)
@@ -159,11 +159,11 @@ class CreateCoachesViewTests(BaseTestCase):
         t2 = TeamFactory(division=d2)
         form_data = {
             'coaches-0-team': self.team.id,
-            'coaches-0-position': 'Head Coach',
+            'coaches-0-position': 'head_coach',
             'coaches-1-team': t1.id,
-            'coaches-1-position': 'Assistant Coach',
+            'coaches-1-position': 'assistant_coach',
             'coaches-2-team': t2.id,
-            'coaches-2-position': 'Assistant Coach',
+            'coaches-2-position': 'assistant_coach',
             'coaches-TOTAL_FORMS': 3,
         }
         self.post_data.update(form_data)
@@ -177,7 +177,7 @@ class CreateCoachesViewTests(BaseTestCase):
 
     def test_post_one_invalid_form(self):
         form_data = {
-            'coaches-0-position': 'Head Coach',
+            'coaches-0-position': 'head_coach',
             'coaches-TOTAL_FORMS': 1,
         }
         self.post_data.update(form_data)
@@ -186,7 +186,7 @@ class CreateCoachesViewTests(BaseTestCase):
 
     def test_post_two_invalid_forms(self):
         form_data = {
-            'coaches-0-position': 'Head Coach',
+            'coaches-0-position': 'head_coach',
             'coaches-1-team': self.team.id,
             'coaches-TOTAL_FORMS': 2,
         }
@@ -198,7 +198,7 @@ class CreateCoachesViewTests(BaseTestCase):
     def test_post_empty_added_form(self):
         form_data = {
             'coaches-0-team': self.team.id,
-            'coaches-0-position': 'Head Coach',
+            'coaches-0-position': 'head_coach',
             'coaches-1-team': '',
             'coaches-1-position': '',
             'coaches-TOTAL_FORMS': 2,
@@ -212,7 +212,7 @@ class CreateCoachesViewTests(BaseTestCase):
         self.sr.set_roles(['Coach'])
         form_data = {
             'coaches-0-team': self.team.id,
-            'coaches-0-position': 'Head Coach'
+            'coaches-0-position': 'head_coach'
         }
         self.post_data.update(form_data)
         response = self.client.post(self._format_url('coaches', pk=self.sr.id), data=self.post_data, follow=True)
@@ -225,7 +225,7 @@ class CreateCoachesViewTests(BaseTestCase):
         self.sr_2.set_roles(['Coach'])
         form_data = {
             'coaches-0-team': self.team.id,
-            'coaches-0-position': 'Head Coach',
+            'coaches-0-position': 'head_coach',
         }
         self.post_data.update(form_data)
         self.client.post(self._format_url('coaches', pk=self.sr.id), data=self.post_data, follow=True)
@@ -235,7 +235,7 @@ class CreateCoachesViewTests(BaseTestCase):
         team = TeamFactory(name='Detroit Tigers', division=division)
         self.post_data.update({
             'coaches-0-team': team.id,
-            'coaches-0-position': 'Assistant Coach',
+            'coaches-0-position': 'assistant_coach',
         })
 
         response = self.client.post(self._format_url('coaches', pk=self.sr_2.id), data=self.post_data, follow=True)
@@ -251,7 +251,7 @@ class CreateCoachesViewTests(BaseTestCase):
         self.sr_2.save()
         form_data = {
             'coaches-0-team': self.team.id,
-            'coaches-0-position': 'Head Coach',
+            'coaches-0-position': 'head_coach',
         }
         self.post_data.update(form_data)
         response = self.client.post(self._format_url('coaches', pk=self.sr.id), data=self.post_data, follow=True)
@@ -311,7 +311,7 @@ class UpdateCoachViewTests(BaseTestCase):
 
     def setUp(self):
         self.post_data = {
-            'position': 'Head Coach'
+            'position': 'head_coach'
         }
         self.coach = CoachFactory(user=self.user, team=self.team, **self.post_data)
         self.coach_url = self._format_url(pk=self.sr.pk, coach_pk=self.coach.pk)
@@ -352,18 +352,18 @@ class UpdateCoachViewTests(BaseTestCase):
 
     # POST
     def test_post(self):
-        self.post_data.update({'position': 'Assistant Coach'})
+        self.post_data.update({'position': 'assistant_coach'})
         response = self.client.post(self.coach_url, data=self.post_data, follow=True)
         self.assertHasMessage(response, 'Your coach information has been updated.')
         self.coach.refresh_from_db()
-        self.assertEqual(self.coach.position, 'Assistant Coach')
+        self.assertEqual(self.coach.position, 'assistant_coach')
         self.assertRedirects(response, self.sr.get_absolute_url())
 
     def test_post_nothing_changed(self):
         response = self.client.post(self.coach_url, data=self.post_data, follow=True)
         self.assertNoMessage(response, 'Your coach information has been updated.')
         self.coach.refresh_from_db()
-        self.assertEqual(self.coach.position, 'Head Coach')
+        self.assertEqual(self.coach.position, 'head_coach')
         self.assertRedirects(response, self.sr.get_absolute_url())
 
     def test_post_invalid(self):
