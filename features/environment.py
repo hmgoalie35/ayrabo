@@ -22,6 +22,6 @@ def after_all(context):
 
 def before_scenario(context, scenario):
     site = Site.objects.get_current()
-    site.name = 'localhost'
+    site.name = '127.0.0.1'
     site.domain = context.get_url().split('http://')[1]
     site.save()

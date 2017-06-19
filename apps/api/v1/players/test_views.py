@@ -25,7 +25,7 @@ class DeactivatePlayerApiViewTests(APITestCase):
         self.league = LeagueFactory(sport=self.sport, full_name='National Hockey League')
         self.division = DivisionFactory(league=self.league, name='Atlantic Division')
         self.team = TeamFactory(division=self.division, name='Boston Bruins')
-        self.player = HockeyPlayerFactory(user=self.user, team=self.team)
+        self.player = HockeyPlayerFactory(user=self.user, team=self.team, sport=self.sport)
 
         self.sr = SportRegistrationFactory(user=self.user, sport=self.sport)
         self.sr.set_roles(['Player', 'Referee'])

@@ -47,7 +47,7 @@ class PlayerFormTests(BaseTestCase):
         """
         user = UserFactory()
         teams = TeamFactory.create_batch(5)
-        HockeyPlayerFactory(user=user, team=teams[0])
+        HockeyPlayerFactory(user=user, team=teams[0], sport=self.sport)
         form = self.form_cls(already_registered_for=[teams[0].id])
         team_field = form.fields['team']
         self.assertNotIn(teams[0], team_field.queryset)
