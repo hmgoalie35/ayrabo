@@ -15,13 +15,10 @@ was_changed_in_last_commit () {
 #    python manage.py loaddata dev_fixtures
 #fi
 
-print_step "Rebuilding npm packages"
-rm -rf node_modules
+print_step "Installing npm packages"
 npm install
 
-print_step "Rebuilding virtualenv"
-rm -rf venv
-virtualenv venv -p $(which python3)
+print_step "Installing pip packages"
 source venv/bin/activate
 pip install -r requirements.txt
 
