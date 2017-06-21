@@ -5,14 +5,12 @@ from django.urls import reverse, reverse_lazy
 from django.views import generic
 from rest_framework.authtoken.models import Token
 
-from escoresheet.utils.mixins import AccountAndSportRegistrationCompleteMixin
 from sports.models import SportRegistration
 from userprofiles.models import UserProfile
 from .forms import CreateUserProfileForm, UpdateUserProfileForm
 
 
-class CreateUserProfileView(LoginRequiredMixin, AccountAndSportRegistrationCompleteMixin,
-                            generic.CreateView):
+class CreateUserProfileView(LoginRequiredMixin, generic.CreateView):
     model = UserProfile
     template_name = 'userprofiles/userprofile_create.html'
     success_url = reverse_lazy('sportregistrations:create')

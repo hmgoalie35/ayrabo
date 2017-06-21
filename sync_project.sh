@@ -25,7 +25,8 @@ pip install -r requirements.txt
 print_step "Running migrations"
 python manage.py migrate
 
-print_step "Applying fixtures"
-python manage.py loaddata dev_fixtures
+# TODO Change this to development seeding, loaddata wipes all local data...
+#print_step "Applying fixtures"
+#python manage.py loaddata dev_fixtures
 
 print_step "Done"

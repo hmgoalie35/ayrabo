@@ -8,7 +8,6 @@ from django.views.generic.base import ContextMixin
 
 from escoresheet.utils import handle_sport_not_configured
 from escoresheet.utils.exceptions import SportNotConfiguredException
-from escoresheet.utils.mixins import AccountAndSportRegistrationCompleteMixin
 from leagues.models import League
 from players.models import AbstractPlayer
 from sports.models import SportRegistration
@@ -18,8 +17,7 @@ MIN_FORMS = 1
 MAX_FORMS = 10
 
 
-class BaseCreateRelatedObjectsView(LoginRequiredMixin, ContextMixin, AccountAndSportRegistrationCompleteMixin,
-                                   generic.View):
+class BaseCreateRelatedObjectsView(LoginRequiredMixin, ContextMixin, generic.View):
     already_registered_msg = 'You have already registered for all available {}.'
 
     def get_template_name(self):

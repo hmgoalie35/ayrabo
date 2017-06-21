@@ -48,7 +48,7 @@ class SportRegistration(models.Model):
     sport = models.ForeignKey(Sport)
     roles_mask = models.SmallIntegerField(default=0, verbose_name='Roles Mask')
     # Signifies if each Coach, Referee, Manager, HockeyPlayer, etc. object has been created for all roles of this model
-    is_complete = models.BooleanField(default=False, verbose_name='Is Registration Complete')
+    is_complete = models.BooleanField(default=False, db_index=True, verbose_name='Is Registration Complete')
 
     class Meta:
         ordering = ['user']
