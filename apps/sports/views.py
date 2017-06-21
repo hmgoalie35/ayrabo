@@ -9,7 +9,6 @@ from django.urls import reverse
 from django.views import generic
 from django.views.generic.base import ContextMixin
 
-from escoresheet.utils.mixins import AccountAndSportRegistrationCompleteMixin
 from players import forms as player_forms
 from players.models import HockeyPlayer, BasketballPlayer, BaseballPlayer
 from sports.forms import CreateSportRegistrationForm, SportRegistrationModelFormSet
@@ -32,8 +31,7 @@ MIN_FORMS = 1
 
 
 # TODO Add API endpoints to do this, so don't have to deal with the formset stuff
-class CreateSportRegistrationView(LoginRequiredMixin, ContextMixin, AccountAndSportRegistrationCompleteMixin,
-                                  generic.View):
+class CreateSportRegistrationView(LoginRequiredMixin, ContextMixin, generic.View):
     template_name = 'sports/sport_registration_create.html'
     already_registered_msg = 'You have already registered for all available sports. ' \
                              'Check back later to see if any new sports have been added.'
