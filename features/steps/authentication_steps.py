@@ -36,8 +36,8 @@ def confirm_account(context, username_or_email, method='manual'):
     if method == 'email_link':
         email_body = mail.outbox[0].body
 
-        confirmation_link = re.search(r'(?P<link>https?://.+/)', str(email_body)).group('link')
-        context.driver.get(confirmation_link)
+        confirmation_link = re.search(r'https?://example.com(?P<link>.+/)', str(email_body)).group('link')
+        context.driver.get(context.get_url(confirmation_link))
         confirm_btn = find_element(context, 'confirm_email_btn')
         confirm_btn.click()
     else:
