@@ -23,17 +23,17 @@ Feature: Login to my existing account
     Then I should be logged in
 
   Scenario: Login with invalid email
-    Given I login with "myincorrectemail@testing.com" and "myweakpassword"
+    Given I login with "myincorrectemail@testing.com" and "myweakpassword" via "login_page"
     Then I should not be logged in
     And I should see "The e-mail address and/or password you specified are not correct."
 
   Scenario: Login with invalid password
-    When I login with "user@example.com" and "myincorrectpassword"
+    When I login with "user@example.com" and "myincorrectpassword" via "login_page"
     Then I should not be logged in
     And I should see "The e-mail address and/or password you specified are not correct."
 
   Scenario: Login with unconfirmed account
-    Given I login with "jane@doe.com" and "myweakpassword"
+    Given I login with "jane@doe.com" and "myweakpassword" via "login_page"
     Then I should not be logged in
     And I should be on the "account_email_verification_sent" page
     And I should see "Verify Your E-mail Address"

@@ -46,25 +46,33 @@ def confirm_account(context, username_or_email, method='manual'):
         email_address_obj.save()
 
 
-def login(context, username_or_email, password, login_method=''):
-    # Defaults are for logging in via login page, not the navbar
-    login_path = 'account_login'
-    username_email_field = 'id_login'
-    password_field = 'id_password'
-    login_btn = 'login_main'
-    if login_method == 'navbar':
-        login_path = 'home'
-        username_email_field = 'id_login_navbar'
-        password_field = 'id_password_navbar'
-        login_btn = 'login_navbar'
+def login(context, username_or_email, password, login_method=None):
+    # If no login method is specified, force authenticate the user so don't need to do extra behave steps.
+    if login_method:
+        # Defaults are for logging in via login page, not the navbar
+        login_path = 'account_login'
+        username_email_field = 'id_login'
+        password_field = 'id_password'
+        login_btn = 'login_main'
+        if login_method == 'navbar':
+            login_path = 'home'
+            username_email_field = 'id_login_navbar'
+            password_field = 'id_password_navbar'
+            login_btn = 'login_navbar'
 
-    step1 = 'when I fill in "{}" with "{}"'.format(username_email_field, username_or_email)
-    step2 = 'when I fill in "{}" with "{}"'.format(password_field, password)
-    step3 = 'and I press "{}"'.format(login_btn)
-    steps = '{}\n{}\n{}'.format(step1, step2, step3)
+        step1 = 'when I fill in "{}" with "{}"'.format(username_email_field, username_or_email)
+        step2 = 'when I fill in "{}" with "{}"'.format(password_field, password)
+        step3 = 'and I press "{}"'.format(login_btn)
+        steps = '{}\n{}\n{}'.format(step1, step2, step3)
 
-    context.driver.get(context.get_url(login_path))
-    context.execute_steps(steps)
+        context.driver.get(context.get_url(login_path))
+        context.execute_steps(steps)
+    else:
+        # context.get_url('/')
+        context.test.client.login(username=username_or_email, password=password)
+        session_id = context.test.client.cookies['sessionid']
+        context.driver.execute_script('document.cookie = "{}={}; path=/;"'.format('sessionid', session_id.value))
+        context.driver.refresh()
 
 
 def logout(context):
@@ -131,9 +139,13 @@ def step_impl(context):
     logout(context)
 
 
-@step(
-        'I login with "(?P<username_or_email>[^"]*)" and "(?P<password>[^"]*)"\s?(?P<optional>via "(?P<login_method>[^"]*)")?')  # noqa
-def step_impl(context, username_or_email, password, optional, login_method):
+@step('I login with "(?P<username_or_email>[^"]*)" and "(?P<password>[^"]*)"')  # noqa
+def step_impl(context, username_or_email, password):
+    login(context, username_or_email, password, None)
+
+
+@step('I login with "(?P<username_or_email>[^"]*)" and "(?P<password>[^"]*)" via "(?P<login_method>[^"]*)"')
+def step_impl(context, username_or_email, password, login_method):
     login(context, username_or_email, password, login_method)
 
 
