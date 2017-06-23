@@ -1,0 +1,50 @@
+- name: Create venv and install requirements
+  pip:
+    chdir: "{{ project_root }}"
+    virtualenv: "{{ venv_path }}"
+    virtualenv_python: "{{ venv_python_version }}"
+    state: present
+    requirements: "requirements.txt"
+
+- name: Install npm packages
+  npm:
+    path: "{{ project_root }}"
+    production: no
+    state: present
+
+- name: Install pre-commit
+  shell: "source {{ venv_path }}/bin/activate && pre-commit install"
+  args:
+    chdir: "{{ project_root }}"
+    executable: "/bin/bash"
+
+- name: Symlinking local settings file
+  file:
+    path: "{{ project_root }}/escoresheet/settings/local_settings.py"
+    src: "{{ project_root }}/escoresheet/settings/local_settings.py.dev"
+    state: link
+
+# If getting errors make sure have latest docker-py, docker-compose, PyYAML, docker for pip2 and pip3. Use -U
+- name: Build and start docker containers in detached mode (this may take a while)
+  shell: "docker-compose up -d"
+  args:
+    chdir: "{{ project_root }}/devops/docker"
+    executable: "/bin/bash"
+
+- name: Wait for postgres container to start up
+  pause:
+    seconds: 8
+
+- name: Run migrations
+  django_manage:
+    app_path: "{{ project_root }}"
+    command: "migrate --noinput"
+    virtualenv: "{{ venv_path }}"
+
+- name: Load dev fixtures
+  django_manage:
+    app_path: "{{ project_root }}"
+    command: "loaddata dev_fixtures"
+    virtualenv: "{{ venv_path }}"
+
+# Don't use ansible to run the test suite because the user should really see all stdout while the tests are running.

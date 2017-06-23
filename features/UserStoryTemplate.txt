@@ -1,0 +1,4 @@
+Feature name
+  As a [kind of stakeholder],
+  So that [I can achieve some goal],
+  I want to [do some task]

@@ -1,0 +1,2 @@
+{% load i18n %}
+{% blocktrans %}You have successfully disconnected your social account{% endblocktrans %}

@@ -1,0 +1,4 @@
+{% load i18n %}
+{% blocktrans %}
+Please confirm your e-mail before signing in, we have sent an e-mail to {{email}}.
+{% endblocktrans %}

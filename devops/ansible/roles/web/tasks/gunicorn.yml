@@ -1,0 +1,34 @@
+- name: Create gunicorn logs dir
+  become: yes
+  file:
+    path: "{{ gunicorn_logs_dir }}"
+    state: directory
+
+- name: Create gunicorn log files
+  become: yes
+  file:
+    owner: "{{ ansible_env['USER'] }}"
+    group: "{{ ansible_env['USER'] }}"
+    path: "{{ gunicorn_logs_dir }}/{{ item }}.log"
+    state: touch
+
+  with_items:
+    - access
+    - error
+
+- name: Copy over gunicorn configuration
+  template:
+    src: "gunicorn.conf.j2"
+    dest: "{{ sites_dir }}/gunicorn.conf"
+
+- name: Copy over gunicorn supervisor config
+  become: yes
+  template:
+    src: "gunicorn_supervisor.conf.j2"
+    dest: "/etc/supervisor/conf.d/gunicorn_supervisor.conf"
+
+- name: Update supervisor with gunicorn group
+  become: yes
+  supervisorctl:
+    name: gunicorn
+    state: present

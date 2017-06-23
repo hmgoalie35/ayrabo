@@ -1,0 +1,8 @@
+<br>
+{% if 'login' not in request.path %}<a href="{{ login_url }}">Login</a><br>{% endif %}
+<a id="forgot_password_link" href="{% url 'account_reset_password' %}">Forgot password?</a>
+<br>
+<a id="didnt_receive_confirmation_email" href="{% url 'account_confirm_email' 'new-confirmation-link' %}">Didn't
+                                                                                                          receive a
+                                                                                                          confirmation
+                                                                                                          email?</a>

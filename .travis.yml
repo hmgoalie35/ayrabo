@@ -1,0 +1,34 @@
+language: python
+
+cache:
+  pip: true
+  directories:
+    - node_modules
+
+python:
+  - "3.5"
+
+install:
+  - source $HOME/.nvm/nvm.sh
+  - nvm install $TRAVIS_NODE_VERSION
+  - nvm use $TRAVIS_NODE_VERSION
+  - pip install -r requirements.txt
+  - npm install
+
+env:
+  global:
+    - DJANGO_SETTINGS_MODULE="escoresheet.settings.settings"
+    - TRAVIS_NODE_VERSION="6"
+
+script:
+  - bash run_tests.sh
+
+branches:
+  only:
+    - master
+    - dev
+
+notifications:
+  email:
+    on_success: change
+    on_failure: always

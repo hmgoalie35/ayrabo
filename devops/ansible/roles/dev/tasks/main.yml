@@ -1,0 +1,7 @@
+- block:
+  - include: install_dependencies.yml
+    become: yes
+    tags: install_dependencies
+  - include: install_project.yml
+    tags: install_project
+  when: "ansible_system == 'Linux'"

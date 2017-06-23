@@ -1,0 +1,47 @@
+- name: Set static ip
+  template:
+    src: interfaces.j2
+    dest: /etc/network/interfaces
+    backup: yes
+
+- name: Restart networking
+  service:
+    name: networking
+    state: restarted
+
+- name: Add git PPA
+  apt_repository:
+    repo: ppa:git-core/ppa
+    state: present
+
+- include: ../../../utils/update_apt_cache.yml
+
+- name: Upgrade system packages
+  apt:
+    upgrade: dist
+    autoremove: yes
+    autoclean: yes
+
+- name: Install common packages
+  apt:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - curl
+    - git
+    - vim
+    - tmux
+    - build-essential
+    - python3-dev
+    - python3-pip
+    - python3-virtualenv
+    - python-dev
+    - python-pip
+    - python-virtualenv
+    - supervisor
+    - htop
+
+- name: Update pip
+  pip:
+    name: pip
+    state: latest

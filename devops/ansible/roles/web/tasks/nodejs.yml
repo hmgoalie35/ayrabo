@@ -1,0 +1,20 @@
+# For reference https://github.com/nodesource/distributions#manual-installation
+- name: Add nodesource apt key
+  become: yes
+  apt_key:
+    url: "https://deb.nodesource.com/gpgkey/nodesource.gpg.key"
+    state: present
+
+- name: Add nodejs apt repository
+  become: yes
+  apt_repository:
+    repo: "deb https://deb.nodesource.com/node_6.x {{ ansible_distribution_release }} main"
+    filename: nodesource
+    state: present
+    update_cache: yes
+
+- name: Install nodejs
+  become: yes
+  apt:
+    name: nodejs
+    state: present

@@ -1,0 +1,48 @@
+{% extends 'site_base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Update Season Roster{% endblock %}
+
+
+{% block content %}
+  <div class="container">
+
+    <div class="row">
+      <div class="col-sm-12">
+        <div class="text-center">
+          <h1>Update Season Roster for {{ team }}</h1>
+          <h4 class="text-muted">{{ team.division }} - {{ team.division.league }}</h4>
+          <br>
+          <h4>{{ season_roster.season }}</h4>
+          <br>
+          <h5>This season roster was created:</h5>
+          <h5>{{ season_roster.created }}</h5>
+        </div>
+      </div>
+    </div>
+
+    <br>
+
+    <div class="row">
+      <div class="col-sm-offset-4 col-sm-4 col-sm-offset-4">
+        <div class="text-center">
+          <form action="" method="post">
+            {% csrf_token %}
+            {{ form | crispy }}
+            <br>
+            <button id="update_season_roster_btn" type="submit" class="btn btn-success">Update season roster</button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+  </div>
+{% endblock %}
+
+{% block extra_js %}
+  <script>
+    $(function () {
+      $(".selectmultiple.form-control[name$='players']").enableBootstrapSelect({ header: "Update players for season roster" });
+    });
+  </script>
+{% endblock %}

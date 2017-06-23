@@ -1,0 +1,146 @@
+{% extends 'site_base.html' %}
+{% load crispy_forms_tags static %}
+
+{% block title %}My Account{% endblock %}
+
+
+{% block content %}
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-offset-3 col-sm-6">
+        <br><br>
+        <ul class="nav nav-tabs nav-justified" role="tablist">
+          <li role="presentation" class="active"><a href="#my_account" role="tab" data-toggle="tab"
+                                                    class="nav-tab"><i class="fa fa-user"></i>&nbsp;My Account</a>
+          </li>
+          <li role="presentation"><a href="#my_sport_registrations" role="tab" data-toggle="tab"
+                                     class="nav-tab"><i class="fa fa-list"></i>&nbsp;My Sports</a>
+          </li>
+        </ul>
+
+        <br>
+
+        <div class="tab-content">
+          <div role="tabpanel" class="tab-pane active" id="my_account">
+            <br>
+            <div class="panel panel-primary">
+              <div class="panel-heading">
+                <div class="text-center">
+                  <h1 class="panel-title">Account Information</h1>
+                </div>
+              </div>
+              <div class="panel-body">
+                <h4>Name: {{ user.get_full_name }}</h4>
+                <h4>Email: {{ user.email }}</h4>
+                <h4>Gender: {{ userprofile.get_gender_display }}</h4>
+                <h4>Birthday: {{ userprofile.birthday }}</h4>
+                <a id="change_password_link" href="{% url 'account_change_password' %}">Change Password</a>
+                {% if api_token %}
+                  <br><br>
+                  <a id="show_token_link" href="#" data-target="#token_modal" data-toggle="modal"><span class="fa fa-eye"></span>&nbsp;API Token</a>
+                  <div class="modal fade" id="token_modal" tabindex="-1" role="dialog">
+                    <br><br><br><br><br><br>
+                    <div class="modal-dialog" role="document">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <button type="button" class="close" data-dismiss="modal"
+                                  aria-label="Close"><span aria-hidden="true">&times;</span>
+                          </button>
+                          <h4 class="modal-title">API Token</h4>
+                        </div>
+                        <div class="modal-body">
+                          <p class="text-danger">You must keep this token secret, otherwise anybody with the token can impersonate you.</p>
+                          <strong>{{ api_token }}</strong>
+                        </div>
+                        <div class="modal-footer">
+                          <form class="pull-left" id="revoke_token_form" action="{% url 'revoke_api_token' %}">
+                            <button id="revoke_api_token_btn" type="submit" class="btn btn-danger btn-sm">Revoke API Token</button>
+                            <span class="text-muted">&nbsp;&nbsp;You will have to manually obtain another token</span>
+                          </form>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                {% endif %}
+                <br><br>
+                <form action="" method="post">
+                  {% csrf_token %}
+                  {{ form | crispy }}
+                  <br>
+                  <div class="text-center">
+                    <input id="update_userprofile_btn" class="btn btn-success" type="submit"
+                           value="Update account">
+                  </div>
+                  <br>
+                </form>
+              </div>
+            </div>
+          </div>
+
+
+          <div role="tabpanel" class="tab-pane" id="my_sport_registrations">
+            <br>
+            <div class="panel panel-primary">
+              <div class="panel-heading">
+                <div class="text-center">
+                  <h1 class="panel-title">Sport Registration Information</h1>
+                </div>
+              </div>
+              <div class="panel-body">
+                <a id="register_for_sport_btn" href="{% url 'sportregistrations:create' %}"
+                   class="btn btn-default btn-sm pull-right">Register for a sport</a>
+                <br><br>
+                {% if data %}
+                  <ul class="list-group">
+                    {% for sport_registration, data_dict in data.items %}
+                      <li id="list-item-{{ data_dict.sport.slug }}" class="list-group-item more-sport-info" data-target="#{{ data_dict.sport.slug }}" data-toggle="collapse">
+                        {{ data_dict.sport.name }}:
+                        {% for role in data_dict.roles %}
+                          <span class="label label-default">{{ role }}</span>
+                        {% empty %}
+                          <div class="alert alert-warning" role="alert">You do not have any roles configured for {{ data_dict.sport.name }}. Please add some roles by selecting the dropdown and then "Edit".</div>
+                        {% endfor %}
+
+                        <span class="pull-right fa fa-fw fa-caret-down more-sport-info-fa-caret"></span>
+                        <a name="edit_registration_link" id="edit-{{ sport_registration.id }}" href="{% url 'sportregistrations:detail' sport_registration.pk %}" class="pull-right ">Manage</a>
+                      </li>
+                      <div class="collapse" id="{{ data_dict.sport.slug }}">
+                        <div class="list-group-item">
+                          {% if data_dict.related_objects %}
+                            <h4 class="text-center">At a glance</h4>
+                            {% for role, objects in data_dict.related_objects.items %}
+                              <strong>{{ role }}:</strong>
+                              {% for object in objects %}
+                                <div>
+                                  {% if role == 'Referee' %}
+                                    {{ object.league }}
+                                  {% else %}
+                                    {{ object.team }} - {{ object.team.division.name }}
+                                  {% endif %}
+                                </div>
+                              {% endfor %}
+                            {% endfor %}
+                          {% else %}
+                          {% endif %}
+                        </div>
+                      </div>
+                    {% endfor %}
+                  </ul>
+                {% else %}
+                  <br>
+                  <div class="alert alert-warning" role="alert">You are not currently registered for any sports. Press the button above to register for a sport.
+                  </div>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block extra_js %}
+  <script src="{% static 'userprofiles/javascripts/userprofile_update.js' %}"></script>
+{% endblock %}

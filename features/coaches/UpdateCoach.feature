@@ -1,0 +1,38 @@
+Feature: Update coach information
+  As a user,
+  I want to be able to update my coach information for a given team
+
+  Background: Coach obj exists
+    Given The following confirmed user account exists
+      | first_name | last_name | email            | password       |
+      | John       | Doe       | user@example.com | myweakpassword |
+    And The following team object exists
+      | name                  | division        | league                            | sport      |
+      | Green Machine IceCats | Midget Minor AA | Long Island Amateur Hockey League | Ice Hockey |
+    And The following sport registrations exist
+      | id | username_or_email | sport      | roles | complete |
+      | 1  | user@example.com  | Ice Hockey | Coach | true     |
+    And The following coach object exists
+      | id | username_or_email | team                  | position   |
+      | 1  | user@example.com  | Green Machine IceCats | head_coach |
+    And I login with "user@example.com" and "myweakpassword"
+
+  Scenario: Navigate to the coach update page
+    Given I am on the absolute url page for "sports.SportRegistration" and "user__email=user@example.com, sport__name=Ice Hockey"
+    When I press "id_coach"
+    And I press "update_coach_link"
+    Then I should be on the "/sport-registrations/1/coaches/1/update/" page
+    And I should see "Update Coach Information for Green Machine IceCats"
+
+  Scenario: Submit changed form
+    Given I am on the "/sport-registrations/1/coaches/1/update/" page
+    And I select "assistant_coach" from "id_position"
+    And I press "update_coach_btn"
+    Then I should see "Your coach information has been updated."
+    And I should be on the absolute url page for "sports.SportRegistration" and "user__email=user@example.com, sport__name=Ice Hockey"
+
+  Scenario: Submit unchanged form
+    Given I am on the "/sport-registrations/1/coaches/1/update/" page
+    And I press "update_coach_btn"
+    Then I should not see "Your coach information has been updated."
+    And I should be on the absolute url page for "sports.SportRegistration" and "user__email=user@example.com, sport__name=Ice Hockey"

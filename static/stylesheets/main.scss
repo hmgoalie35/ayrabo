@@ -1,0 +1,119 @@
+@import "../bootstrap-sass/assets/stylesheets/bootstrap";
+@import "variables";
+@import "buttons";
+@import "icons";
+@import "typography";
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+  margin-bottom: 60px;
+}
+
+footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  border: 1px solid $navbar-default-border;
+  .breadcrumb {
+    margin-bottom: 0;
+  }
+}
+
+#noty_top_layout_container {
+  top: 54px !important;
+
+  :hover {
+    opacity: 0.6;
+  }
+}
+
+#noty_topRight_layout_container {
+  top: 60px !important;
+  right: 5px !important;
+
+  // If using bootstrapTheme uncomment this.
+  //  .list-group-item {
+  //    margin: 4px 0;
+  //  }
+
+  :hover {
+    opacity: 0.6;
+  }
+}
+
+.noty_message {
+  font-weight: normal !important;
+}
+
+.noty_type_info {
+  color: $alert-info-text;
+  background-color: $alert-info-bg;
+  border-color: $alert-info-border;
+}
+
+.noty_type_alert {
+  color: $alert-danger-text;
+  background-color: $alert-danger-bg;
+  border-color: $alert-danger-border;
+}
+
+// For non-field errors
+div.alert.alert-block.alert-danger > ul {
+  padding-left: 22px;
+
+  li {
+    list-style: none;
+  }
+}
+
+.asteriskField {
+  color: red;
+}
+
+#div_id_birthday > .controls {
+  margin-top: 5px;
+}
+
+.nav-tab {
+  color: $ess-gray-light;
+  &:hover {
+    color: $ess-gray-darker;
+  }
+}
+
+.more-sport-info {
+  cursor: pointer;
+
+  &:hover {
+    background-color: $ess-gray-lightest;
+  }
+}
+
+.more-sport-info-fa-caret {
+  margin-top: 3px;
+}
+
+.vertical-line-left {
+  @media (min-width: $screen-sm-min) {
+    border-left: $navbar-vertical-line;
+  }
+}
+
+.clickable {
+  cursor: pointer;
+}
+
+.password-guidelines {
+  margin-right: 5px;
+}
+
+.table.update-sport-registration-table {
+  th {
+    // This is a bootstrap defined color
+    border-bottom: 1px solid $table-border-color;
+  }
+}
