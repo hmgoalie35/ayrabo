@@ -15,7 +15,7 @@ from userprofiles.models import UserProfile
 from .factories.UserProfileFactory import UserProfileFactory
 
 
-class CreateUserProfileViewTests(BaseTestCase):
+class UserProfileCreateViewTests(BaseTestCase):
     def setUp(self):
         self.email = 'user@example.com'
         self.password = 'myweakpassword'
@@ -107,7 +107,7 @@ class CreateUserProfileViewTests(BaseTestCase):
             self.assertFormError(response, 'form', 'weight', 'Enter a whole number.')
 
 
-class UpdateUserProfileViewTests(BaseTestCase):
+class UserProfileUpdateViewTests(BaseTestCase):
     def setUp(self):
         self.email = 'user@example.com'
         self.password = 'myweakpassword'

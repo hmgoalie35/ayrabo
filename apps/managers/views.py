@@ -21,7 +21,7 @@ class ManagerHomeView(LoginRequiredMixin, UserHasRolesMixin, generic.TemplateVie
         return context
 
 
-class CreateManagersView(BaseCreateRelatedObjectsView):
+class ManagersCreateView(BaseCreateRelatedObjectsView):
     def get_formset_prefix(self):
         return 'managers'
 

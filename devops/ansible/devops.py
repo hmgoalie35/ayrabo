@@ -31,7 +31,8 @@ class Devops(object):
         parser.add_argument('-m', '--mode', required=True, choices=MODES, help='What would you like to do?')
         parser.add_argument('-s', '--server', required=True, choices=SERVER_TYPES,
                             help='The type of server to work with')
-        parser.add_argument('-d', '--deployment_version', help='Branch name, SHA hash, release version')
+        parser.add_argument('-d', '--deployment_version', default='master',
+                            help='Branch name, SHA hash, release version')
         parser.add_argument('-t', '--tags', help='Only run plays tagged with these values')
         return parser
 
@@ -65,6 +66,7 @@ class Devops(object):
             3. Rollback
             4. DB backups/restores
             5. Applying new nginx conf (Just need to run web role...)
+            6. If deployment, enforce development version being specified, etc.
         """
         parser = self.get_parser()
         self.args = vars(parser.parse_args())

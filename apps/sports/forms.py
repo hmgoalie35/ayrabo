@@ -18,7 +18,7 @@ class SportRegistrationAdminForm(forms.ModelForm):
         }
 
 
-class CreateSportRegistrationForm(forms.ModelForm):
+class SportRegistrationCreateForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         """
         Override the constructor to allow for additional kwargs to be passed in.
@@ -27,7 +27,7 @@ class CreateSportRegistrationForm(forms.ModelForm):
           register for that sport again.
         """
         sports_already_registered_for = kwargs.pop('sports_already_registered_for', None)
-        super(CreateSportRegistrationForm, self).__init__(*args, **kwargs)
+        super(SportRegistrationCreateForm, self).__init__(*args, **kwargs)
         if sports_already_registered_for is not None:
             self.fields['sport'].queryset = Sport.objects.exclude(id__in=sports_already_registered_for)
 

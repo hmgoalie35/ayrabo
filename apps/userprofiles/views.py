@@ -7,30 +7,30 @@ from rest_framework.authtoken.models import Token
 
 from sports.models import SportRegistration
 from userprofiles.models import UserProfile
-from .forms import CreateUserProfileForm, UpdateUserProfileForm
+from .forms import UserProfileCreateForm, UserProfileUpdateForm
 
 
-class CreateUserProfileView(LoginRequiredMixin, generic.CreateView):
+class UserProfileCreateView(LoginRequiredMixin, generic.CreateView):
     model = UserProfile
     template_name = 'userprofiles/userprofile_create.html'
     success_url = reverse_lazy('sportregistrations:create')
-    form_class = CreateUserProfileForm
+    form_class = UserProfileCreateForm
 
     def form_valid(self, form):
         form.instance.user = self.request.user
-        return super(CreateUserProfileView, self).form_valid(form)
+        return super(UserProfileCreateView, self).form_valid(form)
 
 
-class UpdateUserProfileView(LoginRequiredMixin, SuccessMessageMixin, generic.UpdateView):
+class UserProfileUpdateView(LoginRequiredMixin, SuccessMessageMixin, generic.UpdateView):
     model = UserProfile
-    form_class = UpdateUserProfileForm
+    form_class = UserProfileUpdateForm
     template_name = 'userprofiles/userprofile_update.html'
     success_url = reverse_lazy('account_home')
     success_message = 'Your account has been updated.'
     context_object_name = 'userprofile'
 
     def get_context_data(self, **kwargs):
-        context = super(UpdateUserProfileView, self).get_context_data(**kwargs)
+        context = super(UserProfileUpdateView, self).get_context_data(**kwargs)
         sport_registrations = SportRegistration.objects.filter(user=self.request.user).select_related('sport', 'user')
         data = {}
         for sport_registration in sport_registrations:
@@ -46,6 +46,6 @@ class UpdateUserProfileView(LoginRequiredMixin, SuccessMessageMixin, generic.Upd
 
     def form_valid(self, form):
         if form.has_changed():
-            return super(UpdateUserProfileView, self).form_valid(form)
+            return super(UserProfileUpdateView, self).form_valid(form)
         else:
             return redirect(reverse('account_home'))

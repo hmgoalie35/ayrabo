@@ -85,19 +85,19 @@ class BasketballPlayerForm(BasePlayerForm):
 
 
 # Could create a base form with jersey_number and in subclasses extend the meta to add sport specific fields.
-class UpdateHockeyPlayerForm(forms.ModelForm):
+class HockeyPlayerUpdateForm(forms.ModelForm):
     class Meta:
         model = models.HockeyPlayer
         fields = ['jersey_number', 'position', 'handedness']
 
 
-class UpdateBaseballPlayerForm(forms.ModelForm):
+class BaseballPlayerUpdateForm(forms.ModelForm):
     class Meta:
         model = models.BaseballPlayer
         fields = ['jersey_number', 'position', 'catches', 'bats']
 
 
-class UpdateBasketballPlayerForm(forms.ModelForm):
+class BasketballPlayerUpdateForm(forms.ModelForm):
     class Meta:
         model = models.BasketballPlayer
         fields = ['jersey_number', 'position', 'shoots']

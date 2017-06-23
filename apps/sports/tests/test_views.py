@@ -9,7 +9,7 @@ from sports.tests import SportFactory, SportRegistrationFactory
 from teams.tests import TeamFactory
 
 
-class CreateSportRegistrationViewTests(BaseTestCase):
+class SportRegistrationCreateViewTests(BaseTestCase):
     @classmethod
     def setUpTestData(cls):
         cls.ice_hockey = SportFactory(name='Ice Hockey')

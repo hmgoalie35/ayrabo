@@ -4,13 +4,13 @@ from divisions.tests import DivisionFactory
 from escoresheet.utils.testing_utils import BaseTestCase
 from leagues.tests import LeagueFactory
 from players.tests import HockeyPlayerFactory
-from seasons.forms import CreateHockeySeasonRosterForm, UpdateHockeySeasonRosterForm
+from seasons.forms import HockeySeasonRosterCreateForm, HockeySeasonRosterUpdateForm
 from seasons.tests import SeasonFactory
 from sports.tests import SportFactory
 from teams.tests import TeamFactory
 
 
-class CreateHockeySeasonRosterFormTests(BaseTestCase):
+class HockeySeasonRosterCreateFormTests(BaseTestCase):
     def setUp(self):
         self.sport = SportFactory(name='Ice Hockey')
         self.league = LeagueFactory(sport=self.sport, full_name='Long Island Amateur Hockey League')
@@ -19,7 +19,7 @@ class CreateHockeySeasonRosterFormTests(BaseTestCase):
         self.season1 = SeasonFactory(league=self.league, teams=self.teams)
         self.season2 = SeasonFactory(league=self.league, teams=self.teams,
                                      start_date=datetime.date.today() + datetime.timedelta(weeks=4))
-        self.form_cls = CreateHockeySeasonRosterForm
+        self.form_cls = HockeySeasonRosterCreateForm
 
     def test_sets_fields_disabled(self):
         form = self.form_cls(read_only_fields=['team'])
@@ -63,13 +63,13 @@ class CreateHockeySeasonRosterFormTests(BaseTestCase):
         self.assertNotIn(inactive_player, players_field.queryset)
 
 
-class UpdateHockeySeasonRosterFormTests(BaseTestCase):
+class HockeySeasonRosterUpdateFormTests(BaseTestCase):
     def setUp(self):
         self.sport = SportFactory(name='Ice Hockey')
         self.league = LeagueFactory(sport=self.sport, full_name='Long Island Amateur Hockey League')
         self.division = DivisionFactory(league=self.league, name='Midget Minor AA')
         self.team = TeamFactory(division=self.division)
-        self.form_cls = UpdateHockeySeasonRosterForm
+        self.form_cls = HockeySeasonRosterUpdateForm
 
     def test_hockeyplayers_filtered_by_team(self):
         HockeyPlayerFactory.create_batch(5, team=self.team, sport=self.sport)
