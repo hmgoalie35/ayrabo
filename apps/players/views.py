@@ -17,9 +17,9 @@ SPORT_CREATE_PLAYER_FORM_MAPPINGS = {
 }
 
 SPORT_UPDATE_PLAYER_FORM_MAPPINGS = {
-    'Ice Hockey': forms.UpdateHockeyPlayerForm,
-    'Baseball': forms.UpdateBaseballPlayerForm,
-    'Basketball': forms.UpdateBasketballPlayerForm
+    'Ice Hockey': forms.HockeyPlayerUpdateForm,
+    'Baseball': forms.BaseballPlayerUpdateForm,
+    'Basketball': forms.BasketballPlayerUpdateForm
 }
 
 SPORT_PLAYER_FORMSET_HELPER_MAPPINGS = {
@@ -29,7 +29,7 @@ SPORT_PLAYER_FORMSET_HELPER_MAPPINGS = {
 }
 
 
-class CreatePlayersView(BaseCreateRelatedObjectsView):
+class PlayersCreateView(BaseCreateRelatedObjectsView):
     def get_formset_prefix(self):
         return 'players'
 
@@ -54,7 +54,7 @@ class CreatePlayersView(BaseCreateRelatedObjectsView):
 
 # NOTE: I am currently omitting checks for improperly configured sports because I don't
 # think it's possible to even get to this page.
-class UpdatePlayerView(LoginRequiredMixin, base.ContextMixin, generic.View):
+class PlayerUpdateView(LoginRequiredMixin, base.ContextMixin, generic.View):
     template_name = 'players/players_update.html'
 
     def _get_sport_registration(self):

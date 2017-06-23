@@ -5,7 +5,7 @@ from . import views
 sport_urls = []
 
 sport_registration_urls = [
-    url(r'^create/$', views.CreateSportRegistrationView.as_view(), name='create'),
+    url(r'^create/$', views.SportRegistrationCreateView.as_view(), name='create'),
     url(r'^(?P<pk>\d+)/$', views.SportRegistrationDetailView.as_view(), name='detail'),
 
     url(r'^(?P<pk>\d+)/players/', include('players.urls', namespace='players')),

@@ -8,7 +8,7 @@ from sports.tests import SportFactory, SportRegistrationFactory
 from teams.tests import TeamFactory
 
 
-# Am testing this base view via the `CreatePlayersView`
+# Am testing this base view via the `PlayersCreateView`
 class BaseCreateRelatedObjectsViewTests(BaseTestCase):
     def _format_url(self, role, **kwargs):
         return reverse(self.url.format(role=role), kwargs=kwargs)

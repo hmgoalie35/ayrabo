@@ -11,15 +11,15 @@ from escoresheet.utils.exceptions import SportNotConfiguredException
 from escoresheet.utils.mixins import UserHasRolesMixin
 from managers.models import Manager
 from teams.models import Team
-from .forms import CreateHockeySeasonRosterForm, UpdateHockeySeasonRosterForm
+from .forms import HockeySeasonRosterCreateForm, HockeySeasonRosterUpdateForm
 from .models import HockeySeasonRoster
 
 SPORT_CREATE_FORM_MAPPINGS = {
-    'Ice Hockey': CreateHockeySeasonRosterForm
+    'Ice Hockey': HockeySeasonRosterCreateForm
 }
 
 SPORT_UPDATE_FORM_MAPPINGS = {
-    'Ice Hockey': UpdateHockeySeasonRosterForm
+    'Ice Hockey': HockeySeasonRosterUpdateForm
 }
 
 SPORT_MODEL_MAPPINGS = {
@@ -27,13 +27,13 @@ SPORT_MODEL_MAPPINGS = {
 }
 
 
-class CreateSeasonRosterView(LoginRequiredMixin, UserHasRolesMixin, ContextMixin, generic.View):
+class SeasonRosterCreateView(LoginRequiredMixin, UserHasRolesMixin, ContextMixin, generic.View):
     template_name = 'seasons/season_roster_create.html'
     roles_to_check = ['Manager']
     user_has_no_role_msg = 'You do not have permission to perform this action.'
 
     def get_context_data(self, **kwargs):
-        context = super(CreateSeasonRosterView, self).get_context_data(**kwargs)
+        context = super(SeasonRosterCreateView, self).get_context_data(**kwargs)
         team = get_object_or_404(Team.objects.select_related('division', 'division__league', 'division__league__sport'),
                                  pk=kwargs.get('team_pk', None))
 
@@ -79,12 +79,12 @@ class CreateSeasonRosterView(LoginRequiredMixin, UserHasRolesMixin, ContextMixin
         return render(request, self.template_name, context)
 
 
-class ListSeasonRosterView(LoginRequiredMixin, UserHasRolesMixin, generic.TemplateView):
+class SeasonRosterListView(LoginRequiredMixin, UserHasRolesMixin, generic.TemplateView):
     roles_to_check = ['Manager']
     template_name = 'seasons/season_roster_list.html'
 
     def get_context_data(self, **kwargs):
-        context = super(ListSeasonRosterView, self).get_context_data(**kwargs)
+        context = super(SeasonRosterListView, self).get_context_data(**kwargs)
 
         team = get_object_or_404(Team.objects.select_related('division', 'division__league', 'division__league__sport'),
                                  pk=kwargs.get('team_pk', None))
@@ -115,15 +115,15 @@ class ListSeasonRosterView(LoginRequiredMixin, UserHasRolesMixin, generic.Templa
             self.get_context_data(**kwargs)
         except SportNotConfiguredException as e:
             return handle_sport_not_configured(self.request, self, e)
-        return super(ListSeasonRosterView, self).get(request, *args, **kwargs)
+        return super(SeasonRosterListView, self).get(request, *args, **kwargs)
 
 
-class UpdateSeasonRosterView(LoginRequiredMixin, UserHasRolesMixin, ContextMixin, generic.View):
+class SeasonRosterUpdateView(LoginRequiredMixin, UserHasRolesMixin, ContextMixin, generic.View):
     roles_to_check = ['Manager']
     template_name = 'seasons/season_roster_update.html'
 
     def get_context_data(self, **kwargs):
-        context = super(UpdateSeasonRosterView, self).get_context_data(**kwargs)
+        context = super(SeasonRosterUpdateView, self).get_context_data(**kwargs)
         team = get_object_or_404(Team.objects.select_related('division', 'division__league', 'division__league__sport'),
                                  pk=kwargs.get('team_pk', None))
 

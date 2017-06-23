@@ -69,7 +69,7 @@ class ManagerHomeViewTests(BaseTestCase):
         self.assertEqual(list(context['teams']), [self.icecats, self.yankees])
 
 
-class CreateManagersViewTests(BaseTestCase):
+class ManagersCreateViewTests(BaseTestCase):
     def _format_url(self, role, **kwargs):
         return reverse(self.url.format(role=role), kwargs=kwargs)
 

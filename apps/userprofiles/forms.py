@@ -12,9 +12,9 @@ YEAR_DIFFERENCE = 20
 MAX_AGE = 100
 
 
-class CreateUserProfileForm(forms.ModelForm):
+class UserProfileCreateForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
-        super(CreateUserProfileForm, self).__init__(*args, **kwargs)
+        super(UserProfileCreateForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.layout = Layout(
                 Field('gender'),
@@ -45,7 +45,7 @@ class CreateUserProfileForm(forms.ModelForm):
         fields = ['gender', 'birthday', 'height', 'weight', 'language', 'timezone']
 
 
-class UpdateUserProfileForm(forms.ModelForm):
+class UserProfileUpdateForm(forms.ModelForm):
     weight = forms.IntegerField(label='Weight (in lbs)', min_value=UserProfile.MIN_WEIGHT,
                                 max_value=UserProfile.MAX_WEIGHT,
                                 help_text='Round to the nearest whole number')

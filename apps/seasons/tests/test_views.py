@@ -13,7 +13,7 @@ from sports.tests import SportFactory, SportRegistrationFactory
 from teams.tests import TeamFactory
 
 
-class CreateSeasonRosterViewTests(BaseTestCase):
+class SeasonRosterCreateViewTests(BaseTestCase):
     @classmethod
     def setUpTestData(cls):
         cls.ice_hockey = SportFactory(name='Ice Hockey')
@@ -168,7 +168,7 @@ class CreateSeasonRosterViewTests(BaseTestCase):
                              'A default season roster for this team and season already exists.')
 
 
-class ListSeasonRosterViewTests(BaseTestCase):
+class SeasonRosterListViewTests(BaseTestCase):
     @classmethod
     def setUpTestData(cls):
         cls.ice_hockey = SportFactory(name='Ice Hockey')
@@ -247,7 +247,7 @@ class ListSeasonRosterViewTests(BaseTestCase):
         self.assertEqual(context['season_rosters'][season_rosters[0]].count(), 3)
 
 
-class UpdateSeasonRosterViewTests(BaseTestCase):
+class SeasonRosterUpdateViewTests(BaseTestCase):
     @classmethod
     def setUpTestData(cls):
         cls.ice_hockey = SportFactory(name='Ice Hockey')

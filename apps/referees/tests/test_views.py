@@ -13,7 +13,7 @@ from sports.tests import SportFactory, SportRegistrationFactory
 from teams.tests import TeamFactory
 
 
-class CreateRefereesViewTests(BaseTestCase):
+class RefereesCreateViewTests(BaseTestCase):
     def _format_url(self, role, **kwargs):
         return reverse(self.url.format(role=role), kwargs=kwargs)
 

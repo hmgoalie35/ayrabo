@@ -47,7 +47,7 @@ class CoachForm(forms.ModelForm):
         fields = ['user', 'team', 'position']
 
 
-class UpdateCoachForm(forms.ModelForm):
+class CoachUpdateForm(forms.ModelForm):
     class Meta:
         model = Coach
         fields = ('position',)
