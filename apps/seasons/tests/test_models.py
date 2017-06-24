@@ -1,8 +1,8 @@
 import datetime
 
 from django.core.exceptions import ValidationError
-from django.urls import reverse
 from django.db import IntegrityError
+from django.urls import reverse
 
 from divisions.tests import DivisionFactory
 from escoresheet.utils.testing_utils import BaseTestCase
@@ -10,6 +10,7 @@ from leagues.tests import LeagueFactory
 from seasons.models import Season, HockeySeasonRoster
 from teams.tests import TeamFactory
 from . import SeasonFactory, HockeySeasonRosterFactory
+from players.tests import HockeyPlayerFactory
 
 
 class SeasonModelTests(BaseTestCase):
@@ -166,7 +167,19 @@ class AbstractSeasonRosterModelTests(BaseTestCase):
 
 
 class HockeySeasonRosterModelTests(BaseTestCase):
-    """
-    Currently don't need any unit tests for this model
-    """
-    pass
+    def setUp(self):
+        self.division = DivisionFactory()
+        self.team = TeamFactory(division=self.division)
+        self.season = SeasonFactory(league=self.division.league, teams=[self.team])
+        self.season_roster = HockeySeasonRosterFactory(season=self.season, team=self.team, default=True)
+
+    def test_clean_default(self):
+        with self.assertRaisesMessage(ValidationError, "{'default': ['A default season roster for this team and "
+                                                       "season already exists.']}"):
+            HockeySeasonRosterFactory(season=self.season, team=self.team, default=True).full_clean()
+
+    def test_excludes_current_obj_from_clean_default(self):
+        # There was a bug where a default season roster couldn't be updated because it wasn't excluded from the
+        # clean_default query
+        self.season_roster.players.add(HockeyPlayerFactory(team=self.team, sport=self.team.division.league.sport))
+        self.season_roster.full_clean()
