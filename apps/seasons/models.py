@@ -119,3 +119,12 @@ class HockeySeasonRoster(AbstractSeasonRoster):
     Season roster for hockey
     """
     players = models.ManyToManyField('players.HockeyPlayer')
+
+    def clean(self):
+        if hasattr(self, 'team') and hasattr(self, 'season'):
+            qs = HockeySeasonRoster.objects.filter(team=self.team,
+                                                   season=self.season,
+                                                   default=True).exclude(pk=self.pk)
+            if self.default and qs.exists():
+                raise ValidationError(
+                        {'default': 'A default season roster for this team and season already exists.'})
