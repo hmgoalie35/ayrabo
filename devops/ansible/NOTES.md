@@ -48,3 +48,8 @@
 * Caching: https://www.nginx.com/resources/admin-guide/content-caching/
 * Actual ssl certificate, not snakeoil...
     * `sudo mkdir /etc/nginx/ssl && sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/nginx/ssl/nginx.key -out /etc/nginx/ssl/nginx.crt`
+* Postgres & Django
+    * charset/client_encoding: utf8
+    * timezone: utc
+    * max connections: need to decide
+    * default_transaction_isolation: 'read committed'

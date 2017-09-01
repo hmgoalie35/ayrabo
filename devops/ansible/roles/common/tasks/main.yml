@@ -1,13 +1,13 @@
-- name: Set static ip
-  template:
-    src: interfaces.j2
-    dest: /etc/network/interfaces
-    backup: yes
-
-- name: Restart networking
-  service:
-    name: networking
-    state: restarted
+#- name: Set static ip
+#  template:
+#    src: interfaces.j2
+#    dest: /etc/network/interfaces
+#    backup: yes
+#
+#- name: Restart networking
+#  service:
+#    name: networking
+#    state: restarted
 
 - name: Add git PPA
   apt_repository:

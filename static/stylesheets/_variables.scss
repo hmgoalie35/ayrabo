@@ -1,9 +1,25 @@
-$ess-gray: gray;
-$ess-gray-lightest: lighten($ess-gray, 45%);
-$ess-gray-lighter: lighten($ess-gray, 20%);
-$ess-gray-light: lighten($ess-gray, 10%);
-$ess-gray-dark: darken($ess-gray, 10%);
-$ess-gray-darker: darken($ess-gray, 20%);
-$ess-gray-vertical-line: #DDDDDD;
+/**
+  Variable names for colors should be descriptive.
+  Use http://chir.ag/projects/name-that-color/ to generate names (i.e. mac & cheese yellow)
+  If the above tool gives you the same variable name for a different hex value
+  use `lighten($mine-shaft, 2%)`, `darken($mine-shaft, 2%)`.
 
-$navbar-vertical-line: 1px solid $ess-gray-vertical-line;
+  http://scg.ar-ch.org/
+ */
+
+// Color definitions
+$gray: gray;
+$concrete: #F3F3F3;
+$nobel: #B3B3B3;
+$dusty-gray: #999999;
+$dove-gray: #666666;
+$tundora: #4D4D4D;
+$gallery: #EEEEEE;
+$alto: #DDDDDD;
+$wild-sand: #F5F5F5;
+$white: #FFFFFF;
+$black: #000000;
+$boston-blue: #428BCA;
+
+$table-bg-accent: $gallery;
+$navbar-vertical-line: 1px solid $alto;

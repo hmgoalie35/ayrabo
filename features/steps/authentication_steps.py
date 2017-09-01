@@ -68,7 +68,7 @@ def login(context, username_or_email, password, login_method=None):
         context.driver.get(context.get_url(login_path))
         context.execute_steps(steps)
     else:
-        # context.get_url('/')
+        context.driver.get(context.get_url('home'))
         context.test.client.login(username=username_or_email, password=password)
         session_id = context.test.client.cookies['sessionid']
         context.driver.execute_script('document.cookie = "{}={}; path=/;"'.format('sessionid', session_id.value))

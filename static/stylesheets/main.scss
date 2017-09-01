@@ -1,8 +1,11 @@
-@import "../bootstrap-sass/assets/stylesheets/bootstrap";
 @import "variables";
+// Must come before bootstrap
+@import "../bootstrap-sass/assets/stylesheets/bootstrap";
 @import "buttons";
 @import "icons";
 @import "typography";
+@import "sidebar";
+@import "tables";
 
 html {
   position: relative;
@@ -79,9 +82,9 @@ div.alert.alert-block.alert-danger > ul {
 }
 
 .nav-tab {
-  color: $ess-gray-light;
+  color: $dusty-gray;
   &:hover {
-    color: $ess-gray-darker;
+    color: $dove-gray;
   }
 }
 
@@ -89,7 +92,7 @@ div.alert.alert-block.alert-danger > ul {
   cursor: pointer;
 
   &:hover {
-    background-color: $ess-gray-lightest;
+    background-color: $concrete;
   }
 }
 
@@ -109,11 +112,4 @@ div.alert.alert-block.alert-danger > ul {
 
 .password-guidelines {
   margin-right: 5px;
-}
-
-.table.update-sport-registration-table {
-  th {
-    // This is a bootstrap defined color
-    border-bottom: 1px solid $table-border-color;
-  }
 }

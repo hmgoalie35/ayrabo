@@ -39,7 +39,7 @@ def step_impl(context):
         sport_name = data.get('sport', None)
         roles = data.get('roles', [])
         complete = data.get('complete', 'false').lower() == 'true'
-        id = data.get('id', None)
+        obj_id = data.get('id', None)
 
         if username_or_email is None or sport_name is None or roles is None:
             raise Exception('You must specify user, sport and roles')
@@ -52,8 +52,8 @@ def step_impl(context):
         else:
             kwargs['sport__name'] = sport_name
 
-        if id is not None:
-            kwargs['id'] = id
+        if obj_id is not None:
+            kwargs['id'] = obj_id
 
         sr = SportRegistrationFactory(**kwargs)
         sr.set_roles([role.strip() for role in roles.split(',')])
