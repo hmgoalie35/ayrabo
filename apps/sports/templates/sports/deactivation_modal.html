@@ -32,7 +32,7 @@
                         type="button"
                         class="btn btn-sm btn-danger"
                         name="deactivate_btn"
-                        id="deactivate-{% if role == 'Referee' %}{{ obj.league.slugify }}{% else %}{{ obj.team.slugify }}{% endif %}-{{ role|lower }}-btn"
+                        id="deactivate-{% if role == 'Referee' %}{{ obj.league.slug }}{% else %}{{ obj.team.slug }}{% endif %}-{{ role|lower }}-btn"
                         data-url="{% url api_url sport_registration.pk obj.pk %}"
                 >
                   Deactivate

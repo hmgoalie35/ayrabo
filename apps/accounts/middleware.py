@@ -1,3 +1,5 @@
+from collections import OrderedDict
+
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.utils.deprecation import MiddlewareMixin
@@ -28,7 +30,7 @@ class AccountAndSportRegistrationCompleteMiddleware(MiddlewareMixin):
         if request.user.is_authenticated and not self._is_whitelisted_url(request.path):
             redirect_url = None
             user_profile = UserProfile.objects.filter(user=request.user)
-            sport_registrations = SportRegistration.objects.filter(user=request.user)
+            sport_registrations = SportRegistration.objects.filter(user=request.user).select_related('sport')
             incomplete_sport_registrations = sport_registrations.filter(is_complete=False)
             request.session['is_user_currently_registering'] = True
 
@@ -51,12 +53,21 @@ class AccountAndSportRegistrationCompleteMiddleware(MiddlewareMixin):
                 # At this point the user's account is "complete" and all sport registrations are complete
                 request.session['is_user_currently_registering'] = False
 
-                complete_sport_registrations = sport_registrations.filter(is_complete=True)
-                user_roles = []
+                complete_sport_registrations = sport_registrations.order_by('sport__name').filter(is_complete=True)
+
+                # To display in the navbar
+                sports = OrderedDict()
+                for sport_registration in complete_sport_registrations:
+                    sport = sport_registration.sport
+                    sports[sport_registration.id] = sport.name
+                request.session['my_sports'] = sports
+
+                # Used in UserHasRoles mixin
+                user_roles = set()
                 for sport_reg in complete_sport_registrations:
-                    for role in sport_reg.roles:
-                        user_roles.append(role) if role not in user_roles else None
-                request.session['user_roles'] = user_roles
+                    user_roles.update(sport_reg.roles)
+                request.session['user_roles'] = list(sorted(user_roles))
+
                 return None
             elif redirect_url != request.path:
                 return redirect(redirect_url)

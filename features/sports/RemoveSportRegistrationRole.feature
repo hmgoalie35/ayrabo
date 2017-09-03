@@ -81,12 +81,12 @@ Feature: Remove roles from sport registration
       | user@example.com  | Long Island Amateur Hockey League | 1  |
     And I am on the absolute url page for "sports.SportRegistration" and "user__email=user@example.com, sport__name=Ice Hockey"
     And I press "referee_tab"
-    When I press "deactivate-long-island-amateur-hockey-league-referee-link" which opens "referee-1-modal"
+    When I press "deactivate-liahl-referee-link" which opens "referee-1-modal"
     Then I should see "Are You Sure?"
     And I should see "You will no longer be a referee for the Long Island Amateur Hockey League."
     And I should see "You are about to deactivate your last ice hockey referee registration."
     And I should see "This will additionally revoke your ice hockey referee privileges."
-    When I press "deactivate-long-island-amateur-hockey-league-referee-btn"
+    When I press "deactivate-liahl-referee-btn"
     And I wait for a page refresh
     Then I should not see "You are a referee for 1 league"
     And I should not see "Referees"

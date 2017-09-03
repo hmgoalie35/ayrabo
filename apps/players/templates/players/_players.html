@@ -25,7 +25,7 @@
         <td>
           {% if sr_roles|length > 1 or related_objs|length > 1 %}
             <span data-toggle="tooltip" data-placement="top" title="Deactivate">
-                            <a id="deactivate-{{ obj.team|slugify }}-{{ role|lower }}-link" data-toggle="modal"
+                            <a id="deactivate-{{ obj.team.slug }}-{{ role|lower }}-link" data-toggle="modal"
                                data-target="#{{ role|lower }}-{{ obj.id }}-modal">
                                 <span class="fa fa-times-circle fa-danger"></span>
                             </a>

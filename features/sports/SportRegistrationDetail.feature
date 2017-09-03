@@ -36,7 +36,8 @@ Feature: Sport registration detail
     And I should see "Referees"
     And "Green Machine IceCats" should show up 4 times
     And I should see "Long Island Amateur Hockey League"
-    And "Register" should show up 1 time
+    And I press "available-roles-nav-tab"
+    And "add_manager_role_link" should contain text "Register"
 
   Scenario: Add another coach
     Given I am on the absolute url page for "sports.SportRegistration" and "user__email=user@example.com, sport__name=Ice Hockey"

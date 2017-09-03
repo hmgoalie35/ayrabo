@@ -28,9 +28,8 @@
               </li>
             {% endfor %}
             {% if available_roles %}
-              <li role="presentation" class="{% if forloop.first %}active{% endif %}"><a
-                      href="#id_available_roles" role="tab"
-                      data-toggle="tab" class="nav-tab">Available Roles</a>
+              <li role="presentation" class="{% if forloop.first %}active{% endif %}">
+                <a id="available-roles-nav-tab" href="#id_available_roles" role="tab" data-toggle="tab" class="nav-tab">Available Roles</a>
               </li>
             {% endif %}
           </ul>
@@ -43,13 +42,14 @@
                 <div class="panel panel-primary">
                   <div class="panel-heading panel-title">
                     {% with count=related_objs|length %}
-                      You are a {{ role|lower }} for {{ count }} {% if role == 'Referee' %}league{% else %}team{% endif %}{{ count|pluralize }}
+                    You are a {{ role|lower }} for {{ count }} {% if role == 'Referee' %}league{% else %}team{% endif %}{{ count|pluralize }}
                     {% endwith %}
                   </div>
 
                   <div class="panel-body">
                     <div class="pull-right">
-                      <a id="create_new_{{ role|lower }}_btn" class="btn btn-sm btn-default" href="{{ role_url_mapping|get:role }}"><span class="fa fa-fw fa-plus"></span> {{ role }}</a>
+                      <a id="create_new_{{ role|lower }}_btn" class="btn btn-sm btn-default"
+                         href="{{ role_url_mapping|get:role }}"><span class="fa fa-fw fa-plus"></span> {{ role }}</a>
                     </div>
                   </div>
 
@@ -90,8 +90,9 @@
                       <tr>
                         <td></td>
                         <td class="text-left">{{ role }}</td>
-                        <td class="text-left"><a href="{{ role_url_mapping|get:role }}"
-                                                 id="add_{{ role|lower }}_role_link">Register</a></td>
+                        <td class="text-left">
+                          <a href="{{ role_url_mapping|get:role }}" id="add_{{ role|lower }}_role_link">Register</a>
+                        </td>
                       </tr>
                     {% endfor %}
                     </tbody>

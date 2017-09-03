@@ -8,7 +8,9 @@
  */
 
 // Color definitions
-$gray: gray;
+
+// `$gray` was overriding <option> styling.
+$ess-gray: gray;
 $concrete: #F3F3F3;
 $nobel: #B3B3B3;
 $dusty-gray: #999999;
