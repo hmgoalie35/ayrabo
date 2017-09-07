@@ -9,11 +9,11 @@
   "author": "Harris Pittinsky",
   "private": true,
   "devDependencies": {
-    "autoprefixer": "7.1.1",
+    "autoprefixer": "7.1.2",
     "bower": "1.8.0",
     "node-sass": "4.5.3",
-    "phantomjs-prebuilt": "2.1.14",
+    "phantomjs-prebuilt": "2.1.15",
     "postcss-cli": "4.1.0",
-    "yuglify": "0.1.4"
+    "yuglify": "1.0.1"
   }
 }

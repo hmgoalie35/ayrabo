@@ -327,6 +327,7 @@ def step_impl(context, element, negate):
 
 @step('"(?P<element>.*)" should be (?P<prefix>dis|en)abled')
 def step_impl(context, element, prefix):
+    # NOTE: If this is failing, make sure the html element actually supports the disabled attribute.
     the_element = find_element(context, element)
     result = the_element.is_enabled()
     if prefix == 'dis':
@@ -350,3 +351,25 @@ def step_impl(context, element):
 def step_impl(context, element, value):
     the_element = find_element(context, element)
     context.test.assertEqual(value, the_element.get_property("value"))
+
+
+@step('"(?P<element>[^"]*)" should contain text "(?P<text>[^"]*)"')
+def step_impl(context, element, text):
+    the_element = find_element(context, element)
+    element_text = the_element.text
+    split_text = [t.strip() for t in text.split(',')]
+    for t in split_text:
+        context.test.assertIn(t, element_text)
+
+
+@step('"(?P<element>[^"]*)" should not exist on the page')
+def step_impl(context, element):
+    with context.test.assertRaises(NoSuchElementException):
+        find_element(context, element)
+
+
+@step('The "(?P<attribute>[^"]*)" attribute for "(?P<element>[^"]*)" should have values "(?P<values>[^"]*)"')
+def step_impl(context, attribute, element, values):
+    the_element = find_element(context, element)
+    attribute_values = the_element.get_attribute(attribute)
+    context.test.assertEqual(attribute_values, values)

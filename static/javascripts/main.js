@@ -72,4 +72,10 @@ $(function () {
     return false;
   });
 
+  $(".js-btn-back").click(function (e) {
+    e.preventDefault();
+    e.stopPropagation();
+    history.back();
+  });
+
 });

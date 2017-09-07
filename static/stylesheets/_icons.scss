@@ -16,7 +16,14 @@
   color: red;
 }
 
-.fa-times-circle-red {
-  cursor: pointer;
-  color: $brand-danger;
+.fa-success {
+  @extend .text-success;
+}
+
+.fa-primary {
+  @extend .text-primary;
+}
+
+.fa-danger {
+  @extend .text-danger;
 }

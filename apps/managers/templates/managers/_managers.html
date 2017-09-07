@@ -1,31 +1,71 @@
-<div class="table-responsive">
-  <table class="table update-sport-registration-table">
+<div>
+  <a id="create_{{ role|lower }}_btn" class="btn btn-sm btn-default pull-right"
+     href="{% url 'sportregistrations:managers:create' sport_registration.pk %}">
+    <span class="fa fa-plus-circle fa-success"></span>
+    {{ role }}
+  </a>
+  <div class="visible-xs-block"><br><br></div>
+
+  <table class="table responsive-table table-thin-th-border">
     <thead>
     <tr>
-      <th></th>
-      <th>Team</th>
-      <th></th>
+      <th scope="col">Team</th>
+      <th scope="col">Division</th>
+      <th scope="col"></th>
     </tr>
     </thead>
     <tbody>
     {% for obj in related_objs %}
       <tr>
-        <td></td>
-        <td class="text-left">{{ obj.team.name }} - {{ obj.team.division }}</td>
-        <td>
-          {% if sr_roles|length > 1 or related_objs|length > 1 %}
-            <span data-toggle="tooltip" data-placement="top" title="Deactivate">
-                            <a id="deactivate-{{ obj.team|slugify }}-{{ role|lower }}-link" data-toggle="modal"
-                               data-target="#{{ role|lower }}-{{ obj.id }}-modal">
-                                <span class="fa fa-times-circle fa-times-circle-red"></span>
-                            </a>
-                        </span>
-          {% else %}
-            <span data-toggle="tooltip" data-placement="top"
-                  title="You cannot deactivate this {{ role|lower }}. You must be registered for at least one role.">
-                            <a><span class="fa fa-times-circle fa-times-circle-red"></span></a>
-                        </span>
-          {% endif %}
+        <td data-title="Team">{{ obj.team.name }}</td>
+        <td data-title="Division">{{ obj.team.division }}</td>
+        <td data-title="">
+          <div class="dropdown table-dropdown">
+            <a id="actions-dropdown-{{ role|lower }}-{{ obj.team.slug }}" data-target="#{{ role|lower }}-{{ obj.id }}"
+               data-toggle="dropdown"
+               aria-haspopup="true" aria-expanded="false" role="button">
+              Actions
+              <span class="fa fa-caret-down"></span>
+            </a>
+            <ul class="dropdown-menu table-dropdown-menu" aria-labelledby="{{ obj.id }}">
+              <li class="dropdown-header">Manage</li>
+              {% if sr_roles|length > 1 or related_objs|length > 1 %}
+                <li>
+                  <a id="deactivate-{{ role|lower }}-{{ obj.team.slug }}" data-toggle="modal"
+                     data-target="#{{ role|lower }}-{{ obj.id }}-modal" role="button">
+                    <span class="fa fa-times-circle fa-danger"></span>
+                    Deactivate
+                  </a>
+                </li>
+              {% else %}
+                <li class="disabled" data-toggle="tooltip" data-placement="top"
+                    title="You cannot deactivate this {{ role|lower }}. You must be registered for at least one role.">
+                  <a role="button">
+                    <span class="fa fa-times-circle fa-danger"></span>
+                    Deactivate
+                  </a>
+                </li>
+              {% endif %}
+
+              {# Start Season Roster items #}
+              <li class="dropdown-header">Season Rosters</li>
+              <li>
+                <a id="create_season_roster_btn_{{ obj.team.slug }}"
+                   href="{% url 'teams:season_rosters:create' obj.team.pk %}" role="button">
+                  <span class="fa fa-plus-circle fa-success"></span>&nbsp;Create
+                </a>
+              </li>
+              <li>
+                <a id="list_season_rosters_btn_{{ obj.team.slug }}"
+                   href="{% url 'teams:season_rosters:list' obj.team.pk %}" role="button">
+                  <span class="fa fa-list-alt fa-primary"></span>&nbsp;List
+                </a>
+              </li>
+              {# End Season Roster items #}
+
+            </ul>
+
+          </div>
         </td>
       </tr>
 

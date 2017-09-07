@@ -29,10 +29,10 @@ Feature: List season rosters
     And The following manager object exists
       | username_or_email | team                  |
       | user@example.com  | Green Machine IceCats |
-    And I am on the "managers:home" page
-    When I press "green-machine-icecats_manage_link"
-    And I wait for "green-machine-icecats_create_season_roster_btn" to be visible
-    And I press "green-machine-icecats_list_season_rosters_btn"
+    And I am on the absolute url page for "sports.SportRegistration" and "user__email=user@example.com, sport__name=Ice Hockey"
+    And I press "manager_tab"
+    And I press "actions-dropdown-manager-green-machine-icecats"
+    And I press "list_season_rosters_btn_green-machine-icecats"
     Then I should be on the "teams.Team" "" "teams:season_rosters:list" page with url kwargs "team_pk=pk"
 
   Scenario: No season rosters created

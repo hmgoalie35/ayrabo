@@ -34,11 +34,11 @@ class AbstractPlayer(models.Model):
 
     @property
     def league(self):
-        return self.team.division.league.full_name
+        return self.team.division.league
 
     @property
     def division(self):
-        return self.team.division.name
+        return self.team.division
 
     @property
     def fields(self):
@@ -52,7 +52,8 @@ class AbstractPlayer(models.Model):
         :return: OrderedDict where the keys are user friendly display names and the values are the value of the field.
         """
         fields = OrderedDict()
-        fields['Team'] = '{} - {}'.format(self.team, self.division)
+        fields['Team'] = self.team.name
+        fields['Division'] = self.division.name
         fields['Jersey Number'] = self.jersey_number
         return fields
 

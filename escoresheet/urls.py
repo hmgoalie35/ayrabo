@@ -21,7 +21,6 @@ urlpatterns = [
     # Adding namespace of `api` will cause drf login/logout/obtain token endpoints to fail because they need to
     # only be under the rest_framework namespace.
     url(r'^api/', include('api.urls')),
-    url(r'^managers/', include('managers.urls', namespace='managers')),
 
 ]
 

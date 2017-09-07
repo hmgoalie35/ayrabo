@@ -21,15 +21,15 @@ Feature: Remove roles from sport registration
       | username_or_email | sport      | team                  | jersey_number | position | handedness | id |
       | user@example.com  | Ice Hockey | Green Machine IceCats | 35            | G        | Left       | 1  |
     And I am on the absolute url page for "sports.SportRegistration" and "user__email=user@example.com, sport__name=Ice Hockey"
-    When I press "deactivate-green-machine-icecats-coach-link" which opens "coach-1-modal"
+    And I press "actions-dropdown-coach-green-machine-icecats"
+    When I press "deactivate-coach-green-machine-icecats" which opens "coach-1-modal"
     Then I should see "Are You Sure?"
     And I should see "You will no longer be a coach for the Green Machine IceCats."
     And I should see "You are about to deactivate your last ice hockey coach registration."
     And I should see "This will additionally revoke your ice hockey coach privileges."
     When I press "deactivate-green-machine-icecats-coach-btn"
     And I wait for a page refresh
-    Then I should not see "You are a coach for 1 team"
-    And I should not see "Coaches"
+    Then "Green Machine IceCats" should show up 1 time
 
   Scenario: Multiple roles, deactivate last manager registration
     Given "user@example.com" is completely registered for "Ice Hockey" with roles "Referee, Manager"
@@ -40,15 +40,16 @@ Feature: Remove roles from sport registration
       | username_or_email | league                            | id |
       | user@example.com  | Long Island Amateur Hockey League | 1  |
     And I am on the absolute url page for "sports.SportRegistration" and "user__email=user@example.com, sport__name=Ice Hockey"
-    And I press "manager_tab"
-    When I press "deactivate-green-machine-icecats-manager-link" which opens "manager-1-modal"
+    When I press "manager_tab"
+    And I press "actions-dropdown-manager-green-machine-icecats"
+    And I press "deactivate-manager-green-machine-icecats" which opens "manager-1-modal"
     Then I should see "Are You Sure?"
     And I should see "You will no longer be a manager for the Green Machine IceCats."
     And I should see "You are about to deactivate your last ice hockey manager registration."
     And I should see "This will additionally revoke your ice hockey manager privileges."
     When I press "deactivate-green-machine-icecats-manager-btn"
     And I wait for a page refresh
-    Then I should not see "You are a manager for 1 team"
+    Then I should not see "Green Machine IceCats"
     And I should not see "Managers"
 
   Scenario: Multiple roles, deactivate last player registration
@@ -60,15 +61,16 @@ Feature: Remove roles from sport registration
       | username_or_email | sport      | team                  | jersey_number | position | handedness | id |
       | user@example.com  | Ice Hockey | Green Machine IceCats | 35            | G        | Left       | 1  |
     And I am on the absolute url page for "sports.SportRegistration" and "user__email=user@example.com, sport__name=Ice Hockey"
-    And I press "player_tab"
-    When I press "deactivate-green-machine-icecats-player-link" which opens "player-1-modal"
+    When I press "player_tab"
+    And I press "actions-dropdown-player-green-machine-icecats"
+    And  I press "deactivate-player-green-machine-icecats" which opens "player-1-modal"
     Then I should see "Are You Sure?"
     And I should see "You will no longer be a player for the Green Machine IceCats."
     And I should see "You are about to deactivate your last ice hockey player registration."
     And I should see "This will additionally revoke your ice hockey player privileges."
     When I press "deactivate-green-machine-icecats-player-btn"
     And I wait for a page refresh
-    Then I should not see "You are a player for 1 team"
+    Then "Green Machine IceCats" should show up 1 time
     And I should not see "Players"
 
   Scenario: Multiple roles, deactivate last referee registration
@@ -80,15 +82,16 @@ Feature: Remove roles from sport registration
       | username_or_email | league                            | id |
       | user@example.com  | Long Island Amateur Hockey League | 1  |
     And I am on the absolute url page for "sports.SportRegistration" and "user__email=user@example.com, sport__name=Ice Hockey"
-    And I press "referee_tab"
-    When I press "deactivate-long-island-amateur-hockey-league-referee-link" which opens "referee-1-modal"
+    When I press "referee_tab"
+    And I press "actions-dropdown-referee-liahl"
+    And I press "deactivate-referee-liahl" which opens "referee-1-modal"
     Then I should see "Are You Sure?"
     And I should see "You will no longer be a referee for the Long Island Amateur Hockey League."
     And I should see "You are about to deactivate your last ice hockey referee registration."
     And I should see "This will additionally revoke your ice hockey referee privileges."
-    When I press "deactivate-long-island-amateur-hockey-league-referee-btn"
+    When I press "deactivate-liahl-referee-btn"
     And I wait for a page refresh
-    Then I should not see "You are a referee for 1 league"
+    Then I should not see "Long Island Amateur Hockey League"
     And I should not see "Referees"
 
   Scenario: One role, deactivate last coach registration
@@ -138,9 +141,12 @@ Feature: Remove roles from sport registration
       | username_or_email | sport      | team                  | jersey_number | position | handedness | id |
       | user@example.com  | Ice Hockey | Green Machine IceCats | 35            | G        | Left       | 1  |
     And I am on the absolute url page for "sports.SportRegistration" and "user__email=user@example.com, sport__name=Ice Hockey"
-    When I press "deactivate-green-machine-icecats-coach-link" which opens "coach-1-modal"
+    And I press "actions-dropdown-coach-green-machine-icecats"
+    When I press "deactivate-coach-green-machine-icecats" which opens "coach-1-modal"
     Then I should see "Are You Sure?"
     And I should see "You will no longer be a coach for the Green Machine IceCats."
     When I press "deactivate-green-machine-icecats-coach-btn"
     And I wait for a page refresh
-    Then I should see "You are a coach for 2 teams"
+    Then I should see "Long Island Edge"
+    And I should see "Nassau County Lions"
+    And "Green Machine IceCats" should show up 2 times

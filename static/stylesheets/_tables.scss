@@ -1,0 +1,159 @@
+table.table.table-thin-th-border {
+  th {
+    // This is a bootstrap defined color
+    border-bottom: 1px solid $table-border-color;
+  }
+}
+
+table.bt {
+  tbody tr td {
+    border: none;
+  }
+}
+
+// https://codepen.io/pixelchar/pen/rfuqK
+.responsive-table {
+  width: 100%;
+  margin-bottom: 24px;
+
+  thead {
+    // Accessibly hide <thead> on narrow viewports
+    position: absolute;
+    clip: rect(1px 1px 1px 1px); /* IE6, IE7 */
+    clip: rect(1px, 1px, 1px, 1px);
+    padding: 0;
+    border: 0;
+    height: 1px;
+    width: 1px;
+    overflow: hidden;
+
+    @media (min-width: $screen-sm-min) {
+      // Unhide <thead> on wide viewports
+      position: relative;
+      clip: auto;
+      height: auto;
+      width: auto;
+      overflow: auto;
+    }
+  }
+
+  // Set these items to display: block for narrow viewports
+  tbody,
+  tr,
+  th,
+  td {
+    display: block;
+    padding: 0;
+    text-align: left;
+    white-space: normal;
+  }
+
+  tr {
+    @media (min-width: $screen-sm-min) {
+      // Undo display: block
+      display: table-row;
+    }
+  }
+
+  th,
+  td {
+    padding: 8px;
+    vertical-align: middle;
+
+    @media (min-width: $screen-xs-min) {
+      padding: 12px 8px;
+    }
+
+    @media (min-width: $screen-sm-min) {
+      // Undo display: block
+      display: table-cell;
+      padding: 8px;
+    }
+
+    @media (min-width: $screen-md-min) {
+      padding: 12px 8px;
+    }
+
+    @media (min-width: $screen-lg-min) {
+      padding: 12px;
+    }
+  }
+
+  caption {
+    margin-bottom: 16px;
+    font-size: 16px;
+    font-weight: bold;
+    text-align: center;
+
+    @media (min-width: $screen-sm-min) {
+      font-size: 24px;
+    }
+  }
+
+  tfoot {
+    font-size: 12px;
+    font-style: italic;
+
+    @media (min-width: $screen-md-min) {
+      font-size: 14px;
+    }
+  }
+
+  tbody {
+    @media (min-width: $screen-sm-min) {
+      // Undo display: block
+      display: table-row-group;
+    }
+
+    tr {
+      margin-bottom: 16px;
+      @media (min-width: $screen-sm-min) {
+        // Undo display: block
+        display: table-row;
+        border-width: 1px;
+      }
+
+      @media (max-width: $screen-sm-min) {
+        border-bottom: 1px solid $table-border-color;
+        border-left: 1px solid $table-border-color;
+        border-right: 1px solid $table-border-color;
+      }
+
+      &:last-of-type {
+        margin-bottom: 0;
+      }
+    }
+
+    td {
+      text-align: right;
+
+      @media (min-width: $screen-sm-min) {
+        text-align: left;
+      }
+
+      @media (max-width: $screen-sm-min) {
+        border-top: none;
+        .table-dropdown {
+          text-align: center;
+        }
+        .table-dropdown-menu {
+          left: auto;
+          right: 50%;
+        }
+      }
+    }
+
+    td[data-title]:before {
+      content: attr(data-title);
+      float: left;
+      font-size: 15px;
+      font-weight: bold;
+      color: $black;
+
+      @media (min-width: $screen-sm-min) {
+        // Don’t show data-title labels
+        content: none;
+      }
+    }
+  }
+}

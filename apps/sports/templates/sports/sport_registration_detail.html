@@ -17,7 +17,7 @@
     <div class="row">
       <div class="col-sm-offset-2 col-sm-8 col-sm-offset-2">
         <div class="text-center">
-          <h4 class="text-muted">Choose a tab below to view and manage your roles.</h4>
+          <h4 class="text-muted">Choose a tab below to browse teams/leagues you are registered for</h4>
           <br><br>
           <ul class="nav nav-tabs nav-justified" role="tablist">
             {% for role in sr_roles %}
@@ -28,75 +28,51 @@
               </li>
             {% endfor %}
             {% if available_roles %}
-              <li role="presentation" class="{% if forloop.first %}active{% endif %}"><a
-                      href="#id_available_roles" role="tab"
-                      data-toggle="tab" class="nav-tab">Available Roles</a>
+              <li role="presentation" class="{% if forloop.first %}active{% endif %}">
+                <a id="available-roles-nav-tab" href="#id_available_roles" role="tab" data-toggle="tab" class="nav-tab">
+                  Available Roles
+                </a>
               </li>
             {% endif %}
           </ul>
 
           <div class="tab-content">
             {% for role, related_objs in related_objects.items %}
-              <div role="tabpanel" class="tab-pane {% if forloop.first %}active{% endif %}"
-                   id="id_{{ role|lower }}">
-                <br><br>
-                <div class="panel panel-primary">
-                  <div class="panel-heading panel-title">
-                    {% with count=related_objs|length %}
-                      You are a {{ role|lower }} for {{ count }} {% if role == 'Referee' %}league{% else %}team{% endif %}{{ count|pluralize }}
-                    {% endwith %}
-                  </div>
-
-                  <div class="panel-body">
-                    <div class="pull-right">
-                      <a id="create_new_{{ role|lower }}_btn" class="btn btn-sm btn-default" href="{{ role_url_mapping|get:role }}"><span class="fa fa-fw fa-plus"></span> {{ role }}</a>
-                    </div>
-                  </div>
-
-                  {% if role == 'Player' %}
-                    {% include 'players/_players.html' %}
-                  {% elif role == 'Coach' %}
-                    {% include 'coaches/_coaches.html' %}
-                  {% elif role == 'Referee' %}
-                    {% include 'referees/_referees.html' %}
-                  {% elif role == 'Manager' %}
-                    {% include 'managers/_managers.html' %}
-                  {% endif %}
-                </div>
+              <div role="tabpanel" class="tab-pane {% if forloop.first %}active{% endif %}" id="id_{{ role|lower }}">
+                <br>
+                {% if role == 'Player' %}
+                  {% include 'players/_players.html' %}
+                {% elif role == 'Coach' %}
+                  {% include 'coaches/_coaches.html' %}
+                {% elif role == 'Referee' %}
+                  {% include 'referees/_referees.html' %}
+                {% elif role == 'Manager' %}
+                  {% include 'managers/_managers.html' %}
+                {% endif %}
               </div>
             {% endfor %}
 
             {% if available_roles %}
-              <div role="tabpanel" class="tab-pane {% if forloop.first %}active{% endif %}"
-                   id="id_available_roles">
-                <br><br>
-                <div class="panel panel-primary">
-                  <div class="panel-heading panel-title">
-                    {% with count=available_roles|length %}
-                      {{ count }} available role{{ count|pluralize }}
-                    {% endwith %}
-                  </div>
-
-                  <table class="table">
-                    <thead>
+              <div role="tabpanel" class="tab-pane {% if forloop.first %}active{% endif %}" id="id_available_roles">
+                <br>
+                <table class="table table-thin-th-border">
+                  <thead>
+                  <tr>
+                    <th>Role</th>
+                    <th>Link</th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                  {% for role in available_roles %}
                     <tr>
-                      <th></th>
-                      <th>Role</th>
-                      <th>Link</th>
+                      <td class="text-left">{{ role }}</td>
+                      <td class="text-left">
+                        <a href="{{ role_url_mapping|get:role }}" id="add_{{ role|lower }}_role_link">Register</a>
+                      </td>
                     </tr>
-                    </thead>
-                    <tbody>
-                    {% for role in available_roles %}
-                      <tr>
-                        <td></td>
-                        <td class="text-left">{{ role }}</td>
-                        <td class="text-left"><a href="{{ role_url_mapping|get:role }}"
-                                                 id="add_{{ role|lower }}_role_link">Register</a></td>
-                      </tr>
-                    {% endfor %}
-                    </tbody>
-                  </table>
-                </div>
+                  {% endfor %}
+                  </tbody>
+                </table>
               </div>
             {% endif %}
           </div>
