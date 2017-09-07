@@ -9,6 +9,7 @@ from django.urls import reverse
 from django.views import generic
 from django.views.generic.base import ContextMixin
 
+from escoresheet.utils import get_namespace_for_role
 from players import forms as player_forms
 from players.models import HockeyPlayer, BasketballPlayer, BaseballPlayer
 from sports.forms import SportRegistrationCreateForm, SportRegistrationModelFormSet
@@ -101,17 +102,8 @@ class SportRegistrationCreateView(LoginRequiredMixin, ContextMixin, generic.View
 class SportRegistrationDetailView(LoginRequiredMixin, ContextMixin, generic.View):
     template_name = 'sports/sport_registration_detail.html'
 
-    def _get_namespace_for_role(self, role):
-        mappings = {
-            'Player': 'players',
-            'Coach': 'coaches',
-            'Referee': 'referees',
-            'Manager': 'managers'
-        }
-        return mappings.get(role, None)
-
     def _get_url_for_role(self, role, **kwargs):
-        namespace = self._get_namespace_for_role(role)
+        namespace = get_namespace_for_role(role)
         return reverse('sportregistrations:{}:create'.format(namespace), kwargs=kwargs)
 
     def get_context_data(self, **kwargs):
