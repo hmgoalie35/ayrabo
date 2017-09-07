@@ -10,7 +10,11 @@ Feature: Sport registration detail
     And The following team objects exist
       | name                  | division        | league                            | sport      |
       | Green Machine IceCats | Midget Minor AA | Long Island Amateur Hockey League | Ice Hockey |
-      | Long Island Edge | Midget Minor AA | Long Island Amateur Hockey League | Ice Hockey |
+      | Long Island Edge      | Midget Minor AA | Long Island Amateur Hockey League | Ice Hockey |
+    And The following league objects exist
+      | full_name                         | sport      |
+      | Long Island Amateur Hockey League | Ice Hockey |
+      | National Hockey League            | Ice Hockey |
     And The following sport registrations exist
       | username_or_email | sport      | roles                           | complete |
       | user@example.com  | Ice Hockey | Player, Coach, Referee          | true     |
@@ -29,7 +33,7 @@ Feature: Sport registration detail
   Scenario: Informative text displayed to user
     Given I am on the absolute url page for "sports.SportRegistration" and "user__email=user@example.com, sport__name=Ice Hockey"
     Then I should see "Manage Your Ice Hockey Registration"
-    And I should see "Choose a tab below to view and manage your roles."
+    And I should see "Choose a tab below to browse teams/leagues you are registered for"
     And I should see "Available Roles"
     And I should see "Coaches"
     And I should see "Players"
@@ -39,7 +43,30 @@ Feature: Sport registration detail
     And I press "available-roles-nav-tab"
     And "add_manager_role_link" should contain text "Register"
 
+  Scenario: Add another player
+    Given I am on the absolute url page for "sports.SportRegistration" and "user__email=user@example.com, sport__name=Ice Hockey"
+    And I press "player_tab"
+    And I press "create_player_btn"
+    Then I should be on the "sports.SportRegistration" "" "sportregistrations:players:create" page with url kwargs "pk=pk"
+
   Scenario: Add another coach
     Given I am on the absolute url page for "sports.SportRegistration" and "user__email=user@example.com, sport__name=Ice Hockey"
-    And I press "create_new_coach_btn"
+    And I press "coach_tab"
+    And I press "create_coach_btn"
     Then I should be on the "sports.SportRegistration" "" "sportregistrations:coaches:create" page with url kwargs "pk=pk"
+
+  Scenario: Add another referee
+    Given I am on the absolute url page for "sports.SportRegistration" and "user__email=user@example.com, sport__name=Ice Hockey"
+    And I press "referee_tab"
+    And I press "create_referee_btn"
+    Then I should be on the "sports.SportRegistration" "" "sportregistrations:referees:create" page with url kwargs "pk=pk"
+
+  Scenario: Add another manager
+    Given I add the "Manager" role to "user@example.com" for "Ice Hockey"
+    And The following manager object exists
+      | username_or_email | team                  |
+      | user@example.com  | Green Machine IceCats |
+    And I am on the absolute url page for "sports.SportRegistration" and "user__email=user@example.com, sport__name=Ice Hockey"
+    And I press "manager_tab"
+    And I press "create_manager_btn"
+    Then I should be on the "sports.SportRegistration" "" "sportregistrations:managers:create" page with url kwargs "pk=pk"

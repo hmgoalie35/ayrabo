@@ -58,3 +58,10 @@ def step_impl(context):
         sr = SportRegistrationFactory(**kwargs)
         sr.set_roles([role.strip() for role in roles.split(',')])
         context.url_kwargs.update({sr.sport.name: sr.pk})
+
+
+@given('I add the "(?P<roles>[^"]*)" roles? to "(?P<username_or_email>[^"]*)" for "(?P<sport_name>[^"]*)"')
+def step_impl(context, roles, username_or_email, sport_name):
+    user = get_user(username_or_email)
+    sport_registration = SportRegistration.objects.get(user=user, sport__name=sport_name)
+    sport_registration.set_roles([role.strip() for role in roles.split(',')], True)

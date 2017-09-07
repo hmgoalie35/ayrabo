@@ -26,7 +26,7 @@
 * clean up `dist/`. Only files needed should be in there...
 * fix up error pages
 * Need to have proxy strip X-Forwarded-Proto header and then set it myself so nobody can spoof the header
-* Speed up virtualenv, npm installs
+* Speed up virtualenv, npm installs. Correctly organize dev, testing, prod dependencies for npm and pip
 * On single server setup, when gunicorn restarts at end of deployment, you get 502 bad gateway. But maintenance mode and multiple app servers should mitigate this. Looking into sending SIGHUP or how to hot swap gunicorn binaries might be a good additive measure.
 
 ### Usage

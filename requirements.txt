@@ -10,7 +10,7 @@ coreschema==0.0.4
 coverage==4.4.1
 decorator==4.1.2
 defusedxml==0.5.0
-Django==1.10.7
+Django==1.10.8
 django-allauth==0.31.0
 django-appconf==1.0.2
 django-bower==5.2.0

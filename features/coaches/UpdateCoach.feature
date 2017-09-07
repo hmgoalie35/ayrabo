@@ -20,7 +20,8 @@ Feature: Update coach information
   Scenario: Navigate to the coach update page
     Given I am on the absolute url page for "sports.SportRegistration" and "user__email=user@example.com, sport__name=Ice Hockey"
     When I press "id_coach"
-    And I press "update_coach_link"
+    And I press "actions-dropdown-coach-green-machine-icecats"
+    And I press "update-coach-link"
     Then I should be on the "/sport-registrations/1/coaches/1/update/" page
     And I should see "Update Coach Information for Green Machine IceCats"
 
