@@ -6,6 +6,7 @@
 @import "typography";
 @import "sidebar";
 @import "tables";
+@import "margins";
 
 html {
   position: relative;
@@ -88,7 +89,7 @@ div.alert.alert-block.alert-danger > ul {
   }
 }
 
-.more-sport-info {
+.list-group-item-hoverable {
   cursor: pointer;
 
   &:hover {
@@ -96,8 +97,10 @@ div.alert.alert-block.alert-danger > ul {
   }
 }
 
-.more-sport-info-fa-caret {
-  margin-top: 3px;
+.list-group-item-flush-bottom {
+  &:last-child {
+    margin-bottom: -1px;
+  }
 }
 
 .vertical-line-left {
@@ -112,4 +115,11 @@ div.alert.alert-block.alert-danger > ul {
 
 .password-guidelines {
   margin-right: 5px;
+}
+
+.role-related-objects-section {
+  margin-bottom: 10px;
+  &:last-child {
+    margin-bottom: 0;
+  }
 }

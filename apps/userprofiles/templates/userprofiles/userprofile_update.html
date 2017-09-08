@@ -10,12 +10,16 @@
       <div class="col-sm-offset-3 col-sm-6">
         <br><br>
         <ul class="nav nav-tabs nav-justified" role="tablist">
-          <li role="presentation" class="active"><a href="#my_account" role="tab" data-toggle="tab"
-                                                    class="nav-tab"><i class="fa fa-user"></i>&nbsp;My Account</a>
+          <li role="presentation" class="active">
+            <a href="#my_account" role="tab" data-toggle="tab" class="nav-tab">
+              <i class="fa fa-fw fa-user"></i>
+              My Account
+            </a>
           </li>
           <li role="presentation">
             <a href="#my_sport_registrations" role="tab" data-toggle="tab" class="nav-tab" id="my-sports-tab">
-              <i class="fa fa-list"></i>&nbsp;My Sports
+              <i class="fa fa-fw fa-list"></i>
+              My Sports
             </a>
           </li>
         </ul>
@@ -39,14 +43,16 @@
                 <a id="change_password_link" href="{% url 'account_change_password' %}">Change Password</a>
                 {% if api_token %}
                   <br><br>
-                  <a id="show_token_link" href="#" data-target="#token_modal" data-toggle="modal"><span class="fa fa-eye"></span>&nbsp;API Token</a>
+                  <a id="show_token_link" href="#" data-target="#token_modal" data-toggle="modal">
+                    <span class="fa fa-fw fa-eye"></span>API Token
+                  </a>
                   <div class="modal fade" id="token_modal" tabindex="-1" role="dialog">
                     <br><br><br><br><br><br>
                     <div class="modal-dialog" role="document">
                       <div class="modal-content">
                         <div class="modal-header">
-                          <button type="button" class="close" data-dismiss="modal"
-                                  aria-label="Close"><span aria-hidden="true">&times;</span>
+                          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
                           </button>
                           <h4 class="modal-title">API Token</h4>
                         </div>
@@ -70,15 +76,13 @@
                   {{ form | crispy }}
                   <br>
                   <div class="text-center">
-                    <input id="update_userprofile_btn" class="btn btn-success" type="submit"
-                           value="Update account">
+                    <button id="update_userprofile_btn" class="btn btn-success" type="submit">Update</button>
                   </div>
                   <br>
                 </form>
               </div>
             </div>
           </div>
-
 
           <div role="tabpanel" class="tab-pane" id="my_sport_registrations">
             <br>
@@ -95,32 +99,33 @@
                 {% if data %}
                   <ul class="list-group">
                     {% for sport_registration, data_dict in data.items %}
-                      <li id="list-item-{{ data_dict.sport.slug }}" class="list-group-item more-sport-info" data-target="#{{ data_dict.sport.slug }}" data-toggle="collapse">
-                        {{ data_dict.sport.name }}:
+                      <li id="list-item-{{ data_dict.sport.slug }}"
+                          class="list-group-item list-group-item-hoverable js-list-item-sport"
+                          data-target="#{{ data_dict.sport.slug }}"
+                          data-toggle="collapse">
+                        {{ data_dict.sport.name }}{% if data_dict.roles %}:{% endif %}
                         {% for role in data_dict.roles %}
-                          <span class="label label-default">{{ role }}</span>
-                        {% empty %}
-                          <div class="alert alert-warning" role="alert">You do not have any roles configured for {{ data_dict.sport.name }}. Please add some roles by selecting the dropdown and then "Edit".</div>
+                          <span class="label label-info">{{ role }}</span>
                         {% endfor %}
-
-                        <span class="pull-right fa fa-fw fa-caret-down more-sport-info-fa-caret"></span>
-                        <a name="edit_registration_link" id="edit-{{ sport_registration.id }}" href="{% url 'sportregistrations:detail' sport_registration.pk %}" class="pull-right ">Manage</a>
+                        <span class="fa fa-fw fa-caret-down mt3 pull-right js-toggle-caret"></span>
                       </li>
                       <div class="collapse" id="{{ data_dict.sport.slug }}">
-                        <div class="list-group-item">
+                        <div class="list-group-item list-group-item-flush-bottom">
                           {% if data_dict.related_objects %}
                             <h4 class="text-center">At a glance</h4>
                             {% for role, objects in data_dict.related_objects.items %}
-                              <strong>{{ role }}:</strong>
-                              {% for object in objects %}
-                                <div>
-                                  {% if role == 'Referee' %}
-                                    {{ object.league }}
-                                  {% else %}
-                                    {{ object.team }} - {{ object.team.division.name }}
-                                  {% endif %}
-                                </div>
-                              {% endfor %}
+                              <div class="role-related-objects-section">
+                                <strong>{{ role }}:</strong>
+                                {% for object in objects %}
+                                  <div>
+                                    {% if role == 'Referee' %}
+                                      {{ object.league }}
+                                    {% else %}
+                                      {{ object.team }} - {{ object.team.division.name }}
+                                    {% endif %}
+                                  </div>
+                                {% endfor %}
+                              </div>
                             {% endfor %}
                           {% else %}
                           {% endif %}
@@ -130,7 +135,8 @@
                   </ul>
                 {% else %}
                   <br>
-                  <div class="alert alert-warning" role="alert">You are not currently registered for any sports. Press the button above to register for a sport.
+                  <div class="alert alert-warning" role="alert">You are not currently registered for any sports. Press
+                                                                the button above to register for a sport.
                   </div>
                 {% endif %}
               </div>

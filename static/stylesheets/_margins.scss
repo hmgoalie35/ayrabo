@@ -1,0 +1,14 @@
+/**
+  A place to put common margin properties. These are intended for simple cases where it doesn't make sense to create
+  a new class. I would say use them sparingly and be smart, you might need to create a new class for the element anyway.
+
+  * Stands for a number.
+  mt* -> margin-top: *px;
+  ml* -> margin-left: *px;
+  m* -> margin: *px;
+  etc...
+*/
+
+.mt3 {
+  margin-top: 3px;
+}

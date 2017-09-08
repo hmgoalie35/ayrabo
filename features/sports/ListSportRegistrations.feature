@@ -41,9 +41,3 @@ Feature: List what sports I am currently registered for
     And I should see "Coach"
     And I should see "Referee"
     And I should see "Manager"
-
-  Scenario: Navigate to update sport registration page
-    Given I am on the "account_home" page
-    When I press "my-sports-tab"
-    And I press "edit-" with kwargs "Ice Hockey"
-    Then I should be on the absolute url page for "sports.SportRegistration" and "user@example.com Ice Hockey"
