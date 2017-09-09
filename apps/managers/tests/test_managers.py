@@ -1,4 +1,4 @@
-from escoresheet.utils.testing_utils import BaseTestCase
+from escoresheet.utils.testing import BaseTestCase
 from managers.models import Manager
 from managers.tests import ManagerFactory
 

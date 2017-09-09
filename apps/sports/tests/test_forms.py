@@ -1,4 +1,4 @@
-from escoresheet.utils.testing_utils import BaseTestCase
+from escoresheet.utils.testing import BaseTestCase
 from sports.forms import SportRegistrationCreateForm
 from sports.tests import SportFactory, SportRegistrationFactory
 from accounts.tests import UserFactory

@@ -2,7 +2,7 @@ from django.core.validators import ValidationError
 from django.db import IntegrityError
 
 from accounts.tests import UserFactory
-from escoresheet.utils.testing_utils import BaseTestCase
+from escoresheet.utils.testing import BaseTestCase
 from sports.tests import SportRegistrationFactory
 from teams.tests import TeamFactory
 from .factories.ManagerFactory import ManagerFactory
