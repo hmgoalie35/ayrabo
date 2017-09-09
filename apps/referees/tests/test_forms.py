@@ -1,4 +1,4 @@
-from escoresheet.utils.testing_utils import BaseTestCase
+from escoresheet.utils.testing import BaseTestCase
 from leagues.tests import LeagueFactory
 from referees.forms import RefereeForm
 from sports.tests import SportFactory

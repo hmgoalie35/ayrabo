@@ -1,7 +1,7 @@
 from django.urls import reverse
 
 from accounts.tests import UserFactory
-from escoresheet.utils.testing_utils import BaseTestCase
+from escoresheet.utils.testing import BaseTestCase
 from sports.tests import SportRegistrationFactory
 
 

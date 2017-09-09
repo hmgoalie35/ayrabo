@@ -2,7 +2,7 @@ from behave import *
 from django.contrib.auth.models import User
 
 from accounts.tests import UserFactory
-from escoresheet.utils.testing_utils import get_user
+from escoresheet.utils.testing import get_user
 from players.tests import HockeyPlayerFactory
 from sports.models import Sport
 from sports.tests import SportFactory

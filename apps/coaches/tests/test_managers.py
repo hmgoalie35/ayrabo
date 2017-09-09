@@ -1,6 +1,6 @@
 from coaches.models import Coach
 from coaches.tests import CoachFactory
-from escoresheet.utils.testing_utils import BaseTestCase
+from escoresheet.utils.testing import BaseTestCase
 
 
 class ActiveManagerTests(BaseTestCase):

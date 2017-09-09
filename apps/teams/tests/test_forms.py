@@ -3,7 +3,7 @@ import os
 from django.conf import settings
 from django.core.files.uploadedfile import SimpleUploadedFile
 
-from escoresheet.utils.testing_utils import BaseTestCase
+from escoresheet.utils.testing import BaseTestCase
 from teams.forms import BulkUploadTeamsForm
 
 

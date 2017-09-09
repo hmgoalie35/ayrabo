@@ -1,4 +1,4 @@
-from escoresheet.utils.testing_utils import BaseTestCase
+from escoresheet.utils.testing import BaseTestCase
 from players.models import HockeyPlayer, BaseballPlayer, BasketballPlayer
 from players.tests import HockeyPlayerFactory, BaseballPlayerFactory, BasketballPlayerFactory
 
