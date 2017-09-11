@@ -6,6 +6,21 @@ from django.contrib.auth.password_validation import password_validators_help_tex
 
 from escoresheet.utils import remove_form_placeholders, add_autofocus_to_field
 
+PASSWORD_GUIDLINES_HTML = """
+<span
+    class="password-guidelines clickable pull-right"
+    data-toggle="modal"
+    data-target="#password_guidelines">
+
+    <span
+        data-toggle="tooltip"
+        data-placement="left"
+        title="Password guidelines"
+        class="fa fa-info-circle">
+    </span>
+</span>
+"""
+
 
 class SignupForm(allauth_forms.SignupForm):
     first_name = forms.CharField(widget=forms.TextInput(attrs={'autofocus': 'true'}))
@@ -29,14 +44,8 @@ class SignupForm(allauth_forms.SignupForm):
                 Field('first_name'),
                 Field('last_name'),
                 Field('email'),
+                HTML(PASSWORD_GUIDLINES_HTML),
                 Field('password1'),
-                HTML("""
-                        <ul class="list-unstyled help-block">
-                            {% for help_text in form.password_validator_help_text %}
-                                <li>{{ help_text }}</li>
-                            {% endfor %}
-                        </ul>
-                """),
                 Field('password2'),
                 HTML('<br>'),
                 Div(Submit('id_submit', 'Register',
@@ -65,20 +74,7 @@ class LoginForm(allauth_forms.LoginForm):
         self.helper.form_tag = False
         self.helper.layout = Layout(
                 Field('login'),
-                HTML("""
-                    <span
-                        class="password-guidelines clickable pull-right"
-                        data-toggle="modal"
-                        data-target="#password_guidelines">
-
-                        <span
-                            data-toggle="tooltip"
-                            data-placement="left"
-                            title="Password guidelines"
-                            class="fa fa-info-circle">
-                        </span>
-                    </span>
-                """),
+                HTML(PASSWORD_GUIDLINES_HTML),
                 Field('password'),
                 HTML('<br>'),
                 Div(Submit('login_main', 'Login',
@@ -105,14 +101,8 @@ class PasswordResetFromKeyForm(allauth_forms.ResetPasswordKeyForm):
         self.helper.disable_csrf = True
         self.helper.form_tag = False
         self.helper.layout = Layout(
+                HTML(PASSWORD_GUIDLINES_HTML),
                 Field('password1'),
-                HTML("""
-                        <ul class="list-unstyled help-block">
-                            {% for help_text in form.password_validator_help_text %}
-                                <li>{{ help_text }}</li>
-                            {% endfor %}
-                        </ul>
-                """),
                 Field('password2'),
                 HTML('<br>'),
                 Div(Submit('reset_password_btn', 'Reset password',
@@ -136,14 +126,8 @@ class ChangePasswordForm(allauth_forms.ChangePasswordForm):
         self.helper.form_tag = False
         self.helper.layout = Layout(
                 Field('oldpassword'),
+                HTML(PASSWORD_GUIDLINES_HTML),
                 Field('password1'),
-                HTML("""
-                        <ul class="list-unstyled help-block">
-                            {% for help_text in form.password_validator_help_text %}
-                                <li>{{ help_text }}</li>
-                            {% endfor %}
-                        </ul>
-                """),
                 Field('password2'),
                 HTML('<br>'),
                 Div(Submit('change_password_btn', 'Change password',
