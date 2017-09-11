@@ -76,14 +76,16 @@ class UserProfileCreateViewTests(BaseTestCase):
 
     # Invalid POST data
 
-    def test_no_height_weight_gender(self):
+    def test_no_height_weight_gender_birthday(self):
         self.post_data.pop('gender')
         self.post_data.pop('height')
         self.post_data.pop('weight')
+        self.post_data.pop('birthday')
         response = self.client.post(reverse('account_complete_registration'), data=self.post_data, follow=True)
         self.assertFormError(response, 'form', 'gender', 'This field is required.')
         self.assertFormError(response, 'form', 'height', 'This field is required.')
         self.assertFormError(response, 'form', 'weight', 'This field is required.')
+        self.assertFormError(response, 'form', 'birthday', 'This field is required.')
 
     def test_invalid_height_format(self):
         invalid_heights = ['5 7', '5 7\"', '5\' 7']

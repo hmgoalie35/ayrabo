@@ -15,12 +15,19 @@ was_changed_in_last_commit () {
 #    python manage.py loaddata dev_fixtures
 #fi
 
-print_step "Installing npm packages"
-npm install
+if [ "$1" == "--hard" ]; then
+    print_step "Removing node_modules/ and venv/ folders"
+    rm -rf node_modules/
+    rm -rf venv/
+    virtualenv venv -p `which python3`
+fi
 
 print_step "Installing pip packages"
 source venv/bin/activate
 pip install -r requirements.txt
+
+print_step "Installing npm packages"
+npm install
 
 print_step "Running migrations"
 python manage.py migrate
