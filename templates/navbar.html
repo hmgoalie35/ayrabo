@@ -15,26 +15,28 @@
       <ul class="nav navbar-nav navbar-right">
         {% if user.is_authenticated %}
 
-          <li>
-            <a id="my-sports-dropdown" href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
-               aria-haspopup="true" aria-expanded="false">
-              My Sports
-              <span class="caret"></span>
-            </a>
-            <ul class="dropdown-menu">
-              {% for sport_reg_id, sport_name in request.session.my_sports.items %}
+          {% if request.session.my_sports %}
+            <li>
+              <a id="my-sports-dropdown" href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
+                 aria-haspopup="true" aria-expanded="false">
+                My Sports
+                <span class="caret"></span>
+              </a>
+              <ul class="dropdown-menu">
+                {% for sport_reg_id, sport_name in request.session.my_sports.items %}
+                  <li>
+                    <a href="{% url 'sportregistrations:detail' sport_reg_id %}">{{ sport_name }}</a>
+                  </li>
+                {% endfor %}
+                <li role="separator" class="divider"></li>
                 <li>
-                  <a href="{% url 'sportregistrations:detail' sport_reg_id %}">{{ sport_name }}</a>
+                  <a href="{% url 'sportregistrations:create' %}">
+                    Register for a sport
+                  </a>
                 </li>
-              {% endfor %}
-              <li role="separator" class="divider"></li>
-              <li>
-                <a href="{% url 'sportregistrations:create' %}">
-                  Register for a sport
-                </a>
-              </li>
-            </ul>
-          </li>
+              </ul>
+            </li>
+          {% endif %}
 
 
           <!-- Account dropdown -->
