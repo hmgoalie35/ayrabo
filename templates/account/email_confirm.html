@@ -33,26 +33,23 @@
               <br>
               <h1>Request New Email Confirmation Link</h1>
               <br>
-              <p>
-                This confirmation link is invalid or has expired.
-                <br>
-                Please request a new confirmation link by entering your email address below.
-              </p>
+              {% if 'new-confirmation-link' not in request.path_info %}
+                <p>
+                  This confirmation link is invalid or has expired.<br>Enter your email below to request a new link.
+                </p>
+              {% endif %}
               <br>
               <div class="col-sm-offset-4 col-sm-4 col-sm-offset-4">
                 <form method="post" action="{% url 'account_new_email_confirmation' %}">
                   {% csrf_token %}
                   <input name="request_path" type="hidden" value="{{ request.path }}">
                   <div class="form-group">
-                    <label for="new_email_confirmation" class="control-label">Email Address<span
-                            class="asteriskField">*</span></label>
-                    <input class="form-control" id="new_email_confirmation" type="email"
-                           name="email" autofocus required>
+                    <label for="new_email_confirmation" class="control-label">
+                      Email Address<span class="asteriskField">*</span>
+                    </label>
+                    <input class="form-control" id="new_email_confirmation" type="email" name="email" autofocus required>
                   </div>
-                  <br>
-                  <button id="request_new_confirmation_email" class="btn btn-success" type="submit">
-                    Request new confirmation email
-                  </button>
+                  <button id="request_new_confirmation_email" class="btn btn-success" type="submit">Submit</button>
                 </form>
               </div>
             {% endif %}
