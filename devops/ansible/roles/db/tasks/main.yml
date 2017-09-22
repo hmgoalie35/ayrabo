@@ -74,6 +74,8 @@
     role_attr_flags: CREATEDB
     state: present
 
-# TODO Add supervisor, was having trouble with upstart/systemv/systemd and supervisor.
-# Maybe remove postresql from upstart, have supervisor run /usr/lib/postgresql/9.6/bin/postgres -D /var/lib/postgresql/9.6/main -c config_file=/etc/postgresql/9.6/main/postgresql.conf or use pg_ctl in the dir /usr/lib/postgresql/9.6/bin.
+# TODO Add supervisor, was having trouble with upstart/systemv/systemd and supervisor. Add postgres binaries to PATH.
+# Maybe remove postgresql from upstart, have supervisor run:
+# /usr/lib/postgresql/9.6/bin/postgres -D /var/lib/postgresql/9.6/main -c config_file=/etc/postgresql/9.6/main/postgresql.conf
+# or use pg_ctl in the dir /usr/lib/postgresql/9.6/bin.
 # See https://www.postgresql.org/docs/9.6/static/reference-client.html and https://www.postgresql.org/docs/current/static/reference-server.html

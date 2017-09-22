@@ -8,12 +8,14 @@
   "license": "UNLICENSED",
   "author": "Harris Pittinsky",
   "private": true,
-  "devDependencies": {
+  "dependencies": {
     "autoprefixer": "7.1.2",
     "bower": "1.8.0",
     "node-sass": "4.5.3",
-    "phantomjs-prebuilt": "2.1.15",
     "postcss-cli": "4.1.0",
     "yuglify": "0.1.4"
+  },
+  "devDependencies": {
+    "phantomjs-prebuilt": "2.1.15"
   }
 }

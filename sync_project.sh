@@ -19,7 +19,7 @@ if [ "$1" == "--hard" ]; then
     print_step "Removing node_modules/ and venv/ folders"
     rm -rf node_modules/
     rm -rf venv/
-    virtualenv venv -p `which python3`
+    virtualenv venv -p `which python3.5`
 fi
 
 print_step "Installing pip packages"
