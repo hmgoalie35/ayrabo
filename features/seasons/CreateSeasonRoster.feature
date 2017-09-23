@@ -43,8 +43,8 @@ Feature: Create season rosters
       | username_or_email | team                  |
       | user@example.com  | Green Machine IceCats |
     And The following season object exists
-      | league                            | start_date | end_date   | teams                 |
-      | Long Island Amateur Hockey League | 2016-09-14 | 2017-09-14 | Green Machine IceCats |
+      | id | league                            | teams                 |
+      | 1  | Long Island Amateur Hockey League | Green Machine IceCats |
     And The following player objects exist
       | username_or_email | sport      | team                  |
       | test1@example.com | Ice Hockey | Green Machine IceCats |
@@ -53,7 +53,7 @@ Feature: Create season rosters
       | test4@example.com | Ice Hockey | Green Machine IceCats |
       | test5@example.com | Ice Hockey | Green Machine IceCats |
     Given I am on the "teams.Team" "" "teams:season_rosters:create" page with url kwargs "team_pk=pk"
-    And I select "Long Island Amateur Hockey League: 2016 - 2017 Season" from "id_season"
+    And I select "1" from "id_season"
     And I select 5 players from "id_players"
     And I press "create_season_roster_btn"
     Then I should see "Season roster created for Green Machine IceCats."
@@ -65,8 +65,8 @@ Feature: Create season rosters
       | username_or_email | team                  |
       | user@example.com  | Green Machine IceCats |
     And The following season object exists
-      | league                            | start_date | end_date   | teams                 |
-      | Long Island Amateur Hockey League | 2016-09-14 | 2017-09-14 | Green Machine IceCats |
+      | id | league                            | teams                 |
+      | 1  | Long Island Amateur Hockey League | Green Machine IceCats |
     And The following player objects exist
       | username_or_email | sport      | team                  |
       | test1@example.com | Ice Hockey | Green Machine IceCats |
@@ -85,8 +85,8 @@ Feature: Create season rosters
       | username_or_email | team                  |
       | user@example.com  | Green Machine IceCats |
     And The following season object exists
-      | league                            | start_date | end_date   | teams                 |
-      | Long Island Amateur Hockey League | 2016-09-14 | 2017-09-14 | Green Machine IceCats |
+      | id | league                            | teams                 |
+      | 1  | Long Island Amateur Hockey League | Green Machine IceCats |
     And The following player objects exist
       | username_or_email | sport      | team                  |
       | test1@example.com | Ice Hockey | Green Machine IceCats |
@@ -95,10 +95,10 @@ Feature: Create season rosters
       | test4@example.com | Ice Hockey | Green Machine IceCats |
       | test5@example.com | Ice Hockey | Green Machine IceCats |
     And The following season rosters for "Ice Hockey" exist
-      | season_start_date | season_end_date | team                  | players           | default |
-      | 2016-09-14        | 2017-09-14      | Green Machine IceCats | John Doe, Lee Doe | True    |
+      | season_id | team                  | players           | default |
+      | 1         | Green Machine IceCats | John Doe, Lee Doe | True    |
     And I am on the "teams.Team" "" "teams:season_rosters:create" page with url kwargs "team_pk=pk"
-    When I select "Long Island Amateur Hockey League: 2016 - 2017 Season" from "id_season"
+    When I select "1" from "id_season"
     And I select 5 players from "id_players"
     And I press "id_default"
     And I press "create_season_roster_btn"

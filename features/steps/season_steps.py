@@ -1,3 +1,5 @@
+import datetime
+
 from behave import *
 from django.db.models import Q
 
@@ -13,14 +15,13 @@ def step_impl(context):
         league_name = data.get('league')
         league = League.objects.get(Q(full_name=league_name) | Q(abbreviated_name=league_name))
 
-        kwargs = {'league': league}
-        start_date = data.get('start_date')
-        end_date = data.get('end_date')
-
-        if start_date:
-            kwargs['start_date'] = start_date
-        if end_date:
-            kwargs['end_date'] = end_date
+        today = datetime.date.today()
+        start_date = data.get('start_date', today)
+        end_date = data.get('end_date', today + datetime.timedelta(days=365))
+        kwargs = {'league': league, 'start_date': start_date, 'end_date': end_date}
+        obj_id = data.get('id', None)
+        if obj_id:
+            kwargs['id'] = obj_id
 
         season = SeasonFactory(**kwargs)
 

@@ -1,3 +1,5 @@
+import datetime
+
 from behave import *
 
 from accounts.tests import UserFactory
@@ -16,10 +18,20 @@ def step_impl(context, sport_name):
     for row in context.table:
         data = row.as_dict()
         factory_cls = SPORT_SEASON_ROSTER_FACTORY_MAPPINGS[sport_name]
-        season_start_date = data.get('season_start_date')
-        season_end_date = data.get('season_end_date')
+        today = datetime.date.today()
+
+        season_id = data.get('season_id')
+        season_start_date = data.get('season_start_date', today)
+        season_end_date = data.get('season_end_date', today + datetime.timedelta(days=365))
+        season_kwargs = {}
+        if season_id:
+            season_kwargs['id'] = season_id
+        else:
+            season_kwargs['start_date'] = season_start_date
+            season_kwargs['end_date'] = season_end_date
+        season = Season.objects.get(**season_kwargs)
+
         team = Team.objects.get(name=data.get('team'))
-        season = Season.objects.get(start_date=season_start_date, end_date=season_end_date)
         players = data.get('players', None)
         factory_kwargs = {'season': season, 'team': team, 'default': data.get('default', False)}
         if players:
