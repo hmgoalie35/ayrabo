@@ -33,7 +33,7 @@
     - name: Install npm packages
       npm:
         path: "{{ ongoing_deployment }}"
-        production: no
+        production: yes
         state: present
 
     # TODO Ignore certain directories? -i flag

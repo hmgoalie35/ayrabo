@@ -38,8 +38,8 @@ Feature: List season rosters
   Scenario: No season rosters created
     Given "user@example.com" is completely registered for "Ice Hockey" with role "Manager"
     And The following season object exists
-      | league                            | start_date | end_date   | teams                 |
-      | Long Island Amateur Hockey League | 2016-09-14 | 2017-09-14 | Green Machine IceCats |
+      | league                            | teams                 |
+      | Long Island Amateur Hockey League | Green Machine IceCats |
     And The following manager object exists
       | username_or_email | team                  |
       | user@example.com  | Green Machine IceCats |
