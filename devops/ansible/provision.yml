@@ -35,3 +35,4 @@
   roles:
     - web
     - deploy
+    - cron

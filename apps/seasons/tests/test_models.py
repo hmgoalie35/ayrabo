@@ -7,10 +7,10 @@ from django.urls import reverse
 from divisions.tests import DivisionFactory
 from escoresheet.utils.testing import BaseTestCase
 from leagues.tests import LeagueFactory
+from players.tests import HockeyPlayerFactory
 from seasons.models import Season, HockeySeasonRoster
 from teams.tests import TeamFactory
 from . import SeasonFactory, HockeySeasonRosterFactory
-from players.tests import HockeyPlayerFactory
 
 
 class SeasonModelTests(BaseTestCase):
@@ -64,6 +64,18 @@ class SeasonModelTests(BaseTestCase):
             season = SeasonFactory(start_date=start, end_date=end, league=league)
             seasons.append(season)
         self.assertListEqual(list(reversed(seasons)), list(Season.objects.all()))
+
+    def test_expired_true(self):
+        start_date = datetime.date(2014, 8, 15)
+        end_date = datetime.date(2015, 8, 15)
+        s = SeasonFactory(start_date=start_date, end_date=end_date)
+        self.assertTrue(s.expired)
+
+    def test_expired_false(self):
+        start_date = datetime.date.today()
+        end_date = start_date + datetime.timedelta(days=365)
+        s = SeasonFactory(start_date=start_date, end_date=end_date)
+        self.assertFalse(s.expired)
 
 
 class SeasonTeamM2MSignalTests(BaseTestCase):
