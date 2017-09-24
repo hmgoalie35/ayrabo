@@ -1,0 +1,36 @@
+- name: Create cron log dir
+  become: yes
+  file:
+    path: /var/log/cron
+    owner: "{{ ansible_env['USER'] }}"
+    group: "{{ ansible_env['USER'] }}"
+    state: directory
+
+- name: Create cron log files
+  file:
+    path: "/var/log/cron/{{ item }}.log"
+    state: touch
+  with_items:
+    - copy_expiring_sessions
+
+- name: Add cron job to clear sessions
+  # every monday @ 2:00am
+  cron:
+    name: clear_django_sessions
+    job: "source {{ current_symlink }}/venv/bin/activate && python {{ current_symlink }}/manage.py clearsessions && deactivate"
+    minute: 0
+    hour: 2
+    weekday: 1
+    user: "{{ ansible_env['USER'] }}"
+    state: present
+
+- name: Add cron job to copy expiring seasons
+  # every monday @ 3:00am
+  cron:
+    name: copy_expiring_seasons
+    job: "source {{ current_symlink }}/venv/bin/activate && python {{ current_symlink }}/manage.py copy_expiring_seasons >> /var/log/cron/copy_expiring_sessions.log 2>&1 && deactivate"
+    minute: 0
+    hour: 3
+    weekday: 1
+    user: "{{ ansible_env['USER'] }}"
+    state: present

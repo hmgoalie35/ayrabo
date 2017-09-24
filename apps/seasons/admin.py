@@ -6,7 +6,7 @@ from .models import Season, HockeySeasonRoster
 
 @admin.register(Season)
 class SeasonAdmin(admin.ModelAdmin):
-    list_display = ['id', 'season', 'start_date', 'end_date', 'league', 'sport']
+    list_display = ['id', 'season', 'start_date', 'end_date', 'league', 'sport', 'expired']
     list_display_links = ['season']
     search_fields = ['id', 'start_date', 'end_date']
     filter_horizontal = ['teams']
@@ -14,6 +14,11 @@ class SeasonAdmin(admin.ModelAdmin):
 
     def season(self, obj):
         return str(obj)
+
+    def expired(self, obj):
+        return obj.expired
+
+    expired.boolean = True
 
     season.short_description = 'Season'
 
@@ -25,7 +30,7 @@ class SeasonAdmin(admin.ModelAdmin):
 
 @admin.register(HockeySeasonRoster)
 class HockeySeasonRosterAdmin(admin.ModelAdmin):
-    list_display = ['id', 'season', 'team', 'division', 'default', 'created']
+    list_display = ['id', 'season', 'team', 'division', 'default', 'created', 'expired']
     list_display_links = ['season']
     search_fields = ['team__name', 'season__start_date', 'season__end_date']
     filter_horizontal = ['players']
@@ -33,5 +38,10 @@ class HockeySeasonRosterAdmin(admin.ModelAdmin):
 
     def division(self, obj):
         return obj.team.division
+
+    def expired(self, obj):
+        return obj.season.expired
+
+    expired.boolean = True
 
     division.short_description = 'Division'

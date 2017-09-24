@@ -1,3 +1,4 @@
+import datetime
 import logging
 
 from django.core.validators import ValidationError
@@ -33,6 +34,10 @@ class Season(models.Model):
             raise ValidationError({
                 'end_date': "The season's end date must be after the season's start date."
             })
+
+    @property
+    def expired(self):
+        return datetime.date.today() > self.end_date
 
     def __str__(self):
         return '{start_year}-{end_year} Season'.format(start_year=self.start_date.year, end_year=self.end_date.year)
