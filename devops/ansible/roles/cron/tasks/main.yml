@@ -1,3 +1,6 @@
+# NOTE: crontab runs with the `sh` shell which doesn't support `source`. Need to specify the full path to python in the
+# virtualenv
+
 - name: Create cron log dir
   become: yes
   file:
@@ -17,7 +20,7 @@
   # every monday @ 2:00am
   cron:
     name: clear_django_sessions
-    job: "source {{ current_symlink }}/venv/bin/activate && python {{ current_symlink }}/manage.py clearsessions && deactivate"
+    job: "cd {{ current_symlink }} && venv/bin/python manage.py clearsessions"
     minute: 0
     hour: 2
     weekday: 1
@@ -28,7 +31,7 @@
   # every monday @ 3:00am
   cron:
     name: copy_expiring_seasons
-    job: "source {{ current_symlink }}/venv/bin/activate && python {{ current_symlink }}/manage.py copy_expiring_seasons >> /var/log/cron/copy_expiring_sessions.log 2>&1 && deactivate"
+    job: "cd {{ current_symlink }} && venv/bin/python manage.py copy_expiring_seasons >> /var/log/cron/copy_expiring_sessions.log 2>&1"
     minute: 0
     hour: 3
     weekday: 1
