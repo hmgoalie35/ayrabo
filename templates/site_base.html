@@ -1,4 +1,4 @@
-{% load static compress %}
+{% load static %}
 
 <!DOCTYPE html>
 <html lang="{{ LANGUAGE_CODE }}">
@@ -12,16 +12,13 @@
       <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
 
-  {% compress css %}
-    <link rel="stylesheet" type="text/scss" href="{% static 'scss/main.scss' %}">
-    <link rel="stylesheet" href="{% static 'font-awesome/css/font-awesome.min.css' %}">
-    <link rel="stylesheet" href="{% static 'animate.css/animate.min.css' %}">
-    <link rel="stylesheet" href="{% static 'bootstrap-select/dist/css/bootstrap-select.min.css' %}">
+  <link rel="stylesheet" href="{% static 'scss/main.scss' %}">
+  <link rel="stylesheet" href="{% static 'font-awesome/css/font-awesome.min.css' %}">
+  <link rel="stylesheet" href="{% static 'animate.css/animate.min.css' %}">
+  <link rel="stylesheet" href="{% static 'bootstrap-select/dist/css/bootstrap-select.min.css' %}">
 
-    {% block extra_style %}
-    {% endblock %}
-
-  {% endcompress %}
+  {% block extra_style %}
+  {% endblock %}
 
 </head>
 <body>
@@ -59,18 +56,14 @@
   </footer>
 {% endblock %}
 
-{% compress js %}
+<script src="{% static 'jquery/dist/jquery.min.js' %}"></script>
+<script src="{% static 'bootstrap-sass/assets/javascripts/bootstrap.min.js' %}"></script>
+<script src="{% static 'noty/js/noty/packaged/jquery.noty.packaged.min.js' %}"></script>
+<script src="{% static 'bootstrap-select/dist/js/bootstrap-select.min.js' %}"></script>
+<script src="{% static 'js/main.js' %}"></script>
 
-  <script src="{% static 'jquery/dist/jquery.min.js' %}"></script>
-  <script src="{% static 'bootstrap-sass/assets/javascripts/bootstrap.min.js' %}"></script>
-  <script src="{% static 'noty/js/noty/packaged/jquery.noty.packaged.min.js' %}"></script>
-  <script src="{% static 'bootstrap-select/dist/js/bootstrap-select.min.js' %}"></script>
-  <script src="{% static 'js/main.js' %}"></script>
-
-  {% block extra_js %}
-  {% endblock %}
-
-{% endcompress %}
+{% block extra_js %}
+{% endblock %}
 
 {% block messages %}
   {# noty needs jquery to be loaded #}
