@@ -26,6 +26,12 @@ if [ ${TESTS} == 'all' ] || [ ${TESTS} == 'unit' ]; then
 fi
 
 if [ ${TESTS} == 'all' ] || [ ${TESTS} == 'accept' ]; then
+
+    if [ ! -d "static/dist" ]; then
+        printf "\n\nYou need to run 'npm run dev' or 'npm run build' before running acceptance tests"
+        exit 1
+    fi
+
     # Doesn't really make sense to run coverage for behave. Those tests are just meant to check basic usability
     print_step "Running acceptance tests"
     python manage.py behave

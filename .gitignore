@@ -90,4 +90,6 @@ node_modules/
 
 *.retry
 
-postgresql/
+static/dist/
+
+webpack-stats.json
