@@ -84,9 +84,7 @@ INSTALLED_APPS = [
 
     # 3rd party apps
     'debug_toolbar',
-    'djangobower',
     'django_extensions',
-    'compressor',
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
@@ -95,6 +93,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'django_filters',
+    'webpack_loader',
 
     # Custom apps
     'home.apps.HomeConfig',
@@ -341,37 +340,20 @@ STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'dist')
 # Location to find extra static files (Django automatically looks in static/ subdirectories of all apps)
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
-STATICFILES_FINDERS = ['django.contrib.staticfiles.finders.FileSystemFinder',
-                       'django.contrib.staticfiles.finders.AppDirectoriesFinder',
-                       'djangobower.finders.BowerFinder',
-                       'compressor.finders.CompressorFinder'
-                       ]
+STATICFILES_FINDERS = [
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+]
+
+WEBPACK_LOADER = {
+    'DEFAULT': {
+        'BUNDLE_DIR_NAME': 'dist/',  # must end with slash
+        'STATS_FILE': os.path.join(BASE_DIR, 'webpack-stats.json'),
+    }
+}
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-
-# Django bower related
-BOWER_COMPONENTS_ROOT = os.path.join(BASE_DIR, '', 'static')
-BOWER_PATH = os.path.join(NODE_MODULES_ROOT, 'bower/bin/bower')
-BOWER_INSTALLED_APPS = [
-    'animate.css',
-    'bootstrap-sass',
-    'font-awesome',
-    'jquery#2.2.4',
-    'noty',
-    'bootstrap-select'
-]
-
-# Django compressor
-COMPRESS_PRECOMPILERS = [('text/scss', 'sassc {infile} {outfile} -p 8')]
-COMPRESS_CSS_FILTERS = ['compressor.filters.css_default.CssAbsoluteFilter',
-                        'compressor.filters.yuglify.YUglifyCSSFilter',
-                        'django_compressor_autoprefixer.AutoprefixerFilter']
-COMPRESS_YUGLIFY_BINARY = os.path.join(NODE_MODULES_ROOT, 'yuglify/bin/yuglify')
-COMPRESS_JS_FILTERS = ['compressor.filters.yuglify.YUglifyJSFilter']
-COMPRESS_AUTOPREFIXER_BINARY = os.path.join(NODE_MODULES_ROOT, 'postcss-cli/bin/postcss')
-COMPRESS_AUTOPREFIXER_ARGS = '--use autoprefixer -c {}'.format(os.path.join(BASE_DIR, 'post_css_config.json'))
-COMPRESS_OFFLINE = True
 
 # Django all auth
 ACCOUNT_AUTHENTICATION_METHOD = 'email'

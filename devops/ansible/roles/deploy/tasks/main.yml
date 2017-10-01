@@ -36,17 +36,16 @@
         production: yes
         state: present
 
+    - name: Run production webpack build
+      command: npm run build
+      args:
+        chdir: "{{ ongoing_deployment }}"
+
     # TODO Ignore certain directories? -i flag
     - name: Collect static
       django_manage:
         app_path: "{{ ongoing_deployment }}"
         command: "collectstatic --noinput"
-        virtualenv: "{{ venv_path }}"
-
-    - name: Compress static assets
-      django_manage:
-        app_path: "{{ ongoing_deployment }}"
-        command: "compress"
         virtualenv: "{{ venv_path }}"
 
     - name: Run migrations

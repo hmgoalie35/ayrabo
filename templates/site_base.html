@@ -1,4 +1,4 @@
-{% load static compress %}
+{% load webpack_static from webpack_loader %}
 
 <!DOCTYPE html>
 <html lang="{{ LANGUAGE_CODE }}">
@@ -10,18 +10,15 @@
   <!--[if lt IE 9]>
       <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
       <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-    <![endif]-->
+  <![endif]-->
 
-  {% compress css %}
-    <link rel="stylesheet" type="text/scss" href="{% static 'scss/main.scss' %}">
-    <link rel="stylesheet" href="{% static 'font-awesome/css/font-awesome.min.css' %}">
-    <link rel="stylesheet" href="{% static 'animate.css/animate.min.css' %}">
-    <link rel="stylesheet" href="{% static 'bootstrap-select/dist/css/bootstrap-select.min.css' %}">
+  <link rel="stylesheet" href="{% webpack_static 'css/main.css' %}">
+  <link rel="stylesheet" href="{% webpack_static 'vendor/font-awesome/css/font-awesome.min.css' %}">
+  <link rel="stylesheet" href="{% webpack_static 'vendor/animate.min.css' %}">
+  <link rel="stylesheet" href="{% webpack_static 'vendor/bootstrap-select/css/bootstrap-select.min.css' %}">
 
-    {% block extra_style %}
-    {% endblock %}
-
-  {% endcompress %}
+  {% block extra_style %}
+  {% endblock %}
 
 </head>
 <body>
@@ -59,18 +56,14 @@
   </footer>
 {% endblock %}
 
-{% compress js %}
+<script src="{% webpack_static 'vendor/jquery.min.js' %}"></script>
+<script src="{% webpack_static 'vendor/bootstrap.min.js' %}"></script>
+<script src="{% webpack_static 'vendor/jquery.noty.packaged.min.js' %}"></script>
+<script src="{% webpack_static 'vendor/bootstrap-select/js/bootstrap-select.min.js' %}"></script>
+<script src="{% webpack_static 'js/main.js' %}"></script>
 
-  <script src="{% static 'jquery/dist/jquery.min.js' %}"></script>
-  <script src="{% static 'bootstrap-sass/assets/javascripts/bootstrap.min.js' %}"></script>
-  <script src="{% static 'noty/js/noty/packaged/jquery.noty.packaged.min.js' %}"></script>
-  <script src="{% static 'bootstrap-select/dist/js/bootstrap-select.min.js' %}"></script>
-  <script src="{% static 'js/main.js' %}"></script>
-
-  {% block extra_js %}
-  {% endblock %}
-
-{% endcompress %}
+{% block extra_js %}
+{% endblock %}
 
 {% block messages %}
   {# noty needs jquery to be loaded #}

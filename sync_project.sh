@@ -29,6 +29,9 @@ pip install -r requirements.txt
 print_step "Installing npm packages"
 npm install
 
+print_step "Starting postgres service"
+docker-compose -f devops/docker/docker-compose.yml up --build -d && sleep 5
+
 print_step "Running migrations"
 python manage.py migrate
 
@@ -36,4 +39,5 @@ python manage.py migrate
 #print_step "Applying fixtures"
 #python manage.py loaddata dev_fixtures
 
+printf "\nMake sure to run the webpack watcher to compile your static assets: 'npm run dev'\n"
 print_step "Done"
