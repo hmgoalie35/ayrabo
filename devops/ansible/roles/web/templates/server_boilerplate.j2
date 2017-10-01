@@ -46,7 +46,7 @@ server {
     keepalive_timeout 70;
 
     location /static/ {
-        alias {{ current_symlink }}/dist/;
+        alias {{ current_symlink }}/build/;
      }
 
     location /media/ {

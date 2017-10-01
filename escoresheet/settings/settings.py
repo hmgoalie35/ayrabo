@@ -337,7 +337,7 @@ EMAIL_SSL_KEYFILE = None
 # The actual uri staticfiles are served from (localhost:8000/static/)
 STATIC_URL = '/static/'
 # The folder on the filesystem staticfiles are stored
-STATIC_ROOT = os.path.join(BASE_DIR, 'dist')
+STATIC_ROOT = os.path.join(BASE_DIR, 'build')
 # Location to find extra static files (Django automatically looks in static/ subdirectories of all apps)
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 STATICFILES_FINDERS = [
