@@ -95,7 +95,7 @@ class Devops(object):
         print('Stderr: {}'.format(result.stderr))
 
         time_difference = end_time - start_time
-        print('Took: {}'.format(time_difference))
+        print('\nTook: {}'.format(time_difference))
 
 
 if __name__ == '__main__':
