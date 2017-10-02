@@ -57,11 +57,13 @@ coverage.xml
 
 # Django stuff:
 *.log
-/dist/
+build/
+static/dist/
+webpack-stats.json
+
 media/*
 !media/.gitkeep
 local_settings.py
-static/CACHE/
 
 # Sphinx documentation
 docs/_build/
@@ -89,7 +91,3 @@ ENV/
 node_modules/
 
 *.retry
-
-static/dist/
-
-webpack-stats.json

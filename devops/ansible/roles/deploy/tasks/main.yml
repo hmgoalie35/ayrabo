@@ -41,11 +41,10 @@
       args:
         chdir: "{{ ongoing_deployment }}"
 
-    # TODO Ignore certain directories? -i flag
     - name: Collect static
       django_manage:
         app_path: "{{ ongoing_deployment }}"
-        command: "collectstatic --noinput"
+        command: "collectstatic --noinput -i scss"
         virtualenv: "{{ venv_path }}"
 
     - name: Run migrations

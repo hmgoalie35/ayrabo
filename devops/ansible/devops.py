@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 
 import argparse
+import datetime
 import os
 import subprocess
 
@@ -85,11 +86,16 @@ class Devops(object):
         command = self._build_command()
 
         print('Running "{}"\n'.format(' '.join(command)))
+        start_time = datetime.datetime.now()
         result = subprocess.run(command)
+        end_time = datetime.datetime.now()
         print('Return Code: {}'.format(result.returncode))
         print('Stdout: {}'.format(result.stdout))
         print('-' * 15)
         print('Stderr: {}'.format(result.stderr))
+
+        time_difference = end_time - start_time
+        print('\nTook: {}'.format(time_difference))
 
 
 if __name__ == '__main__':
