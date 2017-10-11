@@ -3,7 +3,7 @@ import random
 
 import factory
 from django.conf import settings
-from factory import fuzzy, django
+from factory import django, Faker
 
 from userprofiles.models import UserProfile
 
@@ -22,10 +22,10 @@ class UserProfileFactory(django.DjangoModelFactory):
         model = UserProfile
 
     user = factory.SubFactory('accounts.tests.factories.UserFactory.UserFactory', userprofile=None)
-    gender = fuzzy.FuzzyChoice(['male', 'female'])
+    gender = Faker('random_element', elements=['male', 'female'])
     birthday = factory.LazyFunction(generate_birthday)
     height = factory.LazyFunction(generate_height)
-    weight = fuzzy.FuzzyInteger(UserProfile.MIN_WEIGHT, UserProfile.MAX_WEIGHT)
+    weight = Faker('random_int', min=UserProfile.MIN_WEIGHT, max=UserProfile.MAX_WEIGHT)
     # see django.conf.global_settings.LANGUAGES for all available languages
     language = 'en'
     # see COMMON_TIMEZONES in the settings file for all available timezones

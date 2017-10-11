@@ -1,5 +1,5 @@
 import factory
-from factory import django, fuzzy
+from factory import django, Faker
 
 from accounts.tests import UserFactory
 from coaches.models import Coach
@@ -11,6 +11,6 @@ class CoachFactory(django.DjangoModelFactory):
         model = Coach
 
     user = factory.SubFactory(UserFactory)
-    position = fuzzy.FuzzyChoice([position[0] for position in Coach.POSITIONS])
+    position = Faker('random_element', elements=[position[0] for position in Coach.POSITIONS])
     team = factory.SubFactory(TeamFactory)
     is_active = True

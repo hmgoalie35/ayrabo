@@ -1,5 +1,5 @@
 import factory
-from factory import django, fuzzy, post_generation
+from factory import django, Faker, post_generation
 
 from divisions.models import Division
 from leagues.tests import LeagueFactory
@@ -10,7 +10,7 @@ class DivisionFactory(django.DjangoModelFactory):
         model = Division
         django_get_or_create = ('name',)
 
-    name = fuzzy.FuzzyText(length=8, suffix=' Division')
+    name = Faker('text', max_nb_chars=8)
     league = factory.SubFactory(LeagueFactory)
 
     @post_generation
