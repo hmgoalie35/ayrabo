@@ -3,12 +3,13 @@ behave==1.2.5
 behave-django==0.5.0
 coreapi==2.3.1
 coverage==4.4.1
-Django==1.11.5
+Django==1.11.6
 django-allauth==0.33.0
 django-crispy-forms==1.6.1
 django-debug-toolbar==1.8
 django-extensions==1.9.1
 django-filter==1.0.4
+django-localflavor==1.5.2
 django-webpack-loader==0.5.0
 djangorestframework==3.6.4
 factory-boy==2.9.2
