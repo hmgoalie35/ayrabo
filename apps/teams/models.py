@@ -2,6 +2,7 @@ from django.db import models
 from django.utils.text import slugify
 
 from divisions.models import Division
+from escoresheet.utils.model_fields import WebsiteField
 
 
 class Team(models.Model):
@@ -10,8 +11,7 @@ class Team(models.Model):
     """
     name = models.CharField(max_length=255, verbose_name='Name')
     slug = models.SlugField(verbose_name='Slug')
-    website = models.URLField(max_length=255, verbose_name='Website', null=True, blank=True,
-                              help_text='You must include http:// or https://')
+    website = WebsiteField()
     division = models.ForeignKey(Division)
     created = models.DateTimeField(auto_now_add=True, verbose_name='Created')
 

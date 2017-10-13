@@ -1,10 +1,12 @@
 import re
 
-from django.core.validators import URLValidator, RegexValidator
+from django.core.validators import RegexValidator
 from django.db import models
 from django.utils.text import slugify
 from localflavor.us import models as us_models
 from localflavor.us.us_states import US_STATES
+
+from escoresheet.utils.model_fields import WebsiteField
 
 VALID_SCHEMES = ['http', 'https']
 PHONE_NUMBER_REGEX = re.compile(r'^\(?[2-9]\d{2}\)?-\d{3}-\d{4}$')
@@ -23,8 +25,7 @@ class Location(models.Model):
                                     validators=[
                                         RegexValidator(regex=PHONE_NUMBER_REGEX, message='Enter a valid phone number.',
                                                        code='invalid')])
-    website = models.CharField(max_length=255, blank=True, validators=[URLValidator(schemes=VALID_SCHEMES)],
-                               verbose_name='Website')
+    website = WebsiteField()
     created = models.DateTimeField(auto_now_add=True, verbose_name='Created')
     updated = models.DateTimeField(auto_now=True, verbose_name='Updated')
 
