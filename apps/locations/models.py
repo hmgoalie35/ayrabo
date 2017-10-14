@@ -8,7 +8,6 @@ from localflavor.us.us_states import US_STATES
 
 from escoresheet.utils.model_fields import WebsiteField
 
-VALID_SCHEMES = ['http', 'https']
 PHONE_NUMBER_REGEX = re.compile(r'^\(?[2-9]\d{2}\)?-\d{3}-\d{4}$')
 
 
@@ -37,3 +36,22 @@ class Location(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class TeamLocation(models.Model):
+    """
+    Used as a through model for a Team's relation to Location (m2m)
+    """
+    team = models.ForeignKey('teams.Team')
+    location = models.ForeignKey(Location)
+    primary = models.BooleanField(default=False, verbose_name='Primary Location')
+    created = models.DateTimeField(auto_now_add=True, verbose_name='Created')
+    updated = models.DateTimeField(auto_now=True, verbose_name='Updated')
+
+    class Meta:
+        unique_together = (
+            ('team', 'location')
+        )
+
+    def __str__(self):
+        return '{}: {}'.format(self.team.name, self.location.name)

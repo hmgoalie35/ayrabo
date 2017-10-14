@@ -13,6 +13,8 @@ class Team(models.Model):
     slug = models.SlugField(verbose_name='Slug')
     website = WebsiteField()
     division = models.ForeignKey(Division)
+    locations = models.ManyToManyField('locations.Location', through='locations.TeamLocation', verbose_name='Locations',
+                                       related_name='teams')
     created = models.DateTimeField(auto_now_add=True, verbose_name='Created')
 
     """
@@ -20,7 +22,6 @@ class Team(models.Model):
     provide all of this info and more. However, in the future it might be useful to add fields like below to this model
     or even create a TeamInfo model
 
-    rink - ManyToManyField to a new model Rink which stores various info
     president - CharField
     governor - CharField, should be optional?
     office_address - CharField

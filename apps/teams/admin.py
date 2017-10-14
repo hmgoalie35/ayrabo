@@ -1,7 +1,12 @@
 from django.contrib import admin
-from django.utils.html import format_html
 
+from escoresheet.utils.admin import format_website_link
+from locations.models import TeamLocation
 from .models import Team
+
+
+class TeamLocationInline(admin.TabularInline):
+    model = TeamLocation
 
 
 @admin.register(Team)
@@ -12,6 +17,8 @@ class TeamAdmin(admin.ModelAdmin):
     #                'division__league__sport__name']
     search_fields = ['name', 'division__name', 'division__league__abbreviated_name', 'division__league__sport__name']
     prepopulated_fields = {'slug': ('name',)}
+    inlines = [TeamLocationInline]
+    exclude = ['locations']
 
     # README: Do not add in an inline for Season.teams.through. With inlines, there is no way to validate the season's
     # division and the team's division. So a staff member could accidentally add a team for basketball to a season
@@ -19,7 +26,7 @@ class TeamAdmin(admin.ModelAdmin):
     # the admin in overkill.
 
     def website_link(self, obj):
-        return format_html('<a target="_blank" href="{url}">{url}</a>', url=obj.website) if obj.website else None
+        return format_website_link(obj)
 
     website_link.short_description = 'Website Link'
 

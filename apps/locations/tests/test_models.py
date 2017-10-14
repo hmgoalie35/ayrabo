@@ -2,6 +2,8 @@ from django.core.exceptions import ValidationError
 from django.db import IntegrityError
 
 from escoresheet.utils.testing import BaseTestCase
+from locations.tests import TeamLocationFactory
+from teams.tests import TeamFactory
 from . import LocationFactory
 
 
@@ -36,3 +38,18 @@ class LocationModelTests(BaseTestCase):
     def test_to_string(self):
         location = LocationFactory(name='Nassau Veterans Memorial Coliseum')
         self.assertEqual(str(location), 'Nassau Veterans Memorial Coliseum')
+
+
+class TeamLocationModelTests(BaseTestCase):
+    def test_unique_together_team_location(self):
+        team = TeamFactory(name='New York Islanders')
+        location = LocationFactory(name='Nassau Veterans Memorial Coliseum')
+        TeamLocationFactory(team=team, location=location)
+        with self.assertRaises(IntegrityError):
+            TeamLocationFactory(team=team, location=location, primary=True)
+
+    def test_to_string(self):
+        team = TeamFactory(name='New York Islanders')
+        location = LocationFactory(name='Nassau Veterans Memorial Coliseum')
+        tl = TeamLocationFactory(team=team, location=location)
+        self.assertEqual(str(tl), 'New York Islanders: Nassau Veterans Memorial Coliseum')
