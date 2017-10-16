@@ -1,3 +1,7 @@
+import os
+
+from django.conf import settings
+from django.core.files.uploadedfile import SimpleUploadedFile
 from django.urls import reverse
 
 from accounts.tests import UserFactory
@@ -77,3 +81,42 @@ class BaseCreateRelatedObjectsViewTests(BaseTestCase):
         self.client.login(email=user.email, password=self.password)
         response = self.client.post(self._format_url('players', pk=self.sr.id), data={}, follow=True)
         self.assertEqual(response.status_code, 404)
+
+
+# Am testing this base class via BulkUploadLocationsView. Tests to see if objects are actually created happen in the
+# respective subclasses.
+class CsvBulkUploadViewTests(BaseTestCase):
+    def setUp(self):
+        self.url = reverse('bulk_upload_locations')
+        self.email = 'user@example.com'
+        self.password = 'myweakpassword'
+        self.test_file_path = os.path.join(settings.BASE_DIR, 'static', 'csv_examples')
+        self.user = UserFactory(email=self.email, password=self.password, is_staff=True)
+
+    def test_anonymous_user(self):
+        response = self.client.get(self.url)
+        result_url = '{}?next={}'.format(reverse('admin:login'), self.url)
+        self.assertRedirects(response, result_url)
+
+    def test_staff_member_required(self):
+        email = 'user1@example.com'
+        password = 'myweakpassword'
+        UserFactory(email=email, password=password, is_staff=False)
+        self.client.login(email=email, password=password)
+
+        response = self.client.get(self.url)
+        result_url = '{}?next={}'.format(reverse('admin:login'), self.url)
+        self.assertRedirects(response, result_url)
+
+    def test_get(self):
+        self.client.login(email=self.email, password=self.password)
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'common/admin_bulk_upload.html')
+        self.assertIsNotNone(response.context['form'])
+
+    def test_post(self):
+        self.client.login(email=self.email, password=self.password)
+        f = SimpleUploadedFile('test.csv', b'hello world')
+        response = self.client.post(self.url, {'file': f})
+        self.assertRedirects(response, self.url)

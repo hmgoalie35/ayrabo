@@ -14,14 +14,14 @@
     * Outputs all data in the db to dev_fixtures.json file
     * Add more apps to the command as new apps are added
 
-* The bootstrap-chosen bower package requires bootstrap's sass because it references bootstrap less variables. My solution is to just compile it myself with sass using the bootstrap-sass repo. Use the following commands
-    * Make sure bootstrap-chosen is in the static folder, if it isn't add it to BOWER_INSTALLED_APPS and run `./manage.py bower install`
-    * `cd static/bootstrap-chosen/`
-    * Run `git clone --depth=1 https://github.com/twbs/bootstrap-sass`
-    * Add `@import "bootstrap-sass/assets/stylesheets/_bootstrap.scss";` right above the first import in bootstrap-chosen.scss. This makes all of the bootstrap variables available to the bootstrap-chosen scss.
-    * Run `sassc bootstrap-chosen.scss bootstrap-chosen.css` and remove the bootstrap css (which is from lines 1 - 5816)
-    * Delete the bootstrap-sass repo
-    
-    Turns out the chosen-bootstrap bower package (completely different from bootstrap-chosen above) is much better
-
 * `./manage.py reset_db && ./manage.py migrate && ./manage.py loaddata dev_fixtures`
+
+### Factory Boy/Faker/Fuzzy
+* `from factory import Faker`
+    * This is a wrapper around the actual faker library
+    * Use as follows: `name = Faker('last_name_male')`, the arg to the constructor is the name of a provider. https://faker.readthedocs.io/en/master/providers.html
+* To use the faker library standalone (generate fixture data, etc.)
+    * `from faker import Faker`, `fake = Faker()`, `faker.last_name_male()`
+* The fuzzy module from factory-boy doesn't seem to be deprecated as of yet (10/10/17).
+    * Can still use it, but really no need. The faker library has almost the same functionality. The only thing missing is specifying a suffix on randomly generated text. (Division)
+    * Can always fall back to using factory boy's lazy functions if need be.

@@ -19,6 +19,9 @@ if [ "$1" == "--hard" ]; then
     print_step "Removing node_modules/ and venv/ folders"
     rm -rf node_modules/
     rm -rf venv/
+fi
+
+if [ ! -e venv ]; then
     virtualenv venv -p `which python3.5`
 fi
 

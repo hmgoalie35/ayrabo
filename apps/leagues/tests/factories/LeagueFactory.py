@@ -1,7 +1,6 @@
 import random
 
 import factory
-import factory.fuzzy
 from factory import django, post_generation
 
 from leagues.models import League

@@ -1,0 +1,70 @@
+{% extends 'admin/base_site.html' %}
+{% load crispy_forms_tags static %}
+{% block extrastyle %}
+  {{ block.super }}
+  <style>
+    .text-center {
+      text-align: center;
+    }
+
+    .list {
+      padding: 0;
+    }
+
+    .list li {
+      list-style: none;
+    }
+
+    .has-error {
+      color: red;
+    }
+  </style>
+{% endblock %}
+
+{% block title %}Bulk Upload {{ model_cls }}s | {{ site_title|default:_('Django site admin') }}{% endblock %}
+
+{% block breadcrumbs %}
+  <div class="breadcrumbs">
+    <a href="{% url 'admin:index' %}">Home</a>
+    /
+    <a href="{{ url }}">Back to {{ model_cls|lower }} list display</a>
+  </div>
+{% endblock %}
+
+{% block content %}
+  <div class="text-center">
+    <h1>This page is staff only</h1>
+    <h3>Choose a file that contains {{ model_cls|lower }}s you want to bulk upload</h3>
+
+    {% if formset and formset.errors %}
+      <br>
+      <p class="has-error">
+        Encountered {{ formset.total_error_count }} error{{ formset.total_error_count|pluralize }} while
+        parsing {{ file.name }}
+      </p>
+      <ul class="list text-center">
+        {% for form_errors in formset.errors %}
+          {% if form_errors %}
+            <li>
+              <div>Row {{ forloop.counter }} errors:</div>
+              {% for field, field_errors in form_errors.items %}
+                <div>
+                  <strong>{{ field }}</strong>: {{ field_errors|join:', ' }}
+                </div>
+              {% endfor %}
+            </li>
+          {% endif %}
+          <br>
+        {% endfor %}
+      </ul>
+    {% endif %}
+
+    <form action="" method="post" enctype="multipart/form-data">
+      <br>
+      {% csrf_token %}
+      {{ form | crispy }}
+      <br>
+      <input id="bulk_upload_submit_btn" type="submit" value="Upload">
+    </form>
+  </div>
+{% endblock %}

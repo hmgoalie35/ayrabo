@@ -47,7 +47,7 @@ class BaseTestCase(TestCase):
         assert isinstance(msg, str)
         messages = [msg.message for msg in response.context['messages']]
         if msg not in messages:
-            self.fail(msg='{} not found in messages'.format(msg))
+            self.fail(msg='{} not found in {}'.format(msg, messages))
 
     def assertNoMessage(self, response, msg):
         assert isinstance(msg, str)
