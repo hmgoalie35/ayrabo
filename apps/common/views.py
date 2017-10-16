@@ -1,11 +1,17 @@
+import csv
+from io import TextIOWrapper
+
 from django import forms
 from django.contrib import messages
+from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render, get_object_or_404, Http404, redirect
 from django.urls import reverse
+from django.utils.decorators import method_decorator
 from django.views import generic
 from django.views.generic.base import ContextMixin
 
+from common.forms import CsvBulkUploadForm
 from escoresheet.utils import handle_sport_not_configured
 from escoresheet.utils.exceptions import SportNotConfiguredException
 from leagues.models import League
@@ -154,3 +160,59 @@ class BaseCreateRelatedObjectsView(LoginRequiredMixin, ContextMixin, generic.Vie
         if self.request.session.pop('was_role_added', False):
             sport_registration.remove_role(role)
         return render(self.request, self.get_template_name(), context)
+
+
+class CsvBulkUploadView(LoginRequiredMixin, generic.FormView):
+    form_class = CsvBulkUploadForm
+    template_name = 'common/admin_bulk_upload.html'
+    success_url = None
+    model = None
+    fields = None
+    model_form_class = None
+
+    @method_decorator(staff_member_required)
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_row_data(self, row, count):
+        data = {}
+        for key, value in row.items():
+            new_key = 'form-{}-{}'.format(count, key.strip())
+            data[new_key] = value.strip()
+        return data
+
+    def parse_data(self, uploaded_file):
+        csv_file = TextIOWrapper(uploaded_file)
+        reader = csv.DictReader(csv_file)
+        data = {}
+        count = 0
+        for row in reader:
+            row_data = self.get_row_data(row, count)
+            data.update(row_data)
+            count += 1
+        data['form-TOTAL_FORMS'] = count
+        data['form-INITIAL_FORMS'] = 0
+        return data
+
+    def get_formset_class(self):
+        kwargs = {}
+        if self.fields:
+            kwargs['fields'] = self.fields
+        if self.model_form_class:
+            kwargs['form'] = self.model_form_class
+        return forms.modelformset_factory(self.model, **kwargs)
+
+    def form_valid(self, form):
+        uploaded_file = form.cleaned_data.get('file')
+        data = self.parse_data(uploaded_file)
+        FormSetClass = self.get_formset_class()
+        formset = FormSetClass(data)
+        if not formset.is_valid():
+            context = self.get_context_data()
+            context['formset'] = formset
+            context['file'] = uploaded_file
+            return render(self.request, self.template_name, context)
+        instances = formset.save()
+        msg = 'Successfully created {} {} object(s)'.format(len(instances), self.model.__name__.lower())
+        messages.success(self.request, msg)
+        return super().form_valid(form)

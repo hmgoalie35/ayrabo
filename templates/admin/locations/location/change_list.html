@@ -1,0 +1,14 @@
+{% extends 'admin/change_list.html' %}
+{% load static %}
+
+{% block object-tools-items %}
+
+  {{ block.super }}
+
+  <li>
+    <a id="bulk_upload_btn" href="{% url 'bulk_upload_locations' %}" class="addlink">Bulk Upload Locations</a>&nbsp;
+    <a id="download_example_csv_btn" href="{% static 'csv_examples/bulk_upload_locations_example.csv' %}" class="addLink"
+       style="margin-left: 5px;">Download Example .csv</a>
+  </li>
+
+{% endblock %}
