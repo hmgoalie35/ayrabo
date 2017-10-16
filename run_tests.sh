@@ -18,6 +18,9 @@ if [ -e venv ]; then
     source venv/bin/activate
 fi
 
+print_step "Running flake8"
+flake8
+
 if [ ${TESTS} == 'all' ] || [ ${TESTS} == 'unit' ]; then
     print_step "Running unit/integration tests"
     coverage erase
