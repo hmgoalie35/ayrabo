@@ -24,6 +24,7 @@ This project uses pre-commit, whenever you commit files flake8 and some other co
 2. Checkout the latest `dev` branch.
 3. Signup for mailtrap https://mailtrap.io/. Emails sent during development will go to mailtrap.
 4. Make sure `python python-dev python-pip libssl-dev libfontconfig` are installed.
+    * If on osx install `brew install libmagic`
 5. Install ansible: `sudo pip install ansible`
 6. Run `cp devops/ansible/roles/deploy/templates/.env.example.j2 .env`.
     * Fill in the email values with your mailtrap settings.
