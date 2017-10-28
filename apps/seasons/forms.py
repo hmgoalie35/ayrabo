@@ -86,7 +86,7 @@ class HockeySeasonRosterCreateForm(forms.ModelForm):
 
     class Meta:
         model = HockeySeasonRoster
-        fields = ['team', 'season', 'players', 'default']
+        fields = ['team', 'season', 'players', 'name', 'default']
 
 
 class HockeySeasonRosterUpdateForm(forms.ModelForm):
@@ -98,6 +98,7 @@ class HockeySeasonRosterUpdateForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         team = kwargs.pop('team', None)
         super(HockeySeasonRosterUpdateForm, self).__init__(*args, **kwargs)
+        set_fields_disabled(['season'], self.fields)
         if team:
             self.fields['players'].queryset = HockeyPlayer.objects.active().filter(team=team).select_related('user')
 
@@ -105,4 +106,4 @@ class HockeySeasonRosterUpdateForm(forms.ModelForm):
 
     class Meta:
         model = HockeySeasonRoster
-        fields = ['players', 'default']
+        fields = ['season', 'players', 'name', 'default']

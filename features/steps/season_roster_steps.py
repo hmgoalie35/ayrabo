@@ -3,6 +3,7 @@ import datetime
 from behave import *
 
 from accounts.tests import UserFactory
+from escoresheet.utils.testing import get_user
 from players.tests import HockeyPlayerFactory
 from seasons.models import Season
 from seasons.tests import HockeySeasonRosterFactory
@@ -33,7 +34,17 @@ def step_impl(context, sport_name):
 
         team = Team.objects.get(name=data.get('team'))
         players = data.get('players', None)
-        factory_kwargs = {'season': season, 'team': team, 'default': data.get('default', False)}
+        created_by = data.get('created_by', None)
+        created_by = get_user(created_by) if created_by else None
+        factory_kwargs = {
+            'season': season,
+            'team': team,
+            'default': data.get('default', False),
+            'name': data.get('name', '')
+        }
+        if created_by:
+            factory_kwargs.update({'created_by': created_by})
+
         if players:
             players = players.split(',')
             player_objs = []

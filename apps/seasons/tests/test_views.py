@@ -148,7 +148,8 @@ class SeasonRosterCreateViewTests(BaseTestCase):
                 follow=True)
         self.assertHasMessage(response, 'Season roster created for {team}.'.format(team=self.icecats))
         self.assertRedirects(response, reverse('home'))
-        self.assertEqual(HockeySeasonRoster.objects.count(), 1)
+        roster = HockeySeasonRoster.objects.first()
+        self.assertEqual(roster.created_by.id, self.user.id)
 
     def test_post_invalid_hockeyseasonroster_form_data(self):
         response = self.client.post(
@@ -166,6 +167,14 @@ class SeasonRosterCreateViewTests(BaseTestCase):
                                     data=post_data)
         self.assertFormError(response, 'form', 'default',
                              'A default season roster for this team and season already exists.')
+
+    def test_duplicate_name_for_season_and_team(self):
+        HockeySeasonRosterFactory(season=self.liahl_season, team=self.icecats, name='Main Squad')
+        HockeySeasonRosterFactory(season=self.liahl_season, team=self.icecats, name='')
+        player_ids = [player.pk for player in self.hockey_players]
+        post_data = {'season': [self.liahl_season.pk], 'players': player_ids, 'name': 'Main Squad'}
+        response = self.client.post(self.url, data=post_data)
+        self.assertFormError(response, 'form', 'name', 'Name must be unique for this team and season.')
 
 
 class SeasonRosterListViewTests(BaseTestCase):
@@ -268,7 +277,8 @@ class SeasonRosterUpdateViewTests(BaseTestCase):
         self.hockey_players = HockeyPlayerFactory.create_batch(5, sport=self.ice_hockey, team=self.icecats)
         self.hockey_player_ids = [player.pk for player in self.hockey_players]
         self.season_roster = HockeySeasonRosterFactory(season=self.liahl_season, team=self.icecats,
-                                                       players=self.hockey_player_ids)
+                                                       players=self.hockey_player_ids, name='Bash Brothers',
+                                                       created_by=self.user)
         self.url = self.season_roster.get_absolute_url()
         self.client.login(email=self.email, password=self.password)
 
@@ -368,10 +378,28 @@ class SeasonRosterUpdateViewTests(BaseTestCase):
         self.assertHasMessage(response, 'Season roster for {team} successfully updated.'.format(team=self.icecats))
         self.assertRedirects(response, reverse('teams:season_rosters:list', kwargs={'team_pk': self.icecats.pk}))
 
+    def test_post_update_different_user(self):
+        user = UserFactory(password=self.password)
+        hockey_sr = SportRegistrationFactory(user=user, sport=self.ice_hockey, is_complete=True, roles_mask=0)
+        hockey_sr.set_roles(['Manager'])
+        ManagerFactory(user=user, team=self.icecats)
+        self.client.logout()
+        self.client.login(email=user.email, password=self.password)
+        post_data = {
+            'players': self.hockey_player_ids,
+            'name': 'My Season Roster'
+        }
+        self.client.post(self.url, data=post_data)
+        roster = HockeySeasonRoster.objects.first()
+        # Make sure created_by doesn't get updated.
+        self.assertEqual(roster.created_by.id, self.user.id)
+        self.assertEqual(roster.name, 'My Season Roster')
+
     def test_post_valid_unchanged_form(self):
         post_data = {
             'players': self.hockey_player_ids,
-            'default': False
+            'default': False,
+            'name': 'Bash Brothers'
         }
         response = self.client.post(self.url, data=post_data, follow=True)
         self.assertNoMessage(response, 'Season roster for {team} successfully updated.'.format(team=self.icecats))
@@ -395,3 +423,10 @@ class SeasonRosterUpdateViewTests(BaseTestCase):
         response = self.client.post(self.url, data=post_data)
         self.assertFormError(response, 'form', 'default',
                              'A default season roster for this team and season already exists.')
+
+    def test_duplicate_name_for_season_and_team(self):
+        HockeySeasonRosterFactory(season=self.liahl_season, team=self.icecats, players=self.hockey_player_ids,
+                                  name='Main Squad')
+        post_data = {'name': 'Main Squad'}
+        response = self.client.post(self.url, data=post_data)
+        self.assertFormError(response, 'form', 'name', 'Name must be unique for this team and season.')
