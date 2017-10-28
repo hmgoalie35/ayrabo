@@ -5,7 +5,7 @@ from escoresheet.utils.testing import BaseTestCase
 from leagues.tests import LeagueFactory
 from players.tests import HockeyPlayerFactory
 from seasons.forms import HockeySeasonRosterCreateForm, HockeySeasonRosterUpdateForm
-from seasons.tests import SeasonFactory
+from seasons.tests import SeasonFactory, HockeySeasonRosterFactory
 from sports.tests import SportFactory
 from teams.tests import TeamFactory
 
@@ -80,3 +80,8 @@ class HockeySeasonRosterUpdateFormTests(BaseTestCase):
         players_field = form.fields['players']
         self.assertNotIn(hockeyplayer_different_team, players_field.queryset)
         self.assertNotIn(inactive_player, players_field.queryset)
+
+    def test_season_disabled(self):
+        form = self.form_cls(instance=HockeySeasonRosterFactory())
+        fields = form.fields
+        self.assertTrue(fields['season'].disabled)

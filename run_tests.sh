@@ -6,6 +6,12 @@ print_step () {
     printf "\n\n>>> $1\n\n"
 }
 
+print_status () {
+    # $2 is the color value from https://stackoverflow.com/questions/5947742/how-to-change-the-output-color-of-echo-in-linux
+    # $3 is the unicode value
+    echo -e "\033[0;$2m$1 \u$3\033[0m\n"
+}
+
 COVERAGE_MIN=94
 # Default to running all tests
 TESTS='all'
@@ -19,7 +25,13 @@ if [ -e venv ]; then
 fi
 
 print_step "Running flake8"
-flake8
+
+if [ "$(flake8)" == "0" ]; then
+    print_status "Success" "32" "2713"
+else
+    print_status "Failed" "31" "2717"
+    exit 1
+fi
 
 if [ ${TESTS} == 'all' ] || [ ${TESTS} == 'unit' ]; then
     print_step "Running unit/integration tests"

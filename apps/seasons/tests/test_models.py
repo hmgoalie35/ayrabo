@@ -177,6 +177,16 @@ class AbstractSeasonRosterModelTests(BaseTestCase):
                                                                    kwargs={'team_pk': season_roster.team.pk,
                                                                            'pk': season_roster.pk}))
 
+    def test_unique_name_season_and_team(self):
+        division = DivisionFactory()
+        team = TeamFactory(division=division)
+        season = SeasonFactory(league=division.league, teams=[team])
+        HockeySeasonRosterFactory(season=season, team=team, name='')
+        HockeySeasonRosterFactory(season=season, team=team, name='Main Squad')
+        msg = "{'name': ['Name must be unique for this team and season.']}"
+        with self.assertRaisesMessage(ValidationError, msg):
+            HockeySeasonRosterFactory(season=season, team=team, name='Main Squad')
+
 
 class HockeySeasonRosterModelTests(BaseTestCase):
     def setUp(self):

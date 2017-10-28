@@ -1,6 +1,7 @@
 import factory
 from factory import django, post_generation
 
+from accounts.tests import UserFactory
 from seasons.models import AbstractSeasonRoster, HockeySeasonRoster
 
 
@@ -12,6 +13,12 @@ class AbstractSeasonRosterFactory(django.DjangoModelFactory):
     season = factory.SubFactory('seasons.tests.SeasonFactory')
     team = factory.SubFactory('teams.tests.TeamFactory')
     default = False
+    name = factory.Sequence(lambda x: 'Season Roster {}'.format(x))
+    created_by = factory.SubFactory(UserFactory)
+
+    @post_generation
+    def full_clean(self, obj, extracted, **kwargs):
+        self.full_clean()
 
 
 class HockeySeasonRosterFactory(AbstractSeasonRosterFactory):
