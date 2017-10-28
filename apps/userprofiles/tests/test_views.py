@@ -4,7 +4,7 @@ from django.urls import reverse
 from accounts.tests import UserFactory
 from coaches.tests import CoachFactory
 from divisions.tests import DivisionFactory
-from escoresheet.utils.testing_utils import BaseTestCase
+from escoresheet.utils.testing import BaseTestCase
 from leagues.tests import LeagueFactory
 from managers.tests import ManagerFactory
 from players.tests import HockeyPlayerFactory
@@ -15,7 +15,7 @@ from userprofiles.models import UserProfile
 from .factories.UserProfileFactory import UserProfileFactory
 
 
-class CreateUserProfileViewTests(BaseTestCase):
+class UserProfileCreateViewTests(BaseTestCase):
     def setUp(self):
         self.email = 'user@example.com'
         self.password = 'myweakpassword'
@@ -76,14 +76,16 @@ class CreateUserProfileViewTests(BaseTestCase):
 
     # Invalid POST data
 
-    def test_no_height_weight_gender(self):
+    def test_no_height_weight_gender_birthday(self):
         self.post_data.pop('gender')
         self.post_data.pop('height')
         self.post_data.pop('weight')
+        self.post_data.pop('birthday')
         response = self.client.post(reverse('account_complete_registration'), data=self.post_data, follow=True)
         self.assertFormError(response, 'form', 'gender', 'This field is required.')
         self.assertFormError(response, 'form', 'height', 'This field is required.')
         self.assertFormError(response, 'form', 'weight', 'This field is required.')
+        self.assertFormError(response, 'form', 'birthday', 'This field is required.')
 
     def test_invalid_height_format(self):
         invalid_heights = ['5 7', '5 7\"', '5\' 7']
@@ -107,7 +109,7 @@ class CreateUserProfileViewTests(BaseTestCase):
             self.assertFormError(response, 'form', 'weight', 'Enter a whole number.')
 
 
-class UpdateUserProfileViewTests(BaseTestCase):
+class UserProfileUpdateViewTests(BaseTestCase):
     def setUp(self):
         self.email = 'user@example.com'
         self.password = 'myweakpassword'

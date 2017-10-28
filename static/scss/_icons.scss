@@ -1,0 +1,29 @@
+// A place for custom fa icon styling and any icon definitions.
+
+.fa-trash-red {
+  cursor: pointer;
+  color: indianred;
+  &:hover {
+    color: darkred;
+  }
+}
+
+.fa-check-green {
+  color: green;
+}
+
+.fa-close-red {
+  color: red;
+}
+
+.fa-success {
+  @extend .text-success;
+}
+
+.fa-primary {
+  @extend .text-primary;
+}
+
+.fa-danger {
+  @extend .text-danger;
+}

@@ -11,7 +11,7 @@ from sports.models import SportRegistration
 from . import forms
 
 
-class CreateCoachesView(BaseCreateRelatedObjectsView):
+class CoachesCreateView(BaseCreateRelatedObjectsView):
     def get_formset_prefix(self):
         return 'coaches'
 
@@ -34,7 +34,7 @@ class CreateCoachesView(BaseCreateRelatedObjectsView):
         return 'Coach'
 
 
-class UpdateCoachView(LoginRequiredMixin, base.ContextMixin, generic.View):
+class CoachesUpdateView(LoginRequiredMixin, base.ContextMixin, generic.View):
     template_name = 'coaches/coaches_update.html'
 
     def _get_sport_registration(self):
@@ -54,7 +54,7 @@ class UpdateCoachView(LoginRequiredMixin, base.ContextMixin, generic.View):
 
         context['sport_registration'] = sport_registration
         context['coach'] = coach
-        context['form'] = forms.UpdateCoachForm(self.request.POST or None, instance=coach)
+        context['form'] = forms.CoachUpdateForm(self.request.POST or None, instance=coach)
         return context
 
     def get(self, request, *args, **kwargs):

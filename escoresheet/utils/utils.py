@@ -1,6 +1,7 @@
 """
 A module to store useful helper functions used throughout the code base
 """
+from django.conf import settings
 from django.core import mail
 from django.shortcuts import render
 
@@ -48,11 +49,12 @@ def email_admins_sport_not_configured(sport_name, view_cls):
     :param sport_name: The sport that is not configured correctly
     :param view_cls: The Django view that caused the exception
     """
-    subject = '{sport_name} incorrectly configured'.format(sport_name=sport_name)
-    mail.mail_admins(subject,
-                     '{sport} incorrectly configured on the {page} ({cls}) page. '
-                     'You will likely need to add a mapping to the appropriate dictionary.'.format(
-                             sport=sport_name, page=view_cls.request.path, cls=view_cls.__class__.__name__))
+    if not settings.DEBUG:
+        subject = '{sport_name} incorrectly configured'.format(sport_name=sport_name)
+        mail.mail_admins(subject,
+                         '{sport} incorrectly configured on the {page} ({cls}) page. '
+                         'You will likely need to add a mapping to the appropriate dictionary.'.format(
+                                 sport=sport_name, page=view_cls.request.path, cls=view_cls.__class__.__name__))
 
 
 def handle_sport_not_configured(request, cls, e):
@@ -65,3 +67,19 @@ def handle_sport_not_configured(request, cls, e):
     """
     email_admins_sport_not_configured(e.sport, cls)
     return render(request, 'sport_not_configured_msg.html', {'message': e.message})
+
+
+def get_namespace_for_role(role):
+    """
+    Given a role, returns the correct url namespace
+
+    :param role: The role
+    :return: The namespace for `role` or `None` if the role DNE.
+    """
+    mappings = {
+        'Player': 'players',
+        'Coach': 'coaches',
+        'Referee': 'referees',
+        'Manager': 'managers'
+    }
+    return mappings.get(role, None)

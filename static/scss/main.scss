@@ -1,0 +1,15 @@
+@charset "utf-8";
+
+@import "variables";
+
+$icon-font-path: "~bootstrap-sass/assets/fonts/bootstrap/";
+@import "~bootstrap-sass/assets/stylesheets/_bootstrap.scss";
+
+// Partials
+@import "common";
+@import "buttons";
+@import "icons";
+@import "typography";
+@import "sidebar";
+@import "tables";
+@import "margins";

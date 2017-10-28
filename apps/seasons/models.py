@@ -1,5 +1,7 @@
+import datetime
 import logging
 
+from django.contrib.auth.models import User
 from django.core.validators import ValidationError
 from django.db import models
 from django.db.models.signals import m2m_changed
@@ -33,6 +35,10 @@ class Season(models.Model):
             raise ValidationError({
                 'end_date': "The season's end date must be after the season's start date."
             })
+
+    @property
+    def expired(self):
+        return datetime.date.today() > self.end_date
 
     def __str__(self):
         return '{start_year}-{end_year} Season'.format(start_year=self.start_date.year, end_year=self.end_date.year)
@@ -101,6 +107,15 @@ class AbstractSeasonRoster(models.Model):
     team = models.ForeignKey(Team, related_name='season_rosters')
     default = models.BooleanField(default=False, verbose_name='Default Season Roster')
     created = models.DateTimeField(auto_now_add=True, verbose_name='Created')
+    name = models.CharField(verbose_name='Name', max_length=255, blank=True)
+    created_by = models.ForeignKey(User, null=True, related_name='season_rosters', verbose_name='Created By')
+
+    def clean(self):
+        if hasattr(self, 'name') and hasattr(self, 'team') and hasattr(self, 'season'):
+            model_cls = self.__class__
+            if model_cls.objects.filter(name=self.name, team=self.team, season=self.season).exclude(name='').exclude(
+                    pk=self.pk).exists():
+                raise ValidationError({'name': 'Name must be unique for this team and season.'})
 
     class Meta:
         abstract = True
@@ -119,3 +134,13 @@ class HockeySeasonRoster(AbstractSeasonRoster):
     Season roster for hockey
     """
     players = models.ManyToManyField('players.HockeyPlayer')
+
+    def clean(self):
+        super().clean()
+        if hasattr(self, 'team') and hasattr(self, 'season'):
+            qs = HockeySeasonRoster.objects.filter(team=self.team,
+                                                   season=self.season,
+                                                   default=True).exclude(pk=self.pk)
+            if self.default and qs.exists():
+                raise ValidationError(
+                        {'default': 'A default season roster for this team and season already exists.'})

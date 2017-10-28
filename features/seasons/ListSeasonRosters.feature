@@ -29,17 +29,17 @@ Feature: List season rosters
     And The following manager object exists
       | username_or_email | team                  |
       | user@example.com  | Green Machine IceCats |
-    And I am on the "managers:home" page
-    When I press "green-machine-icecats_manage_link"
-    And I wait for "green-machine-icecats_create_season_roster_btn" to be visible
-    And I press "green-machine-icecats_list_season_rosters_btn"
+    And I am on the absolute url page for "sports.SportRegistration" and "user__email=user@example.com, sport__name=Ice Hockey"
+    And I press "manager_tab"
+    And I press "actions-dropdown-manager-green-machine-icecats"
+    And I press "list_season_rosters_btn_green-machine-icecats"
     Then I should be on the "teams.Team" "" "teams:season_rosters:list" page with url kwargs "team_pk=pk"
 
   Scenario: No season rosters created
     Given "user@example.com" is completely registered for "Ice Hockey" with role "Manager"
     And The following season object exists
-      | league                            | start_date | end_date   | teams                 |
-      | Long Island Amateur Hockey League | 2016-09-14 | 2017-09-14 | Green Machine IceCats |
+      | league                            | teams                 |
+      | Long Island Amateur Hockey League | Green Machine IceCats |
     And The following manager object exists
       | username_or_email | team                  |
       | user@example.com  | Green Machine IceCats |
@@ -52,12 +52,17 @@ Feature: List season rosters
     And The following season object exists
       | league                            | start_date | end_date   | teams                 |
       | Long Island Amateur Hockey League | 2016-09-14 | 2017-09-14 | Green Machine IceCats |
+      | Long Island Amateur Hockey League | 2017-09-14 | 2018-09-14 | Green Machine IceCats |
     And The following season rosters for "Ice Hockey" exist
-      | season_start_date | season_end_date | team                  |
-      | 2016-09-14        | 2017-09-14      | Green Machine IceCats |
+      | season_start_date | season_end_date | team                  | name       | created_by       |
+      | 2016-09-14        | 2017-09-14      | Green Machine IceCats |            | user@example.com |
+      | 2017-09-14        | 2018-09-14      | Green Machine IceCats | Main Squad | user@example.com |
     And The following manager object exists
       | username_or_email | team                  |
       | user@example.com  | Green Machine IceCats |
     And I am on the "teams.Team" "" "teams:season_rosters:list" page with url kwargs "team_pk=pk"
     Then I should see "Season Rosters for Green Machine IceCats"
     And I should see "2016-2017 Season"
+    And I should see "Main Squad - 2017-2018 Season"
+    And I should see "Created By:"
+    And "You" should show up 2 times

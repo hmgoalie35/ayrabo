@@ -1,4 +1,4 @@
-version: '3'
+version: '3.3'
 
 services:
   postgres:
@@ -9,4 +9,6 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - /var/lib/ess/postgresql/data:/var/lib/postgresql/data
+      - pgdata:/var/lib/postgresql/data
+volumes:
+  pgdata:

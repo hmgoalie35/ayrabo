@@ -20,7 +20,8 @@ Feature: Update player information
   Scenario: Navigate to the player update page
     Given I am on the absolute url page for "sports.SportRegistration" and "user__email=user@example.com, sport__name=Ice Hockey"
     When I press "id_player"
-    And I press "update_player_link"
+    And I press "actions-dropdown-player-green-machine-icecats"
+    And I press "update-player-link"
     Then I should be on the "/sport-registrations/1/players/1/update/" page
     And I should see "Update Player Information for Green Machine IceCats"
 

@@ -83,34 +83,35 @@ INSTALLED_APPS = [
     'django.contrib.sites',
 
     # 3rd party apps
-    'debug_toolbar',
-    'djangobower',
-    'django_extensions',
-    'compressor',
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
     'behave_django',
     'crispy_forms',
+    'debug_toolbar',
+    'django_extensions',
+    'django_filters',
+    'localflavor',
     'rest_framework',
     'rest_framework.authtoken',
-    'django_filters',
+    'webpack_loader',
 
     # Custom apps
-    'home.apps.HomeConfig',
     'accounts.apps.AccountsConfig',
-    'userprofiles.apps.UserprofilesConfig',
-    'sports.apps.SportsConfig',
-    'leagues.apps.LeaguesConfig',
-    'divisions.apps.DivisionsConfig',
-    'teams.apps.TeamsConfig',
-    'coaches.apps.CoachesConfig',
-    'managers.apps.ManagersConfig',
-    'referees.apps.RefereesConfig',
-    'players.apps.PlayersConfig',
-    'seasons.apps.SeasonsConfig',
     'api.apps.ApiConfig',
+    'coaches.apps.CoachesConfig',
     'common.apps.CommonConfig',
+    'divisions.apps.DivisionsConfig',
+    'home.apps.HomeConfig',
+    'leagues.apps.LeaguesConfig',
+    'locations.apps.LocationsConfig',
+    'managers.apps.ManagersConfig',
+    'players.apps.PlayersConfig',
+    'referees.apps.RefereesConfig',
+    'seasons.apps.SeasonsConfig',
+    'sports.apps.SportsConfig',
+    'teams.apps.TeamsConfig',
+    'userprofiles.apps.UserprofilesConfig',
 ]
 
 CRISPY_TEMPLATE_PACK = 'bootstrap3'
@@ -139,13 +140,9 @@ TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [os.path.join(BASE_DIR, 'templates')],
+        # Django 1.11.x auto caches templates when DEBUG=False
+        'APP_DIRS': True,
         'OPTIONS': {
-            'loaders': [
-                ('django.template.loaders.cached.Loader', [
-                    'django.template.loaders.filesystem.Loader',
-                    'django.template.loaders.app_directories.Loader',
-                ]),
-            ],
             'context_processors': [
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
@@ -204,6 +201,14 @@ AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
+]
+
+PASSWORD_HASHERS = [
+    'django.contrib.auth.hashers.BCryptSHA256PasswordHasher',
+    'django.contrib.auth.hashers.BCryptPasswordHasher',
+    'django.contrib.auth.hashers.PBKDF2PasswordHasher',
+    'django.contrib.auth.hashers.PBKDF2SHA1PasswordHasher',
+    'django.contrib.auth.hashers.Argon2PasswordHasher'
 ]
 
 # Internationalization
@@ -334,40 +339,23 @@ EMAIL_SSL_KEYFILE = None
 # The actual uri staticfiles are served from (localhost:8000/static/)
 STATIC_URL = '/static/'
 # The folder on the filesystem staticfiles are stored
-STATIC_ROOT = os.path.join(BASE_DIR, 'dist')
+STATIC_ROOT = os.path.join(BASE_DIR, 'build')
 # Location to find extra static files (Django automatically looks in static/ subdirectories of all apps)
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
-STATICFILES_FINDERS = ['django.contrib.staticfiles.finders.FileSystemFinder',
-                       'django.contrib.staticfiles.finders.AppDirectoriesFinder',
-                       'djangobower.finders.BowerFinder',
-                       'compressor.finders.CompressorFinder'
-                       ]
+STATICFILES_FINDERS = [
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+]
+
+WEBPACK_LOADER = {
+    'DEFAULT': {
+        'BUNDLE_DIR_NAME': 'dist/',  # must end with slash
+        'STATS_FILE': os.path.join(BASE_DIR, 'webpack-stats.json'),
+    }
+}
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-
-# Django bower related
-BOWER_COMPONENTS_ROOT = os.path.join(BASE_DIR, '', 'static')
-BOWER_PATH = os.path.join(NODE_MODULES_ROOT, 'bower/bin/bower')
-BOWER_INSTALLED_APPS = [
-    'animate.css',
-    'bootstrap-sass',
-    'font-awesome',
-    'jquery#2.2.4',
-    'noty',
-    'bootstrap-select'
-]
-
-# Django compressor
-COMPRESS_PRECOMPILERS = [('text/scss', 'sassc {infile} {outfile} -p 8')]
-COMPRESS_CSS_FILTERS = ['compressor.filters.css_default.CssAbsoluteFilter',
-                        'compressor.filters.yuglify.YUglifyCSSFilter',
-                        'django_compressor_autoprefixer.AutoprefixerFilter']
-COMPRESS_YUGLIFY_BINARY = os.path.join(NODE_MODULES_ROOT, 'yuglify/bin/yuglify')
-COMPRESS_JS_FILTERS = ['compressor.filters.yuglify.YUglifyJSFilter']
-COMPRESS_AUTOPREFIXER_BINARY = os.path.join(NODE_MODULES_ROOT, 'postcss-cli/bin/postcss')
-COMPRESS_AUTOPREFIXER_ARGS = '--use autoprefixer -c {}'.format(os.path.join(BASE_DIR, 'post_css_config.json'))
-COMPRESS_OFFLINE = True
 
 # Django all auth
 ACCOUNT_AUTHENTICATION_METHOD = 'email'

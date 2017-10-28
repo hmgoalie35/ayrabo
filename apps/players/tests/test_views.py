@@ -3,7 +3,7 @@ from django.urls import reverse
 
 from accounts.tests import UserFactory
 from divisions.tests import DivisionFactory
-from escoresheet.utils.testing_utils import BaseTestCase
+from escoresheet.utils.testing import BaseTestCase
 from leagues.tests import LeagueFactory
 from players.forms import HockeyPlayerForm
 from players.formset_helpers import HockeyPlayerFormSetHelper
@@ -14,7 +14,7 @@ from sports.tests import SportFactory, SportRegistrationFactory
 from teams.tests import TeamFactory
 
 
-class CreatePlayersViewTests(BaseTestCase):
+class PlayersCreateViewTests(BaseTestCase):
     def _format_url(self, role, **kwargs):
         return reverse(self.url.format(role=role), kwargs=kwargs)
 
@@ -350,7 +350,7 @@ class CreatePlayersViewTests(BaseTestCase):
         self.assertRedirects(response, self.sr.get_absolute_url())
 
 
-class UpdatePlayerViewTests(BaseTestCase):
+class PlayerUpdateViewTests(BaseTestCase):
     def _format_url(self, **kwargs):
         return reverse(self.url, kwargs=kwargs)
 

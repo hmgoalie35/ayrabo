@@ -1,0 +1,27 @@
+/**
+  Variable names for colors should be descriptive.
+  Use http://chir.ag/projects/name-that-color/ to generate names (i.e. mac & cheese yellow)
+  If the above tool gives you the same variable name for a different hex value
+  use `lighten($mine-shaft, 2%)`, `darken($mine-shaft, 2%)`.
+
+  http://scg.ar-ch.org/
+ */
+
+// Color definitions
+
+// `$gray` was overriding <option> styling.
+$ess-gray: gray;
+$concrete: #F3F3F3;
+$nobel: #B3B3B3;
+$dusty-gray: #999999;
+$dove-gray: #666666;
+$tundora: #4D4D4D;
+$gallery: #EEEEEE;
+$alto: #DDDDDD;
+$wild-sand: #F5F5F5;
+$white: #FFFFFF;
+$black: #000000;
+$boston-blue: #428BCA;
+
+$table-bg-accent: $gallery;
+$navbar-vertical-line: 1px solid $alto;

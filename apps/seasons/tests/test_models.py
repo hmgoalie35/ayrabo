@@ -1,12 +1,13 @@
 import datetime
 
 from django.core.exceptions import ValidationError
-from django.urls import reverse
 from django.db import IntegrityError
+from django.urls import reverse
 
 from divisions.tests import DivisionFactory
-from escoresheet.utils.testing_utils import BaseTestCase
+from escoresheet.utils.testing import BaseTestCase
 from leagues.tests import LeagueFactory
+from players.tests import HockeyPlayerFactory
 from seasons.models import Season, HockeySeasonRoster
 from teams.tests import TeamFactory
 from . import SeasonFactory, HockeySeasonRosterFactory
@@ -63,6 +64,18 @@ class SeasonModelTests(BaseTestCase):
             season = SeasonFactory(start_date=start, end_date=end, league=league)
             seasons.append(season)
         self.assertListEqual(list(reversed(seasons)), list(Season.objects.all()))
+
+    def test_expired_true(self):
+        start_date = datetime.date(2014, 8, 15)
+        end_date = datetime.date(2015, 8, 15)
+        s = SeasonFactory(start_date=start_date, end_date=end_date)
+        self.assertTrue(s.expired)
+
+    def test_expired_false(self):
+        start_date = datetime.date.today()
+        end_date = start_date + datetime.timedelta(days=365)
+        s = SeasonFactory(start_date=start_date, end_date=end_date)
+        self.assertFalse(s.expired)
 
 
 class SeasonTeamM2MSignalTests(BaseTestCase):
@@ -164,9 +177,31 @@ class AbstractSeasonRosterModelTests(BaseTestCase):
                                                                    kwargs={'team_pk': season_roster.team.pk,
                                                                            'pk': season_roster.pk}))
 
+    def test_unique_name_season_and_team(self):
+        division = DivisionFactory()
+        team = TeamFactory(division=division)
+        season = SeasonFactory(league=division.league, teams=[team])
+        HockeySeasonRosterFactory(season=season, team=team, name='')
+        HockeySeasonRosterFactory(season=season, team=team, name='Main Squad')
+        msg = "{'name': ['Name must be unique for this team and season.']}"
+        with self.assertRaisesMessage(ValidationError, msg):
+            HockeySeasonRosterFactory(season=season, team=team, name='Main Squad')
+
 
 class HockeySeasonRosterModelTests(BaseTestCase):
-    """
-    Currently don't need any unit tests for this model
-    """
-    pass
+    def setUp(self):
+        self.division = DivisionFactory()
+        self.team = TeamFactory(division=self.division)
+        self.season = SeasonFactory(league=self.division.league, teams=[self.team])
+        self.season_roster = HockeySeasonRosterFactory(season=self.season, team=self.team, default=True)
+
+    def test_clean_default(self):
+        with self.assertRaisesMessage(ValidationError, "{'default': ['A default season roster for this team and "
+                                                       "season already exists.']}"):
+            HockeySeasonRosterFactory(season=self.season, team=self.team, default=True).full_clean()
+
+    def test_excludes_current_obj_from_clean_default(self):
+        # There was a bug where a default season roster couldn't be updated because it wasn't excluded from the
+        # clean_default query
+        self.season_roster.players.add(HockeyPlayerFactory(team=self.team, sport=self.team.division.league.sport))
+        self.season_roster.full_clean()

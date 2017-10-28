@@ -1,5 +1,5 @@
 import factory
-from factory import django, fuzzy, post_generation
+from factory import django, post_generation, Faker
 
 from divisions.tests import DivisionFactory
 from teams.models import Team
@@ -9,8 +9,8 @@ class TeamFactory(django.DjangoModelFactory):
     class Meta:
         model = Team
 
-    name = fuzzy.FuzzyText(length=32)
-    website = 'https://www.google.com'
+    name = Faker('text', max_nb_chars=32)
+    website = Faker('url')
     division = factory.SubFactory(DivisionFactory)
 
     @post_generation

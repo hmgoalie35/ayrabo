@@ -26,7 +26,6 @@ class Sport(models.Model):
     def clean(self):
         self.name = self.name.title()
         self.slug = slugify(self.name)
-        self.save()
 
     def __str__(self):
         return self.name
@@ -35,7 +34,7 @@ class Sport(models.Model):
 class SportRegistration(models.Model):
     """
     Model used to store what roles a user has for a sport. A user chooses to register for a sport and has the option to
-    choose what roles(s) they want for a specific sport
+    choose what role(s) they want for a specific sport
 
     i.e. user John might want to be a Player and Referee for Ice Hockey, but only wants to be a Coach for Soccer. There
     would b 2 SportRegistration objects, both tied to John but one is for Ice Hockey with roles_mask corresponding to

@@ -14,14 +14,22 @@ install:
   - nvm use $TRAVIS_NODE_VERSION
   - pip install -r requirements.txt
   - npm install
+  - npm run build
 
 env:
+#  matrix:
+#    - TEST_SUITE=unit
+#    - TEST_SUITE=accept
+
   global:
     - DJANGO_SETTINGS_MODULE="escoresheet.settings.settings"
     - TRAVIS_NODE_VERSION="6"
 
 script:
-  - bash run_tests.sh
+  - bash run_tests.sh # $TEST_SUITE
+
+git:
+  depth: 10
 
 branches:
   only:

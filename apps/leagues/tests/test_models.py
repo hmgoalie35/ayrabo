@@ -1,7 +1,7 @@
 from django.db.utils import IntegrityError
 from django.utils.text import slugify
 
-from escoresheet.utils.testing_utils import BaseTestCase
+from escoresheet.utils.testing import BaseTestCase
 from leagues.models import League
 from sports.tests import SportFactory
 from .factories.LeagueFactory import LeagueFactory

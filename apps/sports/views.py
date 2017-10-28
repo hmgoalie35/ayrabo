@@ -9,10 +9,11 @@ from django.urls import reverse
 from django.views import generic
 from django.views.generic.base import ContextMixin
 
+from escoresheet.utils import get_namespace_for_role
 from players import forms as player_forms
 from players.models import HockeyPlayer, BasketballPlayer, BaseballPlayer
-from sports.forms import CreateSportRegistrationForm, SportRegistrationModelFormSet
-from sports.formset_helpers import CreateSportRegistrationFormSetHelper
+from sports.forms import SportRegistrationCreateForm, SportRegistrationModelFormSet
+from sports.formset_helpers import SportRegistrationCreateFormSetHelper
 from sports.models import SportRegistration, Sport
 
 SPORT_PLAYER_FORM_MAPPINGS = {
@@ -31,17 +32,17 @@ MIN_FORMS = 1
 
 
 # TODO Add API endpoints to do this, so don't have to deal with the formset stuff
-class CreateSportRegistrationView(LoginRequiredMixin, ContextMixin, generic.View):
+class SportRegistrationCreateView(LoginRequiredMixin, ContextMixin, generic.View):
     template_name = 'sports/sport_registration_create.html'
     already_registered_msg = 'You have already registered for all available sports. ' \
                              'Check back later to see if any new sports have been added.'
 
     def get_context_data(self, **kwargs):
-        context = super(CreateSportRegistrationView, self).get_context_data(**kwargs)
+        context = super(SportRegistrationCreateView, self).get_context_data(**kwargs)
         sports_already_registered_for = SportRegistration.objects.filter(user=self.request.user).values_list('sport_id')
         remaining_sport_count = Sport.objects.count() - len(sports_already_registered_for)
         SportRegistrationFormSet = forms.modelformset_factory(SportRegistration,
-                                                              form=CreateSportRegistrationForm,
+                                                              form=SportRegistrationCreateForm,
                                                               formset=SportRegistrationModelFormSet,
                                                               fields=('sport', 'roles'),
                                                               extra=0,
@@ -59,7 +60,7 @@ class CreateSportRegistrationView(LoginRequiredMixin, ContextMixin, generic.View
                 prefix='sportregistrations',
                 form_kwargs={'sports_already_registered_for': sports_already_registered_for}
         )
-        context['helper'] = CreateSportRegistrationFormSetHelper
+        context['helper'] = SportRegistrationCreateFormSetHelper
         return context
 
     def get(self, request, *args, **kwargs):
@@ -101,17 +102,8 @@ class CreateSportRegistrationView(LoginRequiredMixin, ContextMixin, generic.View
 class SportRegistrationDetailView(LoginRequiredMixin, ContextMixin, generic.View):
     template_name = 'sports/sport_registration_detail.html'
 
-    def _get_namespace_for_role(self, role):
-        mappings = {
-            'Player': 'players',
-            'Coach': 'coaches',
-            'Referee': 'referees',
-            'Manager': 'managers'
-        }
-        return mappings.get(role, None)
-
     def _get_url_for_role(self, role, **kwargs):
-        namespace = self._get_namespace_for_role(role)
+        namespace = get_namespace_for_role(role)
         return reverse('sportregistrations:{}:create'.format(namespace), kwargs=kwargs)
 
     def get_context_data(self, **kwargs):

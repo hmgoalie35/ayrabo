@@ -1,0 +1,8 @@
+.btn-back {
+  color: $white;
+  background: $ess-gray;
+  &:hover {
+    color: $white;
+    background: $dove-gray;
+  }
+}

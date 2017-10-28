@@ -1,9 +1,10 @@
+from django.contrib.sites.models import Site
 from django.core.management.base import BaseCommand
 
 from sports.models import Sport
-from django.contrib.sites.models import Site
 
 SPORTS = ['Ice Hockey', 'Baseball']
+SITE_NAME = 'escoresheet.com'
 
 
 class Command(BaseCommand):
@@ -18,8 +19,8 @@ class Command(BaseCommand):
 
         try:
             site = Site.objects.get(name='example.com')
-            site.domain = 'escoresheet.com'
-            site.name = 'escoresheet.com'
+            site.domain = SITE_NAME
+            site.name = SITE_NAME
             print('Updating default site...')
             site.save()
         except Site.DoesNotExist:

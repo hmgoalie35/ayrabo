@@ -23,35 +23,45 @@
               <div class="panel panel-primary">
                 <div class="panel-heading">
                   <h3 class="text-center panel-title">
-                    {{ season_roster.season }}
+                    {% if season_roster.name %}{{ season_roster.name }} - {% endif %}{{ season_roster.season }}
                   </h3>
                 </div>
                 <div class="panel-body">
-                  <div class="text-left"><strong>Default:&nbsp;</strong>
+                  <div class="text-left">
+                    <strong>Default:</strong>
                     {% if season_roster.default %}
                       <span class="fa fa-check fa-check-green"></span>
                     {% else %}
                       <span class="fa fa-close fa-close-red"></span>
                     {% endif %}
                   </div>
-                  <div class="text-left"><strong>Created:&nbsp;</strong>{{ season_roster.created }}
+                  <div class="text-left">
+                    <strong>Created:</strong>
+                    {{ season_roster.created }}
                   </div>
-
+                  <div class="text-left">
+                    <strong>Created By:</strong>
+                    {% if season_roster.created_by_id == request.user.id %}
+                      You
+                    {% elif season_roster.created_by %}
+                      {{ season_roster.created_by.get_full_name }}
+                    {% else %}
+                      Site Administrator
+                    {% endif %}
+                  </div>
 
                   <div class="text-left">
-                    <strong>Players:&nbsp;</strong>
-                    <a href="#" data-toggle="modal"
-                       data-target="#{{ season_roster.id }}-modal">View</a>
+                    <strong>Players:</strong>
+                    <a href="#" data-toggle="modal" data-target="#{{ season_roster.id }}-modal">View</a>
                   </div>
 
-                  <div class="modal fade" tabindex="-1" role="dialog"
-                       id="{{ season_roster.id }}-modal">
+                  <div class="modal fade" tabindex="-1" role="dialog" id="{{ season_roster.id }}-modal">
                     <br>
                     <div class="modal-dialog modal-sm" role="document">
                       <div class="modal-content">
                         <div class="modal-header">
-                          <button type="button" class="close" data-dismiss="modal"
-                                  aria-label="Close"><span aria-hidden="true">&times;</span>
+                          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                  aria-hidden="true">&times;</span>
                           </button>
                           <h4 class="modal-title">Players At A Glance</h4>
                         </div>
@@ -61,8 +71,9 @@
                             <br>
                           {% endfor %}
                           <br>
-                          <div class="pull-left">{{ players.count }}
-                            Player{{ players.count|pluralize }}</div>
+                          <div class="pull-left">
+                            {{ players.count }} Player{{ players.count|pluralize }}
+                          </div>
                           <br>
                         </div>
                       </div>

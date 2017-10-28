@@ -6,7 +6,7 @@ from django.core import mail
 from generic_steps import find_element
 
 from accounts.tests import UserFactory, EmailAddressFactory
-from escoresheet.utils.testing_utils import get_user
+from escoresheet.utils.testing import get_user
 from userprofiles.tests import UserProfileFactory
 
 
@@ -68,7 +68,7 @@ def login(context, username_or_email, password, login_method=None):
         context.driver.get(context.get_url(login_path))
         context.execute_steps(steps)
     else:
-        # context.get_url('/')
+        context.driver.get(context.get_url('home'))
         context.test.client.login(username=username_or_email, password=password)
         session_id = context.test.client.cookies['sessionid']
         context.driver.execute_script('document.cookie = "{}={}; path=/;"'.format('sessionid', session_id.value))

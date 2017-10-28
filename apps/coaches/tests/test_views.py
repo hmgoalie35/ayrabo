@@ -6,14 +6,14 @@ from coaches.formset_helpers import CoachFormSetHelper
 from coaches.models import Coach
 from coaches.tests import CoachFactory
 from divisions.tests import DivisionFactory
-from escoresheet.utils.testing_utils import BaseTestCase
+from escoresheet.utils.testing import BaseTestCase
 from leagues.tests import LeagueFactory
 from referees.tests import RefereeFactory
 from sports.tests import SportFactory, SportRegistrationFactory
 from teams.tests import TeamFactory
 
 
-class CreateCoachesViewTests(BaseTestCase):
+class CoachesCreateViewTests(BaseTestCase):
     def _format_url(self, role, **kwargs):
         return reverse(self.url.format(role=role), kwargs=kwargs)
 
@@ -291,7 +291,7 @@ class CreateCoachesViewTests(BaseTestCase):
         self.assertRedirects(response, self.sr.get_absolute_url())
 
 
-class UpdateCoachViewTests(BaseTestCase):
+class CoachesUpdateViewTests(BaseTestCase):
     def _format_url(self, **kwargs):
         return reverse(self.url, kwargs=kwargs)
 

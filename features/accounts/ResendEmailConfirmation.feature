@@ -13,6 +13,8 @@ Feature: Resend account confirmation
     Given I am on the "account_login" page
     When I press "didnt_receive_confirmation_email"
     Then I should be on the "/account/confirm-email/new-confirmation-link/" page
+    And I should not see "This confirmation link is invalid or has expired."
+    And I should not see "Enter your email below to request a new link."
 
   Scenario: Request a new email confirmation with valid email
     Given I am on the "/account/confirm-email/new-confirmation-link/" page

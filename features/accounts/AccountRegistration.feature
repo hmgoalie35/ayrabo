@@ -32,7 +32,7 @@ Feature: Register for an account
 
     When I follow an invalid email link
     Then I should see "This confirmation link is invalid or has expired."
-    And I should see "Please request a new confirmation link by entering your email address below."
+    And I should see "Enter your email below to request a new link."
 
   Scenario: Register for an account with no info
     Given I am on the "account_register" page

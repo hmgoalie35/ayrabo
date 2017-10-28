@@ -50,20 +50,12 @@ class HockeySeasonRosterAdminForm(forms.ModelForm):
                                              widget=widgets.FilteredSelectMultiple(verbose_name='Players',
                                                                                    is_stacked=False))
 
-    def clean_default(self):
-        team = self.cleaned_data.get('team')
-        season = self.cleaned_data.get('season')
-        default = self.cleaned_data.get('default', False)
-        if default and HockeySeasonRoster.objects.filter(team=team, season=season, default=True).exists():
-            raise ValidationError('A default season roster for this team and season already exists.')
-        return default
-
     class Meta:
         model = HockeySeasonRoster
         fields = '__all__'
 
 
-class CreateHockeySeasonRosterForm(forms.ModelForm):
+class HockeySeasonRosterCreateForm(forms.ModelForm):
     """
     Form for creating a hockey season roster that optimizes db access through select_related and excludes any
     seasons, teams, players that belong to different leagues or divisions
@@ -74,7 +66,7 @@ class CreateHockeySeasonRosterForm(forms.ModelForm):
         read_only_fields = kwargs.pop('read_only_fields', None)
         team = kwargs.pop('team', None)
 
-        super(CreateHockeySeasonRosterForm, self).__init__(*args, **kwargs)
+        super(HockeySeasonRosterCreateForm, self).__init__(*args, **kwargs)
 
         if read_only_fields:
             set_fields_disabled(read_only_fields, self.fields)
@@ -92,20 +84,12 @@ class CreateHockeySeasonRosterForm(forms.ModelForm):
     season = SeasonModelChoiceField(queryset=Season.objects.all().select_related('league'))
     players = forms.ModelMultipleChoiceField(queryset=HockeyPlayer.objects.active().select_related('user'))
 
-    def clean_default(self):
-        team = self.cleaned_data.get('team')
-        season = self.cleaned_data.get('season')
-        default = self.cleaned_data.get('default', False)
-        if default and HockeySeasonRoster.objects.filter(team=team, season=season, default=True).exists():
-            raise ValidationError('A default season roster for this team and season already exists.')
-        return default
-
     class Meta:
         model = HockeySeasonRoster
-        fields = ['team', 'season', 'players', 'default']
+        fields = ['team', 'season', 'players', 'name', 'default']
 
 
-class UpdateHockeySeasonRosterForm(forms.ModelForm):
+class HockeySeasonRosterUpdateForm(forms.ModelForm):
     """
     Form for updating a hockey season roster that optimizes db access and excludes any players belonging to different
     teams
@@ -113,20 +97,13 @@ class UpdateHockeySeasonRosterForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         team = kwargs.pop('team', None)
-        super(UpdateHockeySeasonRosterForm, self).__init__(*args, **kwargs)
+        super(HockeySeasonRosterUpdateForm, self).__init__(*args, **kwargs)
+        set_fields_disabled(['season'], self.fields)
         if team:
             self.fields['players'].queryset = HockeyPlayer.objects.active().filter(team=team).select_related('user')
 
     players = forms.ModelMultipleChoiceField(queryset=HockeyPlayer.objects.active().select_related('user'))
 
-    def clean_default(self):
-        team = self.instance.team
-        season = self.instance.season
-        default = self.cleaned_data.get('default', False)
-        if default and HockeySeasonRoster.objects.filter(team=team, season=season, default=True).exists():
-            raise ValidationError('A default season roster for this team and season already exists.')
-        return default
-
     class Meta:
         model = HockeySeasonRoster
-        fields = ['players', 'default']
+        fields = ['season', 'players', 'name', 'default']

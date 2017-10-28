@@ -1,4 +1,4 @@
-from .settings import DATABASES, CACHES, REST_FRAMEWORK, TEMPLATES
+from .settings import DATABASES, CACHES, REST_FRAMEWORK
 
 DEBUG = True
 
@@ -15,13 +15,9 @@ CACHES['default'] = {
     'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
 }
 
-TEMPLATES[0]['OPTIONS'].pop('loaders')
-TEMPLATES[0]['APP_DIRS'] = True
-
 DEBUG_TOOLBAR_CONFIG = {
     'SHOW_COLLAPSED': True,
-    # Make djdt use the copy of jQuery loaded on every page
-    'JQUERY_URL': None
+    # Admin panel doesn't load jquery, so debug toolbar doesn't show...
 }
 
 # If INTERNAL_IPS becomes a problem, can override SHOW_TOOLBAR_CALLBACK function

@@ -17,6 +17,7 @@ Feature: User profiles
     Then I should be on the "account_complete_registration" page
     And I should see "Complete Your Account Registration"
     And I should see "You will register for sports in the next step."
+    And I should not see "My Sports"
 
   Scenario: Redirected when trying to navigate to new sport registration page when userprofile not complete
     Given I go to the "sportregistrations:create" page

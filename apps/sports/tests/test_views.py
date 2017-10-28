@@ -2,14 +2,14 @@ from django.urls import reverse
 
 from accounts.tests import UserFactory
 from divisions.tests import DivisionFactory
-from escoresheet.utils.testing_utils import BaseTestCase
+from escoresheet.utils.testing import BaseTestCase
 from leagues.tests import LeagueFactory
 from sports.models import SportRegistration
 from sports.tests import SportFactory, SportRegistrationFactory
 from teams.tests import TeamFactory
 
 
-class CreateSportRegistrationViewTests(BaseTestCase):
+class SportRegistrationCreateViewTests(BaseTestCase):
     @classmethod
     def setUpTestData(cls):
         cls.ice_hockey = SportFactory(name='Ice Hockey')

@@ -4,7 +4,7 @@ from referees.formset_helpers import RefereeFormSetHelper
 from referees.models import Referee
 
 
-class CreateRefereesView(BaseCreateRelatedObjectsView):
+class RefereesCreateView(BaseCreateRelatedObjectsView):
     def get_formset_prefix(self):
         return 'referees'
 

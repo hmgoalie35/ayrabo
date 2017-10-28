@@ -2,7 +2,7 @@ from django.core.exceptions import ValidationError
 from django.db.utils import IntegrityError
 
 from accounts.tests import UserFactory
-from escoresheet.utils.testing_utils import BaseTestCase
+from escoresheet.utils.testing import BaseTestCase
 from sports.tests import SportRegistrationFactory
 from teams.tests import TeamFactory
 from .factories.PlayerFactory import HockeyPlayerFactory, BaseballPlayerFactory, BasketballPlayerFactory
@@ -22,10 +22,10 @@ class PlayerModelTests(BaseTestCase):
         self.player = HockeyPlayerFactory()
 
     def test_league_property(self):
-        self.assertEqual(self.player.league, self.player.team.division.league.full_name)
+        self.assertEqual(self.player.league, self.player.team.division.league)
 
     def test_division_property(self):
-        self.assertEqual(self.player.division, self.player.team.division.name)
+        self.assertEqual(self.player.division, self.player.team.division)
 
     def test_max_jersey_number(self):
         with self.assertRaisesMessage(ValidationError, 'Ensure this value is less than or equal to 99.'):
@@ -57,7 +57,8 @@ class PlayerModelTests(BaseTestCase):
         t = TeamFactory()
         player = HockeyPlayerFactory(team=t)
         expected = {
-            'Team': '{} - {}'.format(t.name, t.division),
+            'Team': t.name,
+            'Division': t.division.name,
             'Jersey Number': player.jersey_number
         }
         fields = player.fields
@@ -102,7 +103,8 @@ class HockeyPlayerModelTests(BaseTestCase):
         t = TeamFactory()
         player = HockeyPlayerFactory(team=t)
         expected = {
-            'Team': '{} - {}'.format(t.name, t.division),
+            'Team': t.name,
+            'Division': t.division.name,
             'Jersey Number': player.jersey_number,
             'Position': player.get_position_display(),
             'Handedness': player.get_handedness_display()
@@ -145,7 +147,8 @@ class BaseballPlayerModelTests(BaseTestCase):
         t = TeamFactory()
         player = BaseballPlayerFactory(team=t)
         expected = {
-            'Team': '{} - {}'.format(t.name, t.division),
+            'Team': t.name,
+            'Division': t.division.name,
             'Jersey Number': player.jersey_number,
             'Position': player.get_position_display(),
             'Catches': player.get_catches_display(),
@@ -190,7 +193,8 @@ class BasketballPlayerModelTests(BaseTestCase):
         t = TeamFactory()
         player = BasketballPlayerFactory(team=t)
         expected = {
-            'Team': '{} - {}'.format(t.name, t.division),
+            'Team': t.name,
+            'Division': t.division.name,
             'Jersey Number': player.jersey_number,
             'Position': player.get_position_display(),
             'Shoots': player.get_shoots_display(),
