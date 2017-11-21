@@ -22,7 +22,7 @@ if [ "$1" == "--hard" ]; then
 fi
 
 if [ ! -e venv ]; then
-    virtualenv venv -p `which python3.5`
+    virtualenv venv -p `which python3.6`
 fi
 
 print_step "Installing pip packages"

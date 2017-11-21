@@ -6,7 +6,7 @@ cache:
     - node_modules
 
 python:
-  - "3.5"
+  - "3.6"
 
 install:
   - source $HOME/.nvm/nvm.sh

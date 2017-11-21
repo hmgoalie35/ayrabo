@@ -8,6 +8,11 @@
 
 - include: ../../db/tasks/add_postgres_apt.yml
 
+- name: Add python PPA
+  apt_repository:
+    repo: ppa:deadsnakes/ppa
+    state: present
+
 - name: Update/upgrade system dependencies
   apt:
     update_cache: yes
@@ -20,6 +25,9 @@
     name: "{{ item }}"
     state: present
   with_items:
+    - python3.6
+    - python3.6-dev
+    - python3.6-venv
     - python3-pip
     - python-pip
     - "linux-image-extra-{{ ansible_kernel }}"

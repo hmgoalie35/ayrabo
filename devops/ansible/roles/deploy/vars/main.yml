@@ -8,7 +8,7 @@ max_deployment_dirs: 5
 
 ongoing_deployment: "{{ all_deployments_dir }}/{{ deployment_version|regex_replace('/', '_') }}_{{ ansible_date_time.iso8601_basic_short }}"
 venv_path: "{{ ongoing_deployment }}/venv"
-venv_python_version: python3.5
+venv_python_version: python3.6
 
 sites_dir: "{{ ansible_env.HOME }}/sites"
 current_symlink: "{{ sites_dir }}/current"

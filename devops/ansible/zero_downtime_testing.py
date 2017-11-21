@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/python3.6
 
 import time
 
@@ -22,7 +22,7 @@ def main():
             print_msg('SUCCESS')
             time.sleep(3)
         else:
-            print_msg('ERROR: {}'.format(resp.status_code))
+            print_msg('ERROR: {} {}'.format(resp.status_code, resp.reason))
             break
     print('Exiting...')
 
