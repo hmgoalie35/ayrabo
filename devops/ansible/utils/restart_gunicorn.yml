@@ -1,3 +1,4 @@
+# Change this to just `update`?
 - name: Restart gunicorn
   become: yes
   supervisorctl:
