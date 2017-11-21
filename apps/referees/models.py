@@ -9,8 +9,8 @@ from sports.models import SportRegistration
 
 class Referee(models.Model):
     """
-    Represents a referee in the system. A user can have many Coach objects related to them provided each referee object
-    is for a different league.
+    Represents a referee in the system. A user can have many Referee objects related to them provided each referee
+    object is for a different league.
     TLDR; A user can be a referee for multiple leagues and a new referee object is created for each league.
     """
     user = models.ForeignKey(User, related_name='referees')

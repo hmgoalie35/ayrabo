@@ -3,6 +3,8 @@
 #### General:
 * Add loadbalancing role
 * Break tasks into reusable roles (nodejs), installing virtualenv, npm packages, etc.
+* Can have the namecheap dns manager handle accessing the site via domain name, ip address, www.<domain-name> (www is a subdomain that is auto routed). Or can have nginx server_name listen on all 3. I'd do both. Make sure to test
+* When site load increases and need to add load balancer, might be a good idea to only allow load balancer to connect to app servers. Use firewall on app servers to only allow connections from load balancer.
 
 #### Deployment:
 * ~~Run dist upgrade.~~
@@ -27,8 +29,11 @@
 * fix up error pages
 * Need to have proxy strip X-Forwarded-Proto header and then set it myself so nobody can spoof the header
 * Speed up virtualenv, npm installs. Correctly organize dev, testing, prod dependencies for npm and pip
+    * checksums of package.json and requirements.txt, if didn't change copy over node_modules and venv?
 * On single server setup, when gunicorn restarts at end of deployment, you get 502 bad gateway. But maintenance mode and multiple app servers should mitigate this. Looking into sending SIGHUP or how to hot swap gunicorn binaries might be a good additive measure.
 * Limit file upload sizes in nginx conf/django settings
+* reload nginx config, update supervisor so have 0 downtime
+    * will gracefully kill itself, however the current gunicorn setup (executable living in non global location will make this difficult. Need to hot swap binaries)
 
 ### Usage
 * A few preconditions must be met on the remote hosts before running the playbooks
