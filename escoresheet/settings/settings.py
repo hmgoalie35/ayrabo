@@ -395,7 +395,7 @@ REST_FRAMEWORK = {
     'DEFAULT_VERSION': DEFAULT_VERSION,
     'ALLOWED_VERSIONS': API_VERSIONS,
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        # For local development, BasicAuthentication is appended to this list in local_settings.py.dev
+        # For local development, BasicAuthentication is appended to this list in local_settings.dev.py
         'rest_framework.authentication.SessionAuthentication',
         'rest_framework.authentication.TokenAuthentication',
     ],
