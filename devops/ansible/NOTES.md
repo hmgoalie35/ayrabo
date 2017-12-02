@@ -25,6 +25,7 @@
 * email, ssl
 * see TODOs in settings.py
 * media folder needs to be stored outside project dir for prod, for testing it can be stored in project dir.
+* Same as above, but for logs dir.
 * clean up `dist/`. Only files needed should be in there...
 * fix up error pages
 * Need to have proxy strip X-Forwarded-Proto header and then set it myself so nobody can spoof the header

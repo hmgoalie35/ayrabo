@@ -10,14 +10,14 @@ class ActiveManager(models.Manager):
         return self.get_queryset().filter(is_active=False)
 
 
-class GenericModelChoiceManager(models.Manager):
+class GenericChoiceManager(models.Manager):
     def get_choices(self, model_cls=None, instance=None):
         """
-        Retrieve GenericModelChoices for the given model class and/or instance.
+        Retrieve GenericChoices for the given model class and/or instance.
 
         :param model_cls: Used to compute the content type.
         :param instance: Used for object_id. instance.pk will be used.
-        :return: Filtered queryset containing GenericModelChoices for the given model class and/or instance.
+        :return: Filtered queryset containing GenericChoices for the given model class and/or instance.
         """
         if model_cls is None and instance is None:
             raise ValueError('You must specify model_cls or instance')

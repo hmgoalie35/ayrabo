@@ -1,1 +1,1 @@
-from .factories.GenericModelChoiceFactory import GenericModelChoiceFactory
+from .factories.GenericChoiceFactory import GenericChoiceFactory
