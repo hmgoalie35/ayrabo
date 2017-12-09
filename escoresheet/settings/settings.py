@@ -17,6 +17,7 @@ import sys
 import pytz
 from django.urls import reverse_lazy
 
+
 SITE_ID = 1
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -102,10 +103,13 @@ INSTALLED_APPS = [
     'coaches.apps.CoachesConfig',
     'common.apps.CommonConfig',
     'divisions.apps.DivisionsConfig',
+    'games.apps.GamesConfig',
     'home.apps.HomeConfig',
     'leagues.apps.LeaguesConfig',
     'locations.apps.LocationsConfig',
     'managers.apps.ManagersConfig',
+    'penalties.apps.PenaltiesConfig',
+    'periods.apps.PeriodsConfig',
     'players.apps.PlayersConfig',
     'referees.apps.RefereesConfig',
     'seasons.apps.SeasonsConfig',
@@ -226,6 +230,7 @@ USE_L10N = True
 
 USE_TZ = True
 
+# TODO Make this a directory shared b/w deployments
 DJANGO_LOGS_DIR = os.path.join(BASE_DIR, 'logs')
 if not os.path.exists(DJANGO_LOGS_DIR):
     os.mkdir(DJANGO_LOGS_DIR)
