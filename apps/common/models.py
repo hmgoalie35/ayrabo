@@ -17,14 +17,18 @@ class GenericChoice(models.Model):
     can create exhibition and league choices which can be queried and displayed in a dropdown. The model that would
     normally have a CharField w/ choices should have a FK to `GenericChoice`.
 
-
     """
+    TYPE_CHOICES = (
+        ('game_type', 'Game Type'),
+        ('game_point_value', 'Game Point Value'),
+    )
     content_type = models.ForeignKey(ContentType, verbose_name='Content Type', on_delete=models.PROTECT)
     object_id = models.PositiveIntegerField(verbose_name='Object Id')
     content_object = GenericForeignKey()
     short_value = models.CharField(verbose_name='Short Value', max_length=255,
                                    help_text='The value stored in the database')
     long_value = models.CharField(verbose_name='Long Value', max_length=255, help_text='The value shown to users')
+    type = models.CharField(verbose_name='Type', max_length=255, choices=TYPE_CHOICES)
 
     objects = GenericChoiceManager()
 
