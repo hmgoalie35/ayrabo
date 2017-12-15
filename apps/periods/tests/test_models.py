@@ -22,4 +22,4 @@ class HockeyPeriodModelTests(BaseTestCase):
             HockeyPeriodFactory(game=self.game, name='1')
 
     def test_to_str(self):
-        self.assertEqual('1st', str(HockeyPeriodFactory(game=self.game, name='1')))
+        self.assertEqual(str(HockeyPeriodFactory(game=self.game, name='1')), '1st')
