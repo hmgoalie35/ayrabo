@@ -20,6 +20,7 @@ class AbstractGameFactory(django.DjangoModelFactory):
     away_team = LazyAttribute(lambda obj: TeamFactory(division=obj.home_team.division))
     status = models.AbstractGame.GAME_STATUSES[0][0]
     location = SubFactory(LocationFactory)
+    # `timezone.now` is defaulting to UTC because the user/userprofile factories default the timzone to UTC
     start = LazyFunction(timezone.now)
     end = LazyAttribute(lambda obj: obj.start + datetime.timedelta(hours=2))
     # This should match the timezone of `start`.
