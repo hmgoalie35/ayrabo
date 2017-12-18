@@ -44,7 +44,7 @@ class Migration(migrations.Migration):
                 ('time', models.DurationField(verbose_name='Time')),
                 ('type', models.CharField(choices=[('e', 'Even Strength'), ('pp', 'Power play'), ('sh', 'Shorthanded')], max_length=255, verbose_name='Type')),
                 ('empty_net', models.BooleanField(default=False, verbose_name='Empty Net')),
-                ('value', models.PositiveSmallIntegerField(choices=[(1, '1')], default=(1, '1'), verbose_name='Value')),
+                ('value', models.PositiveSmallIntegerField(choices=[(1, '1')], default=1, verbose_name='Value')),
                 ('created', models.DateTimeField(auto_now_add=True, verbose_name='Created')),
                 ('updated', models.DateTimeField(auto_now=True, verbose_name='Updated')),
                 ('game', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='goals', to='games.HockeyGame', verbose_name='Goal')),

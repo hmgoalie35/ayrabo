@@ -3,6 +3,8 @@ from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db import models
 
+from periods.models import HockeyPeriod
+
 
 class AbstractGame(models.Model):
     """
@@ -47,6 +49,16 @@ class AbstractGame(models.Model):
     def datetime_formatted(self, dt, default_format='%m/%d/%Y %I:%M %p %Z'):
         return self.datetime_localized(dt).strftime(default_format)
 
+    def init_periods(self, duration):
+        """
+        Creates the 1st, 2nd, 3rd and OT1 periods for this game.
+
+        :param duration: Duration of this period, must be a timedelta instance.
+        """
+        period_choices = HockeyPeriod.PERIOD_CHOICES[:4]
+        for period_choice in period_choices:
+            HockeyPeriod.objects.get_or_create(game=self, name=period_choice[0], duration=duration)
+
 
 class HockeyGame(AbstractGame):
     home_players = models.ManyToManyField('players.HockeyPlayer', verbose_name='Home Roster', related_name='home_games')
@@ -75,7 +87,7 @@ class HockeyGoal(models.Model):
                                 blank=True)
     empty_net = models.BooleanField(verbose_name='Empty Net', default=False)
     value = models.PositiveSmallIntegerField(verbose_name='Value', choices=HOCKEY_GOAL_VALUES,
-                                             default=HOCKEY_GOAL_VALUES[0])
+                                             default=HOCKEY_GOAL_VALUES[0][0])
     created = models.DateTimeField(verbose_name='Created', auto_now_add=True)
     updated = models.DateTimeField(verbose_name='Updated', auto_now=True)
 
@@ -83,7 +95,7 @@ class HockeyGoal(models.Model):
         super().clean()
         if hasattr(self, 'type'):
             if self.type in ['pp', 'sh']:
-                msg = 'This field is required for {} goals'.format(self.get_type_display().lower())
+                msg = 'This field is required for {} goals.'.format(self.get_type_display().lower())
                 raise ValidationError({'penalty': msg})
 
     def __str__(self):

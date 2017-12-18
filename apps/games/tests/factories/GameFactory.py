@@ -12,10 +12,6 @@ from teams.tests import TeamFactory
 
 # NOTE: fields such as type, point_value, etc. should be explicitly set in tests so bad data isn't used.
 class AbstractGameFactory(django.DjangoModelFactory):
-    class Meta:
-        model = models.AbstractGame
-        abstract = True
-
     home_team = SubFactory(TeamFactory)
     away_team = LazyAttribute(lambda obj: TeamFactory(division=obj.home_team.division))
     status = models.AbstractGame.GAME_STATUSES[0][0]
@@ -26,6 +22,10 @@ class AbstractGameFactory(django.DjangoModelFactory):
     # This should match the timezone of `start`.
     timezone = 'UTC'
     season = SubFactory(SeasonFactory)
+
+    class Meta:
+        model = models.AbstractGame
+        abstract = True
 
 
 class HockeyGameFactory(AbstractGameFactory):
@@ -50,19 +50,23 @@ class HockeyGameFactory(AbstractGameFactory):
 
 
 class HockeyGoalFactory(django.DjangoModelFactory):
-    class Meta:
-        model = models.HockeyGame
-
     game = SubFactory(HockeyGameFactory)
     period = SubFactory('periods.tests.HockeyPeriodFactory')
     time = datetime.timedelta(minutes=5, seconds=23)
     player = SubFactory(HockeyPlayerFactory)
     type = models.HockeyGoal.HOCKEY_GOAL_TYPES[0][0]
 
+    class Meta:
+        model = models.HockeyGoal
+
+    @post_generation
+    def full_clean(self, *args, **kwargs):
+        self.full_clean()
+
 
 class HockeyAssistFactory(django.DjangoModelFactory):
-    class Meta:
-        model = models.HockeyAssist
-
     player = SubFactory(HockeyPlayerFactory)
     goal = SubFactory(HockeyGoalFactory)
+
+    class Meta:
+        model = models.HockeyAssist
