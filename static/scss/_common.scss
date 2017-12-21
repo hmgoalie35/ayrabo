@@ -17,42 +17,23 @@ footer {
   }
 }
 
-#noty_top_layout_container {
+#noty_layout__top {
   top: 54px !important;
-
-  :hover {
-    opacity: 0.6;
-  }
 }
 
-#noty_topRight_layout_container {
+#noty_layout__topRight {
   top: 60px !important;
   right: 5px !important;
+}
 
-  // If using bootstrapTheme uncomment this.
-  //  .list-group-item {
-  //    margin: 4px 0;
-  //  }
-
-  :hover {
-    opacity: 0.6;
+.noty_layout {
+  .noty_bar {
+    &.noty_type__info {
+      color: $alert-info-text;
+      background-color: $alert-info-bg;
+      border-color: $alert-info-border;
+    }
   }
-}
-
-.noty_message {
-  font-weight: normal !important;
-}
-
-.noty_type_info {
-  color: $alert-info-text;
-  background-color: $alert-info-bg;
-  border-color: $alert-info-border;
-}
-
-.noty_type_alert {
-  color: $alert-danger-text;
-  background-color: $alert-danger-bg;
-  border-color: $alert-danger-border;
 }
 
 // For non-field errors

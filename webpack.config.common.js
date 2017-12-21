@@ -93,7 +93,12 @@ module.exports = {
         context: "node_modules"
       },
       {
-        from: "noty/js/noty/packaged/jquery.noty.packaged.min.js",
+        from: "noty/lib/noty.min.js",
+        to: "vendor",
+        context: "node_modules"
+      },
+      {
+        from: "noty/lib/noty.css",
         to: "vendor",
         context: "node_modules"
       },

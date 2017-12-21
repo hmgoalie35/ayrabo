@@ -1,4 +1,3 @@
-{# Can create own theme, see noty/demo/themeCss.html #}
 {% if messages %}
   <script type="text/javascript">
     var isMobileDevice = function () {
@@ -10,7 +9,7 @@
         var layout = isMobileDevice() ? "top" : "topRight";
         var openAnimation = isMobileDevice() ? "bounceInDown" : "bounceInRight";
         var closeAnimation = isMobileDevice() ? "bounceOutUp" : "bounceOutRight";
-        noty({
+        new Noty({
           theme: "relax",
           type: "{{msg.level_tag}}",
           text: "{{msg.message}}",
@@ -25,7 +24,7 @@
             easing: "swing",
             speed: 500
           }
-        });
+        }).show();
       })();
     {% endfor %}
   </script>
