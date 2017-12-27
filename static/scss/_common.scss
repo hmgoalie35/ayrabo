@@ -98,3 +98,8 @@ div.alert.alert-block.alert-danger > ul {
 .no-js {
   margin-bottom: 0;
 }
+
+// Fix bootstrap-select caret color
+.bootstrap-select > .dropdown-toggle.bs-placeholder .bs-caret {
+  color: $black;
+}

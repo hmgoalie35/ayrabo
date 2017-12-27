@@ -14,9 +14,7 @@ import os
 import re
 import sys
 
-import pytz
 from django.urls import reverse_lazy
-
 
 SITE_ID = 1
 
@@ -222,7 +220,8 @@ LANGUAGE_CODE = 'en-us'
 
 TIME_ZONE = 'UTC'
 
-COMMON_TIMEZONES = [(tz, tz) for tz in pytz.common_timezones]
+TIMEZONES = ['US/Alaska', 'US/Arizona', 'US/Central', 'US/Eastern', 'US/Hawaii', 'US/Mountain', 'US/Pacific', 'UTC']
+COMMON_TIMEZONES = [(tz, tz) for tz in TIMEZONES]
 
 USE_I18N = True
 

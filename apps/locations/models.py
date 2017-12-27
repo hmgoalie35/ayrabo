@@ -34,6 +34,9 @@ class Location(models.Model):
         # to save things before all validation is finished.
         self.slug = slugify(self.name)
 
+    class Meta:
+        ordering = ['name']
+
     def __str__(self):
         return self.name
 

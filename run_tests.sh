@@ -25,8 +25,8 @@ if [ -e venv ]; then
 fi
 
 print_step "Running flake8"
-
-if [ "$(flake8)" == "0" ]; then
+flake8
+if [ "$?" == "0" ]; then
     print_status "Success" "32" "2713"
 else
     print_status "Failed" "31" "2717"
