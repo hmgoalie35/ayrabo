@@ -41,6 +41,7 @@ class HockeyGameCreateViewTests(BaseTestCase):
                                                                                    'userprofile': None})
         UserProfileFactory(user=self.user, timezone='US/Eastern')
         self.season = SeasonFactory(id=1, league=self.liahl)
+        SeasonFactory(id=2, league=self.liahl, start_date=datetime.date(month=12, day=27, year=2016))
 
         self.sport_registration_url = reverse('sportregistrations:detail', kwargs={'pk': self.sport_registration.id})
 
@@ -145,3 +146,12 @@ class HockeyGameCreateViewTests(BaseTestCase):
         })
         response = self.client.post(self._format_url(team_pk=1), data=self.post_data)
         self.assertFormError(response, 'form', 'end', ['Game end must be after game start.'])
+
+    def test_start_not_in_selected_season_year_range(self):
+        self._login()
+        self.post_data.update({
+            'season': 2
+        })
+        response = self.client.post(self._format_url(team_pk=1), data=self.post_data)
+        self.assertFormError(response, 'form', 'start',
+                             ['This date and time does not occur during the 2016-2017 Season.'])

@@ -91,6 +91,14 @@ class HockeyGameCreateForm(forms.ModelForm):
             if start >= end:
                 errors['end'] = 'Game end must be after game start.'
 
+        season = cleaned_data.get('season', None)
+        if start and season:
+            start_date = season.start_date
+            end_date = season.end_date
+            if start.year != start_date.year:
+                errors['start'] = 'This date and time does not occur during the {}-{} Season.'.format(start_date.year,
+                                                                                                      end_date.year)
+
         if errors:
             raise ValidationError(errors)
 
