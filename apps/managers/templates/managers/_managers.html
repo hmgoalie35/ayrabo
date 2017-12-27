@@ -63,6 +63,14 @@
               </li>
               {# End Season Roster items #}
 
+              <li class="dropdown-header">Games</li>
+              <li>
+                <a id="create_game_btn_{{ obj.team.slug }}"
+                   href="{% url 'teams:games:create' obj.team.pk %}" role="button">
+                  <span class="fa fa-plus-circle fa-success"></span>&nbsp;Create
+                </a>
+              </li>
+
             </ul>
 
           </div>

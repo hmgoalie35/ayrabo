@@ -3,7 +3,7 @@ $(function () {
 
   $('[data-toggle="tooltip"]').tooltip();
 
-  function getCookie (name) {
+  function getCookie(name) {
     var cookieValue = null;
     if (document.cookie && document.cookie !== "") {
       var cookies = document.cookie.split(";");
@@ -21,7 +21,7 @@ $(function () {
 
   var csrftoken = getCookie("csrftoken");
 
-  function csrfSafeMethod (method) {
+  function csrfSafeMethod(method) {
     // these HTTP methods do not require CSRF protection
     return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
   }
@@ -50,12 +50,37 @@ $(function () {
       noneSelectedText: "---------",
       selectedTextFormat: "count > 2",
       mobile: isMobileDevice(),
-      dropupAuto: true
+      dropupAuto: true,
+      template: {
+        caret: '<span class="fa fa-caret-down"></span>'
+      }
     };
-
     $.extend(options, option_overrides);
     this.selectpicker(options);
+    return this;
+  };
 
+  $.fn.enableDatetimepicker = function (option_overrides) {
+    var options = {
+      format: 'MM/DD/YYYY hh:mm A',
+      useCurrent: false,
+      useStrict: true,
+      showClose: true,
+      allowInputToggle: true,
+      icons: {
+        time: 'fa fa-clock-o',
+        date: 'fa fa-calendar',
+        up: 'fa fa-caret-up',
+        down: 'fa fa-caret-down',
+        previous: 'fa fa-caret-left',
+        next: 'fa fa-caret-right',
+        today: 'glyphicon glyphicon-screenshot',
+        clear: 'fa fa-trash',
+        close: 'fa fa-times'
+      }
+    };
+    $.extend(options, option_overrides);
+    this.datetimepicker(options);
     return this;
   };
 

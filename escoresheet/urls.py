@@ -20,7 +20,7 @@ urlpatterns = [
     url(r'^account/', include('accounts.urls')),
     url(r'^account/', include('allauth.urls')),
     url(r'^', include('sports.urls')),
-    url(r'^', include('teams.urls')),
+    url(r'^teams/', include('teams.urls', namespace='teams')),
     # Adding namespace of `api` will cause drf login/logout/obtain token endpoints to fail because they need to
     # only be under the rest_framework namespace.
     url(r'^api/', include('api.urls')),
@@ -30,6 +30,5 @@ urlpatterns = [
 if settings.DEBUG:
     import debug_toolbar
 
-    urlpatterns += [
-                       url(r'^__debug__/', include(debug_toolbar.urls)),
-                   ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    urlpatterns += [url(r'^__debug__/', include(debug_toolbar.urls)), ] + static(settings.MEDIA_URL,
+                                                                                 document_root=settings.MEDIA_ROOT)

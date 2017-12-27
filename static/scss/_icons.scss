@@ -27,3 +27,7 @@
 .fa-danger {
   @extend .text-danger;
 }
+
+.fa-warning {
+  color: $brand-warning;
+}

@@ -116,6 +116,31 @@ module.exports = {
         from: "font-awesome/fonts",
         to: "vendor/font-awesome/fonts",
         context: "node_modules"
+      },
+      {
+        from: "eonasdan-bootstrap-datetimepicker/build/js",
+        to: "vendor/bootstrap-datetimepicker/js",
+        context: "node_modules"
+      },
+      {
+        from: "eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.min.css",
+        to: "vendor/bootstrap-datetimepicker/css",
+        context: "node_modules"
+      },
+      {
+        from: "moment/min/moment.min.js",
+        to: "vendor",
+        context: "node_modules"
+      },
+      {
+        from: "moment/min/locales.min.js",
+        to: "vendor",
+        context: "node_modules"
+      },
+      {
+        from: "moment-timezone/builds/moment-timezone.min.js",
+        to: "vendor",
+        context: "node_modules"
       }
     ])
   ]
