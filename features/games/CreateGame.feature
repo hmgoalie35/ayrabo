@@ -43,6 +43,7 @@ Feature: Create hockey game
     Then I should see "Create Hockey Game for Green Machine IceCats"
     And I should see "Midget Minor AA - LIAHL"
     And I should see "Make sure the date and time entered for Game Start and Game End are for the timezone you choose."
+    And I should see "All dates and times will be automatically displayed in common timezones throughout example.com"
 
   Scenario: Back button works
     Given I am on the "/teams/1/games/create/" page
