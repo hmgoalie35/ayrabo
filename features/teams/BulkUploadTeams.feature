@@ -18,7 +18,7 @@ Feature: Bulk upload teams from csv
     And I fill in "id_password" with "myweakpassword"
     And I press "#login-form > div.submit-row > input[type='submit']"
     And I am on the "admin:teams_team_changelist" page
-    When I press "bulk_upload_teams_btn"
+    When I press "bulk_upload_btn"
     Then I should be on the "bulk_upload_teams" page
 
   Scenario: Download example csv

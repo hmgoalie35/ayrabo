@@ -1,15 +1,6 @@
-{% extends 'admin/change_list.html' %}
+{% extends 'admin/bulk_upload_base.html' %}
 {% load static %}
 
-{% block object-tools-items %}
-
-  {{ block.super }}
-
-  <li>
-    <a id="bulk_upload_teams_btn" href="{% url 'bulk_upload_teams' %}" class="addlink">Bulk Upload Teams</a>
-    &nbsp;
-    <a id="download_example_csv_btn" href="{% static 'csv_examples/Bulk Upload Teams Example.csv' %}" class="addLink"
-       style="margin-left: 5px;">Download Example .csv</a>
-  </li>
-
-{% endblock %}
+{% block bulk_upload_url %}{% url 'bulk_upload_teams' %}{% endblock %}
+{% block object_type_plural %}Teams{% endblock %}
+{% block example_file_path %}{% static 'csv_examples/Bulk Upload Teams Example.csv' %}{% endblock %}
