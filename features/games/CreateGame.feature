@@ -43,6 +43,7 @@ Feature: Create hockey game
     Then I should see "Create Hockey Game for Green Machine IceCats"
     And I should see "Midget Minor AA - LIAHL"
     And I should see "Make sure the date and time entered for Game Start and Game End are for the timezone you choose."
+    And I should see "All dates and times will be automatically displayed in common timezones throughout example.com"
 
   Scenario: Back button works
     Given I am on the "/teams/1/games/create/" page
@@ -58,7 +59,7 @@ Feature: Create hockey game
     And I select "Iceland" from "id_location"
     And I fill in "id_start" with "12/26/2017 07:00 PM"
     And I fill in "id_end" with "12/26/2017 09:00 PM"
-    And I select "Long Island Amateur Hockey League: 2017 - 2018 Season" from "id_season"
+    And I select "LIAHL: 2017-2018 Season" from "id_season"
     And I press "create_game_btn"
     Then I should be on the absolute url page for "sports.SportRegistration" and "user__email=user@example.com, sport__name=Ice Hockey"
     And I should see "Your game has been created."

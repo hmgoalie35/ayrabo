@@ -1,11 +1,13 @@
 import datetime
 
+import pytz
 from django.urls import reverse
 
 from accounts.tests import UserFactory
 from common.tests import GenericChoiceFactory
 from divisions.tests import DivisionFactory
 from escoresheet.utils.testing import BaseTestCase
+from games.tests import HockeyGameFactory
 from leagues.tests import LeagueFactory
 from locations.tests import LocationFactory
 from managers.tests import ManagerFactory
@@ -41,6 +43,7 @@ class HockeyGameCreateViewTests(BaseTestCase):
                                                                                    'userprofile': None})
         UserProfileFactory(user=self.user, timezone='US/Eastern')
         self.season = SeasonFactory(id=1, league=self.liahl)
+        SeasonFactory(id=2, league=self.liahl, start_date=datetime.date(month=12, day=27, year=2016))
 
         self.sport_registration_url = reverse('sportregistrations:detail', kwargs={'pk': self.sport_registration.id})
 
@@ -145,3 +148,26 @@ class HockeyGameCreateViewTests(BaseTestCase):
         })
         response = self.client.post(self._format_url(team_pk=1), data=self.post_data)
         self.assertFormError(response, 'form', 'end', ['Game end must be after game start.'])
+
+    def test_start_not_in_selected_season_year_range(self):
+        self._login()
+        self.post_data.update({
+            'season': 2
+        })
+        response = self.client.post(self._format_url(team_pk=1), data=self.post_data)
+        self.assertFormError(response, 'form', 'start',
+                             ['This date and time does not occur during the 2016-2017 Season.'])
+
+    def test_duplicate_game_for_home_team_game_start_tz(self):
+        self._login()
+        tz = pytz.timezone('US/Eastern')
+        start = tz.localize(self.start)
+        end = tz.localize(self.end)
+        HockeyGameFactory(home_team=self.t1, away_team=self.t2, type=self.game_type, point_value=self.point_value,
+                          location=LocationFactory(), start=start, end=end, timezone='US/Pacific', season=self.season)
+        response = self.client.post(self._format_url(team_pk=1), data=self.post_data)
+        msg = 'This team already has a game for the selected game start and timezone.'
+        self.assertFormError(response, 'form', 'home_team', [msg])
+        self.assertFormError(response, 'form', 'away_team', [msg])
+        self.assertFormError(response, 'form', 'start', [''])
+        self.assertFormError(response, 'form', 'timezone', [''])

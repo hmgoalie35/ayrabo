@@ -74,24 +74,47 @@ class HockeyGameCreateForm(forms.ModelForm):
 
     def clean(self):
         cleaned_data = super().clean()
-        errors = {}
+        field_errors = {}
 
         home_team = cleaned_data.get('home_team', None)
         away_team = cleaned_data.get('away_team', None)
         if home_team and away_team:
             if home_team.id != self.team.id and away_team.id != self.team.id:
-                errors['home_team'] = '{} must be either the home or away team.'.format(self.team.name)
+                field_errors['home_team'] = '{} must be either the home or away team.'.format(self.team.name)
             if home_team.id == away_team.id:
-                errors['home_team'] = 'This team must be different than the away team.'
-                errors['away_team'] = 'This team must be different than the home team.'
+                field_errors['home_team'] = 'This team must be different than the away team.'
+                field_errors['away_team'] = 'This team must be different than the home team.'
 
         start = cleaned_data.get('start', None)
         end = cleaned_data.get('end', None)
         if start and end:
             if start >= end:
-                errors['end'] = 'Game end must be after game start.'
+                field_errors['end'] = 'Game end must be after game start.'
 
-        if errors:
-            raise ValidationError(errors)
+        season = cleaned_data.get('season', None)
+        if start and season:
+            start_date = season.start_date
+            end_date = season.end_date
+            if start.year != start_date.year:
+                field_errors['start'] = 'This date and time does not occur during the {}-{} Season.'.format(
+                    start_date.year,
+                    end_date.year)
+
+        tz = cleaned_data.get('timezone', None)
+        if all([home_team, away_team, start, tz]):
+            qs = self.Meta.model.objects.filter(start=start, timezone=tz)
+            team_error_msg = 'This team already has a game for the selected game start and timezone.'
+            if qs.filter(home_team=home_team).exists():
+                field_errors['home_team'] = team_error_msg
+                # Forces the fields to be rendered in the error state.
+                field_errors['start'] = ''
+                field_errors['timezone'] = ''
+            if qs.filter(away_team=away_team).exists():
+                field_errors['away_team'] = team_error_msg
+                field_errors['start'] = ''
+                field_errors['timezone'] = ''
+
+        if field_errors:
+            raise ValidationError(field_errors)
 
         return cleaned_data
