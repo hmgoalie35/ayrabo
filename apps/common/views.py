@@ -185,14 +185,16 @@ class CsvBulkUploadView(LoginRequiredMixin, generic.FormView):
         csv_file = TextIOWrapper(uploaded_file)
         reader = csv.DictReader(csv_file)
         data = {}
+        raw_data = []
         count = 0
         for row in reader:
+            raw_data.append(row)
             row_data = self.get_row_data(row, count)
             data.update(row_data)
             count += 1
         data['form-TOTAL_FORMS'] = count
         data['form-INITIAL_FORMS'] = 0
-        return data
+        return data, raw_data
 
     def get_formset_class(self):
         kwargs = {}
@@ -202,11 +204,14 @@ class CsvBulkUploadView(LoginRequiredMixin, generic.FormView):
             kwargs['form'] = self.model_form_class
         return forms.modelformset_factory(self.model, **kwargs)
 
+    def get_model_form_kwargs(self, data, raw_data):
+        return {}
+
     def form_valid(self, form):
         uploaded_file = form.cleaned_data.get('file')
-        data = self.parse_data(uploaded_file)
+        data, raw_data = self.parse_data(uploaded_file)
         FormSetClass = self.get_formset_class()
-        formset = FormSetClass(data)
+        formset = FormSetClass(data, form_kwargs=self.get_model_form_kwargs(data, raw_data))
         if not formset.is_valid():
             context = self.get_context_data()
             context['formset'] = formset

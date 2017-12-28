@@ -1,12 +1,16 @@
 import datetime
+import os
 
 import pytz
+from django.conf import settings
+from django.core.files.uploadedfile import SimpleUploadedFile
 from django.urls import reverse
 
 from accounts.tests import UserFactory
 from common.tests import GenericChoiceFactory
 from divisions.tests import DivisionFactory
 from escoresheet.utils.testing import BaseTestCase
+from games.models import HockeyGame
 from games.tests import HockeyGameFactory
 from leagues.tests import LeagueFactory
 from locations.tests import LocationFactory
@@ -171,3 +175,39 @@ class HockeyGameCreateViewTests(BaseTestCase):
         self.assertFormError(response, 'form', 'away_team', [msg])
         self.assertFormError(response, 'form', 'start', [''])
         self.assertFormError(response, 'form', 'timezone', [''])
+
+
+class BulkUploadHockeyGamesViewTests(BaseTestCase):
+    def setUp(self):
+        self.url = reverse('bulk_upload_hockeygames')
+        self.email = 'user@example.com'
+        self.password = 'myweakpassword'
+        self.test_file_path = os.path.join(settings.BASE_DIR, 'static', 'csv_examples')
+        self.user = UserFactory(email=self.email, password=self.password, is_staff=True)
+        sport = SportFactory(name='Ice Hockey')
+        league = LeagueFactory(sport=sport, full_name='Long Island Amateur Hockey League')
+        division = DivisionFactory(league=league, name='Midget Minor AA')
+        TeamFactory(id=35, division=division)
+        TeamFactory(id=31, division=division)
+        GenericChoiceFactory(id=2, content_object=sport, short_value='exhibition', long_value='Exhibition',
+                             type='game_type')
+        GenericChoiceFactory(id=7, content_object=sport, short_value='2', long_value='2', type='game_point_value')
+        LocationFactory(id=11)
+        SeasonFactory(id=10, league=league, start_date=datetime.date(month=12, day=27, year=2017))
+
+    def test_post_valid_csv(self):
+        self.client.login(email=self.email, password=self.password)
+        with open(os.path.join(self.test_file_path, 'bulk_upload_hockeygames_example.csv')) as f:
+            response = self.client.post(self.url, {'file': f}, follow=True)
+            self.assertHasMessage(response, 'Successfully created 1 hockeygame object(s)')
+            self.assertEqual(HockeyGame.objects.count(), 1)
+
+    def test_post_invalid_csv(self):
+        self.client.login(email=self.email, password=self.password)
+        content = b'home_team,away_team,type,point_value,location,start,end,timezone,season\n\n35,31,2,7,11,12/26/2017,12/26/2017 09:00 PM,US/Eastern,5'  # noqa
+        f = SimpleUploadedFile('test.csv', content)
+        response = self.client.post(self.url, {'file': f}, follow=True)
+        self.assertEqual(HockeyGame.objects.count(), 0)
+        self.assertFormsetError(response, 'formset', 0, 'start', ['Enter a valid date/time.'])
+        self.assertFormsetError(response, 'formset', 0, 'season',
+                                ['Select a valid choice. That choice is not one of the available choices.'])
