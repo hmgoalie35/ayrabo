@@ -103,4 +103,44 @@ $(function () {
     history.back();
   });
 
+  var hasLocalStorage = function () {
+    try {
+      var item = 'test';
+      localStorage.setItem(item, item);
+      localStorage.removeItem(item);
+      return true;
+    } catch (e) {
+      return false;
+    }
+  };
+
+  var setLocalStorageItem = function (key, value) {
+    if (!hasLocalStorage()) {
+      return;
+    }
+    localStorage.setItem(key, value);
+  };
+
+  var getLocalStorageItem = function (key) {
+    return hasLocalStorage() ? localStorage.getItem(key) : null;
+  };
+
+  var computePersistentTabKey = function () {
+    var pathname = window.location.pathname;
+    // Convert '/' to '-', omitting the root '/'. This assumes there is a trailing '/'.
+    var key = pathname.substr(1).replace(/\//g, '-');
+    return key.concat('active-tab');
+  };
+
+  $("a[data-toggle='tab']").on('shown.bs.tab', function (e) {
+    var key = computePersistentTabKey();
+    var targetId = $(e.target).attr('id');
+    setLocalStorageItem(key, '#' + targetId);
+  });
+
+  var key = computePersistentTabKey();
+  var elementId = getLocalStorageItem(key);
+  if (elementId !== null) {
+    $(elementId).tab('show');
+  }
 });
