@@ -134,13 +134,13 @@ $(function () {
 
   $("a[data-toggle='tab']").on('shown.bs.tab', function (e) {
     var key = computePersistentTabKey();
-    var targetId = $(e.target).attr('id');
-    setLocalStorageItem(key, '#' + targetId);
+    var targetId = $(e.target).attr('href');
+    setLocalStorageItem(key, targetId);
   });
 
   var key = computePersistentTabKey();
   var elementId = getLocalStorageItem(key);
   if (elementId !== null) {
-    $(elementId).tab('show');
+    $("a[href='" + elementId + "']").tab('show');
   }
 });
