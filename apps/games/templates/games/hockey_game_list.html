@@ -1,0 +1,55 @@
+{% extends 'site_base.html' %}
+
+{% block title %}{{ team.name }} - {{ team.division.name }} Games{% endblock %}
+
+{% block content %}
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="text-center">
+          <h3>{{ team.name }} Games</h3>
+          <h4>{{ team.division.name }} - {{ team.division.league.abbreviated_name }}</h4>
+
+          {% if games %}
+            <table class="table responsive-table table-thin-th-border">
+              <thead>
+              <tr>
+                <th scope="col">Home Team</th>
+                <th scope="col">Away Team</th>
+                <th scope="col">Type</th>
+                <th scope="col">Status</th>
+                <th scope="col">Location</th>
+                <th scope="col">Game Start</th>
+                <th scope="col">Game End</th>
+                <th scope="col">Season</th>
+              </tr>
+              </thead>
+              <tbody>
+              {% for game in games %}
+                <tr>
+                  <td data-title="Home Team">{{ game.home_team }} </td>
+                  <td data-title="Away Team">{{ game.away_team }}</td>
+                  <td data-title="Type">{{ game.type }}</td>
+                  <td data-title="Status">{{ game.get_status_display }}</td>
+                  <td data-title="Location">{{ game.location.name }}</td>
+                  <td data-title="Game Start">{{ game.start_formatted }}</td>
+                  <td data-title="Game End">{{ game.end_formatted }}</td>
+                  <td data-title="Season">{{ game.season }}</td>
+                </tr>
+              {% endfor %}
+              </tbody>
+            </table>
+          {% else %}
+            <br><br><br>
+            <h3>There are no games for this team.</h3>
+            {% if can_create_game %}
+              <a class="btn btn-success" href="{% url 'teams:games:create' team.pk %}">Create Game</a>
+            {% endif %}
+          {% endif %}
+
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+

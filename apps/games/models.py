@@ -44,6 +44,14 @@ class AbstractGame(models.Model):
     def datetime_formatted(self, dt, default_format='%m/%d/%Y %I:%M %p %Z'):
         return self.datetime_localized(dt).strftime(default_format)
 
+    @property
+    def start_formatted(self):
+        return self.datetime_formatted(self.start)
+
+    @property
+    def end_formatted(self):
+        return self.datetime_formatted(self.end)
+
     def init_periods(self, duration):
         """
         Creates the 1st, 2nd, 3rd and OT1 periods for this game.
