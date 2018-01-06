@@ -57,7 +57,6 @@ class HockeyGameCreateView(LoginRequiredMixin,
 class HockeyGameListView(LoginRequiredMixin, generic.ListView):
     template_name = 'games/hockey_game_list.html'
     context_object_name = 'games'
-    ordering = ['-season', '-start']
     model = HockeyGame
 
     def _get_team(self):

@@ -1,11 +1,11 @@
 from django.contrib.sites.models import Site
+from django.core.exceptions import ValidationError
 from django.core.management.base import BaseCommand
 from django.db import IntegrityError
 
 from common.models import GenericChoice
 from penalties.models import GenericPenaltyChoice
 from sports.models import Sport
-
 
 SPORTS = ['Ice Hockey', 'Baseball']
 GENERIC_CHOICES = {
@@ -69,6 +69,26 @@ GENERIC_PENALTY_CHOICES = {
 SITE_NAME = 'escoresheet.com'
 
 
+def get_object(cls, **kwargs):
+    try:
+        return cls.objects.get(**kwargs)
+    except cls.DoesNotExist:
+        return None
+
+
+def create_object(cls, exclude=None, **kwargs):
+    exclude = exclude or []
+    created = False
+    try:
+        instance = cls(**kwargs)
+        instance.full_clean(exclude=exclude)
+        instance.save()
+        created = True
+    except (IntegrityError, ValidationError):
+        instance = get_object(cls, **kwargs)
+    return instance, created
+
+
 class Command(BaseCommand):
     help = 'Configures the project with sports, etc.'
 
@@ -91,8 +111,7 @@ class Command(BaseCommand):
         self.stdout.write('Seeding sports...')
         sports = []
         for sport in SPORTS:
-            obj, created = Sport.objects.get_or_create(name=sport)
-            obj.full_clean()
+            obj, created = create_object(Sport, exclude=['slug'], name=sport)
             sports.append(obj)
             self.print_status(obj, created)
         print()
