@@ -1,4 +1,5 @@
 import datetime
+from unittest import mock
 
 from django.core.management import call_command
 from django.utils.six import StringIO
@@ -64,7 +65,16 @@ class CopyExpiringSeasonsTests(BaseTestCase):
                              list(self.season_3.teams.values_list('id', flat=True)))
         self.assertRegex(result, r'Total: 3 Copied: 3 Skipped: 0 SUCCESS\n$')
 
-    def test_expired_copies_exist(self):
+    @mock.patch('seasons.management.commands.copy_expiring_seasons.date')
+    def test_expired_copies_exist(self, mock_date):
+        today = datetime.date(2017, 9, 24)
+        mock_date.today.return_value = today
+        mock_date.side_effect = lambda *args, **kw: datetime.date(*args, **kw)
+
+        self.season_3.start_date = today
+        self.season_3.end_date = today + datetime.timedelta(days=EXPIRATION_DAYS)
+        self.season_3.save()
+
         SeasonFactory(start_date=datetime.date(2013, 8, 15),
                       end_date=datetime.date(2014, 8, 15),
                       league=self.league,

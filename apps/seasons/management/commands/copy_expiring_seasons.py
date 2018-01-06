@@ -1,4 +1,5 @@
 import datetime
+from datetime import date
 
 from django.core.management.base import BaseCommand
 
@@ -11,7 +12,7 @@ class Command(BaseCommand):
     help = 'Creates new seasons based off of seasons that are about to expire.'
 
     def handle(self, *args, **options):
-        today = datetime.date.today()
+        today = date.today()
         one_year = datetime.timedelta(days=365)
         copied = 0
         skipped = 0
@@ -32,12 +33,8 @@ class Command(BaseCommand):
                 s.save()
                 s.teams.set(old_teams)
                 copied += 1
+
         total = seasons.count()
         status = 'SUCCESS' if copied + skipped == total else 'FAILURE'
-        msg = '[{}] Total: {} Copied: {} Skipped: {} {}'.format(
-                datetime.datetime.now(),
-                total,
-                copied,
-                skipped,
-                status)
+        msg = '[{}] Total: {} Copied: {} Skipped: {} {}'.format(datetime.datetime.now(), total, copied, skipped, status)
         self.stdout.write(msg)

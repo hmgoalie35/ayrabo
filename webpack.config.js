@@ -147,6 +147,21 @@ module.exports = function (env, argv) {
           from: "moment-timezone/builds/moment-timezone.min.js",
           to: "vendor",
           context: "node_modules"
+        },
+        {
+          from: "datatables.net/js",
+          to: "vendor/datatables",
+          context: "node_modules"
+        },
+        {
+          from: "datatables.net-bs/css",
+          to: "vendor/datatables",
+          context: "node_modules"
+        },
+        {
+          from: "datatables.net-bs/js",
+          to: "vendor/datatables",
+          context: "node_modules"
         }
       ])
     ]

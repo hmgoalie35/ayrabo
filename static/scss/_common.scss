@@ -103,3 +103,12 @@ div.alert.alert-block.alert-danger > ul {
 .bootstrap-select > .dropdown-toggle.bs-placeholder .bs-caret {
   color: $black;
 }
+
+.dataTables_filter {
+  label {
+    &:before {
+      font: normal normal normal 18px/2 FontAwesome;
+      content: "\f002";
+    }
+  }
+}

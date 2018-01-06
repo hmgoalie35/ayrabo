@@ -6,9 +6,6 @@ User = get_user_model()
 
 
 class UserFactory(django.DjangoModelFactory):
-    class Meta:
-        model = User
-
     first_name = Faker('first_name_male')
     last_name = Faker('last_name_male')
     # username and email must be the same
@@ -16,3 +13,6 @@ class UserFactory(django.DjangoModelFactory):
     username = factory.LazyAttribute(lambda obj: obj.email)
     password = PostGenerationMethodCall('set_password', 'myweakpassword')
     userprofile = factory.RelatedFactory('userprofiles.tests.factories.UserProfileFactory.UserProfileFactory', 'user')
+
+    class Meta:
+        model = User

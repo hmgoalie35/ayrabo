@@ -14,7 +14,6 @@ Feature: Create hockey game
       | 3  | Long Island Rebels    | Midget Minor AA | Long Island Amateur Hockey League | Ice Hockey |
       | 4  | Nassau County Lions   | Midget Minor AA | Long Island Amateur Hockey League | Ice Hockey |
       | 5  | Aviator Gulls         | Midget Minor AA | Long Island Amateur Hockey League | Ice Hockey |
-    And I login with "user@example.com" and "myweakpassword"
     And "user@example.com" is completely registered for "Ice Hockey" with role "Manager"
     And The following manager objects exist
       | username_or_email | team                  |
@@ -30,6 +29,7 @@ Feature: Create hockey game
     And The following season object exists
       | league                            | start_date | end_date   | teams                 |
       | Long Island Amateur Hockey League | 2017-09-14 | 2018-09-14 | Green Machine IceCats |
+    And I login with "user@example.com" and "myweakpassword"
 
   Scenario: Navigate to hockey game create page
     Given I am on the absolute url page for "sports.SportRegistration" and "user__email=user@example.com, sport__name=Ice Hockey"
@@ -38,17 +38,12 @@ Feature: Create hockey game
     And I press "create_game_btn_green-machine-icecats"
     Then I should be on the "/teams/1/games/create/" page
 
-  Scenario: Helpful text displayed to user
+  Scenario: Informative text displayed to user
     Given I am on the "/teams/1/games/create/" page
     Then I should see "Create Hockey Game for Green Machine IceCats"
     And I should see "Midget Minor AA - LIAHL"
     And I should see "Make sure the date and time entered for Game Start and Game End are for the timezone you choose."
     And I should see "All dates and times will be automatically displayed in common timezones throughout example.com"
-
-  Scenario: Back button works
-    Given I am on the "/teams/1/games/create/" page
-    And I press "back_btn"
-    Then I should be on the absolute url page for "sports.SportRegistration" and "user__email=user@example.com, sport__name=Ice Hockey"
 
   Scenario: Valid form
     Given I am on the "/teams/1/games/create/" page
