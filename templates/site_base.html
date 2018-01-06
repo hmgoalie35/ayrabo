@@ -18,6 +18,7 @@
   <link rel="stylesheet" href="{% webpack_static 'vendor/noty.css' %}">
   <link rel="stylesheet" href="{% webpack_static 'vendor/bootstrap-select/css/bootstrap-select.min.css' %}">
   <link rel="stylesheet" href="{% webpack_static 'vendor/bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css' %}">
+  <link rel="stylesheet" href="{% webpack_static 'vendor/datatables/dataTables.bootstrap.css' %}">
 
   {% block extra_style %}
   {% endblock %}
@@ -66,6 +67,8 @@
 <script src="{% webpack_static 'vendor/moment-timezone.min.js' %}"></script>
 <script src="{% webpack_static 'vendor/bootstrap-select/js/bootstrap-select.min.js' %}"></script>
 <script src="{% webpack_static 'vendor/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js' %}"></script>
+<script src="{% webpack_static 'vendor/datatables/jquery.dataTables.js' %}"></script>
+<script src="{% webpack_static 'vendor/datatables/dataTables.bootstrap.js' %}"></script>
 <script src="{% webpack_static 'js/main.js' %}"></script>
 
 {% block extra_js %}

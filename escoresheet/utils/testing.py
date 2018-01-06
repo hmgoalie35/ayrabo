@@ -4,6 +4,7 @@ A module that contains useful methods for testing
 from django.contrib.auth.models import User
 from django.db.models import Q
 from django.test import TestCase
+from django.urls import reverse
 
 from coaches.tests import CoachFactory
 from managers.tests import ManagerFactory
@@ -42,6 +43,21 @@ class BaseTestCase(TestCase):
 
         return player, coach, referee, manager
 
+    def format_url(self, **kwargs):
+        url = getattr(self, 'url', None)
+        if url:
+            return reverse(url, kwargs=kwargs)
+
+    def get_login_required_url(self, url):
+        return '{}?next={}'.format(reverse('account_login'), url)
+
+    def login(self, user=None, email=None, password=None):
+        if user:
+            return self.client.force_login(user)
+        if email and password:
+            return self.client.login(email=email, password=password)
+        return False
+
     # Custom assertions
     def assertHasMessage(self, response, msg):
         assert isinstance(msg, str)
@@ -54,3 +70,9 @@ class BaseTestCase(TestCase):
         messages = [msg.message for msg in response.context['messages']]
         if msg in messages:
             self.fail(msg='{} unexpectedly found in messages'.format(msg))
+
+    def assert_200(self, response):
+        self.assertEqual(response.status_code, 200)
+
+    def assert_404(self, response):
+        self.assertEqual(response.status_code, 404)

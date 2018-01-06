@@ -46,7 +46,6 @@ class HockeyGameCreateView(LoginRequiredMixin,
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['team'] = self._get_team()
-        context['sport_registration_url'] = self._get_sport_registration_url()
         return context
 
     def get_form_kwargs(self):
@@ -58,7 +57,8 @@ class HockeyGameCreateView(LoginRequiredMixin,
 class HockeyGameListView(LoginRequiredMixin, generic.ListView):
     template_name = 'games/hockey_game_list.html'
     context_object_name = 'games'
-    ordering = ['-season', '-start_date']
+    ordering = ['-season', '-start']
+    model = HockeyGame
 
     def _get_team(self):
         if hasattr(self, 'team'):
@@ -70,10 +70,10 @@ class HockeyGameListView(LoginRequiredMixin, generic.ListView):
         return self.team
 
     def get_queryset(self):
+        qs = super().get_queryset()
         team = self._get_team()
-        return HockeyGame.objects.filter(Q(home_team=team) | Q(away_team=team)).select_related('home_team', 'away_team',
-                                                                                               'type', 'location',
-                                                                                               'season')
+        return qs.filter(Q(home_team=team) | Q(away_team=team)).select_related('home_team', 'away_team', 'type',
+                                                                               'location', 'season')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
