@@ -5,9 +5,7 @@ from itertools import permutations, cycle
 import pytz
 from allauth.account.models import EmailAddress
 from django import utils
-from django.core.exceptions import ValidationError
 from django.core.management import BaseCommand
-from django.db import IntegrityError
 from django.db.models import Q
 from faker import Faker
 
@@ -36,12 +34,9 @@ def get_object(cls, **kwargs):
 
 def create_object(cls, exclude=None, **kwargs):
     exclude = exclude or []
-    try:
-        instance = cls(**kwargs)
-        instance.full_clean(exclude=exclude)
-        instance.save()
-    except (IntegrityError, ValidationError):
-        instance = get_object(cls, **kwargs)
+    instance = cls(**kwargs)
+    instance.full_clean(exclude=exclude)
+    instance.save()
     return instance
 
 
@@ -66,6 +61,9 @@ def get_league(self):
 
 
 def create_season(league, start_date, end_date):
+    qs = Season.objects.filter(league=league, start_date__year=start_date.year, end_date__year=end_date.year)
+    if qs.exists():
+        return qs.first()
     return create_object(Season, league=league, start_date=start_date, end_date=end_date)
 
 
