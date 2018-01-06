@@ -1,4 +1,5 @@
 from django.contrib.sites.models import Site
+from django.core.exceptions import ValidationError
 from django.core.management.base import BaseCommand
 from django.db import IntegrityError
 
@@ -83,7 +84,7 @@ def create_object(cls, exclude=None, **kwargs):
         instance.full_clean(exclude=exclude)
         instance.save()
         created = True
-    except IntegrityError:
+    except (IntegrityError, ValidationError):
         instance = get_object(cls, **kwargs)
     return instance, created
 
