@@ -254,7 +254,7 @@ class HockeyGameListViewTests(BaseTestCase):
 
         games = response.context.get('games')
         game_ids = list(games.values_list('id', flat=True))
-        self.assertListEqual(game_ids, [4, 3, 2, 1])
+        self.assertListEqual(game_ids, [1, 3, 2, 4])
 
     def test_get_context_data(self):
         self.login(email=self.email, password=self.password)

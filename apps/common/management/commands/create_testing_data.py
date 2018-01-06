@@ -136,6 +136,7 @@ def create_players(users, sport, team):
         position = get_position(i)
         player = HockeyPlayerFactory(user=user, sport=sport, team=team, jersey_number=(i % num_users) + 1,
                                      position=position)
+        player.full_clean()
         players.append(player)
         i += 1
     return players
