@@ -97,6 +97,12 @@ def step_impl(context, url):
     navigate_to_page(context, url)
 
 
+@step('I am on the "(?P<url>[^"]*)" page with kwargs "(?P<url_kwargs>[^"]*)"')
+def step_impl(context, url, url_kwargs):
+    kwargs = string_to_kwargs_dict(url_kwargs)
+    navigate_to_page(context, url, kwargs)
+
+
 @step('I go to the "(?P<url>[^"]*)" page')
 def step_impl(context, url):
     navigate_to_page(context, url)
@@ -109,6 +115,12 @@ def step_impl(context, url):
     if '?' in current_url:
         current_url = current_url.split('?')[0]
     context.test.assertEqual(current_url, context.get_url(url))
+
+
+@step('I should be on the "(?P<url>.*)" page with kwargs "(?P<url_kwargs>[^"]*)"')
+def step_impl(context, url, url_kwargs):
+    kwargs = string_to_kwargs_dict(url_kwargs)
+    context.test.assertEqual(context.driver.current_url, context.get_url(url, **kwargs))
 
 
 @step('I am on the absolute url page for "(?P<model_class>.*)" and "(?P<kwarg_data>.*)"')
@@ -228,6 +240,12 @@ def step_impl(context, prefix, kwargs):
 @step('I should see "(?P<text>.*)"')
 def step_impl(context, text):
     context.test.assertIn(text, str(context.driver.page_source))
+
+
+@step('The page should contain "(?P<text>.*)"')
+def step_impl(context, text):
+    bodyText = find_element(context, 'body').text
+    context.test.assertIn(text, bodyText)
 
 
 @step('I should not see "(?P<text>.*)"')

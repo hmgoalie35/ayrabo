@@ -17,7 +17,7 @@ def generate_phone_number():
     left = generate_num(2, 9, 1) + generate_num(0, 9, 2)
     middle = generate_num(0, 9, 3)
     right = generate_num(0, 9, 4)
-    return '({})-{}-{}'.format(left, middle, right)
+    return '({}) {}-{}'.format(left, middle, right)
 
 
 class LocationFactory(django.DjangoModelFactory):

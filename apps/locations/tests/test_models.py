@@ -9,8 +9,8 @@ from . import LocationFactory
 
 class LocationModelTests(BaseTestCase):
     def test_phone_number_regex_valid(self):
-        location = LocationFactory(phone_number='(516)-123-4567')
-        self.assertEqual(location.phone_number, '(516)-123-4567')
+        location = LocationFactory(phone_number='(516) 123-4567')
+        self.assertEqual(location.phone_number, '(516) 123-4567')
 
     def test_phone_number_regex_invalid(self):
         with self.assertRaisesMessage(ValidationError, 'Enter a valid phone number.'):

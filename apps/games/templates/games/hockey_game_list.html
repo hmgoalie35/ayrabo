@@ -48,7 +48,9 @@
                   <td data-title="Away Team">{{ game.away_team }}</td>
                   <td data-title="Type">{{ game.type }}</td>
                   <td data-title="Status">{{ game.get_status_display }}</td>
-                  <td data-title="Location">{{ game.location.name }}</td>
+                  <td data-title="Location">
+                    <a href="{% url 'locations:detail' game.location.slug %}">{{ game.location.name }}</a>
+                  </td>
                   <td data-title="Game Start">{{ game.start_formatted }}</td>
                   <td data-title="Game End">{{ game.end_formatted }}</td>
                   <td data-title="Season">{{ game.season }}</td>
