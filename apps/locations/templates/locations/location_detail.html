@@ -1,0 +1,87 @@
+{% extends 'site_base.html' %}
+
+{% block title %}{{ location.name }}{% endblock %}
+
+{% block content %}
+  <div class="container">
+
+    <div class="row">
+      <div class="col-md-6">
+        <div class="text-center">
+          <h3>{{ location.name }}</h3>
+          <address>
+            <strong>Address:</strong><br>
+            {{ location.street_number }} {{ location.street }},<br>
+            {{ location.city }}, {{ location.state }} {{ location.zip_code }}<br><br>
+
+            <strong>Phone:</strong><br>
+            <a href="tel:{{ location.phone_number }}">{{ location.phone_number }}</a><br><br>
+
+            <strong>Website:</strong><br>
+            <a href="{{ location.website }}">{{ location.website }}</a>
+          </address>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <div class="text-center">
+          <h3>Map</h3>
+          <div class="js-loading mt20">
+            <div>Loading...</div>
+            <br>
+            <div>
+              <i class="fa fa-2x fa-spinner fa-pulse fa-spin"></i>
+            </div>
+          </div>
+
+          {% if not RUNNING_AUTOMATED_TESTS %}
+            <div id="iframe-container">
+              <iframe
+                class="google-map"
+                width="600"
+                height="450"
+                frameborder="0"
+                src="https://www.google.com/maps/embed/v1/place?q={{ address|urlencode }}&key={{ GOOGLE_MAPS_API_KEY }}"
+                allowfullscreen
+              >
+              </iframe>
+            </div>
+          {% endif %}
+
+          <div id="iframeError" class="hidden mt20">
+            <p>There was an error loading the map.</p>
+            <p>Try refreshing the page or try again later.</p>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block extra_js %}
+  {% if not RUNNING_AUTOMATED_TESTS %}
+    <script>
+      $(function () {
+        var onError = function () {
+          $("#iframe-container").remove();
+          hideLoading();
+          $("#iframeError").removeClass("hidden");
+        };
+
+        // If the iframe successfully loads, the timeout gets cleared. Otherwise after a set amount of time we assume
+        // an error occurred while loading the iframe.
+        var iframeError = setTimeout(onError, 1500);
+
+        var hideLoading = function () {
+          $(".js-loading").addClass("hidden");
+        };
+
+        $("iframe").load(function () {
+          hideLoading();
+          clearTimeout(iframeError);
+        });
+      });
+    </script>
+  {% endif %}
+{% endblock %}

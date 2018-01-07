@@ -68,6 +68,7 @@ SECRET_KEY = ENV_SETTINGS.get('SECRET_KEY', DEV_KEY)
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
+RUNNING_AUTOMATED_TESTS = False
 
 ALLOWED_HOSTS = [host.strip() for host in ENV_SETTINGS.get('ALLOWED_HOSTS', '').split(',')]
 
@@ -414,6 +415,9 @@ REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 25,
 }
+
+# Google Maps API
+GOOGLE_MAPS_API_KEY = ENV_SETTINGS.get('GOOGLE_MAPS_API_KEY')
 
 try:
     # Running in testing mode

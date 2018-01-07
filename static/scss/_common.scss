@@ -112,3 +112,11 @@ div.alert.alert-block.alert-danger > ul {
     }
   }
 }
+
+.google-map {
+  border: 0;
+  @media (max-width: $screen-sm-min) {
+    width: 100%;
+    height: 100%;
+  }
+}

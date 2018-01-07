@@ -27,3 +27,5 @@ CACHES['default'] = {
 PASSWORD_HASHERS = [
     'django.contrib.auth.hashers.MD5PasswordHasher',
 ]
+
+RUNNING_AUTOMATED_TESTS = True

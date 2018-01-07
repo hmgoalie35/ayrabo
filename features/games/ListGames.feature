@@ -35,15 +35,15 @@ Feature: List games for a team
     And I press "manager_tab"
     And I press "actions-dropdown-manager-green-machine-icecats"
     And I press "list_games_btn_green-machine-icecats"
-    Then I should be on the "/teams/1/games/" page
+    Then I should be on the "teams:games:list" page with kwargs "team_pk=1"
 
   Scenario: Helpful text displayed to user
-    Given I am on the "/teams/1/games/" page
+    Given I am on the "teams:games:list" page with kwargs "team_pk=1"
     Then I should see "Games for Green Machine IceCats"
     And I should see "Midget Minor AA - LIAHL"
 
   Scenario: No games
-    Given I am on the "/teams/1/games/" page
+    Given I am on the "teams:games:list" page with kwargs "team_pk=1"
     Then I should see "There are no games for this team."
     And "create-game-btn-empty-state" should be visible
 
@@ -54,7 +54,7 @@ Feature: List games for a team
       | Long Island Edge      | Green Machine IceCats | league | 2           | Iceland  | 10/30/2017 07:00 PM | 10/30/2017 09:00 PM | US/Eastern | 1      |
       | Long Island Edge      | Aviator Gulls         | league | 2           | Iceland  | 10/31/2017 07:00 PM | 10/31/2017 09:00 PM | US/Eastern | 1      |
 
-    And I am on the "/teams/1/games/" page
+    And I am on the "teams:games:list" page with kwargs "team_pk=1"
     Then "create-game-btn" should be visible
     And I should see "Green Machine IceCats"
     And I should see "League"
@@ -67,6 +67,6 @@ Feature: List games for a team
 
   Scenario: Not team manager
     Given I login with "user1@example.com" and "myweakpassword"
-    And I am on the "/teams/1/games/" page
+    And I am on the "teams:games:list" page with kwargs "team_pk=1"
     Then "create-game-btn" should not exist on the page
     And "create-game-btn-empty-state" should not exist on the page
