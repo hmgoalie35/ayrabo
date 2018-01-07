@@ -237,7 +237,7 @@ class Command(BaseCommand):
                     users = create_users(num_users, bday_year)
                     self.stdout.write('Creating sport registrations for {} users'.format(num_users))
                     create_sport_registrations(users, sport, ['Player'])
-                    self.stdout.write('Creating players for {} users\n'.format(num_users))
+                    self.stdout.write('Creating players for {} users\n\n'.format(num_users))
                     create_players(users, sport, team)
 
         choices = GenericChoice.objects.get_choices(instance=sport)

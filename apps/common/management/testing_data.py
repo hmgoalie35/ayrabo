@@ -65,6 +65,7 @@ liahl_divisions = {
         'bday_year': [2001, 2000],
         'teams': [li_gulls, pal_ih_jr_isles, westchester_express, li_royals]
     },
+    # ********** This is a good division to test with **********
     '16U Tier II': {
         'bday_year': [2001, 2000],
         'teams': [li_edge, greater_ny, icecats, pal_ih, arrows, aviator, li_rebels, lb_lightning, westchester_vipers,
@@ -86,6 +87,7 @@ liahl_divisions = {
         'bday_year': [2003, 2004],
         'teams': [pal_ih_jr_isles, li_royals, li_gulls, westchester_express]
     },
+    # ********** This is a good division to test with **********
     '14U Tier II': {
         'bday_year': [2003, 2004],
         'teams': [greater_ny, brewster, li_rebels, lb_lightning, nyc_cyclones, li_edge, hv_polar_bears,
@@ -114,6 +116,7 @@ liahl_divisions = {
         'teams': [pal_ih, westchester_vipers, li_rebels, nyc_cyclones, arrows, lb_lightning, icecats, brewster,
                   greater_ny, li_edge]
     },
+    # ********** This is a good division to test with **********
     '12U Tier III': {
         'bday_year': [2005, 2006],
         'teams': [aviator, gn_bruins, li_edge, dix_hills_hawks, pal_ih_sound_tigers, lady_isles, greater_ny,

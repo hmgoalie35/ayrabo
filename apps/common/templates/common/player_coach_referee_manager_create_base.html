@@ -47,16 +47,10 @@
     </div>
 
   </div>
+  <div class="hidden" id="role_type" data-text="{{ role }}"></div>
 {% endblock %}
 
 
 {% block extra_js %}
   <script src="{% static 'js/manage_formset_forms.js' %}"></script>
-  <script>
-    $(function () {
-      var type = '{{ role|lower }}' === 'referee' ? 'league' : 'team';
-      var selector = "select[id$=-" + type + "]";
-      $(selector).enableBootstrapSelect({ header: 'Select a ' + type });
-    });
-  </script>
 {% endblock %}
