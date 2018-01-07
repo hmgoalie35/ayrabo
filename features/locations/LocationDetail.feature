@@ -21,7 +21,7 @@ Feature: Location details
       | sports.Sport | 2           | 2          | game_point_value |
     And The following location object exists
       | name    | street_number | street       | city          | state | zip_code | phone_number   | website                            |
-      | Iceland | 3345          | Hillside Ave | New Hyde Park | NY    | 11040    | (516)-746-1100 | https://www.icelandlongisland.com/ |
+      | Iceland | 3345          | Hillside Ave | New Hyde Park | NY    | 11040    | (516) 746-1100 | https://www.icelandlongisland.com/ |
     And The following season object exists
       | id | league                            | start_date | end_date   | teams                 |
       | 1  | Long Island Amateur Hockey League | 2017-09-14 | 2018-09-14 | Green Machine IceCats |
@@ -42,7 +42,7 @@ Feature: Location details
     And I should see "3345 Hillside Ave,"
     And I should see "New Hyde Park, NY 11040"
     And I should see "Phone:"
-    And I should see "(516)-746-1100"
+    And I should see "(516) 746-1100"
     And I should see "Website:"
     And I should see "https://www.icelandlongisland.com/"
     And I should see "Map"
