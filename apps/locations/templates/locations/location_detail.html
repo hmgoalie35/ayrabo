@@ -18,7 +18,11 @@
             <a href="tel:{{ location.phone_number }}">{{ location.phone_number }}</a><br><br>
 
             <strong>Website:</strong><br>
-            <a href="{{ location.website }}">{{ location.website }}</a>
+            {% if location.website %}
+              <a href="{{ location.website }}">{{ location.website }}</a>
+            {% else %}
+              N/A
+            {% endif %}
           </address>
         </div>
       </div>
@@ -71,15 +75,15 @@
 
         // If the iframe successfully loads, the timeout gets cleared. Otherwise after a set amount of time we assume
         // an error occurred while loading the iframe.
-        var iframeError = setTimeout(onError, 1500);
+        var iframeError = setTimeout(onError, 2000);
 
         var hideLoading = function () {
           $(".js-loading").addClass("hidden");
         };
 
         $("iframe").load(function () {
-          hideLoading();
           clearTimeout(iframeError);
+          hideLoading();
         });
       });
     </script>
