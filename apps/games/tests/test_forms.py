@@ -14,7 +14,11 @@ from teams.tests import TeamFactory
 
 
 # Tests for the .clean method can be found in test_views
-class HockeyGameCreateFormTests(BaseTestCase):
+class AbstractGameCreateFormTests(BaseTestCase):
+    """
+    Testing the abstract class via `HockeyGameCreateForm`.
+    """
+
     def setUp(self):
         self.form_cls = HockeyGameCreateForm
 

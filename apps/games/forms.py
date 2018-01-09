@@ -13,7 +13,7 @@ from teams.models import Team
 DATETIME_INPUT_FORMATS = ['%m/%d/%Y %I:%M %p']
 
 
-class HockeyGameCreateForm(forms.ModelForm):
+class AbstractGameCreateForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         self.team = kwargs.pop('team', None)
         super().__init__(*args, **kwargs)
@@ -52,7 +52,7 @@ class HockeyGameCreateForm(forms.ModelForm):
         self.fields['point_value'].queryset = choices.filter(type='game_point_value')
 
         SeasonModel = self.fields['season'].queryset.model
-        self.fields['season'].queryset = SeasonModel.objects.filter(league=league)
+        self.fields['season'].queryset = SeasonModel.objects.select_related('league').filter(league=league)
 
         # The current timezone is the same as the timezone on the user's profile.
         self.fields['timezone'].initial = timezone.get_current_timezone_name()
@@ -64,9 +64,7 @@ class HockeyGameCreateForm(forms.ModelForm):
     end = forms.DateTimeField(input_formats=DATETIME_INPUT_FORMATS, label='Game End')
 
     class Meta:
-        model = HockeyGame
-        fields = ['home_team', 'away_team', 'type', 'point_value', 'location', 'start', 'end', 'timezone',
-                  'season']
+        fields = ['home_team', 'away_team', 'type', 'point_value', 'location', 'start', 'end', 'timezone', 'season']
         help_texts = {
             'timezone': 'Please specify the timezone where this game will occur. The default is taken from '
                         'your account.'
@@ -118,3 +116,8 @@ class HockeyGameCreateForm(forms.ModelForm):
             raise ValidationError(field_errors)
 
         return cleaned_data
+
+
+class HockeyGameCreateForm(AbstractGameCreateForm):
+    class Meta(AbstractGameCreateForm.Meta):
+        model = HockeyGame

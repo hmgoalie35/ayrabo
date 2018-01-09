@@ -6,32 +6,33 @@ from django.urls import reverse_lazy
 from django.views import generic
 
 from common.views import CsvBulkUploadView
-from escoresheet.utils.mixins import HasPermissionMixin
+from escoresheet.utils.exceptions import SportNotConfiguredException
+from escoresheet.utils.mixins import HasPermissionMixin, HandleSportNotConfiguredMixin
 from games.forms import HockeyGameCreateForm
 from games.models import HockeyGame
 from managers.models import Manager
 from teams.models import Team
 
+SPORT_GAME_FORM_MAPPINGS = {
+    'Ice Hockey': HockeyGameCreateForm
+}
 
-class HockeyGameCreateView(LoginRequiredMixin,
-                           HasPermissionMixin,
-                           SuccessMessageMixin,
-                           generic.CreateView):
-    template_name = 'games/hockey_game_create.html'
-    model = HockeyGame
-    form_class = HockeyGameCreateForm
+SPORT_GAME_MODEL_MAPPINGS = {
+    'Ice Hockey': HockeyGame
+}
+
+
+class GameCreateView(LoginRequiredMixin,
+                     HasPermissionMixin,
+                     HandleSportNotConfiguredMixin,
+                     SuccessMessageMixin,
+                     generic.CreateView):
+    template_name = 'games/game_create.html'
     success_message = 'Your game has been created.'
 
-    def has_permission_func(self):
-        user = self.request.user
-        team = self._get_team()
-        return Manager.objects.active().filter(user=user, team=team).exists()
-
-    def get_success_url(self):
-        return self._get_sport_registration_url()
-
     def _get_sport_registration_url(self):
-        sport_registration = self.request.user.sportregistration_set.get(sport_id=self.team.division.league.sport_id)
+        self._get_team()
+        sport_registration = self.request.user.sportregistration_set.get(sport_id=self.sport.id)
         return reverse('sportregistrations:detail', kwargs={'pk': sport_registration.id})
 
     def _get_team(self):
@@ -41,7 +42,23 @@ class HockeyGameCreateView(LoginRequiredMixin,
             Team.objects.select_related('division', 'division__league', 'division__league__sport'),
             pk=self.kwargs.get('team_pk', None)
         )
+        self.sport = self.team.division.league.sport
         return self.team
+
+    def has_permission_func(self):
+        user = self.request.user
+        team = self._get_team()
+        return Manager.objects.active().filter(user=user, team=team).exists()
+
+    def get_success_url(self):
+        return self._get_sport_registration_url()
+
+    def get_form_class(self):
+        self._get_team()
+        form_cls = SPORT_GAME_FORM_MAPPINGS.get(self.sport.name)
+        if form_cls is None:
+            raise SportNotConfiguredException(self.sport)
+        return form_cls
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -54,25 +71,28 @@ class HockeyGameCreateView(LoginRequiredMixin,
         return form_kwargs
 
 
-class HockeyGameListView(LoginRequiredMixin, generic.ListView):
-    template_name = 'games/hockey_game_list.html'
+class GameListView(LoginRequiredMixin, generic.ListView):
+    template_name = 'games/game_list.html'
     context_object_name = 'games'
-    model = HockeyGame
 
     def _get_team(self):
         if hasattr(self, 'team'):
             return self.team
         self.team = get_object_or_404(
-            Team.objects.select_related('division', 'division__league'),
+            Team.objects.select_related('division', 'division__league', 'division__league__sport'),
             pk=self.kwargs.get('team_pk', None)
         )
+        self.sport = self.team.division.league.sport
         return self.team
 
     def get_queryset(self):
-        qs = super().get_queryset()
         team = self._get_team()
-        return qs.filter(Q(home_team=team) | Q(away_team=team)).select_related('home_team', 'away_team', 'type',
-                                                                               'location', 'season')
+        model_cls = SPORT_GAME_MODEL_MAPPINGS.get(self.sport.name, None)
+        if model_cls is None:
+            raise SportNotConfiguredException(self.sport)
+        return model_cls.objects.filter(Q(home_team=team) | Q(away_team=team)).select_related('home_team', 'away_team',
+                                                                                              'type', 'location',
+                                                                                              'season')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

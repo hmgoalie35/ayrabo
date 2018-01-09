@@ -6,5 +6,5 @@ class SportNotConfiguredException(Exception):
         :param sport: The sport that isn't configured properly.
         """
         self.sport = sport
-        self.message = "{sport} hasn't been configured correctly in our system. " \
-                       "If you believe this is an error please contact us.".format(sport=self.sport)
+        self.message = "{} hasn't been configured correctly in our system. " \
+                       "If you believe this is an error please contact us.".format(self.sport)
