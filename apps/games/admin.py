@@ -17,23 +17,24 @@ COMMON_GAME_FIELDS = ['id', 'home_team', 'away_team', 'start_formatted', 'end_fo
 PLAYER_SEARCH_FIELDS = ['player__user__first_name', 'player__user__last_name', 'player__jersey_number']
 
 
-class HockeyGameAdminForm(forms.ModelForm):
+class AbstractGameAdminForm(forms.ModelForm):
     """
-    NOTE: This form is currently being used to just reduce the number of db queries. It is lacking the necessary
-    validation for home/away teams being different and players belonging to the chosen teams, etc.
+    NOTE: This form is solely being used to reduce the number of db queries.
+    It is lacks validation for home/away teams being different and players belonging to the chosen teams, etc.
     """
+    sport_name = None
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        sport = Sport.objects.get(name='Ice Hockey')
+        sport = Sport.objects.get(name=self.sport_name)
 
         TeamModel = self.fields['home_team'].queryset.model
         teams = TeamModel.objects.select_related('division').filter(division__league__sport=sport)
         self.fields['home_team'].queryset = teams
         self.fields['away_team'].queryset = teams
 
-        HockeyPlayerModel = self.fields['home_players'].queryset.model
-        players = HockeyPlayerModel.objects.active().select_related('user').filter(sport=sport)
+        PlayerModel = self.fields['home_players'].queryset.model
+        players = PlayerModel.objects.active().select_related('user').filter(sport=sport)
         self.fields['home_players'].queryset = players
         self.fields['away_players'].queryset = players
 
@@ -43,7 +44,7 @@ class HockeyGameAdminForm(forms.ModelForm):
         self.fields['point_value'].queryset = choices.filter(type='game_point_value')
 
         SeasonModel = self.fields['season'].queryset.model
-        self.fields['season'].queryset = SeasonModel.objects.filter(league__sport=sport).select_related('league')
+        self.fields['season'].queryset = SeasonModel.objects.select_related('league').filter(league__sport=sport)
 
         # The current timezone is the same as the timezone on the user's profile.
         self.fields['timezone'].initial = timezone.get_current_timezone_name()
@@ -53,8 +54,16 @@ class HockeyGameAdminForm(forms.ModelForm):
     away_team = TeamModelChoiceField(queryset=Team.objects.all())
 
     class Meta:
-        model = HockeyGame
         fields = COMMON_FIELDS + ['home_players', 'away_players']
+
+
+class HockeyGameAdminForm(AbstractGameAdminForm):
+    def __init__(self, *args, **kwargs):
+        self.sport_name = 'Ice Hockey'
+        super().__init__(*args, **kwargs)
+
+    class Meta(AbstractGameAdminForm.Meta):
+        model = HockeyGame
 
 
 class HockeyGoalAdminForm(forms.ModelForm):
@@ -77,22 +86,15 @@ class HockeyAssistAdminForm(forms.ModelForm):
         self.fields['player'].queryset = players
 
 
-@admin.register(HockeyGame)
-class HockeyGameAdmin(admin.ModelAdmin):
+class AbstractGameAdmin(admin.ModelAdmin):
     list_display = COMMON_GAME_FIELDS
     search_fields = ['home_team__name', 'away_team__name', 'type__long_value', 'location__name']
     filter_horizontal = ['home_players', 'away_players']
+
+
+@admin.register(HockeyGame)
+class HockeyGameAdmin(AbstractGameAdmin):
     form = HockeyGameAdminForm
-
-    def start_formatted(self, obj):
-        return obj.datetime_formatted(obj.start)
-
-    start_formatted.short_description = 'Start'
-
-    def end_formatted(self, obj):
-        return obj.datetime_formatted(obj.end)
-
-    end_formatted.short_description = 'End'
 
 
 @admin.register(HockeyGoal)

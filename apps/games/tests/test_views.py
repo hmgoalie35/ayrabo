@@ -100,7 +100,7 @@ class HockeyGameCreateViewTests(BaseTestCase):
         self.login(email=self.email, password=self.password)
         response = self.client.get(self.format_url(team_pk=1))
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'games/hockey_game_create.html')
+        self.assertTemplateUsed(response, 'games/game_create.html')
 
     def test_get_team_dne(self):
         self.login(email=self.email, password=self.password)
@@ -112,6 +112,16 @@ class HockeyGameCreateViewTests(BaseTestCase):
         response = self.client.get(self.format_url(team_pk=1))
         context = response.context
         self.assertEqual(context['team'].id, self.t1.id)
+
+    # Testing some generic functionality in this test...
+    def test_get_sport_not_configured(self):
+        baseball = SportFactory(name='Baseball')
+        email = 'user2@example.com'
+        team = TeamFactory(id=5, name='New York Yankees', division__league__sport=baseball)
+        self._create_user(baseball, team, ['Manager'], user={'email': email, 'password': self.password})
+        self.login(email=email, password=self.password)
+        response = self.client.get(self.format_url(team_pk=5))
+        self.assertTemplateUsed(response, 'sport_not_configured_msg.html')
 
     # POST
     def test_valid_post(self):
@@ -196,7 +206,7 @@ class HockeyGameListViewTests(BaseTestCase):
     def test_get(self):
         self.login(email=self.email, password=self.password)
         response = self.client.get(self.format_url(team_pk=1))
-        self.assertTemplateUsed(response, 'games/hockey_game_list.html')
+        self.assertTemplateUsed(response, 'games/game_list.html')
         self.assert_200(response)
 
     def test_team_not_found(self):

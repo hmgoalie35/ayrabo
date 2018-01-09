@@ -4,6 +4,8 @@ from django.http import Http404
 from django.shortcuts import redirect
 from django.urls import reverse
 
+from escoresheet.utils import handle_sport_not_configured
+from escoresheet.utils.exceptions import SportNotConfiguredException
 from sports.models import SportRegistration
 
 
@@ -50,3 +52,17 @@ class HasPermissionMixin(object):
             return super().dispatch(request, *args, **kwargs)
 
         raise self.exception_cls(self.exception_msg)
+
+
+class HandleSportNotConfiguredMixin(object):
+    """
+    Useful when a view needs to fetch a model, form, etc for a specific sport. If that sport hasn't been configured
+    correctly (i.e. exist in the dictionary mapping) the view should raise `SportNotConfiguredException`. This mixin
+    will catch the exception and handle it appropriately.
+    """
+
+    def dispatch(self, request, *args, **kwargs):
+        try:
+            return super().dispatch(request, *args, **kwargs)
+        except SportNotConfiguredException as e:
+            return handle_sport_not_configured(request, self, e)

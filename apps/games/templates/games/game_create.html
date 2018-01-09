@@ -1,7 +1,7 @@
 {% extends 'site_base.html' %}
 {% load crispy_forms_tags %}
 
-{% block title %}Create Hockey Game for {{ team.name }} - {{ team.division.name }}{% endblock %}
+{% block title %}Create Game for {{ team.name }} - {{ team.division.name }}{% endblock %}
 
 
 {% block content %}
@@ -10,7 +10,7 @@
     <div class="row">
       <div class="col-md-12">
         <div class="text-center">
-          <h3>Create Hockey Game for {{ team.name }}</h3>
+          <h3>Create Game for {{ team.name }}</h3>
           <h4>{{ team.division.name }} - {{ team.division.league.abbreviated_name }}</h4>
           <p class="text-muted">
             <span class="fa fa-lg fa-warning fa-lightbulb-o"></span>

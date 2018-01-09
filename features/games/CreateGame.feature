@@ -1,6 +1,6 @@
-Feature: Create hockey game
+Feature: Create game
   As a manager,
-  I want to be able to create a hockey game for my team,
+  I want to be able to create a game for my team,
   so the system can keep track of my team's games, display games to users, etc.
 
   Background: User exists
@@ -31,7 +31,7 @@ Feature: Create hockey game
       | Long Island Amateur Hockey League | 2017-09-14 | 2018-09-14 | Green Machine IceCats |
     And I login with "user@example.com" and "myweakpassword"
 
-  Scenario: Navigate to hockey game create page
+  Scenario: Navigate to game create page
     Given I am on the absolute url page for "sports.SportRegistration" and "user__email=user@example.com, sport__name=Ice Hockey"
     And I press "manager_tab"
     And I press "actions-dropdown-manager-green-machine-icecats"
@@ -40,7 +40,7 @@ Feature: Create hockey game
 
   Scenario: Informative text displayed to user
     Given I am on the "/teams/1/games/create/" page
-    Then I should see "Create Hockey Game for Green Machine IceCats"
+    Then I should see "Create Game for Green Machine IceCats"
     And I should see "Midget Minor AA - LIAHL"
     And I should see "Make sure the date and time entered for Game Start and Game End are for the timezone you choose."
     And I should see "All dates and times will be automatically displayed in common timezones throughout example.com."

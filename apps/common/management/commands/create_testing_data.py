@@ -4,9 +4,9 @@ from itertools import permutations, cycle
 
 import pytz
 from allauth.account.models import EmailAddress
-from django import utils
 from django.core.management import BaseCommand
 from django.db.models import Q
+from django.utils.timezone import activate
 from faker import Faker
 
 from accounts.tests import UserFactory
@@ -155,7 +155,7 @@ def create_games(matchups, point_value, game_type, timezone, season, locations):
     games = []
     i = 0
     tz = pytz.timezone(timezone)
-    utils.timezone.activate(tz)
+    activate(tz)
     iterator = cycle(range(2))
     weeks = 0
     for home_team, away_team in matchups:
