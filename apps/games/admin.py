@@ -20,7 +20,7 @@ PLAYER_SEARCH_FIELDS = ['player__user__first_name', 'player__user__last_name', '
 class AbstractGameAdminForm(forms.ModelForm):
     """
     NOTE: This form is solely being used to reduce the number of db queries.
-    It is lacks validation for home/away teams being different and players belonging to the chosen teams, etc.
+    It lacks validation for home/away teams being different and players belonging to the chosen teams, etc.
     """
     sport_name = None
 
