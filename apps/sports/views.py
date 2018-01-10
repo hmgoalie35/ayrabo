@@ -126,7 +126,9 @@ class SportRegistrationDetailView(LoginRequiredMixin, ContextMixin, generic.View
         context['role_url_mapping'] = role_url_mapping
 
         tab = self.request.GET.get('tab', None)
-        context['tab'] = tab if tab in [role.lower() for role in sr_roles] else None
+        roles = [role.lower() for role in sr_roles]
+        roles.append('available-roles')
+        context['tab'] = tab if tab in roles else None
         return context
 
     def get(self, request, *args, **kwargs):

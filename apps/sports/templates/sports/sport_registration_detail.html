@@ -28,8 +28,8 @@
               </li>
             {% endfor %}
             {% if available_roles %}
-              <li role="presentation" class="{% if forloop.first %}active{% endif %}">
-                <a id="available-roles-nav-tab" href="#id_available_roles" role="tab" data-toggle="tab" class="nav-tab">
+              <li role="presentation" class="{% if forloop.first and tab is None or tab == 'available-roles' %}active{% endif %}">
+                <a id="available-roles-nav-tab" href="#id_available_roles" role="tab" data-toggle="tab" class="nav-tab" data-tab="available-roles">
                   Available Roles
                 </a>
               </li>
@@ -53,7 +53,7 @@
             {% endfor %}
 
             {% if available_roles %}
-              <div role="tabpanel" class="tab-pane {% if forloop.first %}active{% endif %}" id="id_available_roles">
+              <div role="tabpanel" class="tab-pane {% if forloop.first and tab is None or tab == 'available-roles' %}active{% endif %}" id="id_available_roles">
                 <br>
                 <table class="table table-thin-th-border">
                   <thead>
