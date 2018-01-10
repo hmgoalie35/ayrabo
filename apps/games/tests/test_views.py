@@ -48,12 +48,13 @@ class HockeyGameCreateViewTests(BaseTestCase):
                                                                                    'password': self.password,
                                                                                    'userprofile': None})
         UserProfileFactory(user=self.user, timezone='US/Eastern')
-        self.season = SeasonFactory(id=1, league=self.liahl, start_date=datetime.date(month=12, day=27, year=2017))
-        SeasonFactory(id=2, league=self.liahl, start_date=datetime.date(month=12, day=27, year=2016))
+
+        self.season_start = datetime.date(month=12, day=27, year=2017)
+        self.season = SeasonFactory(id=1, league=self.liahl, start_date=self.season_start)
 
         self.sport_registration_url = reverse('sportregistrations:detail', kwargs={'pk': self.sport_registration.id})
 
-        self.start = datetime.datetime(month=12, day=26, year=2017, hour=19, minute=0)
+        self.start = datetime.datetime(month=12, day=27, year=2017, hour=19, minute=0)
         self.end = self.start + datetime.timedelta(hours=3)
         self.post_data = {
             'home_team': self.t1.id,
@@ -158,14 +159,43 @@ class HockeyGameCreateViewTests(BaseTestCase):
         response = self.client.post(self.format_url(team_pk=1), data=self.post_data)
         self.assertFormError(response, 'form', 'end', ['Game end must be after game start.'])
 
-    def test_start_not_in_selected_season_year_range(self):
+    def test_game_start_before_season_start(self):
         self.login(email=self.email, password=self.password)
         self.post_data.update({
-            'season': 2
+            'start': (self.season_start - datetime.timedelta(days=7)).strftime(INPUT_FORMAT)
         })
         response = self.client.post(self.format_url(team_pk=1), data=self.post_data)
         self.assertFormError(response, 'form', 'start',
-                             ['This date and time does not occur during the 2016-2017 Season.'])
+                             ['This date does not occur during the 2017-2018 season (12/27/2017-12/27/2018).'])
+
+    def test_game_start_after_season_end(self):
+        self.login(email=self.email, password=self.password)
+        season_end = self.season.end_date
+        self.post_data.update({
+            'start': (season_end + datetime.timedelta(days=7)).strftime(INPUT_FORMAT)
+        })
+        response = self.client.post(self.format_url(team_pk=1), data=self.post_data)
+        self.assertFormError(response, 'form', 'start',
+                             ['This date does not occur during the 2017-2018 season (12/27/2017-12/27/2018).'])
+
+    def test_game_end_before_season_start(self):
+        self.login(email=self.email, password=self.password)
+        self.post_data.update({
+            'end': (self.season_start - datetime.timedelta(days=7)).strftime(INPUT_FORMAT)
+        })
+        response = self.client.post(self.format_url(team_pk=1), data=self.post_data)
+        self.assertFormError(response, 'form', 'end',
+                             ['This date does not occur during the 2017-2018 season (12/27/2017-12/27/2018).'])
+
+    def test_game_end_after_season_end(self):
+        self.login(email=self.email, password=self.password)
+        season_end = self.season.end_date
+        self.post_data.update({
+            'end': (season_end + datetime.timedelta(days=7)).strftime(INPUT_FORMAT)
+        })
+        response = self.client.post(self.format_url(team_pk=1), data=self.post_data)
+        self.assertFormError(response, 'form', 'end',
+                             ['This date does not occur during the 2017-2018 season (12/27/2017-12/27/2018).'])
 
     def test_duplicate_game_for_home_team_game_start_tz(self):
         self.login(email=self.email, password=self.password)
@@ -275,8 +305,9 @@ class HockeyGameListViewTests(BaseTestCase):
 
 
 class BulkUploadHockeyGamesViewTests(BaseTestCase):
+    url = 'bulk_upload_hockeygames'
+
     def setUp(self):
-        self.url = reverse('bulk_upload_hockeygames')
         self.email = 'user@example.com'
         self.password = 'myweakpassword'
         self.test_file_path = os.path.join(settings.BASE_DIR, 'static', 'csv_examples')
@@ -290,12 +321,12 @@ class BulkUploadHockeyGamesViewTests(BaseTestCase):
                              type='game_type')
         GenericChoiceFactory(id=7, content_object=sport, short_value='2', long_value='2', type='game_point_value')
         LocationFactory(id=11)
-        SeasonFactory(id=10, league=league, start_date=datetime.date(month=12, day=27, year=2017))
+        SeasonFactory(id=10, league=league, start_date=datetime.date(month=8, day=15, year=2017))
 
     def test_post_valid_csv(self):
         self.client.login(email=self.email, password=self.password)
         with open(os.path.join(self.test_file_path, 'bulk_upload_hockeygames_example.csv')) as f:
-            response = self.client.post(self.url, {'file': f}, follow=True)
+            response = self.client.post(self.format_url(), {'file': f}, follow=True)
             self.assertHasMessage(response, 'Successfully created 1 hockeygame object(s)')
             self.assertEqual(HockeyGame.objects.count(), 1)
 
@@ -303,7 +334,7 @@ class BulkUploadHockeyGamesViewTests(BaseTestCase):
         self.client.login(email=self.email, password=self.password)
         content = b'home_team,away_team,type,point_value,location,start,end,timezone,season\n\n35,31,2,7,11,12/26/2017,12/26/2017 09:00 PM,US/Eastern,5'  # noqa
         f = SimpleUploadedFile('test.csv', content)
-        response = self.client.post(self.url, {'file': f}, follow=True)
+        response = self.client.post(self.format_url(), {'file': f}, follow=True)
         self.assertEqual(HockeyGame.objects.count(), 0)
         self.assertFormsetError(response, 'formset', 0, 'start', ['Enter a valid date/time.'])
         self.assertFormsetError(response, 'formset', 0, 'season',

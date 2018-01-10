@@ -90,13 +90,26 @@ class AbstractGameCreateForm(forms.ModelForm):
                 field_errors['end'] = 'Game end must be after game start.'
 
         season = cleaned_data.get('season', None)
-        if start and season:
-            start_date = season.start_date
-            end_date = season.end_date
-            if start.year != start_date.year:
-                field_errors['start'] = 'This date and time does not occur during the {}-{} Season.'.format(
-                    start_date.year,
-                    end_date.year)
+        if start and end and season:
+            game_start = start.date()
+            game_end = end.date()
+            season_start = season.start_date
+            season_end = season.end_date
+            DATE_FORMAT = '%m/%d/%Y'
+            date_out_of_bounds_error_msg = 'This date does not occur during the {}-{} season ({}-{}).'.format(
+                season_start.year,
+                season_end.year,
+                season_start.strftime(DATE_FORMAT),
+                season_end.strftime(DATE_FORMAT))
+
+            # NOTE These validation errors overwrite previous start/end validation errors (which is expected).
+            # The error messages below are more informative.
+
+            # Games on the season start/end date are considered valid.
+            if not (season_start <= game_start <= season_end):
+                field_errors['start'] = date_out_of_bounds_error_msg
+            if not (season_start <= game_end <= season_end):
+                field_errors['end'] = date_out_of_bounds_error_msg
 
         tz = cleaned_data.get('timezone', None)
         if all([home_team, away_team, start, tz]):
