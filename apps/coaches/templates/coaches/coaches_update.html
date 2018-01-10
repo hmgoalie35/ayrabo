@@ -19,14 +19,10 @@
         <div class="col-sm-offset-4 col-sm-4">
           <form action="" method="post">
             {% csrf_token %}
-
             {{ form|crispy }}
-
             <br>
-            <a href="{% url 'sportregistrations:detail' sport_registration.pk %}"
-               class="btn btn-back">Back</a>
+            <a class="btn btn-back js-btn-back">Back</a>
             <button id="update_coach_btn" type="submit" class="btn btn-success">Update</button>
-
           </form>
         </div>
       </div>
