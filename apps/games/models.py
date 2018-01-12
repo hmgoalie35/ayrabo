@@ -35,6 +35,10 @@ class AbstractGame(models.Model):
     timezone = models.CharField(max_length=128, choices=settings.COMMON_TIMEZONES, verbose_name='Timezone')
     season = models.ForeignKey('seasons.Season', verbose_name='Season', on_delete=models.PROTECT,
                                related_name='games')
+    # Used to track which team this game was created for
+    team = models.ForeignKey('teams.Team', null=True, verbose_name='Team', on_delete=models.PROTECT)
+    created_by = models.ForeignKey('auth.User', null=True, verbose_name='Created By', related_name='games_created',
+                                   on_delete=models.PROTECT)
     created = models.DateTimeField(verbose_name='Created', auto_now_add=True)
     updated = models.DateTimeField(verbose_name='Updated', auto_now=True)
 

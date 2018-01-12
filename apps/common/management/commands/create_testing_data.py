@@ -4,6 +4,7 @@ from itertools import permutations, cycle
 
 import pytz
 from allauth.account.models import EmailAddress
+from django.contrib.auth.models import User
 from django.core.management import BaseCommand
 from django.db.models import Q
 from django.utils.timezone import activate
@@ -16,6 +17,7 @@ from divisions.models import Division
 from games.tests import HockeyGameFactory
 from leagues.models import League
 from locations.models import Location
+from managers.models import Manager
 from players.tests import HockeyPlayerFactory
 from seasons.models import Season
 from sports.models import SportRegistration
@@ -169,10 +171,13 @@ def create_games(matchups, point_value, game_type, timezone, season, locations):
             weeks += 1
         weeks = weeks % 52
 
+        managers = Manager.objects.active().filter(team=home_team)
+        created_by = managers.first() or User.objects.filter(is_superuser=True).first()
         start = tz.localize(start)
         end = start + datetime.timedelta(hours=3)
         game = create_game(home_team=home_team, away_team=away_team, point_value=point_value, type=game_type,
-                           timezone=timezone, season=season, start=start, end=end, location=random.choice(locations))
+                           timezone=timezone, season=season, start=start, end=end, location=random.choice(locations),
+                           team=home_team, created_by=created_by)
 
         game_start = game.start.date()
         game_end = game.end.date()
