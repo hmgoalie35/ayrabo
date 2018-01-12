@@ -3,6 +3,7 @@ import datetime
 from django.utils import timezone
 from factory import django, SubFactory, LazyFunction, LazyAttribute, post_generation
 
+from accounts.tests import UserFactory
 from games import models
 from locations.tests import LocationFactory
 from players.tests import HockeyPlayerFactory
@@ -22,6 +23,8 @@ class AbstractGameFactory(django.DjangoModelFactory):
     # This should match the timezone of `start`.
     timezone = 'UTC'
     season = SubFactory(SeasonFactory)
+    team = LazyAttribute(lambda obj: obj.home_team)
+    created_by = SubFactory(UserFactory)
 
     class Meta:
         model = models.AbstractGame

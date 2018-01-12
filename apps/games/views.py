@@ -70,6 +70,11 @@ class GameCreateView(LoginRequiredMixin,
         form_kwargs['team'] = self._get_team()
         return form_kwargs
 
+    def form_valid(self, form):
+        form.instance.team = self.team
+        form.instance.created_by = self.request.user
+        return super().form_valid(form)
+
 
 class GameListView(LoginRequiredMixin, generic.ListView):
     template_name = 'games/game_list.html'

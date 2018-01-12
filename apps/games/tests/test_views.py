@@ -130,6 +130,9 @@ class HockeyGameCreateViewTests(BaseTestCase):
         response = self.client.post(self.format_url(team_pk=1), data=self.post_data, follow=True)
         self.assertRedirects(response, self.sport_registration_url)
         self.assertHasMessage(response, 'Your game has been created.')
+        game = HockeyGame.objects.first()
+        self.assertEqual(game.team, self.t1)
+        self.assertEqual(game.created_by, self.user)
 
     def test_team_in_url_not_specified(self):
         self.login(email=self.email, password=self.password)
