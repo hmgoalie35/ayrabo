@@ -49,13 +49,14 @@ Feature: List games for a team
 
   Scenario: Games exist
     Given The following game objects exist
-      | home_team             | away_team             | type   | point_value | location | start               | end                 | timezone   | season |
-      | Green Machine IceCats | Long Island Edge      | league | 2           | Iceland  | 10/23/2017 07:00 PM | 10/23/2017 09:00 PM | US/Eastern | 1      |
-      | Long Island Edge      | Green Machine IceCats | league | 2           | Iceland  | 10/30/2017 07:00 PM | 10/30/2017 09:00 PM | US/Eastern | 1      |
-      | Long Island Edge      | Aviator Gulls         | league | 2           | Iceland  | 10/31/2017 07:00 PM | 10/31/2017 09:00 PM | US/Eastern | 1      |
+      | id | home_team             | away_team             | type   | point_value | location | start               | end                 | timezone   | season |
+      | 1  | Green Machine IceCats | Long Island Edge      | league | 2           | Iceland  | 10/23/2017 07:00 PM | 10/23/2017 09:00 PM | US/Eastern | 1      |
+      |    | Long Island Edge      | Green Machine IceCats | league | 2           | Iceland  | 10/30/2017 07:00 PM | 10/30/2017 09:00 PM | US/Eastern | 1      |
+      |    | Long Island Edge      | Aviator Gulls         | league | 2           | Iceland  | 10/31/2017 07:00 PM | 10/31/2017 09:00 PM | US/Eastern | 1      |
 
     And I am on the "teams:games:list" page with kwargs "team_pk=1"
     Then "create-game-btn" should be visible
+    And I should see "1"
     And I should see "Green Machine IceCats"
     And I should see "League"
     And I should see "Scheduled"

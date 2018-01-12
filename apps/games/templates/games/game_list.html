@@ -21,8 +21,8 @@
 
             {% if can_create_game %}
               <span class="pull-right mt5">
-                <a id="create-game-btn" href="{% url 'teams:games:create' team.pk %}" class="btn btn-sm btn-success">
-                  <i class="fa fa-plus-circle fa-white"></i>
+                <a id="create-game-btn" href="{% url 'teams:games:create' team.pk %}" class="btn btn-sm btn-default">
+                  <i class="fa fa-plus-circle fa-success"></i>
                   Game
                 </a>
               </span>
@@ -31,6 +31,8 @@
             <table class="table js-table responsive-table table-thin-th-border">
               <thead>
               <tr>
+                {# !!! Remember to update the datatables column indexes if modifying this #}
+                <th scope="col">#</th>
                 <th scope="col">Home Team</th>
                 <th scope="col">Away Team</th>
                 <th scope="col">Type</th>
@@ -39,11 +41,13 @@
                 <th scope="col">Game Start</th>
                 <th scope="col">Game End</th>
                 <th scope="col">Season</th>
+                <th scope="col"></th>
               </tr>
               </thead>
               <tbody>
               {% for game in games %}
                 <tr>
+                  <td data-title="Number">{{ game.pk }}</td>
                   <td data-title="Home Team">{{ game.home_team }} </td>
                   <td data-title="Away Team">{{ game.away_team }}</td>
                   <td data-title="Type">{{ game.type }}</td>
@@ -54,6 +58,13 @@
                   <td data-title="Game Start">{{ game.start_formatted }}</td>
                   <td data-title="Game End">{{ game.end_formatted }}</td>
                   <td data-title="Season">{{ game.season }}</td>
+                  <td>
+                    {% if game.home_team.id in team_ids_for_manager or game.away_team.id in team_ids_for_manager %}
+                      <a href="{% url 'teams:games:update' team_pk=team.pk pk=game.pk %}">
+                        <i class="fa fa-pencil"></i>
+                      </a>
+                    {% endif %}
+                  </td>
                 </tr>
               {% endfor %}
               </tbody>
@@ -82,7 +93,11 @@
       {% if games %}
         $(".js-table").DataTable({
           dom: '<"pull-left"f>tpr',
-          order: [[7, 'desc'], [5, 'desc']],
+          // Season, Game Start. If add/remove columns need to update this.
+          order: [[8, 'desc'], [6, 'desc']],
+          columnDefs: [
+            { orderable: false, targets: 9 }
+          ],
           pageLength: 10,
           language: {
             paginate: {

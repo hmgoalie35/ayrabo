@@ -10,6 +10,7 @@ from accounts.tests import UserFactory
 from common.tests import GenericChoiceFactory
 from divisions.tests import DivisionFactory
 from escoresheet.utils.testing import BaseTestCase
+from games.forms import DATETIME_INPUT_FORMAT
 from games.models import HockeyGame
 from games.tests import HockeyGameFactory
 from leagues.tests import LeagueFactory
@@ -19,8 +20,6 @@ from seasons.tests import SeasonFactory
 from sports.tests import SportFactory, SportRegistrationFactory
 from teams.tests import TeamFactory
 from userprofiles.tests import UserProfileFactory
-
-INPUT_FORMAT = '%m/%d/%Y %I:%M %p'
 
 
 class HockeyGameCreateViewTests(BaseTestCase):
@@ -62,8 +61,8 @@ class HockeyGameCreateViewTests(BaseTestCase):
             'type': self.game_type.id,
             'point_value': self.point_value.id,
             'location': LocationFactory().id,
-            'start': self.start.strftime(INPUT_FORMAT),
-            'end': self.end.strftime(INPUT_FORMAT),
+            'start': self.start.strftime(DATETIME_INPUT_FORMAT),
+            'end': self.end.strftime(DATETIME_INPUT_FORMAT),
             'timezone': 'US/Pacific',
             'season': self.season.id
         }
@@ -142,6 +141,7 @@ class HockeyGameCreateViewTests(BaseTestCase):
         response = self.client.post(self.format_url(team_pk=1), data=self.post_data)
         self.assertFormError(response, 'form', 'home_team',
                              ['Green Machine IceCats must be either the home or away team.'])
+        self.assertFormError(response, 'form', 'away_team', [''])
 
     def test_home_team_away_team_same(self):
         self.login(email=self.email, password=self.password)
@@ -157,7 +157,7 @@ class HockeyGameCreateViewTests(BaseTestCase):
         self.login(email=self.email, password=self.password)
         end = self.start - datetime.timedelta(hours=3)
         self.post_data.update({
-            'end': end.strftime(INPUT_FORMAT)
+            'end': end.strftime(DATETIME_INPUT_FORMAT)
         })
         response = self.client.post(self.format_url(team_pk=1), data=self.post_data)
         self.assertFormError(response, 'form', 'end', ['Game end must be after game start.'])
@@ -165,40 +165,40 @@ class HockeyGameCreateViewTests(BaseTestCase):
     def test_game_start_before_season_start(self):
         self.login(email=self.email, password=self.password)
         self.post_data.update({
-            'start': (self.season_start - datetime.timedelta(days=7)).strftime(INPUT_FORMAT)
+            'start': (self.season_start - datetime.timedelta(days=7)).strftime(DATETIME_INPUT_FORMAT)
         })
         response = self.client.post(self.format_url(team_pk=1), data=self.post_data)
         self.assertFormError(response, 'form', 'start',
-                             ['This date does not occur during the 2017-2018 season (12/27/2017-12/27/2018).'])
+                             ['This date does not occur during the 12/27/2017-12/27/2018 season.'])
 
     def test_game_start_after_season_end(self):
         self.login(email=self.email, password=self.password)
         season_end = self.season.end_date
         self.post_data.update({
-            'start': (season_end + datetime.timedelta(days=7)).strftime(INPUT_FORMAT)
+            'start': (season_end + datetime.timedelta(days=7)).strftime(DATETIME_INPUT_FORMAT)
         })
         response = self.client.post(self.format_url(team_pk=1), data=self.post_data)
         self.assertFormError(response, 'form', 'start',
-                             ['This date does not occur during the 2017-2018 season (12/27/2017-12/27/2018).'])
+                             ['This date does not occur during the 12/27/2017-12/27/2018 season.'])
 
     def test_game_end_before_season_start(self):
         self.login(email=self.email, password=self.password)
         self.post_data.update({
-            'end': (self.season_start - datetime.timedelta(days=7)).strftime(INPUT_FORMAT)
+            'end': (self.season_start - datetime.timedelta(days=7)).strftime(DATETIME_INPUT_FORMAT)
         })
         response = self.client.post(self.format_url(team_pk=1), data=self.post_data)
         self.assertFormError(response, 'form', 'end',
-                             ['This date does not occur during the 2017-2018 season (12/27/2017-12/27/2018).'])
+                             ['This date does not occur during the 12/27/2017-12/27/2018 season.'])
 
     def test_game_end_after_season_end(self):
         self.login(email=self.email, password=self.password)
         season_end = self.season.end_date
         self.post_data.update({
-            'end': (season_end + datetime.timedelta(days=7)).strftime(INPUT_FORMAT)
+            'end': (season_end + datetime.timedelta(days=7)).strftime(DATETIME_INPUT_FORMAT)
         })
         response = self.client.post(self.format_url(team_pk=1), data=self.post_data)
         self.assertFormError(response, 'form', 'end',
-                             ['This date does not occur during the 2017-2018 season (12/27/2017-12/27/2018).'])
+                             ['This date does not occur during the 12/27/2017-12/27/2018 season.'])
 
     def test_duplicate_game_for_home_team_game_start_tz(self):
         self.login(email=self.email, password=self.password)

@@ -1,20 +1,24 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
 from django.db.models import Q
-from django.shortcuts import get_object_or_404, reverse
+from django.shortcuts import get_object_or_404, reverse, redirect
 from django.urls import reverse_lazy
 from django.views import generic
 
 from common.views import CsvBulkUploadView
 from escoresheet.utils.exceptions import SportNotConfiguredException
 from escoresheet.utils.mixins import HasPermissionMixin, HandleSportNotConfiguredMixin
-from games.forms import HockeyGameCreateForm
+from games.forms import HockeyGameCreateForm, HockeyGameUpdateForm, DATETIME_INPUT_FORMAT
 from games.models import HockeyGame
 from managers.models import Manager
 from teams.models import Team
 
-SPORT_GAME_FORM_MAPPINGS = {
+SPORT_GAME_CREATE_FORM_MAPPINGS = {
     'Ice Hockey': HockeyGameCreateForm
+}
+
+SPORT_GAME_UPDATE_FORM_MAPPINGS = {
+    'Ice Hockey': HockeyGameUpdateForm
 }
 
 SPORT_GAME_MODEL_MAPPINGS = {
@@ -23,15 +27,14 @@ SPORT_GAME_MODEL_MAPPINGS = {
 
 
 class GameCreateView(LoginRequiredMixin,
-                     HasPermissionMixin,
                      HandleSportNotConfiguredMixin,
+                     HasPermissionMixin,
                      SuccessMessageMixin,
                      generic.CreateView):
     template_name = 'games/game_create.html'
     success_message = 'Your game has been created.'
 
     def _get_sport_registration_url(self):
-        self._get_team()
         sport_registration = self.request.user.sportregistration_set.get(sport_id=self.sport.id)
         return reverse('sportregistrations:detail', kwargs={'pk': sport_registration.id})
 
@@ -54,26 +57,119 @@ class GameCreateView(LoginRequiredMixin,
         return self._get_sport_registration_url()
 
     def get_form_class(self):
-        self._get_team()
-        form_cls = SPORT_GAME_FORM_MAPPINGS.get(self.sport.name)
+        form_cls = SPORT_GAME_CREATE_FORM_MAPPINGS.get(self.sport.name)
         if form_cls is None:
             raise SportNotConfiguredException(self.sport)
         return form_cls
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['team'] = self._get_team()
-        return context
-
     def get_form_kwargs(self):
         form_kwargs = super().get_form_kwargs()
-        form_kwargs['team'] = self._get_team()
+        form_kwargs['team'] = self.team
         return form_kwargs
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['team'] = self.team
+        return context
 
     def form_valid(self, form):
         form.instance.team = self.team
         form.instance.created_by = self.request.user
         return super().form_valid(form)
+
+    def get(self, request, *args, **kwargs):
+        self._get_team()
+        return super().get(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        self._get_team()
+        return super().post(request, *args, **kwargs)
+
+
+class GameUpdateView(LoginRequiredMixin,
+                     HandleSportNotConfiguredMixin,
+                     HasPermissionMixin,
+                     SuccessMessageMixin,
+                     generic.UpdateView):
+    template_name = 'games/game_update.html'
+    success_message = 'Your game has been updated.'
+    context_object_name = 'game'
+
+    def _get_team(self):
+        if hasattr(self, 'team'):
+            return self.team
+        self.team = get_object_or_404(
+            Team.objects.select_related('division', 'division__league', 'division__league__sport'),
+            pk=self.kwargs.get('team_pk', None)
+        )
+        self.sport = self.team.division.league.sport
+        return self.team
+
+    def has_permission_func(self):
+        # NOTE: Don't compute permissions for full update, etc based off of the team from the url because managers from
+        # the home and away team can access this page.
+        team = self._get_team()
+        user = self.request.user
+        game = self.get_object()
+        home_team = game.home_team
+        away_team = game.away_team
+        team_ids = [home_team.id, away_team.id]
+        # TODO Only allow access if user is active manager for game.team
+        can_update_game = Manager.objects.active().filter(user=user, team_id__in=team_ids).exists()
+        # Allow active managers from the home or away team and make sure the game is actually for the team from the url.
+        return can_update_game and team.id in team_ids
+
+    def get_success_url(self):
+        return reverse('teams:games:list', kwargs={'team_pk': self.team.pk})
+
+    def get_object(self, queryset=None):
+        model_cls = SPORT_GAME_MODEL_MAPPINGS.get(self.sport.name, None)
+        if model_cls is None:
+            raise SportNotConfiguredException(self.sport)
+        pk = self.kwargs.get(self.pk_url_kwarg, None)
+        return get_object_or_404(model_cls.objects.select_related('home_team', 'home_team__division', 'away_team',
+                                                                  'away_team__division'), pk=pk)
+
+    def get_queryset(self):
+        model_cls = SPORT_GAME_MODEL_MAPPINGS.get(self.sport.name, None)
+        if model_cls is None:
+            raise SportNotConfiguredException(self.sport)
+        return model_cls.objects.all().select_related('home_team', 'away_team')
+
+    def get_form_kwargs(self):
+        form_kwargs = super().get_form_kwargs()
+        game = self.object
+
+        form_kwargs['team'] = self.team
+        form_kwargs['initial'] = {
+            'start': game.datetime_formatted(game.start, DATETIME_INPUT_FORMAT),
+            'end': game.datetime_formatted(game.end, DATETIME_INPUT_FORMAT)
+        }
+        return form_kwargs
+
+    def get_form_class(self):
+        form_cls = SPORT_GAME_UPDATE_FORM_MAPPINGS.get(self.sport.name)
+        if form_cls is None:
+            raise SportNotConfiguredException(self.sport)
+        return form_cls
+
+    def form_valid(self, form):
+        if form.has_changed():
+            return super().form_valid(form)
+        return redirect(reverse('teams:games:list', kwargs={'team_pk': self.team.pk}))
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['team'] = self.team
+        return context
+
+    def get(self, request, *args, **kwargs):
+        self._get_team()
+        return super().get(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        self._get_team()
+        return super().post(request, *args, **kwargs)
 
 
 class GameListView(LoginRequiredMixin, generic.ListView):
@@ -91,22 +187,25 @@ class GameListView(LoginRequiredMixin, generic.ListView):
         return self.team
 
     def get_queryset(self):
-        team = self._get_team()
         model_cls = SPORT_GAME_MODEL_MAPPINGS.get(self.sport.name, None)
         if model_cls is None:
             raise SportNotConfiguredException(self.sport)
-        return model_cls.objects.filter(Q(home_team=team) | Q(away_team=team)).select_related('home_team', 'away_team',
-                                                                                              'type', 'location',
-                                                                                              'season')
+        return model_cls.objects.filter(Q(home_team=self.team) | Q(away_team=self.team)).select_related(
+            'home_team', 'away_team', 'type', 'location', 'season')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        team = self._get_team()
         user = self.request.user
-        is_manager_for_team = Manager.objects.active().filter(user=user, team=team).exists()
-        context['can_create_game'] = is_manager_for_team
-        context['team'] = team
+        managers_for_user = Manager.objects.active().filter(user=user)
+        context['can_create_game'] = managers_for_user.filter(team=self.team).exists()
+        context['team_ids_for_manager'] = managers_for_user.filter(
+            team__division__league__sport=self.sport).values_list('team_id', flat=True)
+        context['team'] = self.team
         return context
+
+    def get(self, request, *args, **kwargs):
+        self._get_team()
+        return super().get(request, *args, **kwargs)
 
 
 class BulkUploadHockeyGamesView(CsvBulkUploadView):

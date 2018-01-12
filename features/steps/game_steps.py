@@ -27,8 +27,10 @@ def step_impl(context):
         data = row.as_dict()
         timezone = data.get('timezone')
         tz = pytz.timezone(timezone)
+        obj_id = data.get('id', None)
 
         kwargs = {
+            'id': obj_id,
             'home_team': get_object(Team, name=data.get('home_team')),
             'away_team': get_object(Team, name=data.get('away_team')),
             'type': get_object(GenericChoice, short_value=data.get('type')),
