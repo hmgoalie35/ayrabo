@@ -307,6 +307,162 @@ class HockeyGameListViewTests(BaseTestCase):
         self.assertEqual(context.get('team'), self.icecats)
 
 
+class HockeyGameUpdateViewTests(BaseTestCase):
+    """
+    No need to duplicate all of the form validation logic here, it's already tested in the create view tests. Ideally
+    the form validation logic would be in form specific tests so the view tests are more slim, and wouldn't need to
+    duplicate anything.
+    """
+    url = 'teams:games:update'
+
+    def setUp(self):
+        self.email = 'user@example.com'
+        self.password = 'myweakpassword'
+
+        self.ice_hockey = SportFactory(name='Ice Hockey')
+        self.liahl = LeagueFactory(full_name='Long Island Amateur Hockey League', sport=self.ice_hockey)
+        self.mm_aa = DivisionFactory(name='Midget Minor AA', league=self.liahl)
+        self.t1 = TeamFactory(id=1, name='Green Machine IceCats', division=self.mm_aa)
+        self.t2 = TeamFactory(id=2, division=self.mm_aa)
+        self.t3 = TeamFactory(id=3, division=self.mm_aa)
+
+        self.game_type = GenericChoiceFactory(short_value='exhibition', long_value='Exhibition', type='game_type',
+                                              content_object=self.ice_hockey)
+        self.point_value = GenericChoiceFactory(short_value='2', long_value='2', type='game_point_value',
+                                                content_object=self.ice_hockey)
+
+        self.user, self.sport_registration, self.manager = self._create_user(self.ice_hockey, self.t1, ['Manager'],
+                                                                             user={'email': self.email,
+                                                                                   'password': self.password,
+                                                                                   'userprofile': None})
+        timezone = 'US/Eastern'
+        us_eastern = pytz.timezone(timezone)
+        UserProfileFactory(user=self.user, timezone=timezone)
+
+        self.season_start = datetime.date(month=12, day=27, year=2017)
+        self.season = SeasonFactory(league=self.liahl, start_date=self.season_start)
+
+        self.start = datetime.datetime(month=12, day=27, year=2017, hour=19, minute=0)
+        self.end = self.start + datetime.timedelta(hours=3)
+        location = LocationFactory()
+        self.game = HockeyGameFactory(home_team=self.t1, team=self.t1, away_team=self.t2, type=self.game_type,
+                                      point_value=self.point_value, location=location,
+                                      start=us_eastern.localize(self.start), end=us_eastern.localize(self.end),
+                                      timezone=timezone, season=self.season)
+        self.post_data = {
+            'home_team': self.t1.id,
+            'away_team': self.t2.id,
+            'type': self.game_type.id,
+            'point_value': self.point_value.id,
+            'location': location.id,
+            'start': self.start.strftime(DATETIME_INPUT_FORMAT),
+            'end': self.end.strftime(DATETIME_INPUT_FORMAT),
+            'timezone': timezone,
+            'season': self.season.id
+        }
+
+        self.formatted_url = self.format_url(team_pk=self.t1.id, pk=self.game.id)
+
+    def _create_user(self, sport, team, roles, **kwargs):
+        user_kwargs = kwargs.get('user')
+        user = UserFactory(**user_kwargs)
+        sport_registration = SportRegistrationFactory(user=user, sport=sport)
+        sport_registration.set_roles(roles)
+        manager = ManagerFactory(user=user, team=team)
+        return user, sport_registration, manager
+
+    def test_login_required(self):
+        response = self.client.get(self.formatted_url)
+        self.assertRedirects(response, self.get_login_required_url(self.formatted_url))
+
+    def test_not_team_manager(self):
+        user, _, _ = self._create_user(self.ice_hockey, self.t3, ['Manager'],
+                                       user={'email': 'user1@example.com', 'password': self.password})
+        self.login(user=user)
+        response = self.client.get(self.formatted_url)
+        self.assert_404(response)
+
+    def test_team_pk_not_for_game(self):
+        self.login(email=self.email, password=self.password)
+        response = self.client.get(self.format_url(team_pk=self.t2.id, pk=self.t1.id))
+        self.assert_404(response)
+
+    def test_team_dne(self):
+        self.login(email=self.email, password=self.password)
+        response = self.client.get(self.format_url(team_pk=1000, pk=self.game.id))
+        self.assert_404(response)
+
+    def test_sport_not_configured(self):
+        """
+        It's pretty hard to test this separately for the model and form class.
+        """
+        team = TeamFactory()
+        sr = SportRegistrationFactory(user=self.user, sport=team.division.league.sport)
+        sr.set_roles(['Manager'])
+        ManagerFactory(user=self.user, team=team)
+        self.login(email=self.email, password=self.password)
+        response = self.client.get(self.format_url(team_pk=team.pk, pk=self.game.id))
+        self.assertTemplateUsed(response, 'sport_not_configured_msg.html')
+
+    def test_game_dne(self):
+        self.login(email=self.email, password=self.password)
+        response = self.client.get(self.format_url(team_pk=self.t1.pk, pk=1000))
+        self.assert_404(response)
+
+    def test_form_kwargs(self):
+        self.login(email=self.email, password=self.password)
+        response = self.client.get(self.formatted_url)
+        form = response.context.get('form')
+        start = form.initial.get('start')
+        end = form.initial.get('end')
+        self.assertEqual(start, '12/27/2017 07:00 PM')
+        self.assertEqual(end, '12/27/2017 10:00 PM')
+        self.assertEqual(response.context.get('team'), self.t1)
+
+    # GET
+    def test_get(self):
+        self.login(email=self.email, password=self.password)
+        response = self.client.get(self.format_url(team_pk=1, pk=1))
+        self.assertTemplateUsed(response, 'games/game_update.html')
+        self.assert_200(response)
+        self.assertEqual(response.context.get('game'), self.game)
+
+    # POST
+    def test_has_changed_custom_logic(self):
+        # Don't mistakenly report the instance has changed if only start and end have changed
+        self.login(email=self.email, password=self.password)
+        response = self.client.post(self.formatted_url, data=self.post_data, follow=True)
+        self.assertNoMessage(response, 'Your game has been updated.')
+        self.assertRedirects(response, reverse('teams:games:list', kwargs={'team_pk': self.t1.id}))
+
+    def test_post_valid(self):
+        location = LocationFactory()
+        # This test case is also making sure the current object is excluded from any unique checks.
+        self.login(email=self.email, password=self.password)
+        self.post_data.update({'location': location.id})
+        response = self.client.post(self.formatted_url, data=self.post_data, follow=True)
+        self.assertHasMessage(response, 'Your game has been updated.')
+        self.assertRedirects(response, reverse('teams:games:list', kwargs={'team_pk': self.t1.id}))
+        self.game.refresh_from_db()
+        self.assertEqual(self.game.location.id, location.id)
+
+    def test_post_change_timezone(self):
+        self.login(email=self.email, password=self.password)
+        tz = 'US/Pacific'
+        self.post_data.update({'timezone': tz})
+        self.client.post(self.formatted_url, data=self.post_data, follow=True)
+        self.game.refresh_from_db()
+        self.assertEqual(self.game.start_formatted, '12/27/2017 07:00 PM PST')
+        self.assertEqual(self.game.end_formatted, '12/27/2017 10:00 PM PST')
+        self.assertEqual(self.game.timezone, tz)
+
+    def test_post_invalid(self):
+        self.login(email=self.email, password=self.password)
+        self.post_data.pop('home_team')
+        response = self.client.post(self.formatted_url, data=self.post_data)
+        self.assertFormError(response, 'form', 'home_team', ['This field is required.'])
+
+
 class BulkUploadHockeyGamesViewTests(BaseTestCase):
     url = 'bulk_upload_hockeygames'
 

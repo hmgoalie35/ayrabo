@@ -51,8 +51,8 @@ Feature: List games for a team
     Given The following game objects exist
       | id | home_team             | away_team             | type   | point_value | location | start               | end                 | timezone   | season |
       | 1  | Green Machine IceCats | Long Island Edge      | league | 2           | Iceland  | 10/23/2017 07:00 PM | 10/23/2017 09:00 PM | US/Eastern | 1      |
-      |    | Long Island Edge      | Green Machine IceCats | league | 2           | Iceland  | 10/30/2017 07:00 PM | 10/30/2017 09:00 PM | US/Eastern | 1      |
-      |    | Long Island Edge      | Aviator Gulls         | league | 2           | Iceland  | 10/31/2017 07:00 PM | 10/31/2017 09:00 PM | US/Eastern | 1      |
+      | 2  | Long Island Edge      | Green Machine IceCats | league | 2           | Iceland  | 10/30/2017 07:00 PM | 10/30/2017 09:00 PM | US/Eastern | 1      |
+      | 3  | Long Island Edge      | Aviator Gulls         | league | 2           | Iceland  | 10/31/2017 07:00 PM | 10/31/2017 09:00 PM | US/Eastern | 1      |
 
     And I am on the "teams:games:list" page with kwargs "team_pk=1"
     Then "create-game-btn" should be visible
@@ -67,7 +67,13 @@ Feature: List games for a team
     And I should not see "Aviator Gulls"
 
   Scenario: Not team manager
-    Given I login with "user1@example.com" and "myweakpassword"
+    Given The following game objects exist
+      | home_team             | away_team             | type   | point_value | location | start               | end                 | timezone   | season |
+      | Green Machine IceCats | Long Island Edge      | league | 2           | Iceland  | 10/23/2017 07:00 PM | 10/23/2017 09:00 PM | US/Eastern | 1      |
+      | Long Island Edge      | Green Machine IceCats | league | 2           | Iceland  | 10/30/2017 07:00 PM | 10/30/2017 09:00 PM | US/Eastern | 1      |
+      | Long Island Edge      | Aviator Gulls         | league | 2           | Iceland  | 10/31/2017 07:00 PM | 10/31/2017 09:00 PM | US/Eastern | 1      |
+    And I login with "user1@example.com" and "myweakpassword"
     And I am on the "teams:games:list" page with kwargs "team_pk=1"
     Then "create-game-btn" should not exist on the page
     And "create-game-btn-empty-state" should not exist on the page
+    And "i.fa.fa-pencil" should not exist on the page

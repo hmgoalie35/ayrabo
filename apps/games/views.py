@@ -106,18 +106,12 @@ class GameUpdateView(LoginRequiredMixin,
         return self.team
 
     def has_permission_func(self):
-        # NOTE: Don't compute permissions for full update, etc based off of the team from the url because managers from
-        # the home and away team can access this page.
         team = self._get_team()
         user = self.request.user
         game = self.get_object()
-        home_team = game.home_team
-        away_team = game.away_team
-        team_ids = [home_team.id, away_team.id]
-        # TODO Only allow access if user is active manager for game.team
-        can_update_game = Manager.objects.active().filter(user=user, team_id__in=team_ids).exists()
-        # Allow active managers from the home or away team and make sure the game is actually for the team from the url.
-        return can_update_game and team.id in team_ids
+        can_update_game = Manager.objects.active().filter(user=user, team=game.team).exists()
+        # Allow active managers for the game's team and make sure the game is actually for the team from the url.
+        return can_update_game and team.id == game.team_id
 
     def get_success_url(self):
         return reverse('teams:games:list', kwargs={'team_pk': self.team.pk})
@@ -128,13 +122,7 @@ class GameUpdateView(LoginRequiredMixin,
             raise SportNotConfiguredException(self.sport)
         pk = self.kwargs.get(self.pk_url_kwarg, None)
         return get_object_or_404(model_cls.objects.select_related('home_team', 'home_team__division', 'away_team',
-                                                                  'away_team__division'), pk=pk)
-
-    def get_queryset(self):
-        model_cls = SPORT_GAME_MODEL_MAPPINGS.get(self.sport.name, None)
-        if model_cls is None:
-            raise SportNotConfiguredException(self.sport)
-        return model_cls.objects.all().select_related('home_team', 'away_team')
+                                                                  'away_team__division', 'team'), pk=pk)
 
     def get_form_kwargs(self):
         form_kwargs = super().get_form_kwargs()
@@ -191,7 +179,7 @@ class GameListView(LoginRequiredMixin, generic.ListView):
         if model_cls is None:
             raise SportNotConfiguredException(self.sport)
         return model_cls.objects.filter(Q(home_team=self.team) | Q(away_team=self.team)).select_related(
-            'home_team', 'away_team', 'type', 'location', 'season')
+            'home_team', 'away_team', 'type', 'location', 'season', 'team')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

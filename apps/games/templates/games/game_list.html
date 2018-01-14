@@ -31,15 +31,15 @@
             <table class="table js-table responsive-table table-thin-th-border">
               <thead>
               <tr>
-                {# !!! Remember to update the datatables column indexes if modifying this #}
+                {# !!! Remember to update the datatables column indexes if modifying this !!! #}
                 <th scope="col">#</th>
-                <th scope="col">Home Team</th>
-                <th scope="col">Away Team</th>
+                <th scope="col">Home</th>
+                <th scope="col">Away</th>
                 <th scope="col">Type</th>
                 <th scope="col">Status</th>
                 <th scope="col">Location</th>
-                <th scope="col">Game Start</th>
-                <th scope="col">Game End</th>
+                <th scope="col">Start</th>
+                <th scope="col">End</th>
                 <th scope="col">Season</th>
                 <th scope="col"></th>
               </tr>
@@ -47,20 +47,20 @@
               <tbody>
               {% for game in games %}
                 <tr>
-                  <td data-title="Number">{{ game.pk }}</td>
-                  <td data-title="Home Team">{{ game.home_team }} </td>
-                  <td data-title="Away Team">{{ game.away_team }}</td>
+                  <td data-title="#">{{ game.pk }}</td>
+                  <td data-title="Home">{{ game.home_team }}</td>
+                  <td data-title="Away">{{ game.away_team }}</td>
                   <td data-title="Type">{{ game.type }}</td>
                   <td data-title="Status">{{ game.get_status_display }}</td>
                   <td data-title="Location">
                     <a href="{% url 'locations:detail' game.location.slug %}">{{ game.location.name }}</a>
                   </td>
-                  <td data-title="Game Start">{{ game.start_formatted }}</td>
-                  <td data-title="Game End">{{ game.end_formatted }}</td>
+                  <td data-title="Start">{{ game.start_formatted }}</td>
+                  <td data-title="End">{{ game.end_formatted }}</td>
                   <td data-title="Season">{{ game.season }}</td>
                   <td>
-                    {% if game.home_team.id in team_ids_for_manager or game.away_team.id in team_ids_for_manager %}
-                      <a href="{% url 'teams:games:update' team_pk=team.pk pk=game.pk %}">
+                    {% if game.team_id in team_ids_for_manager %}
+                      <a id="update-game-{{ game.pk }}" href="{% url 'teams:games:update' team_pk=game.team_id pk=game.pk %}">
                         <i class="fa fa-pencil"></i>
                       </a>
                     {% endif %}
@@ -79,6 +79,7 @@
                 Game
               </a>
             {% endif %}
+
           {% endif %}
         </div>
       </div>
