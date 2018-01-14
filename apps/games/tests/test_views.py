@@ -348,7 +348,7 @@ class HockeyGameUpdateViewTests(BaseTestCase):
         self.game = HockeyGameFactory(home_team=self.t1, team=self.t1, away_team=self.t2, type=self.game_type,
                                       point_value=self.point_value, location=location,
                                       start=us_eastern.localize(self.start), end=us_eastern.localize(self.end),
-                                      timezone=timezone, season=self.season)
+                                      timezone=timezone, season=self.season, status='scheduled')
         self.post_data = {
             'home_team': self.t1.id,
             'away_team': self.t2.id,
@@ -358,7 +358,8 @@ class HockeyGameUpdateViewTests(BaseTestCase):
             'start': self.start.strftime(DATETIME_INPUT_FORMAT),
             'end': self.end.strftime(DATETIME_INPUT_FORMAT),
             'timezone': timezone,
-            'season': self.season.id
+            'season': self.season.id,
+            'status': 'scheduled'
         }
 
         self.formatted_url = self.format_url(team_pk=self.t1.id, pk=self.game.id)

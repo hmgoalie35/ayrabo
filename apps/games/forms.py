@@ -24,18 +24,28 @@ class AbstractGameCreateUpdateForm(forms.ModelForm):
         # csrf token manually included in template
         self.helper.disable_csrf = True
         self.helper.form_tag = False
+        fields = [
+            PrependedText('start', calendar_icon),
+            PrependedText('end', calendar_icon),
+            'timezone',
+            'season',
+        ]
+        if isinstance(self, HockeyGameUpdateForm):
+            fields.append('status')
+
         self.helper.layout = Layout(
-            Div('home_team',
+            Div(
+                'home_team',
                 'away_team',
                 'type',
                 'point_value',
                 'location',
-                css_class='col-md-offset-2 col-md-4'),
-            Div(PrependedText('start', calendar_icon),
-                PrependedText('end', calendar_icon),
-                'timezone',
-                'season',
-                css_class='col-md-4')
+                css_class='col-md-offset-2 col-md-4'
+            ),
+            Div(
+                *fields,
+                css_class='col-md-4'
+            )
         )
 
         division = self.team.division
@@ -156,3 +166,7 @@ class HockeyGameUpdateForm(AbstractGameCreateUpdateForm):
 
     class Meta(AbstractGameCreateUpdateForm.Meta):
         model = HockeyGame
+        fields = AbstractGameCreateUpdateForm.Meta.fields + ['status']
+        help_texts = {
+            'timezone': None
+        }
