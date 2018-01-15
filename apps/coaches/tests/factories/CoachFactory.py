@@ -7,10 +7,10 @@ from teams.tests import TeamFactory
 
 
 class CoachFactory(django.DjangoModelFactory):
-    class Meta:
-        model = Coach
-
     user = factory.SubFactory(UserFactory)
     position = Faker('random_element', elements=[position[0] for position in Coach.POSITIONS])
     team = factory.SubFactory(TeamFactory)
     is_active = True
+
+    class Meta:
+        model = Coach
