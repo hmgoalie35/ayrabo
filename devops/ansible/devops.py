@@ -45,20 +45,20 @@ class Devops(object):
         command.append('-i')
         command.append(self.inventory_file)
 
-        if self.mode == 'dev':
-            if self.tags == 'install_dependencies':
-                command.append('-K')
-            if self.tags:
-                command.append('-t')
-                command.append(self.tags)
-        if self.mode in ['provision', 'deploy']:
+        # Require sudo
+        if self.mode in ['dev', 'provision', 'deploy']:
             command.append('-K')
+
+        if self.mode in ['provision', 'deploy']:
             command.append('--vault-password-file')
             command.append(VAULT_PASSWORD_FILE)
             command.append('--extra-vars')
             command.append('deployment_version={}'.format(self.deployment_version))
             command.append('--extra-vars')
             command.append('server_type={}'.format(self.server_type))
+        if self.tags:
+            command.append('-t')
+            command.append(self.tags)
         if self.verbosity:
             command.append('-{}'.format('v' * self.verbosity))
         return command

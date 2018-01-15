@@ -20,23 +20,24 @@ A license has been intentionally excluded. See http://choosealicense.com/no-lice
 
 This project uses pre-commit, whenever you commit files flake8 and some other code quality tools will run to help prevent bugs/errors.
 
-1. Clone the repo and cd into it.
-2. Checkout the latest `dev` branch.
-3. Signup for mailtrap https://mailtrap.io/. Emails sent during development will go to mailtrap.
-4. Make sure `python python-dev python-pip libssl-dev libfontconfig` are installed.
+* Clone the repo and cd into it.
+* Checkout the latest `dev` branch.
+* Signup for [mailtrap](https://mailtrap.io/). Emails sent during development will go to mailtrap.
+* Install `python python-dev python-pip libssl-dev libfontconfig`
     * If on osx install `brew install libmagic`
-5. Install ansible: `sudo pip install ansible`
-6. Run `cp devops/ansible/roles/deploy/templates/.env.example.j2 .env`.
-    * Fill in the email values with your mailtrap settings.
+* Install `python3.6 python3.6-dev python3-pip`
+    * Can use `sudo add-apt-repository ppa:deadsnakes/ppa` if on linux.
+* Install [docker](https://docs.docker.com/engine/installation/)
+* Install ansible: `sudo pip install ansible==2.3.2.0`
+* Run `devops/ansible/devops.py -m dev -s dev`
+* A `.env` file will be generated in the repo
+    * Replace `REPLACE_ME` w/ your mailtrap settings.
     * Set `ALLOWED_HOSTS` TO `*`.
     * Remove the `SECRET_KEY` line.
     * Fill in the remaining values.
     * **NOTE:** Do not surround the values in `''` or `""`.
-7. Run `devops/ansible/devops.py -m dev -s dev -t install_dependencies`
-    * Your computer will reboot.
-8. After reboot run `devops/ansible/devops.py -m dev -s dev -t install_project`.
-9. In a separate terminal window run `npm run dev`.
-10. Run the test suite
+* In a separate terminal window run `npm run dev`.
+* Run the test suite
     * `source venv/bin/activate && bash run_tests.sh`.
 
 Docker is being used to run a postgres db server. You can start the postgres container by running `docker-compose up -d` from the `devops/docker` directory.

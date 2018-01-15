@@ -1,3 +1,8 @@
+- name: Copy over .env
+  template:
+    src: ../../deploy/templates/.env.example.j2
+    dest: ../../.env
+
 - name: Create venv and install requirements
   pip:
     chdir: "{{ project_root }}"
