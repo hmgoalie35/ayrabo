@@ -30,6 +30,7 @@
               <span class="fa fa-caret-down"></span>
             </a>
             <ul class="dropdown-menu table-dropdown-menu" aria-labelledby="{{ obj.id }}">
+
               <li class="dropdown-header">Manage</li>
               <li>
                 <a href="{% url 'sportregistrations:coaches:update' sport_registration.pk obj.pk %}" id="update-{{ role|lower }}-link">
@@ -54,6 +55,16 @@
                   </a>
                 </li>
               {% endif %}
+
+              {# Game items #}
+              <li class="dropdown-header">Games</li>
+              <li>
+                <a id="list_games_coach_btn_{{ obj.team.slug }}"
+                   href="{% url 'teams:games:list' obj.team.pk %}" role="button">
+                  <span class="fa fa-list-alt fa-primary"></span>&nbsp;List
+                </a>
+              </li>
+            {# End game items #}
             </ul>
           </div>
         </td>
