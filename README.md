@@ -30,6 +30,7 @@ This project uses pre-commit, whenever you commit files flake8 and some other co
 * Install [docker](https://docs.docker.com/engine/installation/)
 * Install ansible: `sudo pip install ansible==2.3.2.0`
 * Run `devops/ansible/devops.py -m dev -s dev`
+* A `.env` file will be generated in the repo
     * Replace `REPLACE_ME` w/ your mailtrap settings.
     * Set `ALLOWED_HOSTS` TO `*`.
     * Remove the `SECRET_KEY` line.
