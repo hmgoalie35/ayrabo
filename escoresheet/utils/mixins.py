@@ -66,3 +66,18 @@ class HandleSportNotConfiguredMixin(object):
             return super().dispatch(request, *args, **kwargs)
         except SportNotConfiguredException as e:
             return handle_sport_not_configured(request, self, e)
+
+
+class DisableFormFieldsMixin(object):
+    def __init__(self, *args, **kwargs):
+        """
+        :param disable: List of field names to disable. The special value '__all__' will disable all form fields and
+        does not need to be passed as a list.
+        """
+        self.disable = kwargs.pop('disable', None)
+        super().__init__(*args, **kwargs)
+        if self.disable:
+            for field_name in self.fields:
+                if field_name in self.disable or self.disable == '__all__':
+                    field = self.fields.get(field_name)
+                    field.disabled = True

@@ -132,8 +132,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.contrib.sites.middleware.CurrentSiteMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'escoresheet.middleware.TranslationMiddleware',
-    'escoresheet.middleware.TimezoneMiddleware',
+    'escoresheet.middleware.TimezoneAndTranslationMiddleware',
     'accounts.middleware.AccountAndSportRegistrationCompleteMiddleware',
 ]
 

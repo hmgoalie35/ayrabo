@@ -3,17 +3,19 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Div
 from django import forms
 from django.core.exceptions import ValidationError
+from django.forms import widgets
 from django.utils import timezone
 
 from escoresheet.utils.form_fields import SeasonModelChoiceField, TeamModelChoiceField
+from escoresheet.utils.mixins import DisableFormFieldsMixin
 from games.models import HockeyGame
 from seasons.models import Season
 from teams.models import Team
 
-DATETIME_INPUT_FORMATS = ['%m/%d/%Y %I:%M %p']
+DATETIME_INPUT_FORMAT = '%m/%d/%Y %I:%M %p'
 
 
-class AbstractGameCreateForm(forms.ModelForm):
+class AbstractGameCreateUpdateForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         self.team = kwargs.pop('team', None)
         super().__init__(*args, **kwargs)
@@ -23,18 +25,28 @@ class AbstractGameCreateForm(forms.ModelForm):
         # csrf token manually included in template
         self.helper.disable_csrf = True
         self.helper.form_tag = False
+        fields = [
+            PrependedText('start', calendar_icon),
+            PrependedText('end', calendar_icon),
+            'timezone',
+            'season',
+        ]
+        if isinstance(self, HockeyGameUpdateForm):
+            fields.append('status')
+
         self.helper.layout = Layout(
-            Div('home_team',
+            Div(
+                'home_team',
                 'away_team',
                 'type',
                 'point_value',
                 'location',
-                css_class='col-md-offset-2 col-md-4'),
-            Div(PrependedText('start', calendar_icon),
-                PrependedText('end', calendar_icon),
-                'timezone',
-                'season',
-                css_class='col-md-4')
+                css_class='col-md-offset-2 col-md-4'
+            ),
+            Div(
+                *fields,
+                css_class='col-md-4'
+            )
         )
 
         division = self.team.division
@@ -60,8 +72,10 @@ class AbstractGameCreateForm(forms.ModelForm):
     season = SeasonModelChoiceField(queryset=Season.objects.all())
     home_team = TeamModelChoiceField(queryset=Team.objects.all(), label='Home Team')
     away_team = TeamModelChoiceField(queryset=Team.objects.all(), label='Away Team')
-    start = forms.DateTimeField(input_formats=DATETIME_INPUT_FORMATS, label='Game Start')
-    end = forms.DateTimeField(input_formats=DATETIME_INPUT_FORMATS, label='Game End')
+    start = forms.DateTimeField(input_formats=[DATETIME_INPUT_FORMAT], label='Game Start',
+                                widget=widgets.DateTimeInput(format=DATETIME_INPUT_FORMAT))
+    end = forms.DateTimeField(input_formats=[DATETIME_INPUT_FORMAT], label='Game End',
+                              widget=widgets.DateTimeInput(format=DATETIME_INPUT_FORMAT))
 
     class Meta:
         fields = ['home_team', 'away_team', 'type', 'point_value', 'location', 'start', 'end', 'timezone', 'season']
@@ -79,6 +93,7 @@ class AbstractGameCreateForm(forms.ModelForm):
         if home_team and away_team:
             if home_team.id != self.team.id and away_team.id != self.team.id:
                 field_errors['home_team'] = '{} must be either the home or away team.'.format(self.team.name)
+                field_errors['away_team'] = ''
             if home_team.id == away_team.id:
                 field_errors['home_team'] = 'This team must be different than the away team.'
                 field_errors['away_team'] = 'This team must be different than the home team.'
@@ -96,9 +111,7 @@ class AbstractGameCreateForm(forms.ModelForm):
             season_start = season.start_date
             season_end = season.end_date
             DATE_FORMAT = '%m/%d/%Y'
-            date_out_of_bounds_error_msg = 'This date does not occur during the {}-{} season ({}-{}).'.format(
-                season_start.year,
-                season_end.year,
+            date_out_of_bounds_error_msg = 'This date does not occur during the {}-{} season.'.format(
                 season_start.strftime(DATE_FORMAT),
                 season_end.strftime(DATE_FORMAT))
 
@@ -113,7 +126,7 @@ class AbstractGameCreateForm(forms.ModelForm):
 
         tz = cleaned_data.get('timezone', None)
         if all([home_team, away_team, start, tz]):
-            qs = self.Meta.model.objects.filter(start=start, timezone=tz)
+            qs = self.Meta.model.objects.filter(start=start, timezone=tz).exclude(pk=self.instance.pk)
             team_error_msg = 'This team already has a game for the selected game start and timezone.'
             if qs.filter(home_team=home_team).exists():
                 field_errors['home_team'] = team_error_msg
@@ -131,6 +144,30 @@ class AbstractGameCreateForm(forms.ModelForm):
         return cleaned_data
 
 
-class HockeyGameCreateForm(AbstractGameCreateForm):
-    class Meta(AbstractGameCreateForm.Meta):
+class HockeyGameCreateForm(AbstractGameCreateUpdateForm):
+    class Meta(AbstractGameCreateUpdateForm.Meta):
         model = HockeyGame
+
+
+class HockeyGameUpdateForm(DisableFormFieldsMixin, AbstractGameCreateUpdateForm):
+    def has_changed(self):
+        has_changed = super().has_changed()
+        # The initial form data for start/end is being set to the formatted datetime. has_changed is incorrectly
+        # reporting the datetimes as changed because the datetimes on the instance are UTC while the datetimes
+        # coming from the form are in the timezone specified on the user's profile. We can just compare everything as
+        # formatted datetime strings to see if start/end have changed.
+        if sorted(self.changed_data) == ['end', 'start']:
+            initial_start = self.initial.get('start')
+            initial_end = self.initial.get('end')
+            start = self.cleaned_data.get('start').strftime(DATETIME_INPUT_FORMAT)
+            end = self.cleaned_data.get('end').strftime(DATETIME_INPUT_FORMAT)
+            if initial_start == start and initial_end == end:
+                return False
+        return has_changed
+
+    class Meta(AbstractGameCreateUpdateForm.Meta):
+        model = HockeyGame
+        fields = AbstractGameCreateUpdateForm.Meta.fields + ['status']
+        help_texts = {
+            'timezone': None
+        }
