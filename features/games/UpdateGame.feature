@@ -32,7 +32,7 @@ Feature: Update a game
       | 1  | Long Island Amateur Hockey League | 2017-09-14 | 2018-09-14 | Green Machine IceCats |
     And The following game objects exist
       | id | home_team             | away_team             | type   | point_value | location | start               | end                 | timezone   | season |
-      | 1  | Green Machine IceCats | Long Island Edge      | league | 2           | Iceland  | 10/23/2017 07:00 PM | 10/23/2017 09:00 PM | US/Eastern | 1      |
+      | 1  | Green Machine IceCats | Long Island Edge      | league | 2           | Iceland  | today               | today               | US/Eastern | 1      |
       | 2  | Long Island Edge      | Green Machine IceCats | league | 2           | Iceland  | 10/30/2017 07:00 PM | 10/30/2017 09:00 PM | US/Eastern | 1      |
       | 3  | Long Island Edge      | Aviator Gulls         | league | 2           | Iceland  | 10/31/2017 07:00 PM | 10/31/2017 09:00 PM | US/Eastern | 1      |
     And I login with "user@example.com" and "myweakpassword"
@@ -59,3 +59,12 @@ Feature: Update a game
     And I fill in "id_end" with "10/23/2017 03:00 PM"
     And I press "update_game_btn"
     Then I should see "Game end must be after game start."
+
+  Scenario: Form disabled
+    Given The following game object exists
+      | id | home_team             | away_team     | type   | point_value | location | start               | end                 | timezone   | season | status    |
+      | 4  | Green Machine IceCats | Aviator Gulls | league | 2           | Iceland  | 11/23/2017 07:00 PM | 11/23/2017 10:00 PM | US/Eastern | 1      | completed |
+    And I am on the "teams:games:update" page with kwargs "team_pk=1, pk=4"
+    Then I should see "Updates to this game are no longer permitted."
+    And I should see "Back"
+    And "update_game_btn" should not exist on the page

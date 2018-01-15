@@ -1,8 +1,11 @@
+import datetime
+
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
 from django.db.models import Q
 from django.shortcuts import get_object_or_404, reverse, redirect
 from django.urls import reverse_lazy
+from django.utils import timezone
 from django.views import generic
 
 from common.views import CsvBulkUploadView
@@ -94,6 +97,7 @@ class GameUpdateView(LoginRequiredMixin,
     template_name = 'games/game_update.html'
     success_message = 'Your game has been updated.'
     context_object_name = 'game'
+    grace_period = datetime.timedelta(hours=24)
 
     def _get_team(self):
         if hasattr(self, 'team'):
@@ -133,6 +137,8 @@ class GameUpdateView(LoginRequiredMixin,
             'start': game.datetime_formatted(game.start, DATETIME_INPUT_FORMAT),
             'end': game.datetime_formatted(game.end, DATETIME_INPUT_FORMAT)
         }
+        if game.status in ['completed'] or timezone.now() > game.end + self.grace_period:
+            form_kwargs['disable'] = '__all__'
         return form_kwargs
 
     def get_form_class(self):

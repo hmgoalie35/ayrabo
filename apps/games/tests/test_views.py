@@ -1,5 +1,6 @@
 import datetime
 import os
+from unittest import mock
 
 import pytz
 from django.conf import settings
@@ -316,6 +317,12 @@ class HockeyGameUpdateViewTests(BaseTestCase):
     url = 'teams:games:update'
 
     def setUp(self):
+        self.patcher = mock.patch('django.utils.timezone.now')
+        self.mock_now = self.patcher.start()
+        self.now = pytz.utc.localize(datetime.datetime(month=12, day=26, year=2017, hour=19, minute=0))
+        self.mock_now.return_value = self.now
+        self.addCleanup(self.patcher.stop)
+
         self.email = 'user@example.com'
         self.password = 'myweakpassword'
 
@@ -419,6 +426,24 @@ class HockeyGameUpdateViewTests(BaseTestCase):
         self.assertEqual(start, '12/27/2017 07:00 PM')
         self.assertEqual(end, '12/27/2017 10:00 PM')
         self.assertEqual(response.context.get('team'), self.t1)
+
+    def test_form_disabled_game_completed(self):
+        self.login(email=self.email, password=self.password)
+        self.game.status = 'completed'
+        self.game.save()
+        response = self.client.get(self.formatted_url)
+        form = response.context.get('form')
+        self.assertTrue(all([v.disabled for k, v in form.fields.items()]))
+
+    def test_form_disabled_end_of_grace_period(self):
+        self.login(email=self.email, password=self.password)
+        start = pytz.utc.localize(datetime.datetime(month=12, day=24, year=2017, hour=19, minute=0))
+        self.game.start = start
+        self.game.end = start + datetime.timedelta(hours=2)
+        self.game.save()
+        response = self.client.get(self.formatted_url)
+        form = response.context.get('form')
+        self.assertTrue(all([v.disabled for k, v in form.fields.items()]))
 
     # GET
     def test_get(self):

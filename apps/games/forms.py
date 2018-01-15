@@ -7,6 +7,7 @@ from django.forms import widgets
 from django.utils import timezone
 
 from escoresheet.utils.form_fields import SeasonModelChoiceField, TeamModelChoiceField
+from escoresheet.utils.mixins import DisableFormFieldsMixin
 from games.models import HockeyGame
 from seasons.models import Season
 from teams.models import Team
@@ -148,7 +149,7 @@ class HockeyGameCreateForm(AbstractGameCreateUpdateForm):
         model = HockeyGame
 
 
-class HockeyGameUpdateForm(AbstractGameCreateUpdateForm):
+class HockeyGameUpdateForm(DisableFormFieldsMixin, AbstractGameCreateUpdateForm):
     def has_changed(self):
         has_changed = super().has_changed()
         # The initial form data for start/end is being set to the formatted datetime. has_changed is incorrectly

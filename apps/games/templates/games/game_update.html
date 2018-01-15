@@ -19,6 +19,19 @@
 
     <br>
 
+  {% if form.disable %}
+    <div class="row">
+      <div class="col-md-offset-3 col-md-6">
+        <div class="text-center">
+          <div class="alert alert-danger" role="alert">
+            Updates to this game are no longer permitted.<br>
+            Please <a href="{% url 'contact_us' %}" class="alert-link">contact us</a> with any questions.
+          </div>
+        </div>
+      </div>
+    </div>
+  {% endif %}
+
     <div class="row">
       <div class="col-md-offset-1 col-md-10">
         <form action="" method="post">
@@ -30,7 +43,11 @@
           <div class="row">
             <div class="col-md-12">
               <div class="text-center">
-                <button id="update_game_btn" type="submit" role="button" class="btn btn-success">Update</button>
+                {% if form.disable %}
+                  <button role="button" class="btn btn-back js-btn-back">Back</button>
+                {% else %}
+                  <button id="update_game_btn" type="submit" role="button" class="btn btn-success">Update</button>
+                {% endif %}
               </div>
             </div>
           </div>
