@@ -94,7 +94,7 @@
       {% if games %}
         $(".js-table").DataTable({
           dom: '<"pull-left"f>tpr',
-          // Season, Game Start. If add/remove columns need to update this.
+          // Initially sort by game start. If add/remove columns need to update this.
           order: [[6, 'desc']],
           columnDefs: [
             { orderable: false, targets: 9 },
