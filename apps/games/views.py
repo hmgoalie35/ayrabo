@@ -166,7 +166,7 @@ class GameUpdateView(LoginRequiredMixin,
         return super().post(request, *args, **kwargs)
 
 
-class GameListView(LoginRequiredMixin, generic.ListView):
+class GameListView(LoginRequiredMixin, HandleSportNotConfiguredMixin, generic.ListView):
     template_name = 'games/game_list.html'
     context_object_name = 'games'
 

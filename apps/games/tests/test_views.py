@@ -248,6 +248,12 @@ class HockeyGameListViewTests(BaseTestCase):
         response = self.client.get(self.format_url(team_pk=100))
         self.assert_404(response)
 
+    def test_sport_not_configured(self):
+        self.login(email=self.email, password=self.password)
+        team = TeamFactory()
+        response = self.client.get(self.format_url(team_pk=team.pk))
+        self.assertTemplateUsed(response, 'sport_not_configured_msg.html')
+
     def test_get_queryset(self):
         t2 = TeamFactory(id=2, division=self.mm_aa)
         t3 = TeamFactory(id=3, division=self.mm_aa)
