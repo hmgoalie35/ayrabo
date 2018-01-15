@@ -103,4 +103,13 @@ $(function () {
     history.back();
   });
 
+  // Any tabs on the site can opt into this functionality by adding `data-tab=<value>`.
+  // The corresponding Django view needs to set the `active` class based off of the `tab` query param.
+  $("a[data-toggle='tab']").on('shown.bs.tab', function (e) {
+    var tab = $(e.target).data('tab');
+    if (tab) {
+      var baseUrl = window.location.origin + window.location.pathname;
+      window.history.replaceState({}, '', baseUrl + '?tab=' + encodeURIComponent(tab));
+    }
+  });
 });
