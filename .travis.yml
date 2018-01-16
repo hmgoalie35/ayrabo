@@ -23,7 +23,7 @@ env:
 
   global:
     - DJANGO_SETTINGS_MODULE="escoresheet.settings.settings"
-    - TRAVIS_NODE_VERSION="6"
+    - TRAVIS_NODE_VERSION="8"
 
 script:
   - bash run_tests.sh # $TEST_SUITE
