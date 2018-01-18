@@ -11,8 +11,18 @@
       <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
       <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
   <![endif]-->
+  <script>
+    var modernBrowser = 'fetch' in window && 'Promise' in window && 'assign' in Object && 'keys' in Object;
+    if (!modernBrowser) {
+      console.log('Old browser detected, downloading polyfills...');
+      var scriptElement = document.createElement('script');
+      scriptElement.async = false;
+      scriptElement.src = "{% webpack_static 'js/polyfills.js' %}";
+      document.head.appendChild(scriptElement);
+    }
+  </script>
 
-  <link rel="stylesheet" href="{% webpack_static 'css/main.css' %}">
+  <link rel="stylesheet" href="{% webpack_static 'css/styleMain.css' %}">
   <link rel="stylesheet" href="{% webpack_static 'vendor/font-awesome/css/font-awesome.min.css' %}">
   <link rel="stylesheet" href="{% webpack_static 'vendor/animate.min.css' %}">
   <link rel="stylesheet" href="{% webpack_static 'vendor/noty.css' %}">
@@ -69,7 +79,8 @@
 <script src="{% webpack_static 'vendor/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js' %}"></script>
 <script src="{% webpack_static 'vendor/datatables/jquery.dataTables.js' %}"></script>
 <script src="{% webpack_static 'vendor/datatables/dataTables.bootstrap.js' %}"></script>
-<script src="{% webpack_static 'js/main.js' %}"></script>
+<script src="{% webpack_static 'js/jqueryMain.js' %}"></script>
+<script src="{% webpack_static 'js/reactMain.js' %}"></script>
 
 {% block extra_js %}
 {% endblock %}
