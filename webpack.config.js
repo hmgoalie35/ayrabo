@@ -27,7 +27,15 @@ const PATHS = {
 
 module.exports = function (env, argv) {
   const productionBuild = env.nodeEnv === 'production';
-  const extractScss = new ExtractTextPlugin('css/[name].css');
+
+  let cssFileName = '[name]';
+  let jsFileName = '[name]';
+  if (productionBuild) {
+    cssFileName = '[name].[chunkhash]';
+    jsFileName = '[name].[chunkhash]';
+  }
+  
+  const extractScss = new ExtractTextPlugin(`css/${cssFileName}.css`);
 
   return {
     entry: {
@@ -38,7 +46,7 @@ module.exports = function (env, argv) {
       polyfills: ['babel-polyfill'],
     },
     output: {
-      filename: 'js/[name].js',
+      filename: `js/${jsFileName}.js`,
       path: PATHS.dist,
       library: 'App',
       publicPath: '/static/dist/'

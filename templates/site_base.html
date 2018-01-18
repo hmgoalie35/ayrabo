@@ -1,4 +1,4 @@
-{% load webpack_static from webpack_loader %}
+{% load webpack_static render_bundle get_files from webpack_loader %}
 
 <!DOCTYPE html>
 <html lang="{{ LANGUAGE_CODE }}">
@@ -17,12 +17,14 @@
       console.log('Old browser detected, downloading polyfills...');
       var scriptElement = document.createElement('script');
       scriptElement.async = false;
-      scriptElement.src = "{% webpack_static 'js/polyfills.js' %}";
+      {% get_files 'polyfills' 'js' as polyfills %}
+      scriptElement.src = '{{ polyfills.0.url }}';
       document.head.appendChild(scriptElement);
     }
   </script>
 
-  <link rel="stylesheet" href="{% webpack_static 'css/styleMain.css' %}">
+
+  {% render_bundle 'styleMain' 'css' %}
   <link rel="stylesheet" href="{% webpack_static 'vendor/font-awesome/css/font-awesome.min.css' %}">
   <link rel="stylesheet" href="{% webpack_static 'vendor/animate.min.css' %}">
   <link rel="stylesheet" href="{% webpack_static 'vendor/noty.css' %}">
@@ -79,8 +81,8 @@
 <script src="{% webpack_static 'vendor/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js' %}"></script>
 <script src="{% webpack_static 'vendor/datatables/jquery.dataTables.js' %}"></script>
 <script src="{% webpack_static 'vendor/datatables/dataTables.bootstrap.js' %}"></script>
-<script src="{% webpack_static 'js/jqueryMain.js' %}"></script>
-<script src="{% webpack_static 'js/reactMain.js' %}"></script>
+{% render_bundle 'jqueryMain' 'js' %}
+{% render_bundle 'reactMain' 'js' %}
 
 {% block extra_js %}
 {% endblock %}
