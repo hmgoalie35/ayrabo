@@ -56,7 +56,15 @@ module.exports = function (env, argv) {
         {
           test: /\.jsx$/,
           include: [jsxRoot],
-          loader: 'babel-loader',
+          use: [
+            'babel-loader',
+            {
+              loader: 'eslint-loader',
+              options: {
+                cache: true,
+              }
+            }
+          ],
         },
         {
           test: /\.scss$/,
