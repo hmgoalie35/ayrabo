@@ -34,7 +34,7 @@ module.exports = function (env, argv) {
     cssFileName = '[name].[chunkhash]';
     jsFileName = '[name].[chunkhash]';
   }
-  
+
   const extractScss = new ExtractTextPlugin(`css/${cssFileName}.css`);
 
   return {
@@ -106,6 +106,7 @@ module.exports = function (env, argv) {
       new CleanWebpackPlugin([PATHS.dist]),
       extractScss,
       new BundleTracker({ filename: './webpack-stats.json' }),
+      new webpack.HashedModuleIdsPlugin(),
       new CopyWebpackPlugin([
         {
           from: 'jquery/dist/jquery.min.js',
