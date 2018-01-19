@@ -23,6 +23,12 @@
     "datatables.net": "1.10.16",
     "datatables.net-bs": "1.10.16",
     "eonasdan-bootstrap-datetimepicker": "4.17.47",
+    "eslint": "4.15.0",
+    "eslint-config-airbnb": "16.1.0",
+    "eslint-loader": "1.9.0",
+    "eslint-plugin-import": "2.8.0",
+    "eslint-plugin-jsx-a11y": "6.0.3",
+    "eslint-plugin-react": "7.5.1",
     "extract-text-webpack-plugin": "3.0.2",
     "file-loader": "1.1.6",
     "font-awesome": "4.7.0",
@@ -41,12 +47,6 @@
     "webpack-bundle-tracker": "0.2.1"
   },
   "devDependencies": {
-    "eslint": "4.15.0",
-    "eslint-config-airbnb": "16.1.0",
-    "eslint-loader": "1.9.0",
-    "eslint-plugin-import": "2.8.0",
-    "eslint-plugin-jsx-a11y": "6.0.3",
-    "eslint-plugin-react": "7.5.1",
     "phantomjs-prebuilt": "2.1.16"
   },
   "scripts": {
