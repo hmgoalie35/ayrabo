@@ -111,6 +111,7 @@ INSTALLED_APPS = [
     'periods.apps.PeriodsConfig',
     'players.apps.PlayersConfig',
     'referees.apps.RefereesConfig',
+    'scorekeepers.apps.ScorekeepersConfig',
     'seasons.apps.SeasonsConfig',
     'sports.apps.SportsConfig',
     'teams.apps.TeamsConfig',

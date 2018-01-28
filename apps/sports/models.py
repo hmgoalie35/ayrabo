@@ -41,7 +41,7 @@ class SportRegistration(models.Model):
     Player and Referee and another tied to sport Soccer with a roles_mask corresponding to Coach
     """
 
-    ROLES = ['Player', 'Coach', 'Referee', 'Manager']
+    ROLES = ['Player', 'Coach', 'Referee', 'Manager', 'Scorekeeper']
 
     user = models.ForeignKey(User)
     sport = models.ForeignKey(Sport)
