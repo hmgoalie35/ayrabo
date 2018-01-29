@@ -121,6 +121,8 @@
                                   <div>
                                     {% if role == 'Referee' %}
                                       {{ object.league }}
+                                    {% elif role == 'Scorekeeper' %}
+                                      {{ object.sport.name }}
                                     {% else %}
                                       {{ object.team }} - {{ object.team.division.name }}
                                     {% endif %}

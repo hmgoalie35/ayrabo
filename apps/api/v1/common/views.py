@@ -45,6 +45,8 @@ class BaseDeactivateApiView(views.APIView):
         filter_kwargs = {'user': user}
         if role == 'referee':
             filter_kwargs['league__sport'] = sport_registration.sport
+        elif role == 'scorekeeper':
+            filter_kwargs['sport'] = sport_registration.sport
         else:
             filter_kwargs['team__division__league__sport'] = sport_registration.sport
 

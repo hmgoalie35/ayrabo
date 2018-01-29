@@ -13,7 +13,9 @@
         <div class="row">
           <div class="col-sm-12">
             <div class="text-center">
-              <p>You will no longer be a {{ role|lower }} for the {% if role == 'Referee' %}{{ obj.league }}{% else %}{{ obj.team }}{% endif %}.</p>
+              <p>
+                You will no longer be a {{ role|lower }} for {% if role == 'Referee' %}the {{ obj.league }}{% elif role == 'Scorekeeper' %}{{ obj.sport.name }}{% else %}the {{ obj.team }}{% endif %}.
+              </p>
               {% if related_objs|length_is:1 %}
                 <p>You are about to deactivate your last {{ sport_name|lower }} {{ role|lower }} registration.<br>This will additionally revoke your {{ sport_name|lower }} {{ role|lower }} privileges.</p>
               {% endif %}
@@ -32,7 +34,7 @@
                         type="button"
                         class="btn btn-sm btn-danger"
                         name="deactivate_btn"
-                        id="deactivate-{% if role == 'Referee' %}{{ obj.league.slug }}{% else %}{{ obj.team.slug }}{% endif %}-{{ role|lower }}-btn"
+                        id="deactivate-{% if role == 'Referee' %}{{ obj.league.slug }}{% elif role == 'Scorekeeper' %}{{ obj.sport.slug }}{% else %}{{ obj.team.slug }}{% endif %}-{{ role|lower }}-btn"
                         data-url="{% url api_url sport_registration.pk obj.pk %}"
                 >
                   Deactivate

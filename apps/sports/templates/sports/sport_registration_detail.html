@@ -17,7 +17,6 @@
     <div class="row">
       <div class="col-sm-offset-2 col-sm-8 col-sm-offset-2">
         <div class="text-center">
-          <h4 class="text-muted">Choose a tab below to browse teams/leagues you are registered for</h4>
           <br><br>
           <ul class="nav nav-tabs nav-justified" role="tablist">
             {% for role in sr_roles %}
@@ -48,6 +47,8 @@
                   {% include 'referees/_referees.html' %}
                 {% elif role == 'Manager' %}
                   {% include 'managers/_managers.html' %}
+                {% elif role == 'Scorekeeper' %}
+                  {% include 'scorekeepers/_scorekeepers.html' %}
                 {% endif %}
               </div>
             {% endfor %}

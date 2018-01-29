@@ -7,6 +7,7 @@ sport_registration_urls = [
     url(r'^(?P<pk>\d+)/coaches/', include('api.v1.coaches.urls', namespace='coaches')),
     url(r'^(?P<pk>\d+)/referees/', include('api.v1.referees.urls', namespace='referees')),
     url(r'^(?P<pk>\d+)/managers/', include('api.v1.managers.urls', namespace='managers')),
+    url(r'^(?P<pk>\d+)/scorekeepers/', include('api.v1.scorekeepers.urls', namespace='scorekeepers')),
 ]
 
 urlpatterns = [

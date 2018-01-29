@@ -11,7 +11,8 @@ sport_registration_urls = [
     url(r'^(?P<pk>\d+)/players/', include('players.urls', namespace='players')),
     url(r'^(?P<pk>\d+)/coaches/', include('coaches.urls', namespace='coaches')),
     url(r'^(?P<pk>\d+)/referees/', include('referees.urls', namespace='referees')),
-    url(r'^(?P<pk>\d+)/managers/', include('managers.sport_registration_urls', namespace='managers')),
+    url(r'^(?P<pk>\d+)/managers/', include('managers.urls', namespace='managers')),
+    url(r'^(?P<pk>\d+)/scorekeepers/', include('scorekeepers.urls', namespace='scorekeepers')),
 ]
 
 urlpatterns = [
