@@ -98,10 +98,25 @@ class SportRegistrationCreateViewTests(BaseTestCase):
         self.assertRedirects(response, reverse(url, kwargs={'pk': sr.first().id}))
         self.assertHasMessage(response, 'You have been registered for Ice Hockey.')
 
+    def test_valid_post_only_scorekeeper_role(self):
+        form_data = {
+            'sportregistrations-0-sport': self.ice_hockey.id,
+            'sportregistrations-0-roles': ['Scorekeeper']
+        }
+        self.post_data.update(form_data)
+        response = self.client.post(self.url, data=self.post_data, follow=True)
+        # Sport registration should be marked as complete, redirect to home page
+        sr = SportRegistration.objects.filter(user=self.user, sport=self.ice_hockey)
+        self.assertTrue(sr.exists())
+        self.assertEqual(sr.first().roles, ['Scorekeeper'])
+        self.assertTrue(sr.first().is_complete)
+        self.assertRedirects(response, reverse('home'))
+        self.assertHasMessage(response, 'You have been registered for Ice Hockey.')
+
     def test_valid_post_two_forms(self):
         form_data = {
             'sportregistrations-0-sport': self.ice_hockey.id,
-            'sportregistrations-0-roles': ['Player', 'Coach'],
+            'sportregistrations-0-roles': ['Player', 'Coach', 'Scorekeeper'],
             'sportregistrations-1-sport': self.basketball.id,
             'sportregistrations-1-roles': ['Player', 'Referee']
         }
@@ -111,7 +126,7 @@ class SportRegistrationCreateViewTests(BaseTestCase):
         response = self.client.post(self.url, data=self.post_data, follow=True)
         sr = SportRegistration.objects.filter(user=self.user)
         self.assertEqual(sr.count(), 2)
-        self.assertEqual(sr[0].roles, ['Player', 'Coach'])
+        self.assertEqual(sr[0].roles, ['Player', 'Coach', 'Scorekeeper'])
         self.assertEqual(sr[1].roles, ['Player', 'Referee'])
         url = 'sportregistrations:{role}:create'.format(role='players')
         self.assertRedirects(response, reverse(url, kwargs={'pk': sr.first().id}))
@@ -207,10 +222,10 @@ class SportRegistrationDetailViewTests(BaseTestCase):
         self.manager_data = {'user': self.user, 'team': self.team}
 
         self.player, self.coach, self.referee, self.manager = self.create_related_objects(
-                player_args=self.player_data,
-                coach_args=self.coach_data,
-                referee_args=self.referee_data,
-                manager_args=self.manager_data)
+            player_args=self.player_data,
+            coach_args=self.coach_data,
+            referee_args=self.referee_data,
+            manager_args=self.manager_data)
 
         self.client.login(email=self.email, password=self.password)
 
