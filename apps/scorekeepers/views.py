@@ -30,12 +30,15 @@ class ScorekeepersCreateView(LoginRequiredMixin, HasPermissionMixin, generic.Vie
         # We want to include deactivated scorekeepers in this query.
         scorekeepers = Scorekeeper.objects.filter(user=user)
         if Sport.objects.count() == scorekeepers.count():
-            messages.info(request, 'You have already registered for all available sports.')
+            messages.info(request, 'You have already registered for all available sports. Please contact us to '
+                                   'reactivate your scorekeeper registration.')
             return redirect(url)
 
         sport = self.sport_registration.sport
         # We want to check for inactive scorekeepers also.
-        if not scorekeepers.filter(sport=sport).exists():
+        if scorekeepers.filter(sport=sport).exists():
+            messages.info(request, 'Trying to reactivate your scorekeeper registration? Contact us.')
+        else:
             self.sport_registration.set_roles(['Scorekeeper'], append=True)
             Scorekeeper.objects.create(user=user, sport=sport).full_clean()
             messages.success(request, 'You have been registered as a scorekeeper for {}.'.format(sport.name))

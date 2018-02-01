@@ -57,13 +57,15 @@ class ScorekeepersCreateViewTests(BaseTestCase):
         self.login(user=self.user)
         response = self.client.post(self.format_url(pk=self.sr.id), follow=True)
         self.assertRedirects(response, reverse('sportregistrations:detail', kwargs={'pk': self.sr.id}))
-        self.assertHasMessage(response, 'You have already registered for all available sports.')
+        self.assertHasMessage(response, 'You have already registered for all available sports. Please contact us to '
+                                        'reactivate your scorekeeper registration.')
 
     def test_user_already_inactive_scorekeeper_for_sport(self):
         ScorekeeperFactory(user=self.user, sport=self.ice_hockey, is_active=False)
         self.login(user=self.user)
         response = self.client.post(self.format_url(pk=self.sr.id), follow=True)
         self.assertRedirects(response, reverse('sportregistrations:detail', kwargs={'pk': self.sr.id}))
+        self.assertHasMessage(response, 'Trying to reactivate your scorekeeper registration? Contact us.')
 
     def test_user_already_active_scorekeeper_for_sport(self):
         ScorekeeperFactory(user=self.user, sport=self.ice_hockey, is_active=True)

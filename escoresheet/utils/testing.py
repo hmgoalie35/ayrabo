@@ -5,6 +5,8 @@ from django.contrib.auth.models import User
 from django.db.models import Q
 from django.test import TestCase
 from django.urls import reverse
+from rest_framework.reverse import reverse as drf_reverse
+from rest_framework.test import APITestCase
 
 from coaches.tests import CoachFactory
 from managers.tests import ManagerFactory
@@ -76,3 +78,29 @@ class BaseTestCase(TestCase):
 
     def assert_404(self, response):
         self.assertEqual(response.status_code, 404)
+
+
+class BaseAPITestCase(APITestCase):
+    ERROR_MESSAGE_DEFAULTS = {
+        'not_found': {'detail': 'Not found.'},
+        'unauthenticated': {'detail': 'Authentication credentials were not provided.'},
+        'permission_denied': {'detail': 'You do not have permission to perform this action.'},
+    }
+
+    STATUS_CODE_DEFAULTS = {
+        'not_found': 404,
+        'unauthenticated': 403,
+        'permission_denied': 403,
+    }
+
+    def format_url(self, **kwargs):
+        url = getattr(self, 'url', None)
+        if url:
+            return drf_reverse(url, kwargs=kwargs)
+
+    # Custom assertions
+    def assertAPIError(self, response, status):
+        status_code = self.STATUS_CODE_DEFAULTS.get(status)
+        error_messages = self.ERROR_MESSAGE_DEFAULTS.get(status)
+        self.assertEqual(response.status_code, status_code)
+        self.assertDictEqual(response.data, error_messages)
