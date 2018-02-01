@@ -4,5 +4,5 @@ from . import views
 
 
 urlpatterns = [
-    url(r'^(?P<player_pk>\d+)/deactivate', views.DeactivatePlayerApiView.as_view(), name='deactivate'),
+    url(r'^(?P<player_pk>\d+)/deactivate/$', views.DeactivatePlayerApiView.as_view(), name='deactivate'),
 ]
