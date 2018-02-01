@@ -111,6 +111,7 @@ INSTALLED_APPS = [
     'periods.apps.PeriodsConfig',
     'players.apps.PlayersConfig',
     'referees.apps.RefereesConfig',
+    'scorekeepers.apps.ScorekeepersConfig',
     'seasons.apps.SeasonsConfig',
     'sports.apps.SportsConfig',
     'teams.apps.TeamsConfig',
@@ -413,6 +414,7 @@ REST_FRAMEWORK = {
     ],
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 25,
+    'TEST_REQUEST_DEFAULT_FORMAT': 'json',
 }
 
 # Google Maps API

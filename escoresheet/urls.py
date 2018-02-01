@@ -9,14 +9,14 @@ from locations.views import BulkUploadLocationsView
 from teams.views import BulkUploadTeamsView
 
 urlpatterns = [
-    url(r'^admin/bulk-upload-teams', BulkUploadTeamsView.as_view(), name='bulk_upload_teams'),
-    url(r'^admin/bulk-upload-locations', BulkUploadLocationsView.as_view(), name='bulk_upload_locations'),
-    url(r'^admin/bulk-upload-hockey-games', BulkUploadHockeyGamesView.as_view(), name='bulk_upload_hockeygames'),
+    url(r'^admin/bulk-upload-teams/$', BulkUploadTeamsView.as_view(), name='bulk_upload_teams'),
+    url(r'^admin/bulk-upload-locations/$', BulkUploadLocationsView.as_view(), name='bulk_upload_locations'),
+    url(r'^admin/bulk-upload-hockey-games/$', BulkUploadHockeyGamesView.as_view(), name='bulk_upload_hockeygames'),
     url(r'^admin/', admin.site.urls),
 
     url(r'^$', HomePageView.as_view(), name='home'),
-    url(r'^about-us$', AboutUsView.as_view(), name='about_us'),
-    url(r'^contact-us$', ContactUsView.as_view(), name='contact_us'),
+    url(r'^about-us/$', AboutUsView.as_view(), name='about_us'),
+    url(r'^contact-us/$', ContactUsView.as_view(), name='contact_us'),
 
     # This allows me to override allauth views, and add in custom views under account/
     url(r'^account/', include('accounts.urls')),

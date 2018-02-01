@@ -80,6 +80,7 @@ def get_namespace_for_role(role):
         'Player': 'players',
         'Coach': 'coaches',
         'Referee': 'referees',
-        'Manager': 'managers'
+        'Manager': 'managers',
+        'Scorekeeper': 'scorekeepers'
     }
     return mappings.get(role, None)

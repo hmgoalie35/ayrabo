@@ -42,11 +42,14 @@ class BaseDeactivateApiView(views.APIView):
         obj.is_active = False
         obj.save()
 
+        sport = sport_registration.sport
         filter_kwargs = {'user': user}
         if role == 'referee':
-            filter_kwargs['league__sport'] = sport_registration.sport
+            filter_kwargs['league__sport'] = sport
+        elif role == 'scorekeeper':
+            filter_kwargs['sport'] = sport
         else:
-            filter_kwargs['team__division__league__sport'] = sport_registration.sport
+            filter_kwargs['team__division__league__sport'] = sport
 
         active_objs = model_cls.objects.active().filter(**filter_kwargs)
         if not active_objs.exists():

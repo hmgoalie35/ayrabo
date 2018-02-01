@@ -96,6 +96,14 @@ class BaseCreateRelatedObjectsView(LoginRequiredMixin, ContextMixin, generic.Vie
         context['role'] = role
         return context
 
+    def get_user_registered_for_all_msg(self, role):
+        role = role.lower()
+        if role == 'referee':
+            msg = 'leagues'
+        else:
+            msg = 'teams'
+        return self.already_registered_msg.format(msg)
+
     def get(self, *args, **kwargs):
         try:
             context = self.get_context_data(**kwargs)
@@ -104,7 +112,7 @@ class BaseCreateRelatedObjectsView(LoginRequiredMixin, ContextMixin, generic.Vie
         if context.get('user_registered_for_all', False):
             role = self.get_role()
             sr = context.get('sport_registration')
-            messages.info(self.request, self.already_registered_msg.format('leagues' if role == 'Referee' else 'teams'))
+            messages.info(self.request, self.get_user_registered_for_all_msg(role))
             return redirect(sr.get_absolute_url())
 
         return render(self.request, self.get_template_name(), context)
@@ -118,7 +126,7 @@ class BaseCreateRelatedObjectsView(LoginRequiredMixin, ContextMixin, generic.Vie
         if context.get('user_registered_for_all', False):
             role = self.get_role()
             sr = context.get('sport_registration')
-            messages.info(self.request, self.already_registered_msg.format('leagues' if role == 'Referee' else 'teams'))
+            messages.info(self.request, self.get_user_registered_for_all_msg(role))
             return redirect(sr.get_absolute_url())
 
         formset = context.get('formset')

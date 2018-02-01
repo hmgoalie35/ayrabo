@@ -6,7 +6,8 @@ SINGULAR_PLURAL_MAPPINGS = {
     'Player': 'Players',
     'Coach': 'Coaches',
     'Referee': 'Referees',
-    'Manager': 'Managers'
+    'Manager': 'Managers',
+    'Scorekeeper': 'Scorekeepers'
 }
 
 

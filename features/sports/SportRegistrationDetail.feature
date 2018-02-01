@@ -16,9 +16,9 @@ Feature: Sport registration detail
       | Long Island Amateur Hockey League | Ice Hockey |
       | National Hockey League            | Ice Hockey |
     And The following sport registrations exist
-      | username_or_email | sport      | roles                           | complete |
-      | user@example.com  | Ice Hockey | Player, Coach, Referee          | true     |
-      | user@example.com  | Baseball   | Player, Coach, Manager, Referee | true     |
+      | username_or_email | sport      | roles                               | complete |
+      | user@example.com  | Ice Hockey | Player, Coach, Referee, Scorekeeper | true     |
+      | user@example.com  | Baseball   | Player, Coach, Manager, Referee     | true     |
     And The following player object exists
       | username_or_email | sport      | team                  | jersey_number | position | handedness |
       | user@example.com  | Ice Hockey | Green Machine IceCats | 35            | G        | Left       |
@@ -28,17 +28,21 @@ Feature: Sport registration detail
     And The following referee object exists
       | username_or_email | league                            |
       | user@example.com  | Long Island Amateur Hockey League |
+    And The following scorekeeper object exists
+      | username_or_email | sport      |
+      | user@example.com  | Ice Hockey |
     And I login with "user@example.com" and "myweakpassword"
 
   Scenario: Informative text displayed to user
     Given I am on the absolute url page for "sports.SportRegistration" and "user__email=user@example.com, sport__name=Ice Hockey"
     Then I should see "Manage Your Ice Hockey Registration"
-    And I should see "Choose a tab below to browse teams/leagues you are registered for"
     And I should see "Available Roles"
     And I should see "Coaches"
     And I should see "Players"
     And I should see "Referees"
+    And I should see "Scorekeepers"
     And "Green Machine IceCats" should show up 4 times
+    And "Ice Hockey" should show up 5 times
     And I should see "Long Island Amateur Hockey League"
     And I press "available-roles-nav-tab"
     And "add_manager_role_link" should contain text "Register"

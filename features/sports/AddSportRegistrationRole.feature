@@ -62,6 +62,17 @@ Feature: Add roles to a sport registration
     And I press "add_manager_role_link"
     Then I should be on the "sports.SportRegistration" "" "sportregistrations:managers:create" page with url kwargs "pk=pk"
 
+  Scenario: Add scorekeeper role
+    Given "user@example.com" is completely registered for "Ice Hockey" with role "Player"
+    And The following player object exists
+      | username_or_email | sport      | team                  | jersey_number | position | handedness |
+      | user@example.com  | Ice Hockey | Green Machine IceCats | 35            | G        | Left       |
+    And I am on the absolute url page for "sports.SportRegistration" and "user__email=user@example.com, sport__name=Ice Hockey"
+    When I press "Available Roles"
+    And I press "add_scorekeeper_role_link"
+    Then I should be on the absolute url page for "sports.SportRegistration" and "user__email=user@example.com, sport__name=Ice Hockey"
+    And I should see "You have been registered as a scorekeeper for Ice Hockey."
+
     # We know we can navigate to the player, coach, etc creation page but now try to actually create an object. Scenarios
   # below are different from general player, coach, etc creation because the code is adding the new role and removing
   # it if things go wrong.

@@ -72,7 +72,7 @@ class SportRegistrationModelTests(BaseTestCase):
                          reverse('sportregistrations:detail', kwargs={'pk': ice_hockey.pk}))
 
     def test_current_available_roles(self):
-        self.assertListEqual(SportRegistration.ROLES, ['Player', 'Coach', 'Referee', 'Manager'])
+        self.assertListEqual(SportRegistration.ROLES, ['Player', 'Coach', 'Referee', 'Manager', 'Scorekeeper'])
 
     def test_set_roles_param_not_a_list(self):
         sr = SportRegistrationFactory()

@@ -6,6 +6,7 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const BundleTracker = require('webpack-bundle-tracker');
 
+// Paths
 const projectRoot = path.resolve(__dirname);
 const staticRoot = path.join(projectRoot, 'static');
 const jsRoot = path.join(staticRoot, 'js');
@@ -31,7 +32,7 @@ module.exports = function (env, argv) {
   let cssFileName = '[name]';
   let jsFileName = '[name]';
   if (productionBuild) {
-    cssFileName = '[name].[chunkhash]';
+    cssFileName = '[name].[contenthash]';
     jsFileName = '[name].[chunkhash]';
   }
 
@@ -43,13 +44,21 @@ module.exports = function (env, argv) {
       reactMain: PATHS.jsx.main,
       // styleMain.js is never used
       styleMain: PATHS.scss.main,
-      polyfills: ['babel-polyfill'],
+      polyfills: ['babel-polyfill', 'raf/polyfill'],
     },
     output: {
       filename: `js/${jsFileName}.js`,
       path: PATHS.dist,
+      pathinfo: !productionBuild,
       library: 'App',
       publicPath: '/static/dist/'
+    },
+    resolve: {
+      extensions: ['.js', '.jsx', '.json']
+    },
+    stats: {
+      // Don't show CopyWebpackPlugin output
+      excludeAssets: [/^vendor/]
     },
     module: {
       rules: [
@@ -61,7 +70,7 @@ module.exports = function (env, argv) {
             {
               loader: 'eslint-loader',
               options: {
-                cache: true,
+                cache: false,
               }
             }
           ],
