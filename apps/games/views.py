@@ -14,6 +14,7 @@ from escoresheet.utils.mixins import HasPermissionMixin, HandleSportNotConfigure
 from games.forms import HockeyGameCreateForm, HockeyGameUpdateForm, DATETIME_INPUT_FORMAT
 from games.models import HockeyGame
 from managers.models import Manager
+from scorekeepers.models import Scorekeeper
 from teams.models import Team
 
 SPORT_GAME_CREATE_FORM_MAPPINGS = {
@@ -192,6 +193,7 @@ class GameListView(LoginRequiredMixin, HandleSportNotConfiguredMixin, generic.Li
         user = self.request.user
         managers_for_user = Manager.objects.active().filter(user=user)
         context['can_create_game'] = managers_for_user.filter(team=self.team).exists()
+        context['is_scorekeeper'] = Scorekeeper.objects.filter(user=user, sport=self.sport).exists()
         context['team_ids_for_manager'] = managers_for_user.filter(
             team__division__league__sport=self.sport).values_list('team_id', flat=True)
         context['team'] = self.team
@@ -200,6 +202,33 @@ class GameListView(LoginRequiredMixin, HandleSportNotConfiguredMixin, generic.Li
     def get(self, request, *args, **kwargs):
         self._get_team()
         return super().get(request, *args, **kwargs)
+
+
+# TODO Add permission checks
+class GameRostersUpdateView(LoginRequiredMixin, generic.TemplateView):
+    template_name = 'games/game_rosters_update.html'
+
+    def _get_game(self):
+        if hasattr(self, 'game'):
+            return self.game
+        self.game = get_object_or_404(
+            HockeyGame.objects.select_related('home_team', 'home_team__division', 'away_team', 'away_team__division',
+                                              'team'),
+            pk=self.kwargs.get('pk', None)
+        )
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['game'] = self.game
+        home_team = self.game.home_team
+        away_team = self.game.away_team
+        context['home_team'] = '{} {}'.format(home_team.name, home_team.division.name)
+        context['away_team'] = '{} {}'.format(away_team.name, away_team.division.name)
+        return context
+
+    def get(self, *args, **kwargs):
+        self._get_game()
+        return super().get(*args, **kwargs)
 
 
 class BulkUploadHockeyGamesView(CsvBulkUploadView):

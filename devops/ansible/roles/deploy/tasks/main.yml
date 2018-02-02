@@ -14,6 +14,7 @@
         repo: "{{ repo }}"
         clone: yes
         update: yes
+        depth: 5
         version: "{{ deployment_version }}"
         dest: "{{ ongoing_deployment }}"
 
