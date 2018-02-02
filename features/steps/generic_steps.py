@@ -143,7 +143,7 @@ def step_impl(context, model_class, kwarg_data):
 
 
 @step(
-        'I am on the "(?P<model_class>[^"]*)" "(?P<model_kwargs>[^"]*)" "(?P<url_or_url_name>[^"]*)" page with url kwargs "(?P<url_kwargs>[^"]*)"')  # noqa
+    'I am on the "(?P<model_class>[^"]*)" "(?P<model_kwargs>[^"]*)" "(?P<url_or_url_name>[^"]*)" page with url kwargs "(?P<url_kwargs>[^"]*)"')  # noqa
 def step_impl(context, model_class, model_kwargs, url_or_url_name, url_kwargs):
     url_kwargs_dict = string_to_kwargs_dict(url_kwargs)
     obj = get_first_obj_for_model(model_class, model_kwargs)
@@ -157,7 +157,7 @@ def step_impl(context, model_class, model_kwargs, url_or_url_name, url_kwargs):
 
 
 @step(
-        'I go to the "(?P<model_class>[^"]*)" "(?P<model_kwargs>[^"]*)" "(?P<url_or_url_name>[^"]*)" page with url kwargs "(?P<url_kwargs>[^"]*)"')  # noqa
+    'I go to the "(?P<model_class>[^"]*)" "(?P<model_kwargs>[^"]*)" "(?P<url_or_url_name>[^"]*)" page with url kwargs "(?P<url_kwargs>[^"]*)"')  # noqa
 def step_impl(context, model_class, model_kwargs, url_or_url_name, url_kwargs):
     url_kwargs_dict = string_to_kwargs_dict(url_kwargs)
     obj = get_first_obj_for_model(model_class, model_kwargs)
@@ -171,7 +171,7 @@ def step_impl(context, model_class, model_kwargs, url_or_url_name, url_kwargs):
 
 
 @step(
-        'I should be on the "(?P<model_class>[^"]*)" "(?P<model_kwargs>[^"]*)" "(?P<url_or_url_name>[^"]*)" page with url kwargs "(?P<url_kwargs>[^"]*)"')  # noqa
+    'I should be on the "(?P<model_class>[^"]*)" "(?P<model_kwargs>[^"]*)" "(?P<url_or_url_name>[^"]*)" page with url kwargs "(?P<url_kwargs>[^"]*)"')  # noqa
 def step_impl(context, model_class, model_kwargs, url_or_url_name, url_kwargs):
     url_kwargs_dict = string_to_kwargs_dict(url_kwargs)
     obj = get_first_obj_for_model(model_class, model_kwargs)
@@ -210,7 +210,7 @@ def step_impl(context, element, modal_id):
     the_element = find_element(context, element)
     the_element.click()
     WebDriverWait(context.driver, 10).until(
-            expected_conditions.element_to_be_clickable((By.ID, modal_id)),
+        expected_conditions.element_to_be_clickable((By.ID, modal_id)),
     )
 
 
@@ -302,7 +302,7 @@ def step_impl(context, deselect, select_option, element):
 
     if not success:
         raise NoSuchElementException(
-                'Cannot locate {select_option} by value, visible text or index'.format(select_option=select_option))
+            'Cannot locate {select_option} by value, visible text or index'.format(select_option=select_option))
 
 
 @step('I select (?P<num_selections>\d+) [a-zA-Z]+ from "(?P<element>[^"]*)"')
@@ -335,7 +335,7 @@ def step_impl(context, file_name, element):
 def step_impl(context, element, negate):
     the_element = find_element(context, element)
     WebDriverWait(context.driver, 10).until(
-            expected_conditions.visibility_of_element_located((By.ID, element)),
+        expected_conditions.visibility_of_element_located((By.ID, element)),
     )
     is_displayed = the_element.is_displayed()
     if negate:
@@ -384,6 +384,11 @@ def step_impl(context, element, text):
 def step_impl(context, element):
     with context.test.assertRaises(NoSuchElementException):
         find_element(context, element)
+
+
+@step('"(?P<element>[^"]*)" should exist on the page')
+def step_impl(context, element):
+    find_element(context, element)
 
 
 @step('The "(?P<attribute>[^"]*)" attribute for "(?P<element>[^"]*)" should have values "(?P<values>[^"]*)"')

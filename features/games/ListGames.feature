@@ -67,7 +67,7 @@ Feature: List games for a team
   Scenario: No games
     Given I am on the "teams:games:list" page with kwargs "team_pk=1"
     Then I should see "There are no games for this team."
-    And "create-game-btn-empty-state" should be visible
+    And "create-game-btn-empty-state" should exist on the page
 
   Scenario: Games exist
     Given The following game objects exist
