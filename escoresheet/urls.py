@@ -24,7 +24,6 @@ urlpatterns = [
     url(r'^', include('sports.urls')),
     url(r'^teams/', include('teams.urls', namespace='teams')),
     url(r'^locations/', include('locations.urls', namespace='locations')),
-    url(r'^games/', include('games.roster_urls', namespace='games')),
     # Adding namespace of `api` will cause drf login/logout/obtain token endpoints to fail because they need to
     # only be under the rest_framework namespace.
     url(r'^api/', include('api.urls')),

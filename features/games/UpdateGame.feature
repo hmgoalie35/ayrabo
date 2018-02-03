@@ -39,6 +39,7 @@ Feature: Update a game
 
   Scenario: Navigate to game update page
     Given I am on the "teams:games:list" page with kwargs "team_pk=1"
+    When I press "actions-dropdown-1"
     And I press "update-game-1"
     Then I should be on the "teams:games:update" page with kwargs "team_pk=1, pk=1"
 

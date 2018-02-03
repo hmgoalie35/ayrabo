@@ -7,5 +7,5 @@ roster_urls = [
 ]
 
 urlpatterns = [
-    url(r'^(?P<pk>\d+)/', include(roster_urls, namespace='rosters')),
+    url(r'^(?P<game_pk>\d+)/', include(roster_urls, namespace='rosters')),
 ]

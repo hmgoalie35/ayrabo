@@ -47,21 +47,21 @@ Feature: Update game rosters
     And I am on the "teams:games:list" page with kwargs "team_pk=1"
     When I press "actions-dropdown-1"
     And I press "update-game-rosters-1"
-    Then I should be on the "games:rosters:update" page with kwargs "pk=1"
+    Then I should be on the "sports:games:rosters:update" page with kwargs "slug=ice-hockey, game_pk=1"
 
   Scenario: Navigate to game roster update page as away team manager
     Given I login with "user1@example.com" and "myweakpassword"
     And I am on the "teams:games:list" page with kwargs "team_pk=1"
     When I press "actions-dropdown-1"
     And I press "update-game-rosters-1"
-    Then I should be on the "games:rosters:update" page with kwargs "pk=1"
+    Then I should be on the "sports:games:rosters:update" page with kwargs "slug=ice-hockey, game_pk=1"
 
   Scenario: Navigate to game roster update page as scorekeeper for the team's sport
     Given I login with "michael@scott.com" and "myweakpassword"
     And I am on the "teams:games:list" page with kwargs "team_pk=1"
     When I press "actions-dropdown-1"
     And I press "update-game-rosters-1"
-    Then I should be on the "games:rosters:update" page with kwargs "pk=1"
+    Then I should be on the "sports:games:rosters:update" page with kwargs "slug=ice-hockey, game_pk=1"
 
   Scenario: Update game roster link not shown to regular users
     Given I login with "dwight@schrute.com" and "myweakpassword"
