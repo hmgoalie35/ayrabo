@@ -17,6 +17,7 @@ from games.tests import HockeyGameFactory
 from leagues.tests import LeagueFactory
 from locations.tests import LocationFactory
 from managers.tests import ManagerFactory
+from scorekeepers.tests import ScorekeeperFactory
 from seasons.tests import SeasonFactory
 from sports.tests import SportFactory, SportRegistrationFactory
 from teams.tests import TeamFactory
@@ -312,6 +313,7 @@ class HockeyGameListViewTests(BaseTestCase):
         context = response.context
         self.assertTrue(context.get('can_create_game'))
         self.assertEqual(context.get('team'), self.icecats)
+        self.assertEqual(context.get('sport'), self.ice_hockey)
 
 
 class HockeyGameUpdateViewTests(BaseTestCase):
@@ -493,6 +495,134 @@ class HockeyGameUpdateViewTests(BaseTestCase):
         self.post_data.pop('home_team')
         response = self.client.post(self.formatted_url, data=self.post_data)
         self.assertFormError(response, 'form', 'home_team', ['This field is required.'])
+
+
+class GameRostersUpdateViewTests(BaseTestCase):
+    url = 'sports:games:rosters:update'
+
+    def setUp(self):
+        self.email = 'user@example.com'
+        self.password = 'myweakpassword'
+
+        self.ice_hockey = SportFactory(name='Ice Hockey')
+        self.liahl = LeagueFactory(full_name='Long Island Amateur Hockey League', sport=self.ice_hockey)
+        self.mm_aa = DivisionFactory(name='Midget Minor AA', league=self.liahl)
+        self.t1 = TeamFactory(id=1, name='Green Machine IceCats', division=self.mm_aa)
+        self.t2 = TeamFactory(id=2, name='Aviator Gulls', division=self.mm_aa)
+
+        self.game_type = GenericChoiceFactory(short_value='exhibition', long_value='Exhibition', type='game_type',
+                                              content_object=self.ice_hockey)
+        self.point_value = GenericChoiceFactory(short_value='2', long_value='2', type='game_point_value',
+                                                content_object=self.ice_hockey)
+
+        timezone = 'US/Eastern'
+        us_eastern = pytz.timezone(timezone)
+
+        self.user = UserFactory(email=self.email, password=self.password, userprofile__timezone=timezone)
+        self.sport_registration = SportRegistrationFactory(user=self.user, sport=self.ice_hockey)
+
+        self.season_start = datetime.date(month=12, day=27, year=2017)
+        self.season = SeasonFactory(league=self.liahl, start_date=self.season_start)
+
+        self.start = datetime.datetime(month=12, day=27, year=2017, hour=19, minute=0)
+        self.end = self.start + datetime.timedelta(hours=3)
+        location = LocationFactory()
+        self.game = HockeyGameFactory(id=1, home_team=self.t1, team=self.t1, away_team=self.t2, type=self.game_type,
+                                      point_value=self.point_value, location=location,
+                                      start=us_eastern.localize(self.start), end=us_eastern.localize(self.end),
+                                      timezone=timezone, season=self.season, status='scheduled')
+        self.formatted_url = self.format_url(slug='ice-hockey', game_pk=1)
+        self.login(user=self.user)
+
+    # General
+    def test_login_required(self):
+        self.client.logout()
+
+        response = self.client.get(self.formatted_url)
+        self.assertRedirects(response, self.get_login_required_url(self.formatted_url))
+
+    def test_has_permission_home_team_manager(self):
+        self.sport_registration.set_roles(['Manager'])
+        ManagerFactory(user=self.user, team=self.t1)
+
+        response = self.client.get(self.formatted_url)
+        self.assert_200(response)
+
+    def test_has_permission_away_team_manager(self):
+        self.sport_registration.set_roles(['Manager'])
+        ManagerFactory(user=self.user, team=self.t2)
+
+        response = self.client.get(self.formatted_url)
+        self.assert_200(response)
+
+    def test_has_permission_scorekeeper(self):
+        self.sport_registration.set_roles(['Scorekeeper'])
+        ScorekeeperFactory(user=self.user, sport=self.ice_hockey)
+
+        response = self.client.get(self.formatted_url)
+        self.assert_200(response)
+
+    def test_has_permission_inactive_roles(self):
+        self.sport_registration.set_roles(['Manager', 'Scorekeeper'])
+        ManagerFactory(user=self.user, team=self.t1, is_active=False)
+        ScorekeeperFactory(user=self.user, sport=self.ice_hockey, is_active=False)
+
+        response = self.client.get(self.formatted_url)
+        self.assert_404(response)
+
+    def test_has_permission_false(self):
+        self.client.logout()
+        user = UserFactory()
+        sr = SportRegistrationFactory(user=user, sport=self.ice_hockey)
+        sr.set_roles(['Manager'])
+        # This user is a manager for some random team.
+        ManagerFactory(user=user)
+        self.login(user=user)
+
+        response = self.client.get(self.formatted_url)
+        self.assert_404(response)
+
+    def test_game_dne(self):
+        self.sport_registration.set_roles(['Manager'])
+        ManagerFactory(user=self.user, team=self.t1)
+
+        response = self.client.get(self.format_url(slug='ice-hockey', game_pk=1000))
+        self.assert_404(response)
+
+    def test_sport_not_configured(self):
+        sport = SportFactory()
+        self.sport_registration.set_roles(['Manager'])
+        ManagerFactory(user=self.user, team=self.t1)
+
+        response = self.client.get(self.format_url(slug=sport.slug, game_pk=1))
+
+        self.assertTemplateUsed(response, 'sport_not_configured_msg.html')
+
+    def test_sport_dne(self):
+        self.sport_registration.set_roles(['Manager'])
+        ManagerFactory(user=self.user, team=self.t1)
+
+        response = self.client.get(self.format_url(slug='i-dont-exist', game_pk=1))
+
+        self.assert_404(response)
+
+    # GET
+    @mock.patch('django.utils.timezone.now')
+    def test_get(self, mock_now):
+        mock_now.return_value = pytz.utc.localize(datetime.datetime(month=12, day=26, year=2017, hour=19, minute=0))
+        self.sport_registration.set_roles(['Manager'])
+        ManagerFactory(user=self.user, team=self.t1)
+
+        response = self.client.get(self.formatted_url)
+
+        context = response.context
+        self.assert_200(response)
+        self.assertTemplateUsed(response, 'games/game_rosters_update.html')
+        self.assertEqual(context.get('game').id, 1)
+        self.assertEqual(context.get('home_team'), 'Green Machine IceCats Midget Minor AA')
+        self.assertEqual(context.get('away_team'), 'Aviator Gulls Midget Minor AA')
+        self.assertTrue(context.get('can_update_home_team_roster'))
+        self.assertFalse(context.get('can_update_away_team_roster'))
 
 
 class BulkUploadHockeyGamesViewTests(BaseTestCase):

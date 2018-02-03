@@ -1,3 +1,5 @@
+import json
+
 from django import template
 
 register = template.Library()
@@ -36,3 +38,14 @@ def get(dictionary, key):
 def pluralize_role(value, role):
     role_pluralized = SINGULAR_PLURAL_MAPPINGS.get(role, None)
     return '{}{}'.format(value, role_pluralized.lower() if role_pluralized is not None else role_pluralized)
+
+
+@register.filter
+def booltojson(value):
+    """
+    Converts python booleans to javascript booleans.
+    See https://code.djangoproject.com/ticket/17419 for why we don't have a generic `tojson` filter.
+    """
+    if value in [True, False]:
+        return json.dumps(value)
+    return json.dumps(None)

@@ -1,0 +1,42 @@
+{% extends 'site_base.html' %}
+{% load crispy_forms_tags ess_utils %}
+
+{% block title %}Update Game Rosters{% endblock %}
+
+{% block content %}
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="text-center">
+          <h3>Update Game Rosters</h3>
+        </div>
+      </div>
+    </div>
+
+    <br>
+
+    <div class="row">
+      <div id="game-roster-container">
+        <div class="col-md-12">
+          {% include 'includes/loading.html' %}
+        </div>
+      </div>
+    </div>
+
+  </div>
+{% endblock %}
+
+{% block extra_js %}
+  <script>
+    $(function () {
+      App.initGameRostersUpdateComponent({
+        container: 'game-roster-container',
+        gameId: {{ game.id }},
+        homeTeam: '{{ home_team }}',
+        awayTeam: '{{ away_team }}',
+        canUpdateHomeTeamRoster: {{ can_update_home_team_roster|booltojson }},
+        canUpdateAwayTeamRoster: {{ can_update_away_team_roster|booltojson }}
+      });
+    });
+  </script>
+{% endblock %}

@@ -81,6 +81,23 @@ class AbstractGameModelTests(BaseTestCase):
         self.assertEqual(game.start, expected_start)
         self.assertEqual(game.end, expected_end)
 
+    def test_can_update_true(self):
+        self.game.status = 'scheduled'
+        self.game.end = timezone.now() + datetime.timedelta(hours=24)
+        self.game.save()
+        self.assertTrue(self.game.can_update())
+
+    def test_can_update_invalid_status(self):
+        self.game.status = 'completed'
+        self.game.end = timezone.now() + datetime.timedelta(hours=24)
+        self.game.save()
+        self.assertFalse(self.game.can_update())
+
+    def test_can_update_invalid_datetime(self):
+        self.game.status = 'scheduled'
+        self.game.save()
+        self.assertFalse(self.game.can_update())
+
 
 class HockeyGoalModelTests(BaseTestCase):
     def setUp(self):

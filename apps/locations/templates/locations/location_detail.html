@@ -31,11 +31,7 @@
         <div class="text-center">
           <h3></h3>
           <div class="js-loading mt20">
-            <div>Loading...</div>
-            <br>
-            <div>
-              <i class="fa fa-2x fa-spinner fa-pulse fa-spin"></i>
-            </div>
+            {% include 'includes/loading.html' %}
           </div>
 
           {% if not RUNNING_AUTOMATED_TESTS %}

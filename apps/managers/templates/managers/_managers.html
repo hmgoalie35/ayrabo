@@ -1,7 +1,7 @@
 <div>
   <a id="create_{{ role|lower }}_btn" class="btn btn-sm btn-default pull-right"
      href="{% url 'sportregistrations:managers:create' sport_registration.pk %}">
-    <span class="fa fa-plus-circle fa-success"></span>
+    <i class="fa fa-plus-circle fa-success"></i>
     {{ role }}
   </a>
   <div class="visible-xs-block"><br><br></div>
@@ -25,7 +25,7 @@
                data-toggle="dropdown"
                aria-haspopup="true" aria-expanded="false" role="button">
               Actions
-              <span class="fa fa-caret-down"></span>
+              <i class="fa fa-caret-down"></i>
             </a>
             <ul class="dropdown-menu table-dropdown-menu" aria-labelledby="{{ obj.id }}">
               <li class="dropdown-header">Manage</li>
@@ -33,7 +33,7 @@
                 <li>
                   <a id="deactivate-{{ role|lower }}-{{ obj.team.slug }}" data-toggle="modal"
                      data-target="#{{ role|lower }}-{{ obj.id }}-modal" role="button">
-                    <span class="fa fa-times-circle fa-danger"></span>
+                    <i class="fa fa-times-circle fa-danger"></i>
                     Deactivate
                   </a>
                 </li>
@@ -41,7 +41,7 @@
                 <li class="disabled" data-toggle="tooltip" data-placement="top"
                     title="You cannot deactivate this {{ role|lower }}. You must be registered for at least one role.">
                   <a role="button">
-                    <span class="fa fa-times-circle fa-danger"></span>
+                    <i class="fa fa-times-circle fa-danger"></i>
                     Deactivate
                   </a>
                 </li>
@@ -52,13 +52,13 @@
               <li>
                 <a id="create_season_roster_btn_{{ obj.team.slug }}"
                    href="{% url 'teams:season_rosters:create' obj.team.pk %}" role="button">
-                  <span class="fa fa-plus-circle fa-success"></span>&nbsp;Create
+                  <i class="fa fa-plus-circle fa-success"></i>&nbsp;Create
                 </a>
               </li>
               <li>
                 <a id="list_season_rosters_btn_{{ obj.team.slug }}"
                    href="{% url 'teams:season_rosters:list' obj.team.pk %}" role="button">
-                  <span class="fa fa-list-alt fa-primary"></span>&nbsp;List
+                  <i class="fa fa-list-alt fa-primary"></i>&nbsp;List
                 </a>
               </li>
               {# End Season Roster items #}
@@ -68,13 +68,13 @@
               <li>
                 <a id="create_game_btn_{{ obj.team.slug }}"
                    href="{% url 'teams:games:create' obj.team.pk %}" role="button">
-                  <span class="fa fa-plus-circle fa-success"></span>&nbsp;Create
+                  <i class="fa fa-plus-circle fa-success"></i>&nbsp;Create
                 </a>
               </li>
               <li>
                 <a id="list_games_manager_btn_{{ obj.team.slug }}"
                    href="{% url 'teams:games:list' obj.team.pk %}" role="button">
-                  <span class="fa fa-list-alt fa-primary"></span>&nbsp;List
+                  <i class="fa fa-list-alt fa-primary"></i>&nbsp;List
                 </a>
               </li>
               {# End game items #}

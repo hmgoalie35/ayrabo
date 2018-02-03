@@ -1,3 +1,5 @@
+import datetime
+
 import pytz
 from django.conf import settings
 from django.core.exceptions import ValidationError
@@ -18,26 +20,28 @@ class AbstractGame(models.Model):
         ('completed', 'Completed'),
     )
 
+    GRACE_PERIOD = datetime.timedelta(hours=24)
+
     home_team = models.ForeignKey('teams.Team', verbose_name='Home Team', on_delete=models.PROTECT,
-                                  related_name='home_games')
+                                  related_name='home_%(class)ss')
     away_team = models.ForeignKey('teams.Team', verbose_name='Away Team', on_delete=models.PROTECT,
-                                  related_name='away_games')
+                                  related_name='away_%(class)ss')
     type = models.ForeignKey('common.GenericChoice', verbose_name='Game Type', on_delete=models.PROTECT,
                              related_name='+')
     point_value = models.ForeignKey('common.GenericChoice', verbose_name='Point Value', on_delete=models.PROTECT,
                                     related_name='+')
     status = models.CharField(verbose_name='Status', max_length=255, choices=GAME_STATUSES, default=GAME_STATUSES[0][0])
     location = models.ForeignKey('locations.Location', verbose_name='Location', on_delete=models.PROTECT,
-                                 related_name='games')
+                                 related_name='%(class)ss')
     start = models.DateTimeField(verbose_name='Game Start')
     end = models.DateTimeField(verbose_name='Game End')
     # In forms, the default value will be the user's timezone (set in their profile)
     timezone = models.CharField(max_length=128, choices=settings.COMMON_TIMEZONES, verbose_name='Timezone')
     season = models.ForeignKey('seasons.Season', verbose_name='Season', on_delete=models.PROTECT,
-                               related_name='games')
+                               related_name='%(class)ss')
     # Used to track which team this game was created for
     team = models.ForeignKey('teams.Team', null=True, verbose_name='Team', on_delete=models.PROTECT)
-    created_by = models.ForeignKey('auth.User', null=True, verbose_name='Created By', related_name='games_created',
+    created_by = models.ForeignKey('auth.User', null=True, verbose_name='Created By', related_name='%(class)ss_created',
                                    on_delete=models.PROTECT)
     created = models.DateTimeField(verbose_name='Created', auto_now_add=True)
     updated = models.DateTimeField(verbose_name='Updated', auto_now=True)
@@ -55,6 +59,9 @@ class AbstractGame(models.Model):
     @property
     def end_formatted(self):
         return self.datetime_formatted(self.end)
+
+    def can_update(self):
+        return self.status not in ['completed'] and timezone.now() <= self.end + self.GRACE_PERIOD
 
     def init_periods(self, duration):
         """
@@ -102,6 +109,13 @@ class AbstractGame(models.Model):
 class HockeyGame(AbstractGame):
     home_players = models.ManyToManyField('players.HockeyPlayer', verbose_name='Home Roster', related_name='home_games')
     away_players = models.ManyToManyField('players.HockeyPlayer', verbose_name='Away Roster', related_name='away_games')
+
+
+class BaseballGame(AbstractGame):
+    home_players = models.ManyToManyField('players.BaseballPlayer', verbose_name='Home Roster',
+                                          related_name='home_games')
+    away_players = models.ManyToManyField('players.BaseballPlayer', verbose_name='Away Roster',
+                                          related_name='away_games')
 
 
 class HockeyGoal(models.Model):
