@@ -623,6 +623,7 @@ class GameRostersUpdateViewTests(BaseTestCase):
         self.assertEqual(context.get('away_team'), 'Aviator Gulls Midget Minor AA')
         self.assertTrue(context.get('can_update_home_team_roster'))
         self.assertFalse(context.get('can_update_away_team_roster'))
+        self.assertEqual(context.get('sport'), self.ice_hockey)
 
 
 class BulkUploadHockeyGamesViewTests(BaseTestCase):

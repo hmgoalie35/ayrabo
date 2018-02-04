@@ -32,6 +32,7 @@
       App.initGameRostersUpdateComponent({
         container: 'game-roster-container',
         gameId: {{ game.id }},
+        sportId: {{ sport.id }},
         homeTeam: '{{ home_team }}',
         awayTeam: '{{ away_team }}',
         canUpdateHomeTeamRoster: {{ can_update_home_team_roster|booltojson }},

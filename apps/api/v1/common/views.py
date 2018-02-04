@@ -1,14 +1,15 @@
 from django.shortcuts import get_object_or_404
 from rest_framework import views, status
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
-from api import permissions
+from api.permissions import IsObjectOwner
 from sports.exceptions import InvalidNumberOfRolesException
 from sports.models import SportRegistration
 
 
 class BaseDeactivateApiView(views.APIView):
-    permission_classes = (permissions.IsObjectOwner,)
+    permission_classes = (IsAuthenticated, IsObjectOwner)
 
     def get_url_lookup_kwarg(self):
         raise NotImplementedError()
