@@ -5,6 +5,7 @@ from django.contrib.auth.models import User
 from django.db.models import Q
 from django.test import TestCase
 from django.urls import reverse
+from rest_framework import status
 from rest_framework.reverse import reverse as drf_reverse
 from rest_framework.test import APITestCase
 
@@ -89,10 +90,10 @@ class BaseAPITestCase(APITestCase):
     }
 
     STATUS_CODE_DEFAULTS = {
-        'not_found': 404,
-        'unauthenticated': 403,
-        'permission_denied': 403,
-        'sport_not_configured': 400,
+        'not_found': status.HTTP_404_NOT_FOUND,
+        'unauthenticated': status.HTTP_403_FORBIDDEN,
+        'permission_denied': status.HTTP_403_FORBIDDEN,
+        'sport_not_configured': status.HTTP_400_BAD_REQUEST,
     }
 
     def format_url(self, **kwargs):
@@ -107,3 +108,6 @@ class BaseAPITestCase(APITestCase):
 
         self.assertEqual(response.status_code, status_code)
         self.assertDictEqual(response.data, error_messages)
+
+    def assert_200(self, response):
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
