@@ -249,9 +249,9 @@ class GameRostersUpdateView(LoginRequiredMixin,
         can_update_game = self.game.can_update()
 
         context['game'] = self.game
-        context['home_team_id'] = home_team.id
+        context['home_team'] = home_team
+        context['away_team'] = away_team
         context['home_team_name'] = '{} {}'.format(home_team.name, home_team.division.name)
-        context['away_team_id'] = away_team.id
         context['away_team_name'] = '{} {}'.format(away_team.name, away_team.division.name)
         context['can_update_home_team_roster'] = can_update_game and (
                 self.managers.filter(team=home_team).exists() or is_scorekeeper)
