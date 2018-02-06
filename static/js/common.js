@@ -1,16 +1,14 @@
 $(function () {
-  "use strict";
-
   $('[data-toggle="tooltip"]').tooltip();
 
   function getCookie(name) {
     var cookieValue = null;
-    if (document.cookie && document.cookie !== "") {
-      var cookies = document.cookie.split(";");
+    if (document.cookie && document.cookie !== '') {
+      var cookies = document.cookie.split(';');
       for (var i = 0; i < cookies.length; i++) {
         var cookie = jQuery.trim(cookies[i]);
         // Does this cookie string begin with the name we want?
-        if (cookie.substring(0, name.length + 1) === (name + "=")) {
+        if (cookie.substring(0, name.length + 1) === (name + '=')) {
           cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
           break;
         }
@@ -19,7 +17,7 @@ $(function () {
     return cookieValue;
   }
 
-  var csrftoken = getCookie("csrftoken");
+  var csrftoken = getCookie('csrftoken');
 
   function csrfSafeMethod(method) {
     // these HTTP methods do not require CSRF protection
@@ -29,7 +27,7 @@ $(function () {
   $.ajaxSetup({
     beforeSend: function (xhr, settings) {
       if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
-        xhr.setRequestHeader("X-CSRFToken", csrftoken);
+        xhr.setRequestHeader('X-CSRFToken', csrftoken);
       }
     }
   });
@@ -40,15 +38,15 @@ $(function () {
 
   $.fn.enableBootstrapSelect = function (option_overrides) {
     var options = {
-      header: "Select an option",
-      iconBase: "fa",
-      tickIcon: "fa-check",
+      header: 'Select an option',
+      iconBase: 'fa',
+      tickIcon: 'fa-check',
       showTick: true,
       liveSearch: true,
       liveSearchNormalize: true,
-      liveSearchPlaceholder: "Search",
-      noneSelectedText: "---------",
-      selectedTextFormat: "count > 2",
+      liveSearchPlaceholder: 'Search',
+      noneSelectedText: '---------',
+      selectedTextFormat: 'count > 2',
       mobile: isMobileDevice(),
       dropupAuto: true,
       template: {
@@ -84,20 +82,47 @@ $(function () {
     return this;
   };
 
-  $("#edit_account_link.disabled").click(function (e) {
+  $.fn.extend({
+    animateCss: function (animationName, callback) {
+      var animationEnd = (function (el) {
+        var animations = {
+          animation: 'animationend',
+          OAnimation: 'oAnimationEnd',
+          MozAnimation: 'mozAnimationEnd',
+          WebkitAnimation: 'webkitAnimationEnd',
+        };
+
+        for (var t in animations) {
+          if (el.style[t] !== undefined) {
+            return animations[t];
+          }
+        }
+      })(document.createElement('div'));
+
+      this.addClass('animated ' + animationName).one(animationEnd, function () {
+        $(this).removeClass('animated ' + animationName);
+
+        if (typeof callback === 'function') callback();
+      });
+
+      return this;
+    },
+  });
+
+  $('#edit_account_link.disabled').click(function (e) {
     e.preventDefault();
     e.stopPropagation();
     return false;
   });
 
-  $("#logout_btn_acct_menu").click(function (e) {
+  $('#logout_btn_acct_menu').click(function (e) {
     e.preventDefault();
     e.stopPropagation();
-    $("#logout_form").submit();
+    $('#logout_form').submit();
     return false;
   });
 
-  $(".js-btn-back").click(function (e) {
+  $('.js-btn-back').click(function (e) {
     e.preventDefault();
     e.stopPropagation();
     history.back();
@@ -105,7 +130,7 @@ $(function () {
 
   // Any tabs on the site can opt into this functionality by adding `data-tab=<value>`.
   // The corresponding Django view needs to set the `active` class based off of the `tab` query param.
-  $("a[data-toggle='tab']").on('shown.bs.tab', function (e) {
+  $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
     var tab = $(e.target).data('tab');
     if (tab) {
       var baseUrl = window.location.origin + window.location.pathname;
