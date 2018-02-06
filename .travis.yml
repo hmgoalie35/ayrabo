@@ -29,7 +29,7 @@ script:
   - bash run_tests.sh # $TEST_SUITE
 
 git:
-  depth: 10
+  depth: 5
 
 branches:
   only:

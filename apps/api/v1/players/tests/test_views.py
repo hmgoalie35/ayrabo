@@ -4,7 +4,9 @@ from rest_framework.test import APITestCase
 
 from accounts.tests import UserFactory
 from divisions.tests import DivisionFactory
+from escoresheet.utils.testing import BaseAPITestCase
 from leagues.tests import LeagueFactory
+from managers.tests import ManagerFactory
 from players.tests import HockeyPlayerFactory
 from sports.tests import SportRegistrationFactory, SportFactory
 from teams.tests import TeamFactory
@@ -82,5 +84,56 @@ class DeactivatePlayerApiViewTests(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertDictEqual(
-                response.data,
-                {'error': 'You cannot remove the player role. You must be registered for at least one role.'})
+            response.data,
+            {'error': 'You cannot remove the player role. You must be registered for at least one role.'})
+
+
+class PlayersListAPIViewTests(BaseAPITestCase):
+    url = 'v1:teams:players:list'
+
+    def setUp(self):
+        self.user = UserFactory()
+        self.sport = SportFactory(name='Ice Hockey')
+        team = TeamFactory(id=1, name='Green Machine IceCats', division__league__sport=self.sport)
+        sr = SportRegistrationFactory(user=self.user)
+        sr.set_roles(['Manager'])
+        ManagerFactory(user=self.user, team=team)
+
+        HockeyPlayerFactory(id=1, team=team, is_active=True)
+        HockeyPlayerFactory(id=2, team=team, is_active=True)
+        HockeyPlayerFactory(id=3, team=team, is_active=True)
+        HockeyPlayerFactory(id=4, team=team, is_active=True)
+        HockeyPlayerFactory(id=5, team=team, is_active=True)
+        HockeyPlayerFactory(id=6, team=team, is_active=False)
+        self.client.force_login(self.user)
+
+    # General
+    def test_login_required(self):
+        self.client.logout()
+        response = self.client.get(self.format_url(pk=1))
+        self.assertAPIError(response, 'unauthenticated')
+
+    def test_filter_by_is_active(self):
+        response = self.client.get(self.format_url(pk=1), data={'is_active': True})
+        data = [p.get('id') for p in response.data]
+        self.assertListEqual(data, [1, 2, 3, 4, 5])
+
+    def test_team_dne(self):
+        response = self.client.get(self.format_url(pk=1000))
+        self.assertAPIError(response, 'not_found')
+
+    def test_sport_not_configured(self):
+        TeamFactory(id=2, division__league__sport__name='Sport 1')
+        response = self.client.get(self.format_url(pk=2))
+        self.assertAPIError(response, 'sport_not_configured',
+                            error_message_overrides={'detail': 'Sport 1 is not currently configured.'})
+
+    # List
+    def test_list(self):
+        # Make sure players are filtered by team
+        team = TeamFactory(division__league__sport=self.sport)
+        HockeyPlayerFactory(team=team, is_active=True)
+        HockeyPlayerFactory(team=team, is_active=True)
+        response = self.client.get(self.format_url(pk=1))
+        data = [p.get('id') for p in response.data]
+        self.assertListEqual(data, [1, 2, 3, 4, 5, 6])

@@ -8,24 +8,13 @@ from django.views import generic
 from common.views import CsvBulkUploadView
 from escoresheet.utils.exceptions import SportNotConfiguredException
 from escoresheet.utils.mixins import HasPermissionMixin, HandleSportNotConfiguredMixin
-from games.forms import HockeyGameCreateForm, HockeyGameUpdateForm, DATETIME_INPUT_FORMAT
+from games.forms import HockeyGameCreateForm, DATETIME_INPUT_FORMAT
 from games.models import HockeyGame
 from managers.models import Manager
 from scorekeepers.models import Scorekeeper
 from sports.models import Sport
 from teams.models import Team
-
-SPORT_GAME_CREATE_FORM_MAPPINGS = {
-    'Ice Hockey': HockeyGameCreateForm
-}
-
-SPORT_GAME_UPDATE_FORM_MAPPINGS = {
-    'Ice Hockey': HockeyGameUpdateForm
-}
-
-SPORT_GAME_MODEL_MAPPINGS = {
-    'Ice Hockey': HockeyGame
-}
+from . import mappings
 
 
 class GameCreateView(LoginRequiredMixin,
@@ -59,7 +48,7 @@ class GameCreateView(LoginRequiredMixin,
         return self._get_sport_registration_url()
 
     def get_form_class(self):
-        form_cls = SPORT_GAME_CREATE_FORM_MAPPINGS.get(self.sport.name)
+        form_cls = mappings.SPORT_GAME_CREATE_FORM_MAPPINGS.get(self.sport.name)
         if form_cls is None:
             raise SportNotConfiguredException(self.sport)
         return form_cls
@@ -119,7 +108,7 @@ class GameUpdateView(LoginRequiredMixin,
         return reverse('teams:games:list', kwargs={'team_pk': self.team.pk})
 
     def get_object(self, queryset=None):
-        model_cls = SPORT_GAME_MODEL_MAPPINGS.get(self.sport.name, None)
+        model_cls = mappings.SPORT_GAME_MODEL_MAPPINGS.get(self.sport.name, None)
         if model_cls is None:
             raise SportNotConfiguredException(self.sport)
         pk = self.kwargs.get(self.pk_url_kwarg, None)
@@ -140,7 +129,7 @@ class GameUpdateView(LoginRequiredMixin,
         return form_kwargs
 
     def get_form_class(self):
-        form_cls = SPORT_GAME_UPDATE_FORM_MAPPINGS.get(self.sport.name)
+        form_cls = mappings.SPORT_GAME_UPDATE_FORM_MAPPINGS.get(self.sport.name)
         if form_cls is None:
             raise SportNotConfiguredException(self.sport)
         return form_cls
@@ -179,7 +168,7 @@ class GameListView(LoginRequiredMixin, HandleSportNotConfiguredMixin, generic.Li
         return self.team
 
     def get_queryset(self):
-        model_cls = SPORT_GAME_MODEL_MAPPINGS.get(self.sport.name, None)
+        model_cls = mappings.SPORT_GAME_MODEL_MAPPINGS.get(self.sport.name, None)
         if model_cls is None:
             raise SportNotConfiguredException(self.sport)
         return model_cls.objects.filter(Q(home_team=self.team) | Q(away_team=self.team)).select_related(
@@ -239,7 +228,7 @@ class GameRostersUpdateView(LoginRequiredMixin,
         self._get_sport()
         if hasattr(self, 'game'):
             return self.game
-        model_cls = SPORT_GAME_MODEL_MAPPINGS.get(self.sport.name)
+        model_cls = mappings.SPORT_GAME_MODEL_MAPPINGS.get(self.sport.name)
         if model_cls is None:
             raise SportNotConfiguredException(self.sport)
 
@@ -260,12 +249,15 @@ class GameRostersUpdateView(LoginRequiredMixin,
         can_update_game = self.game.can_update()
 
         context['game'] = self.game
-        context['home_team'] = '{} {}'.format(home_team.name, home_team.division.name)
-        context['away_team'] = '{} {}'.format(away_team.name, away_team.division.name)
+        context['home_team'] = home_team
+        context['away_team'] = away_team
+        context['home_team_name'] = '{} {}'.format(home_team.name, home_team.division.name)
+        context['away_team_name'] = '{} {}'.format(away_team.name, away_team.division.name)
         context['can_update_home_team_roster'] = can_update_game and (
                 self.managers.filter(team=home_team).exists() or is_scorekeeper)
         context['can_update_away_team_roster'] = can_update_game and (
                 self.managers.filter(team=away_team).exists() or is_scorekeeper)
+        context['sport'] = self.sport
         return context
 
 

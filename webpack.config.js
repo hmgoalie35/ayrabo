@@ -115,7 +115,7 @@ module.exports = function (env, argv) {
         }
       ],
     },
-    devtool: productionBuild ? '' : 'cheap-module-eval-source-map',
+    devtool: productionBuild ? '' : 'cheap-module-source-map',
     plugins: [
       new webpack.DefinePlugin({
         'process.env.NODE_ENV': JSON.stringify(env.nodeEnv)

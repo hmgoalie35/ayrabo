@@ -5,6 +5,7 @@
 
 {% block content %}
   <div class="container">
+
     <div class="row">
       <div class="col-md-12">
         <div class="text-center">
@@ -13,10 +14,8 @@
       </div>
     </div>
 
-    <br>
-
-    <div class="row">
-      <div id="game-roster-container">
+    <div id="game-roster-container">
+      <div class="row">
         <div class="col-md-12">
           {% include 'includes/loading.html' %}
         </div>
@@ -32,8 +31,11 @@
       App.initGameRostersUpdateComponent({
         container: 'game-roster-container',
         gameId: {{ game.id }},
-        homeTeam: '{{ home_team }}',
-        awayTeam: '{{ away_team }}',
+        sportId: {{ sport.id }},
+        homeTeamId: {{ home_team.id }},
+        awayTeamId: {{ away_team.id }},
+        homeTeamName: '{{ home_team_name }}',
+        awayTeamName: '{{ away_team_name }}',
         canUpdateHomeTeamRoster: {{ can_update_home_team_roster|booltojson }},
         canUpdateAwayTeamRoster: {{ can_update_away_team_roster|booltojson }}
       });
