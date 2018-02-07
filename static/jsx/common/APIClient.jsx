@@ -4,7 +4,7 @@ export default class APIClient {
   }
 
   getUrl(url) {
-    return `/api/${this.apiVersion}/${url}`;
+    return `/api/${this.apiVersion}/${url}/`;
   }
 
   request(url, data, options) {
