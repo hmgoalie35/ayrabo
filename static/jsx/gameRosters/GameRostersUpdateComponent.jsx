@@ -127,7 +127,12 @@ export default class GameRostersUpdateComponent extends React.Component {
           <div className="row">
             <div className="col-md-12">
               <div className="text-center">
-                <button className="btn btn-success" type="submit">Update</button>
+                <button
+                  className="btn btn-success"
+                  type="submit"
+                  id="update-game-roster-btn"
+                >Update
+                </button>
               </div>
             </div>
           </div>

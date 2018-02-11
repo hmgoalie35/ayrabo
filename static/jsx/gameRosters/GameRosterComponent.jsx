@@ -41,7 +41,7 @@ export default class GameRosterComponent extends React.Component {
     }
 
     return (
-      <div className="col-md-6">
+      <div className="col-md-6 game-roster-component">
         <div className="text-center">
           <h4>{teamType} Team</h4>
           <div className="mb10"><strong>{team}</strong></div>
