@@ -17,6 +17,24 @@ footer {
   }
 }
 
+.api-error {
+  position: absolute;
+  top: 0;
+  width: 100%;
+  z-index: 1001;
+
+  button i {
+    font-size: 16px;
+  }
+
+  .alert {
+    margin-bottom: 0;
+    padding-top: 15px;
+    padding-bottom: 15px;
+    border-radius: 0;
+  }
+}
+
 #noty_layout__top {
   top: 54px !important;
 }

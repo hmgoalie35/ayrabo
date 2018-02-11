@@ -47,6 +47,17 @@
   {% include 'navbar.html' %}
 {% endblock %}
 
+<div class="hidden api-error js-api-error">
+  <div class="alert alert-danger alert-dismissible" role="alert">
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+      <i aria-hidden="true" class="fa fa-close"></i>
+    </button>
+    <i class="fa fa-exclamation-triangle"></i>
+    &nbsp;We are currently experiencing some issues. Please try refreshing the page.
+  </div>
+</div>
+
+
 {% block content %}
 {% endblock %}
 

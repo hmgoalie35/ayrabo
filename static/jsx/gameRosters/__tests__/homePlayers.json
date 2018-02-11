@@ -1,0 +1,310 @@
+[
+  {
+    "id": 3061,
+    "user": {
+      "id": 3062,
+      "first_name": "Caleb",
+      "last_name": "Gordon"
+    },
+    "sport": 1,
+    "team": 201,
+    "jersey_number": 1,
+    "is_active": true,
+    "position": "C",
+    "handedness": "Left"
+  },
+  {
+    "id": 3062,
+    "user": {
+      "id": 3063,
+      "first_name": "Charles",
+      "last_name": "Williams"
+    },
+    "sport": 1,
+    "team": 201,
+    "jersey_number": 2,
+    "is_active": true,
+    "position": "C",
+    "handedness": "Right"
+  },
+  {
+    "id": 3063,
+    "user": {
+      "id": 3064,
+      "first_name": "Jeffrey",
+      "last_name": "Francis"
+    },
+    "sport": 1,
+    "team": 201,
+    "jersey_number": 3,
+    "is_active": true,
+    "position": "C",
+    "handedness": "Left"
+  },
+  {
+    "id": 3064,
+    "user": {
+      "id": 3065,
+      "first_name": "Scott",
+      "last_name": "Price"
+    },
+    "sport": 1,
+    "team": 201,
+    "jersey_number": 4,
+    "is_active": true,
+    "position": "C",
+    "handedness": "Left"
+  },
+  {
+    "id": 3065,
+    "user": {
+      "id": 3066,
+      "first_name": "Jeffrey",
+      "last_name": "Barajas"
+    },
+    "sport": 1,
+    "team": 201,
+    "jersey_number": 5,
+    "is_active": true,
+    "position": "LW",
+    "handedness": "Left"
+  },
+  {
+    "id": 3066,
+    "user": {
+      "id": 3067,
+      "first_name": "Phillip",
+      "last_name": "Casey"
+    },
+    "sport": 1,
+    "team": 201,
+    "jersey_number": 6,
+    "is_active": true,
+    "position": "LW",
+    "handedness": "Left"
+  },
+  {
+    "id": 3067,
+    "user": {
+      "id": 3068,
+      "first_name": "Michael",
+      "last_name": "Smith"
+    },
+    "sport": 1,
+    "team": 201,
+    "jersey_number": 7,
+    "is_active": true,
+    "position": "LW",
+    "handedness": "Left"
+  },
+  {
+    "id": 3068,
+    "user": {
+      "id": 3069,
+      "first_name": "Ian",
+      "last_name": "Edwards"
+    },
+    "sport": 1,
+    "team": 201,
+    "jersey_number": 8,
+    "is_active": true,
+    "position": "LW",
+    "handedness": "Left"
+  },
+  {
+    "id": 3069,
+    "user": {
+      "id": 3070,
+      "first_name": "Bruce",
+      "last_name": "Garcia"
+    },
+    "sport": 1,
+    "team": 201,
+    "jersey_number": 9,
+    "is_active": true,
+    "position": "RW",
+    "handedness": "Right"
+  },
+  {
+    "id": 3070,
+    "user": {
+      "id": 3071,
+      "first_name": "Aaron",
+      "last_name": "Brown"
+    },
+    "sport": 1,
+    "team": 201,
+    "jersey_number": 10,
+    "is_active": true,
+    "position": "RW",
+    "handedness": "Left"
+  },
+  {
+    "id": 3071,
+    "user": {
+      "id": 3072,
+      "first_name": "Alexander",
+      "last_name": "Friedman"
+    },
+    "sport": 1,
+    "team": 201,
+    "jersey_number": 11,
+    "is_active": true,
+    "position": "RW",
+    "handedness": "Left"
+  },
+  {
+    "id": 3072,
+    "user": {
+      "id": 3073,
+      "first_name": "Thomas",
+      "last_name": "Elliott"
+    },
+    "sport": 1,
+    "team": 201,
+    "jersey_number": 12,
+    "is_active": true,
+    "position": "RW",
+    "handedness": "Right"
+  },
+  {
+    "id": 3073,
+    "user": {
+      "id": 3074,
+      "first_name": "Rodney",
+      "last_name": "Warner"
+    },
+    "sport": 1,
+    "team": 201,
+    "jersey_number": 13,
+    "is_active": true,
+    "position": "LD",
+    "handedness": "Left"
+  },
+  {
+    "id": 3074,
+    "user": {
+      "id": 3075,
+      "first_name": "Jimmy",
+      "last_name": "Knight"
+    },
+    "sport": 1,
+    "team": 201,
+    "jersey_number": 14,
+    "is_active": true,
+    "position": "LD",
+    "handedness": "Left"
+  },
+  {
+    "id": 3075,
+    "user": {
+      "id": 3076,
+      "first_name": "Kenneth",
+      "last_name": "Spence"
+    },
+    "sport": 1,
+    "team": 201,
+    "jersey_number": 15,
+    "is_active": true,
+    "position": "LD",
+    "handedness": "Right"
+  },
+  {
+    "id": 3076,
+    "user": {
+      "id": 3077,
+      "first_name": "Scott",
+      "last_name": "Brown"
+    },
+    "sport": 1,
+    "team": 201,
+    "jersey_number": 16,
+    "is_active": true,
+    "position": "LD",
+    "handedness": "Left"
+  },
+  {
+    "id": 3077,
+    "user": {
+      "id": 3078,
+      "first_name": "Dustin",
+      "last_name": "Miller"
+    },
+    "sport": 1,
+    "team": 201,
+    "jersey_number": 17,
+    "is_active": true,
+    "position": "RD",
+    "handedness": "Left"
+  },
+  {
+    "id": 3078,
+    "user": {
+      "id": 3079,
+      "first_name": "Mark",
+      "last_name": "Hatfield"
+    },
+    "sport": 1,
+    "team": 201,
+    "jersey_number": 18,
+    "is_active": true,
+    "position": "RD",
+    "handedness": "Right"
+  },
+  {
+    "id": 3079,
+    "user": {
+      "id": 3080,
+      "first_name": "Steven",
+      "last_name": "Ryan"
+    },
+    "sport": 1,
+    "team": 201,
+    "jersey_number": 19,
+    "is_active": true,
+    "position": "RD",
+    "handedness": "Right"
+  },
+  {
+    "id": 3080,
+    "user": {
+      "id": 3081,
+      "first_name": "Andrew",
+      "last_name": "Hogan"
+    },
+    "sport": 1,
+    "team": 201,
+    "jersey_number": 20,
+    "is_active": true,
+    "position": "RD",
+    "handedness": "Left"
+  },
+  {
+    "id": 3081,
+    "user": {
+      "id": 3082,
+      "first_name": "James",
+      "last_name": "Mathis"
+    },
+    "sport": 1,
+    "team": 201,
+    "jersey_number": 21,
+    "is_active": true,
+    "position": "G",
+    "handedness": "Right"
+  },
+  {
+    "id": 3082,
+    "user": {
+      "id": 3083,
+      "first_name": "Zachary",
+      "last_name": "Perez"
+    },
+    "sport": 1,
+    "team": 201,
+    "jersey_number": 22,
+    "is_active": true,
+    "position": "G",
+    "handedness": "Left"
+  }
+]
