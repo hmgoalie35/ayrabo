@@ -40,6 +40,11 @@ if [ ${TESTS} == 'all' ] || [ ${TESTS} == 'unit' ]; then
     coverage combine && coverage report --fail-under=${COVERAGE_MIN}
 fi
 
+if [ ${TESTS} == 'all' ] || [ ${TESTS} == 'jest' ]; then
+    print_step "Running jest tests"
+    npm run test-ci
+fi
+
 if [ ${TESTS} == 'all' ] || [ ${TESTS} == 'accept' ]; then
 
     if [ ! -d "static/dist" ]; then
