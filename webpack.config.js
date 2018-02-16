@@ -19,6 +19,7 @@ const PATHS = {
   },
   jsx: {
     main: path.join(jsxRoot, 'main.jsx'),
+    vendor: path.join(jsxRoot, 'vendor.jsx'),
   },
   scss: {
     main: path.join(scssRoot, 'main.scss'),
@@ -45,6 +46,7 @@ module.exports = function (env, argv) {
       // styleMain.js is never used
       styleMain: PATHS.scss.main,
       polyfills: ['babel-polyfill', 'raf/polyfill'],
+      vendor: PATHS.jsx.vendor,
     },
     output: {
       filename: `js/${jsFileName}.js`,
