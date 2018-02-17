@@ -6,15 +6,15 @@ from seasons.models import AbstractSeasonRoster, HockeySeasonRoster
 
 
 class AbstractSeasonRosterFactory(django.DjangoModelFactory):
-    class Meta:
-        model = AbstractSeasonRoster
-        abstract = True
-
+    name = factory.Sequence(lambda x: 'Season Roster {}'.format(x))
     season = factory.SubFactory('seasons.tests.SeasonFactory')
     team = factory.SubFactory('teams.tests.TeamFactory')
     default = False
-    name = factory.Sequence(lambda x: 'Season Roster {}'.format(x))
     created_by = factory.SubFactory(UserFactory)
+
+    class Meta:
+        model = AbstractSeasonRoster
+        abstract = True
 
     @post_generation
     def full_clean(self, obj, extracted, **kwargs):

@@ -54,9 +54,9 @@ Feature: List season rosters
       | Long Island Amateur Hockey League | 2016-09-14 | 2017-09-14 | Green Machine IceCats |
       | Long Island Amateur Hockey League | 2017-09-14 | 2018-09-14 | Green Machine IceCats |
     And The following season rosters for "Ice Hockey" exist
-      | season_start_date | season_end_date | team                  | name       | created_by       |
-      | 2016-09-14        | 2017-09-14      | Green Machine IceCats |            | user@example.com |
-      | 2017-09-14        | 2018-09-14      | Green Machine IceCats | Main Squad | user@example.com |
+      | name       | season_start_date | season_end_date | team                  | created_by       |
+      | Main Squad | 2016-09-14        | 2017-09-14      | Green Machine IceCats | user@example.com |
+      | Main Squad | 2017-09-14        | 2018-09-14      | Green Machine IceCats | user@example.com |
     And The following manager object exists
       | username_or_email | team                  |
       | user@example.com  | Green Machine IceCats |

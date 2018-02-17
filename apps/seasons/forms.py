@@ -89,7 +89,7 @@ class HockeySeasonRosterCreateForm(forms.ModelForm):
 
     class Meta:
         model = HockeySeasonRoster
-        fields = ['team', 'season', 'players', 'name', 'default']
+        fields = ['name', 'team', 'season', 'players', 'default']
 
 
 class HockeySeasonRosterUpdateForm(forms.ModelForm):
@@ -109,4 +109,4 @@ class HockeySeasonRosterUpdateForm(forms.ModelForm):
 
     class Meta:
         model = HockeySeasonRoster
-        fields = ['season', 'players', 'name', 'default']
+        fields = ['name', 'season', 'players', 'default']

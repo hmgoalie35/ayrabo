@@ -14,8 +14,8 @@ Feature: Update season roster
       | league                            | start_date | end_date   | teams                 |
       | Long Island Amateur Hockey League | 2016-09-14 | 2017-09-14 | Green Machine IceCats |
     And The following season rosters for "Ice Hockey" exist
-      | season_start_date | season_end_date | team                  | players           |
-      | 2016-09-14        | 2017-09-14      | Green Machine IceCats | John Doe, Lee Doe |
+      | name       | season_start_date | season_end_date | team                  | players           |
+      | Main Squad | 2016-09-14        | 2017-09-14      | Green Machine IceCats | John Doe, Lee Doe |
     And I login with "user@example.com" and "myweakpassword"
 
   Scenario Outline: Can't view season roster update page w/o manager role
