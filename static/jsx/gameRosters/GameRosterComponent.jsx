@@ -81,7 +81,7 @@ export default class GameRosterComponent extends React.Component {
           <h4>{teamType} Team</h4>
           <div className="mb10"><strong>{team}</strong></div>
           {(selectedPlayers !== null && allPlayers !== null) &&
-          <div className="text-left mb10">
+          <div className="mb10">
             <Typeahead
               multiple
               highlightOnlyResult
