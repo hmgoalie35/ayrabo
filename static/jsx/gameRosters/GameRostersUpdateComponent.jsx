@@ -130,19 +130,27 @@ export default class GameRostersUpdateComponent extends React.Component {
     e.preventDefault();
     e.stopPropagation();
 
-    const { gameId, sportId } = this.props;
+    const {
+      gameId,
+      sportId,
+      canUpdateHomeTeamRoster,
+      canUpdateAwayTeamRoster,
+    } = this.props;
     const { selectedHomeTeamPlayers, selectedAwayTeamPlayers } = this.state;
-    const homePlayerIds = selectedHomeTeamPlayers.map(player => player.id);
-    const awayPlayerIds = selectedAwayTeamPlayers.map(player => player.id);
+
+    const data = {};
+    if (canUpdateHomeTeamRoster) {
+      data.home_players = selectedHomeTeamPlayers.map(player => player.id);
+    }
+    if (canUpdateAwayTeamRoster) {
+      data.away_players = selectedAwayTeamPlayers.map(player => player.id);
+    }
+
     const onSuccess = () => {
       this.setState({ disableUpdateButton: true });
       createNotification('Your updates have been saved.', 'success').show();
     };
-
-    this.client.put(`sports/${sportId}/games/${gameId}/rosters`, {
-      home_players: homePlayerIds,
-      away_players: awayPlayerIds,
-    }).then(onSuccess, this.onAPIFailure);
+    this.client.patch(`sports/${sportId}/games/${gameId}/rosters`, data).then(onSuccess, this.onAPIFailure);
   }
 
   /**

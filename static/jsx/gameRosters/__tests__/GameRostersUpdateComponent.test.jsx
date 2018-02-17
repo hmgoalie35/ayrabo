@@ -170,7 +170,7 @@ describe('handleSubmit', () => {
   test('Disables update button and creates notification', async () => {
     const component = getComponent(true, true);
     // We have the function resolve some dummy value, we could add the correct api response.
-    const clientSpy = jest.spyOn(component.instance().client, 'put').mockImplementation(() => Promise.resolve(true));
+    const clientSpy = jest.spyOn(component.instance().client, 'patch').mockImplementation(() => Promise.resolve(true));
 
     // Prevents tooltip() not being defined error
     component.instance().componentDidUpdate = jest.fn();

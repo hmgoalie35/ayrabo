@@ -7,6 +7,7 @@ from players.models import HockeyPlayer
 
 class AbstractGameRosterSerializer(serializers.ModelSerializer):
     player_model_cls = None
+    not_permitted_msg = 'You do not have permission to perform this action.'
 
     def __init__(self, instance, *args, **kwargs):
         super().__init__(instance, *args, **kwargs)
@@ -26,10 +27,13 @@ class AbstractGameRosterSerializer(serializers.ModelSerializer):
                                                                          label='Away Roster')
 
     def validate_home_players(self, value):
-        # TODO Only allow scorekeeper or home manager to update home players.
+        if not self.context.get('can_update_home_roster'):
+            raise serializers.ValidationError(self.not_permitted_msg)
         return value
 
     def validate_away_players(self, value):
+        if not self.context.get('can_update_away_roster'):
+            raise serializers.ValidationError(self.not_permitted_msg)
         return value
 
     class Meta:
