@@ -53,6 +53,7 @@ Feature: Create season rosters
       | test4@example.com | Ice Hockey | Green Machine IceCats |
       | test5@example.com | Ice Hockey | Green Machine IceCats |
     Given I am on the "teams.Team" "" "teams:season_rosters:create" page with url kwargs "team_pk=pk"
+    And I fill in "id_name" with "Main Squad"
     And I select "1" from "id_season"
     And I select 5 players from "id_players"
     And I press "create_season_roster_btn"
@@ -76,7 +77,7 @@ Feature: Create season rosters
       | test5@example.com | Ice Hockey | Green Machine IceCats |
     Given I am on the "teams.Team" "" "teams:season_rosters:create" page with url kwargs "team_pk=pk"
     And I press "create_season_roster_btn"
-    Then "This field is required." should show up 2 times
+    Then "This field is required." should show up 3 times
     And I should be on the "teams.Team" "" "teams:season_rosters:create" page with url kwargs "team_pk=pk"
 
   Scenario: Attempt to add another default season roster for a team/season
@@ -95,8 +96,8 @@ Feature: Create season rosters
       | test4@example.com | Ice Hockey | Green Machine IceCats |
       | test5@example.com | Ice Hockey | Green Machine IceCats |
     And The following season rosters for "Ice Hockey" exist
-      | season_id | team                  | players           | default |
-      | 1         | Green Machine IceCats | John Doe, Lee Doe | True    |
+      | name       | season_id | team                  | players           | default |
+      | Main Squad | 1         | Green Machine IceCats | John Doe, Lee Doe | True    |
     And I am on the "teams.Team" "" "teams:season_rosters:create" page with url kwargs "team_pk=pk"
     When I select "1" from "id_season"
     And I select 5 players from "id_players"

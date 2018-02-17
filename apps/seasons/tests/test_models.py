@@ -146,9 +146,8 @@ class AbstractSeasonRosterModelTests(BaseTestCase):
 
     def test_to_string(self):
         season_roster = HockeySeasonRosterFactory()
-        self.assertEqual(str(season_roster), '{team}-{division}: {season}'.format(team=season_roster.team,
-                                                                                  division=season_roster.team.division,
-                                                                                  season=season_roster.season))
+        self.assertEqual(str(season_roster), '{}-{}: {}'.format(season_roster.team, season_roster.team.division,
+                                                                season_roster.season))
 
     def test_roster_default_false(self):
         season_roster = HockeySeasonRosterFactory()
@@ -181,7 +180,6 @@ class AbstractSeasonRosterModelTests(BaseTestCase):
         division = DivisionFactory()
         team = TeamFactory(division=division)
         season = SeasonFactory(league=division.league, teams=[team])
-        HockeySeasonRosterFactory(season=season, team=team, name='')
         HockeySeasonRosterFactory(season=season, team=team, name='Main Squad')
         msg = "{'name': ['Name must be unique for this team and season.']}"
         with self.assertRaisesMessage(ValidationError, msg):
