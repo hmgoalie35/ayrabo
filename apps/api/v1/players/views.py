@@ -2,7 +2,7 @@ from django.shortcuts import get_object_or_404
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
 
-from api.exceptions import SportNotConfiguredException
+from api.exceptions import SportNotConfiguredAPIException
 from api.v1.common.views import BaseDeactivateApiView
 from escoresheet.utils.mappings import SPORT_PLAYER_MODEL_MAPPINGS, SPORT_PLAYER_SERIALIZER_MAPPINGS
 from teams.models import Team
@@ -35,12 +35,12 @@ class PlayersListAPIView(generics.ListAPIView):
     def get_serializer_class(self):
         serializer_cls = SPORT_PLAYER_SERIALIZER_MAPPINGS.get(self.sport.name)
         if serializer_cls is None:
-            raise SportNotConfiguredException(self.sport)
+            raise SportNotConfiguredAPIException(self.sport)
         return serializer_cls
 
     def get_queryset(self):
         team = self._get_team()
         model_cls = SPORT_PLAYER_MODEL_MAPPINGS.get(self.sport.name)
         if model_cls is None:
-            raise SportNotConfiguredException(self.sport)
+            raise SportNotConfiguredAPIException(self.sport)
         return model_cls.objects.filter(team=team).select_related('user')

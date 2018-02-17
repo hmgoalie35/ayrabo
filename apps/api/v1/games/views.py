@@ -2,7 +2,7 @@ from django.shortcuts import get_object_or_404
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
 
-from api.exceptions import SportNotConfiguredException
+from api.exceptions import SportNotConfiguredAPIException
 from games import mappings
 from managers.models import Manager
 from scorekeepers.models import Scorekeeper
@@ -44,7 +44,7 @@ class GameRostersRetrieveUpdateAPIView(generics.RetrieveUpdateAPIView):
     def get_serializer_class(self):
         serializer_cls = SPORT_SERIALIZER_CLASS_MAPPINGS.get(self.sport.name)
         if serializer_cls is None:
-            raise SportNotConfiguredException(self.sport)
+            raise SportNotConfiguredAPIException(self.sport)
 
         return serializer_cls
 
@@ -52,7 +52,7 @@ class GameRostersRetrieveUpdateAPIView(generics.RetrieveUpdateAPIView):
         sport = self._get_sport()
         model_cls = mappings.SPORT_GAME_MODEL_MAPPINGS.get(sport.name)
         if model_cls is None:
-            raise SportNotConfiguredException(sport)
+            raise SportNotConfiguredAPIException(sport)
 
         # FYI This view deals w/ the various game models
         return model_cls.objects.all().select_related(
