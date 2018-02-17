@@ -101,7 +101,7 @@ describe('addTypeaheadLabel', () => {
   test('adds label key to all players', () => {
     const component = getComponent();
     const result = component.instance().addTypeaheadLabel([homeTeamPlayer]);
-    expect(result[0].label).toEqual('#1 Caleb Gordon');
+    expect(result[0].label).toEqual('#1 Caleb Gordon C');
   });
 });
 

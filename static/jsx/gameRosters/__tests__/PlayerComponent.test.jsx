@@ -5,18 +5,21 @@ import PlayerComponent from '../PlayerComponent';
 import homePlayers from './homePlayers.json';
 
 
-const getComponent = (canUpdate = true) => {
+const homeTeamPlayer = homePlayers[0];
+
+const getComponent = (canUpdate = true, handleRemovePlayer = jest.fn()) => {
   const props = {
-    player: homePlayers[0],
+    player: homeTeamPlayer,
     canUpdate,
+    handleRemovePlayer,
   };
   return mount(<PlayerComponent {...props} />);
 };
 
 describe('render', () => {
-  test('user \'s name is displayed', () => {
+  test('player is displayed', () => {
     const component = getComponent();
-    expect(component.find('span').first().text()).toEqual('Caleb Gordon');
+    expect(component.find('span').first().text()).toEqual('#1 Caleb Gordon C');
   });
 
   test('can update false', () => {
@@ -30,5 +33,12 @@ describe('render', () => {
     const tooltipComponent = component.find('[data-toggle="tooltip"]');
     expect(tooltipComponent.props().title).toEqual('Remove player');
     expect(tooltipComponent.find('.fa-trash').exists()).toBeTruthy();
+  });
+
+  test('Remove player event handler', () => {
+    const handleRemovePlayer = jest.fn();
+    const component = getComponent(true, handleRemovePlayer);
+    component.find('a[role="button"]').simulate('click');
+    expect(handleRemovePlayer).toHaveBeenCalledWith(homeTeamPlayer);
   });
 });

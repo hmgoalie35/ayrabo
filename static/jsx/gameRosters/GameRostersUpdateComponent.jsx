@@ -157,7 +157,7 @@ export default class GameRostersUpdateComponent extends React.Component {
   addTypeaheadLabel(players) {
     return players.map(player => ({
       ...player,
-      label: `#${player.jersey_number} ${player.user.first_name} ${player.user.last_name}`,
+      label: `#${player.jersey_number} ${player.user.first_name} ${player.user.last_name} ${player.position}`,
     }));
   }
 

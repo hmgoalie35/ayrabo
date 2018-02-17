@@ -90,7 +90,7 @@ export default class GameRosterComponent extends React.Component {
               options={this.getOptions(selectedPlayers, allPlayers)}
               disabled={!canUpdate}
               emptyLabel="No players found."
-              placeholder="Search players by first name, last name or jersey number"
+              placeholder="Search players by name, jersey number or position"
               paginationText="Display more players"
               ref={(typeahead) => {
                 this.typeahead = typeahead;
