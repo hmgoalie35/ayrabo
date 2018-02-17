@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 
 import GameRosterComponent from './GameRosterComponent';
 import APIClient from '../common/APIClient';
-import { showAPIErrorMessage } from '../common/utils';
+import { createNotification, showAPIErrorMessage } from '../common/utils';
 
 
 export default class GameRostersUpdateComponent extends React.Component {
@@ -11,20 +11,26 @@ export default class GameRostersUpdateComponent extends React.Component {
     super(props);
 
     this.client = new APIClient();
+
     this.getPlayers = this.getPlayers.bind(this);
     this.getRosters = this.getRosters.bind(this);
     this.onAPIFailure = this.onAPIFailure.bind(this);
+    this.handleAddHomeTeamPlayer = this.handleAddHomeTeamPlayer.bind(this);
+    this.handleAddAwayTeamPlayer = this.handleAddAwayTeamPlayer.bind(this);
+    this.handleRemoveHomeTeamPlayer = this.handleRemoveHomeTeamPlayer.bind(this);
+    this.handleRemoveAwayTeamPlayer = this.handleRemoveAwayTeamPlayer.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
+    this.addPlayers = this.addPlayers.bind(this);
+    this.removePlayer = this.removePlayer.bind(this);
 
     this.state = {
-      // Ids of players already on the rosters
-      // homeTeamPlayerIds: null,
-      // awayTeamPlayerIds: null,
       // All active players for the teams
       homeTeamPlayers: null,
       awayTeamPlayers: null,
       // Rosters being manipulated by the user
       selectedHomeTeamPlayers: null,
       selectedAwayTeamPlayers: null,
+      disableUpdateButton: true,
     };
   }
 
@@ -69,13 +75,74 @@ export default class GameRostersUpdateComponent extends React.Component {
   getRosters(homeTeamPlayers, awayTeamPlayers, sportId, gameId) {
     return this.client.get(`sports/${sportId}/games/${gameId}/rosters`).then((data) => {
       const { home_players: homeTeamPlayerIds, away_players: awayTeamPlayerIds } = data;
+      const homePlayers = this.addTypeaheadLabel(homeTeamPlayers);
+      const awayPlayers = this.addTypeaheadLabel(awayTeamPlayers);
       this.setState({
-        homeTeamPlayers,
-        awayTeamPlayers,
-        selectedHomeTeamPlayers: this.cleanPlayers(homeTeamPlayerIds, homeTeamPlayers),
-        selectedAwayTeamPlayers: this.cleanPlayers(awayTeamPlayerIds, awayTeamPlayers),
+        homeTeamPlayers: homePlayers,
+        awayTeamPlayers: awayPlayers,
+        selectedHomeTeamPlayers: this.cleanPlayers(homeTeamPlayerIds, homePlayers),
+        selectedAwayTeamPlayers: this.cleanPlayers(awayTeamPlayerIds, awayPlayers),
       });
     }, this.onAPIFailure);
+  }
+
+  addPlayers(currentPlayers, newPlayers) {
+    return currentPlayers.concat(newPlayers);
+  }
+
+  removePlayer(currentPlayers, removedPlayer) {
+    return currentPlayers.filter(player => player.id !== removedPlayer.id);
+  }
+
+  handleAddHomeTeamPlayer(selected) {
+    const { selectedHomeTeamPlayers } = this.state;
+    this.setState({
+      selectedHomeTeamPlayers: this.addPlayers(selectedHomeTeamPlayers, selected),
+      disableUpdateButton: false,
+    });
+  }
+
+  handleRemoveHomeTeamPlayer(removedPlayer) {
+    const { selectedHomeTeamPlayers } = this.state;
+    this.setState({
+      selectedHomeTeamPlayers: this.removePlayer(selectedHomeTeamPlayers, removedPlayer),
+      disableUpdateButton: false,
+    });
+  }
+
+  handleAddAwayTeamPlayer(selected) {
+    const { selectedAwayTeamPlayers } = this.state;
+    this.setState({
+      selectedAwayTeamPlayers: this.addPlayers(selectedAwayTeamPlayers, selected),
+      disableUpdateButton: false,
+    });
+  }
+
+  handleRemoveAwayTeamPlayer(removedPlayer) {
+    const { selectedAwayTeamPlayers } = this.state;
+    this.setState({
+      selectedAwayTeamPlayers: this.removePlayer(selectedAwayTeamPlayers, removedPlayer),
+      disableUpdateButton: false,
+    });
+  }
+
+  handleSubmit(e) {
+    e.preventDefault();
+    e.stopPropagation();
+
+    const { gameId, sportId } = this.props;
+    const { selectedHomeTeamPlayers, selectedAwayTeamPlayers } = this.state;
+    const homePlayerIds = selectedHomeTeamPlayers.map(player => player.id);
+    const awayPlayerIds = selectedAwayTeamPlayers.map(player => player.id);
+    const onSuccess = () => {
+      this.setState({ disableUpdateButton: true });
+      createNotification('Your updates have been saved.', 'success').show();
+    };
+
+    this.client.put(`sports/${sportId}/games/${gameId}/rosters`, {
+      home_players: homePlayerIds,
+      away_players: awayPlayerIds,
+    }).then(onSuccess, this.onAPIFailure);
   }
 
   /**
@@ -85,6 +152,13 @@ export default class GameRostersUpdateComponent extends React.Component {
    */
   cleanPlayers(playerIds, players) {
     return playerIds.map(id => players.find(el => id === el.id));
+  }
+
+  addTypeaheadLabel(players) {
+    return players.map(player => ({
+      ...player,
+      label: `#${player.jersey_number} ${player.user.first_name} ${player.user.last_name} ${player.position}`,
+    }));
   }
 
   render() {
@@ -100,26 +174,31 @@ export default class GameRostersUpdateComponent extends React.Component {
       selectedAwayTeamPlayers,
       homeTeamPlayers,
       awayTeamPlayers,
+      disableUpdateButton,
     } = this.state;
 
-    console.log(homeTeamPlayers, awayTeamPlayers);
-
     return (
-      <div>
+      <div className="game-rosters-update-component">
 
-        <form>
+        <form onSubmit={this.handleSubmit}>
           <div className="row">
             <GameRosterComponent
               team={homeTeamName}
-              players={selectedHomeTeamPlayers}
+              selectedPlayers={selectedHomeTeamPlayers}
+              allPlayers={homeTeamPlayers}
               canUpdate={canUpdateHomeTeamRoster}
               teamType="Home"
+              handleAddPlayer={this.handleAddHomeTeamPlayer}
+              handleRemovePlayer={this.handleRemoveHomeTeamPlayer}
             />
             <GameRosterComponent
               team={awayTeamName}
-              players={selectedAwayTeamPlayers}
+              selectedPlayers={selectedAwayTeamPlayers}
+              allPlayers={awayTeamPlayers}
               canUpdate={canUpdateAwayTeamRoster}
               teamType="Away"
+              handleAddPlayer={this.handleAddAwayTeamPlayer}
+              handleRemovePlayer={this.handleRemoveAwayTeamPlayer}
             />
           </div>
 
@@ -131,7 +210,19 @@ export default class GameRostersUpdateComponent extends React.Component {
                   className="btn btn-success"
                   type="submit"
                   id="update-game-roster-btn"
-                >Update
+                  disabled={disableUpdateButton}
+                >
+                  Update
+                </button>
+                <button
+                  className="btn btn-link"
+                  type="button"
+                  id="cancel-update-game-roster-btn"
+                  /* onClick handler doesn't get called when the button is disabled */
+                  onClick={() => window.location.reload()}
+                  disabled={disableUpdateButton}
+                >
+                  Cancel
                 </button>
               </div>
             </div>

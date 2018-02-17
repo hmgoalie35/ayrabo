@@ -7,10 +7,15 @@ export default class APIClient {
     return `/api/${this.apiVersion}/${url}/`;
   }
 
+  getData(data, options) {
+    const { method } = options;
+    return method === 'GET' ? data : JSON.stringify(data);
+  }
+
   request(url, data, options) {
     const defaults = {
       url: this.getUrl(url),
-      data,
+      data: this.getData(data, options),
       contentType: 'application/json',
       dataType: 'json',
       // Browser will automatically send sessionid cookie because it is marked as httponly
