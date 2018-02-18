@@ -236,7 +236,7 @@ class GameRostersUpdateView(LoginRequiredMixin,
             model_cls.objects.select_related('home_team', 'home_team__division', 'away_team',
                                              'away_team__division', 'team', 'team__division',
                                              'team__division__league',
-                                             'team__division__league__sport'),
+                                             'team__division__league__sport', 'season'),
             pk=self.kwargs.get('game_pk')
         )
         return self.game
