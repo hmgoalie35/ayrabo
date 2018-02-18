@@ -5,8 +5,11 @@ from behave import *
 from django.utils import timezone
 
 from common.models import GenericChoice
+from escoresheet.utils.testing import string_to_kwargs_dict
+from games.models import HockeyGame
 from games.tests import HockeyGameFactory
 from locations.models import Location
+from players.models import HockeyPlayer
 from seasons.models import Season
 from teams.models import Team
 
@@ -56,3 +59,12 @@ def step_impl(context):
         }
         kwargs = {k: v for k, v in kwargs.items() if v is not None}
         HockeyGameFactory(**kwargs)
+
+
+@step('"(?P<player_ids>[^"]*)" is added to "(?P<roster>home_players|away_players)" for the game with kwargs "(?P<kwarg_data>[^"]*)"')  # noqa
+def step_impl(context, player_ids, roster, kwarg_data):
+    ids = [int(p.strip()) for p in player_ids.split(',')]
+    players = [HockeyPlayer.objects.get(id=p_id) for p_id in ids]
+    kwargs = string_to_kwargs_dict(kwarg_data)
+    game = get_object(HockeyGame, **kwargs)
+    getattr(game, roster).add(*players)

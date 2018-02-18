@@ -11,7 +11,7 @@ from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.select import Select
 from selenium.webdriver.support.ui import WebDriverWait
 
-from escoresheet.utils.testing import get_user
+from escoresheet.utils.testing import string_to_kwargs_dict, get_user
 
 
 def find_element(context, element_to_find, multiple=False):
@@ -37,23 +37,6 @@ def find_element(context, element_to_find, multiple=False):
         except (NoSuchElementException, WebDriverException):
             pass
     raise NoSuchElementException('{element} does not exist on the page'.format(element=element_to_find))
-
-
-def string_to_kwargs_dict(string):
-    """
-    Given a string of the form "a=b, c=d" returns a dictionary of key-value pairs. i.e {'a': 'b', 'c': 'd'}
-    The purpose is so the return dictionary can be used with ** to pass kwargs to functions.
-
-    :param string: A string of the form "a=b, c=d"
-    :return: A dictionary of key value pairs. The key is derived from the left side of = and the value is from the right
-      side
-    """
-    ret_val = {}
-    for kwarg in string.split(', '):
-        val = kwarg.strip().split('=')
-        for i in range(len(val) - 1):
-            ret_val[val[i]] = val[i + 1]
-    return ret_val
 
 
 def navigate_to_page(context, url, url_kwargs=None):

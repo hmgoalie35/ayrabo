@@ -17,6 +17,7 @@ from games.tests import HockeyGameFactory
 from leagues.tests import LeagueFactory
 from locations.tests import LocationFactory
 from managers.tests import ManagerFactory
+from players.tests import HockeyPlayerFactory
 from scorekeepers.tests import ScorekeeperFactory
 from seasons.tests import SeasonFactory
 from sports.tests import SportFactory, SportRegistrationFactory
@@ -495,6 +496,29 @@ class HockeyGameUpdateViewTests(BaseTestCase):
         self.post_data.pop('home_team')
         response = self.client.post(self.formatted_url, data=self.post_data)
         self.assertFormError(response, 'form', 'home_team', ['This field is required.'])
+
+    def test_post_change_home_team(self):
+        self.game.home_team = self.t2
+        self.game.away_team = self.t1
+        self.game.save()
+        player = HockeyPlayerFactory(sport=self.ice_hockey, team=self.t2)
+        self.game.home_players.add(player)
+        self.login(email=self.email, password=self.password)
+        self.post_data.update({'home_team': self.t3.id, 'away_team': self.t1.id})
+
+        self.client.post(self.formatted_url, data=self.post_data, follow=True)
+        self.game.refresh_from_db()
+        self.assertEqual(self.game.home_players.count(), 0)
+
+    def test_post_change_away_team(self):
+        player = HockeyPlayerFactory(sport=self.ice_hockey, team=self.t2)
+        self.game.away_players.add(player)
+        self.login(email=self.email, password=self.password)
+        self.post_data.update({'away_team': self.t3.id})
+
+        self.client.post(self.formatted_url, data=self.post_data, follow=True)
+        self.game.refresh_from_db()
+        self.assertEqual(self.game.away_players.count(), 0)
 
 
 class GameRostersUpdateViewTests(BaseTestCase):

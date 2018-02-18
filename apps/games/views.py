@@ -112,8 +112,11 @@ class GameUpdateView(LoginRequiredMixin,
         if model_cls is None:
             raise SportNotConfiguredException(self.sport)
         pk = self.kwargs.get(self.pk_url_kwarg, None)
-        return get_object_or_404(model_cls.objects.select_related('home_team', 'home_team__division', 'away_team',
-                                                                  'away_team__division', 'team'), pk=pk)
+        obj = get_object_or_404(model_cls.objects.select_related(
+            'home_team', 'home_team__division', 'away_team', 'away_team__division', 'team'), pk=pk)
+        self.orig_home_team = obj.home_team
+        self.orig_away_team = obj.away_team
+        return obj
 
     def get_form_kwargs(self):
         form_kwargs = super().get_form_kwargs()
@@ -136,7 +139,12 @@ class GameUpdateView(LoginRequiredMixin,
 
     def form_valid(self, form):
         if form.has_changed():
-            return super().form_valid(form)
+            response = super().form_valid(form)
+            if 'home_team' in form.changed_data:
+                self.object.home_players.clear()
+            if 'away_team' in form.changed_data:
+                self.object.away_players.clear()
+            return response
         return redirect(reverse('teams:games:list', kwargs={'team_pk': self.team.pk}))
 
     def get_context_data(self, **kwargs):

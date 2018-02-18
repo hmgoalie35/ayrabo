@@ -69,3 +69,18 @@ Feature: Update a game
     Then I should see "Updates to this game are no longer permitted."
     And I should see "Back"
     And "update_game_btn" should not exist on the page
+
+  Scenario: Changing away team launches modal
+    Given The following player object exists
+      | id | username_or_email | sport      | team                  | jersey_number | position | handedness |
+      | 1  | john@tavares.com  | Ice Hockey | Green Machine IceCats | 35            | G        | Left       |
+    And "1" is added to "away_players" for the game with kwargs "pk=1"
+    And I am on the "teams:games:update" page with kwargs "team_pk=1, pk=1"
+    And I select "Aviator Gulls - Midget Minor AA" from "id_away_team"
+    And I press "update_game_btn" which opens "roster-warning-modal"
+    And I should see "Changing the home team for this game will clear the home team roster if one was set."
+    And I should see "Changing the away team for this game will clear the away team roster if one was set."
+    And I should see "You will need to set new home team rosters or away team rosters."
+    And I press "js-modal-continue"
+    Then I should be on the "teams:games:list" page with kwargs "team_pk=1"
+    And I should see "Your game has been updated."
