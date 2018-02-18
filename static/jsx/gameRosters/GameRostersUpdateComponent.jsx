@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { uniqBy } from 'lodash/array';
 
 import GameRosterComponent from './GameRosterComponent';
 import APIClient from '../common/APIClient';
@@ -15,8 +16,8 @@ export default class GameRostersUpdateComponent extends React.Component {
     this.getPlayers = this.getPlayers.bind(this);
     this.getRosters = this.getRosters.bind(this);
     this.onAPIFailure = this.onAPIFailure.bind(this);
-    this.handleAddHomeTeamPlayer = this.handleAddHomeTeamPlayer.bind(this);
-    this.handleAddAwayTeamPlayer = this.handleAddAwayTeamPlayer.bind(this);
+    this.handleAddHomeTeamPlayers = this.handleAddHomeTeamPlayers.bind(this);
+    this.handleAddAwayTeamPlayers = this.handleAddAwayTeamPlayers.bind(this);
     this.handleRemoveHomeTeamPlayer = this.handleRemoveHomeTeamPlayer.bind(this);
     this.handleRemoveAwayTeamPlayer = this.handleRemoveAwayTeamPlayer.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -87,14 +88,14 @@ export default class GameRostersUpdateComponent extends React.Component {
   }
 
   addPlayers(currentPlayers, newPlayers) {
-    return currentPlayers.concat(newPlayers);
+    return uniqBy(currentPlayers.concat(newPlayers), 'id');
   }
 
   removePlayer(currentPlayers, removedPlayer) {
     return currentPlayers.filter(player => player.id !== removedPlayer.id);
   }
 
-  handleAddHomeTeamPlayer(selected) {
+  handleAddHomeTeamPlayers(selected) {
     const { selectedHomeTeamPlayers } = this.state;
     this.setState({
       selectedHomeTeamPlayers: this.addPlayers(selectedHomeTeamPlayers, selected),
@@ -110,7 +111,7 @@ export default class GameRostersUpdateComponent extends React.Component {
     });
   }
 
-  handleAddAwayTeamPlayer(selected) {
+  handleAddAwayTeamPlayers(selected) {
     const { selectedAwayTeamPlayers } = this.state;
     this.setState({
       selectedAwayTeamPlayers: this.addPlayers(selectedAwayTeamPlayers, selected),
@@ -201,7 +202,7 @@ export default class GameRostersUpdateComponent extends React.Component {
               allPlayers={homeTeamPlayers}
               canUpdate={canUpdateHomeTeamRoster}
               teamType="Home"
-              handleAddPlayer={this.handleAddHomeTeamPlayer}
+              handleAddPlayers={this.handleAddHomeTeamPlayers}
               handleRemovePlayer={this.handleRemoveHomeTeamPlayer}
             />
             <GameRosterComponent
@@ -212,7 +213,7 @@ export default class GameRostersUpdateComponent extends React.Component {
               allPlayers={awayTeamPlayers}
               canUpdate={canUpdateAwayTeamRoster}
               teamType="Away"
-              handleAddPlayer={this.handleAddAwayTeamPlayer}
+              handleAddPlayers={this.handleAddAwayTeamPlayers}
               handleRemovePlayer={this.handleRemoveAwayTeamPlayer}
             />
           </div>

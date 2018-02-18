@@ -51,12 +51,12 @@ export default class GameRosterComponent extends React.Component {
 
   // The param for this function is an array
   handleTypeaheadChange(selected) {
-    const { handleAddPlayer } = this.props;
+    const { handleAddPlayers } = this.props;
     // See https://github.com/ericgio/react-bootstrap-typeahead/blob/master/docs/Methods.md#clear
     if (selected.length) {
       this.typeahead.getInstance().clear();
     }
-    handleAddPlayer(selected);
+    handleAddPlayers(selected);
   }
 
   render() {
@@ -66,6 +66,7 @@ export default class GameRosterComponent extends React.Component {
       allPlayers,
       canUpdate,
       teamType,
+      handleAddPlayers,
       handleRemovePlayer,
     } = this.props;
     const { seasonRosters } = this.state;
@@ -124,7 +125,11 @@ export default class GameRosterComponent extends React.Component {
             }}
           />
           <div className="text-right">
-            <SeasonRosterDropdownComponent teamType={teamType} seasonRosters={seasonRosters} />
+            <SeasonRosterDropdownComponent
+              teamType={teamType}
+              seasonRosters={seasonRosters}
+              handleAddPlayers={handleAddPlayers}
+            />
           </div>
         </React.Fragment>
         }
@@ -144,7 +149,7 @@ GameRosterComponent.propTypes = {
   allPlayers: PropTypes.arrayOf(playerPropType),
   canUpdate: PropTypes.bool.isRequired,
   teamType: PropTypes.oneOf(['Home', 'Away']).isRequired,
-  handleAddPlayer: PropTypes.func.isRequired,
+  handleAddPlayers: PropTypes.func.isRequired,
   handleRemovePlayer: PropTypes.func.isRequired,
 };
 

@@ -13,7 +13,7 @@ const addTypeaheadLabel = players =>
 
 const playersWithLabel = addTypeaheadLabel(homePlayers);
 
-const getComponent = (selectedPlayers, allPlayers, canUpdate = true, handleAddPlayer = jest.fn()) => {
+const getComponent = (selectedPlayers, allPlayers, canUpdate = true, handleAddPlayers = jest.fn()) => {
   const props = {
     teamName: 'Green Machine IceCats Midget Minor AA',
     teamId: 3,
@@ -22,7 +22,7 @@ const getComponent = (selectedPlayers, allPlayers, canUpdate = true, handleAddPl
     teamType: 'Home',
     selectedPlayers,
     allPlayers,
-    handleAddPlayer,
+    handleAddPlayers,
     handleRemovePlayer: jest.fn(),
   };
   return mount(<GameRosterComponent {...props} />);
@@ -57,10 +57,10 @@ describe('Component functions', () => {
     const allPlayers = playersWithLabel.slice(0, 5);
     const selectedPlayers = playersWithLabel.slice(0, 2);
     const player = playersWithLabel.slice(2, 3);
-    const handleAddPlayer = jest.fn();
-    const component = getComponent(selectedPlayers, allPlayers, true, handleAddPlayer);
+    const handleAddPlayers = jest.fn();
+    const component = getComponent(selectedPlayers, allPlayers, true, handleAddPlayers);
     component.instance().handleTypeaheadChange([player]);
-    expect(handleAddPlayer).toHaveBeenCalledWith([player]);
+    expect(handleAddPlayers).toHaveBeenCalledWith([player]);
     // Could add a test to make sure .clear is called.
   });
 });
