@@ -4,21 +4,32 @@ import PropTypes from 'prop-types';
 import { noop } from 'lodash/util';
 
 import { seasonRosterPropType } from '../common/proptypes';
+import SeasonRosterModalComponent from './SeasonRosterModalComponent';
 
 
 const SeasonRosterDropdownComponent = (props) => {
-  const { teamType, seasonRosters } = props;
+  const { teamType, seasonRosters, handleAddPlayers } = props;
   const id = `season-roster-${teamType}`;
+  let listItems = null;
+  let seasonRosterModals = null;
 
-  let listItems;
   if (seasonRosters === null) {
     listItems = null;
+    seasonRosterModals = null;
   } else if (seasonRosters.length === 0) {
     listItems = (
-      <li><a tabIndex="0" role="button" onClick={noop}>You have no season rosters.</a></li>);
+      <li><a tabIndex="0" role="button" onClick={noop}>There are no season rosters.</a></li>
+    );
   } else {
     listItems = seasonRosters.map(roster =>
-      <li key={roster.id}><a href="TODO">{roster.name}</a></li>,
+      <li key={roster.id}>
+        <a data-toggle="modal" data-target={`#modal-${roster.id}`} role="button">{roster.name}</a>
+      </li>
+    );
+    seasonRosterModals = seasonRosters.map(roster =>
+      <div className="text-left" key={roster.id}>
+        <SeasonRosterModalComponent roster={roster} handleAddPlayers={handleAddPlayers} />
+      </div>
     );
   }
 
@@ -37,12 +48,15 @@ const SeasonRosterDropdownComponent = (props) => {
         <i className="fa fa-fw fa-caret-down" />
       </a>
       {listItems !== null &&
-      <ul
-        className="dropdown-menu dropdown-menu-right"
-        aria-labelledby={id}
-      >
-        {listItems}
-      </ul>
+      <React.Fragment>
+        <ul
+          className="dropdown-menu dropdown-menu-right"
+          aria-labelledby={id}
+        >
+          {listItems}
+        </ul>
+        {seasonRosterModals}
+      </React.Fragment>
       }
     </div>
   );
@@ -53,6 +67,7 @@ export default SeasonRosterDropdownComponent;
 SeasonRosterDropdownComponent.propTypes = {
   seasonRosters: PropTypes.arrayOf(seasonRosterPropType),
   teamType: PropTypes.string.isRequired,
+  handleAddPlayers: PropTypes.func.isRequired,
 };
 
 SeasonRosterDropdownComponent.defaultProps = {
