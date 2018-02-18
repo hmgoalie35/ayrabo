@@ -131,11 +131,17 @@ describe('Adding/removing players', () => {
     });
   });
 
+  test('addPlayers uniq', () => {
+    const result = component.instance().addPlayers(
+      selectedHomeTeamPlayers, selectedHomeTeamPlayers);
+    expect(result.length).toEqual(5);
+  });
+
   test('handleAddHomeTeamPlayer', () => {
     expect(selectedHomeTeamPlayers.map(p => p.id)).not.toContain(3061);
     expect(component.state('disableUpdateButton')).toBe(true);
 
-    component.instance().handleAddHomeTeamPlayer([homeTeamPlayer]);
+    component.instance().handleAddHomeTeamPlayers([homeTeamPlayer]);
     expect(component.state('selectedHomeTeamPlayers').map(p => p.id)).toContain(3061);
     expect(component.state('disableUpdateButton')).toBe(false);
   });
@@ -153,7 +159,7 @@ describe('Adding/removing players', () => {
     expect(selectedAwayTeamPlayers.map(p => p.id)).not.toContain(3215);
     expect(component.state('disableUpdateButton')).toBe(true);
 
-    component.instance().handleAddAwayTeamPlayer([awayTeamPlayer]);
+    component.instance().handleAddAwayTeamPlayers([awayTeamPlayer]);
     expect(component.state('selectedAwayTeamPlayers').map(p => p.id)).toContain(3215);
     expect(component.state('disableUpdateButton')).toBe(false);
   });
@@ -180,9 +186,9 @@ describe('handleSubmit', () => {
       selectedHomeTeamPlayers: [],
       selectedAwayTeamPlayers: [],
     });
-    component.instance().handleAddHomeTeamPlayer([homePlayers[0]]);
-    component.instance().handleAddHomeTeamPlayer([homePlayers[1]]);
-    component.instance().handleAddAwayTeamPlayer([awayPlayers[0]]);
+    component.instance().handleAddHomeTeamPlayers([homePlayers[0]]);
+    component.instance().handleAddHomeTeamPlayers([homePlayers[1]]);
+    component.instance().handleAddAwayTeamPlayers([awayPlayers[0]]);
     component.find('form').simulate('submit');
 
     await expect(clientSpy).toHaveBeenCalledWith(
@@ -242,7 +248,7 @@ describe('render', () => {
       selectedHomeTeamPlayers: [],
       selectedAwayTeamPlayers: [],
     });
-    component.instance().handleAddHomeTeamPlayer([homeTeamPlayer]);
+    component.instance().handleAddHomeTeamPlayers([homeTeamPlayer]);
     component.update();
     expect(component.find('#update-game-roster-btn').prop('disabled')).toBe(false);
     expect(component.find('#cancel-update-game-roster-btn').prop('disabled')).toBe(false);
