@@ -48,11 +48,13 @@ const awayTeamPlayer = {
 
 const sportId = 1;
 const gameId = 100;
+const seasonId = 5;
 
 const getComponent = (canUpdateHomeTeamRoster = true, canUpdateAwayTeamRoster = false) => {
   const props = {
     sportId,
     gameId,
+    seasonId,
     homeTeamId: homeTeam.id,
     homeTeamName: homeTeam.name,
     awayTeamId: awayTeam.id,
@@ -170,7 +172,7 @@ describe('handleSubmit', () => {
   test('Disables update button and creates notification', async () => {
     const component = getComponent(true, true);
     // We have the function resolve some dummy value, we could add the correct api response.
-    const clientSpy = jest.spyOn(component.instance().client, 'put').mockImplementation(() => Promise.resolve(true));
+    const clientSpy = jest.spyOn(component.instance().client, 'patch').mockImplementation(() => Promise.resolve(true));
 
     // Prevents tooltip() not being defined error
     component.instance().componentDidUpdate = jest.fn();

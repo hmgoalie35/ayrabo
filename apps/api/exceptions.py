@@ -1,7 +1,7 @@
 from rest_framework import exceptions, status
 
 
-class SportNotConfiguredException(exceptions.APIException):
+class SportNotConfiguredAPIException(exceptions.APIException):
     def __init__(self, sport, *args, **kwargs):
         self.default_detail = '{} is not currently configured.'.format(sport.name)
         super().__init__(*args, **kwargs)

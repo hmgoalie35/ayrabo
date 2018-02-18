@@ -145,17 +145,41 @@ class GameRostersRetrieveUpdateAPIViewTests(BaseAPITestCase):
         self.assertListEqual(away_players, [6, 7])
 
     # Update
-    def test_update(self):
+    def test_patch(self):
         self.game.home_players.add(self.home_players[0], self.home_players[1])
         self.game.away_players.add(self.away_players[0], self.away_players[1])
         self.client.force_login(self.user)
 
         data = {
             'home_players': [1, 2, 3, 4],
-            'away_players': []
         }
-        response = self.client.put(self.format_url(pk=1, game_pk=1), data=data)
+        response = self.client.patch(self.format_url(pk=1, game_pk=1), data=data)
         home_players = response.data.get('home_players')
         away_players = response.data.get('away_players')
         self.assertListEqual(home_players, [1, 2, 3, 4])
-        self.assertListEqual(away_players, [])
+        self.assertListEqual(away_players, [6, 7])
+
+    # There aren't tests for each possible case, I thought that was overkill. Those test cases should eventually be
+    # added.
+    def test_cant_update_home_roster(self):
+        self.manager.is_active = False
+        self.manager.save()
+        ManagerFactory(user=self.user, team=self.away_team)
+        self.client.force_login(self.user)
+        data = {
+            'home_players': [1, 2, 3, 4],
+        }
+        response = self.client.patch(self.format_url(pk=1, game_pk=1), data=data)
+        self.assertAPIError(response, 'validation_error', {
+            'home_players': ['You do not have permission to perform this action.']
+        })
+
+    def test_cant_update_away_roster(self):
+        self.client.force_login(self.user)
+        data = {
+            'away_players': [6, 7],
+        }
+        response = self.client.patch(self.format_url(pk=1, game_pk=1), data=data)
+        self.assertAPIError(response, 'validation_error', {
+            'away_players': ['You do not have permission to perform this action.']
+        })

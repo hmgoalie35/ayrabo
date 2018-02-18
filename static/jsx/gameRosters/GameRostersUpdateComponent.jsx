@@ -130,19 +130,27 @@ export default class GameRostersUpdateComponent extends React.Component {
     e.preventDefault();
     e.stopPropagation();
 
-    const { gameId, sportId } = this.props;
+    const {
+      gameId,
+      sportId,
+      canUpdateHomeTeamRoster,
+      canUpdateAwayTeamRoster,
+    } = this.props;
     const { selectedHomeTeamPlayers, selectedAwayTeamPlayers } = this.state;
-    const homePlayerIds = selectedHomeTeamPlayers.map(player => player.id);
-    const awayPlayerIds = selectedAwayTeamPlayers.map(player => player.id);
+
+    const data = {};
+    if (canUpdateHomeTeamRoster) {
+      data.home_players = selectedHomeTeamPlayers.map(player => player.id);
+    }
+    if (canUpdateAwayTeamRoster) {
+      data.away_players = selectedAwayTeamPlayers.map(player => player.id);
+    }
+
     const onSuccess = () => {
       this.setState({ disableUpdateButton: true });
       createNotification('Your updates have been saved.', 'success').show();
     };
-
-    this.client.put(`sports/${sportId}/games/${gameId}/rosters`, {
-      home_players: homePlayerIds,
-      away_players: awayPlayerIds,
-    }).then(onSuccess, this.onAPIFailure);
+    this.client.patch(`sports/${sportId}/games/${gameId}/rosters`, data).then(onSuccess, this.onAPIFailure);
   }
 
   /**
@@ -164,9 +172,12 @@ export default class GameRostersUpdateComponent extends React.Component {
   render() {
     const {
       homeTeamName,
+      homeTeamId,
       awayTeamName,
+      awayTeamId,
       canUpdateHomeTeamRoster,
       canUpdateAwayTeamRoster,
+      seasonId,
     } = this.props;
 
     const {
@@ -183,7 +194,9 @@ export default class GameRostersUpdateComponent extends React.Component {
         <form onSubmit={this.handleSubmit}>
           <div className="row">
             <GameRosterComponent
-              team={homeTeamName}
+              teamName={homeTeamName}
+              teamId={homeTeamId}
+              seasonId={seasonId}
               selectedPlayers={selectedHomeTeamPlayers}
               allPlayers={homeTeamPlayers}
               canUpdate={canUpdateHomeTeamRoster}
@@ -192,7 +205,9 @@ export default class GameRostersUpdateComponent extends React.Component {
               handleRemovePlayer={this.handleRemoveHomeTeamPlayer}
             />
             <GameRosterComponent
-              team={awayTeamName}
+              teamName={awayTeamName}
+              teamId={awayTeamId}
+              seasonId={seasonId}
               selectedPlayers={selectedAwayTeamPlayers}
               allPlayers={awayTeamPlayers}
               canUpdate={canUpdateAwayTeamRoster}
@@ -238,6 +253,7 @@ export default class GameRostersUpdateComponent extends React.Component {
 GameRostersUpdateComponent.propTypes = {
   gameId: PropTypes.number.isRequired,
   sportId: PropTypes.number.isRequired,
+  seasonId: PropTypes.number.isRequired,
   homeTeamId: PropTypes.number.isRequired,
   homeTeamName: PropTypes.string.isRequired,
   awayTeamId: PropTypes.number.isRequired,

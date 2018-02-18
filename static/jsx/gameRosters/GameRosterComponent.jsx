@@ -6,15 +6,42 @@ import { Typeahead } from 'react-bootstrap-typeahead';
 import PlayerComponent from './PlayerComponent';
 import { playerPropType } from '../common/proptypes';
 import Loading from '../common/Loading';
-import { pluralize } from '../common/utils';
+import { pluralize, showAPIErrorMessage } from '../common/utils';
+import SeasonRosterDropdownComponent from './SeasonRosterDropdownComponent';
+import APIClient from '../common/APIClient';
 
 
 export default class GameRosterComponent extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.client = new APIClient();
+    this.state = {
+      seasonRosters: null,
+    };
     this.getOptions = this.getOptions.bind(this);
     this.handleTypeaheadChange = this.handleTypeaheadChange.bind(this);
+    this.onAPIFailure = this.onAPIFailure.bind(this);
+    this.getSeasonRosters = this.getSeasonRosters.bind(this);
+  }
+
+  componentDidMount() {
+    const { canUpdate } = this.props;
+    if (canUpdate) {
+      this.getSeasonRosters();
+    }
+  }
+
+  onAPIFailure(jqXHR) {
+    if (jqXHR.status === 400) {
+      console.info(jqXHR.responseJSON);
+    } else {
+      showAPIErrorMessage();
+    }
+  }
+
+  getSeasonRosters() {
+    const { teamId, seasonId } = this.props;
+    this.client.get(`teams/${teamId}/season-rosters`, { season: seasonId }).then(data => this.setState({ seasonRosters: data }), this.onAPIFailure);
   }
 
   getOptions(selectedPlayers, allPlayers) {
@@ -34,26 +61,27 @@ export default class GameRosterComponent extends React.Component {
 
   render() {
     const {
-      team,
+      teamName,
       selectedPlayers,
       allPlayers,
       canUpdate,
       teamType,
       handleRemovePlayer,
     } = this.props;
+    const { seasonRosters } = this.state;
 
     let element;
     if (selectedPlayers === null) {
-      element = (<div className="mt20"><Loading /></div>);
+      element = (<div className="mt20 text-center"><Loading /></div>);
     } else if (selectedPlayers.length === 0) {
       element = (
-        <div className="list-group-item">
+        <div className="list-group-item text-center">
           There are no players on this roster.
         </div>
       );
     } else if (!canUpdate) {
       element = (
-        <div className="list-group-item">
+        <div className="list-group-item text-center">
           This game roster is currently unavailable.
         </div>
       );
@@ -77,30 +105,31 @@ export default class GameRosterComponent extends React.Component {
 
     return (
       <div className="col-md-6 game-roster-component">
-        <div className="text-center">
-          <h4>{teamType} Team</h4>
-          <div className="mb10"><strong>{team}</strong></div>
-          {(selectedPlayers !== null && allPlayers !== null) &&
-          <div className="mb10">
-            <Typeahead
-              multiple
-              highlightOnlyResult
-              selectHintOnEnter
-              onChange={this.handleTypeaheadChange}
-              options={this.getOptions(selectedPlayers, allPlayers)}
-              disabled={!canUpdate}
-              emptyLabel="No players found."
-              placeholder="Search players by name, jersey number or position"
-              paginationText="Display more players"
-              ref={(typeahead) => {
-                this.typeahead = typeahead;
-              }}
-            />
+        <h4 className="text-center">{teamType} Team</h4>
+        <div className="text-center mb10"><strong>{teamName}</strong></div>
+        {(selectedPlayers !== null && allPlayers !== null) &&
+        <React.Fragment>
+          <Typeahead
+            multiple
+            highlightOnlyResult
+            selectHintOnEnter
+            onChange={this.handleTypeaheadChange}
+            options={this.getOptions(selectedPlayers, allPlayers)}
+            disabled={!canUpdate}
+            emptyLabel="No players found."
+            placeholder="Add players via search"
+            paginationText="Display more players"
+            ref={(typeahead) => {
+              this.typeahead = typeahead;
+            }}
+          />
+          <div className="text-right">
+            <SeasonRosterDropdownComponent teamType={teamType} seasonRosters={seasonRosters} />
           </div>
-          }
-          <div className="list-group">
-            {element}
-          </div>
+        </React.Fragment>
+        }
+        <div className="list-group">
+          {element}
         </div>
       </div>
     );
@@ -108,7 +137,9 @@ export default class GameRosterComponent extends React.Component {
 }
 
 GameRosterComponent.propTypes = {
-  team: PropTypes.string.isRequired,
+  teamName: PropTypes.string.isRequired,
+  teamId: PropTypes.number.isRequired,
+  seasonId: PropTypes.number.isRequired,
   selectedPlayers: PropTypes.arrayOf(playerPropType),
   allPlayers: PropTypes.arrayOf(playerPropType),
   canUpdate: PropTypes.bool.isRequired,

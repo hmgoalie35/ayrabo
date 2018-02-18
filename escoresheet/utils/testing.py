@@ -87,6 +87,7 @@ class BaseAPITestCase(APITestCase):
         'unauthenticated': {'detail': 'Authentication credentials were not provided.'},
         'permission_denied': {'detail': 'You do not have permission to perform this action.'},
         'sport_not_configured': {'detail': '{} is not currently configured.'},
+        'validation_error': {'detail': ''},
     }
 
     STATUS_CODE_DEFAULTS = {
@@ -94,6 +95,7 @@ class BaseAPITestCase(APITestCase):
         'unauthenticated': status.HTTP_403_FORBIDDEN,
         'permission_denied': status.HTTP_403_FORBIDDEN,
         'sport_not_configured': status.HTTP_400_BAD_REQUEST,
+        'validation_error': status.HTTP_400_BAD_REQUEST,
     }
 
     def format_url(self, **kwargs):
@@ -102,9 +104,9 @@ class BaseAPITestCase(APITestCase):
             return drf_reverse(url, kwargs=kwargs)
 
     # Custom assertions
-    def assertAPIError(self, response, status, error_message_overrides=None):
-        status_code = self.STATUS_CODE_DEFAULTS.get(status)
-        error_messages = error_message_overrides or self.ERROR_MESSAGE_DEFAULTS.get(status)
+    def assertAPIError(self, response, status_name, error_message_overrides=None):
+        status_code = self.STATUS_CODE_DEFAULTS.get(status_name)
+        error_messages = error_message_overrides or self.ERROR_MESSAGE_DEFAULTS.get(status_name)
 
         self.assertEqual(response.status_code, status_code)
         self.assertDictEqual(response.data, error_messages)
