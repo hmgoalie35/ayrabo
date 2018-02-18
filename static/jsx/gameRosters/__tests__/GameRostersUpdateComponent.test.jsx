@@ -48,11 +48,13 @@ const awayTeamPlayer = {
 
 const sportId = 1;
 const gameId = 100;
+const seasonId = 5;
 
 const getComponent = (canUpdateHomeTeamRoster = true, canUpdateAwayTeamRoster = false) => {
   const props = {
     sportId,
     gameId,
+    seasonId,
     homeTeamId: homeTeam.id,
     homeTeamName: homeTeam.name,
     awayTeamId: awayTeam.id,

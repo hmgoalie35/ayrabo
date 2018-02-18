@@ -15,7 +15,9 @@ const playersWithLabel = addTypeaheadLabel(homePlayers);
 
 const getComponent = (selectedPlayers, allPlayers, canUpdate = true, handleAddPlayer = jest.fn()) => {
   const props = {
-    team: 'Green Machine IceCats Midget Minor AA',
+    teamName: 'Green Machine IceCats Midget Minor AA',
+    teamId: 3,
+    seasonId: 4,
     canUpdate,
     teamType: 'Home',
     selectedPlayers,
@@ -25,6 +27,22 @@ const getComponent = (selectedPlayers, allPlayers, canUpdate = true, handleAddPl
   };
   return mount(<GameRosterComponent {...props} />);
 };
+
+describe('componentDidMount', () => {
+  test('fetches season rosters if user can update', () => {
+    const spy = jest.spyOn(GameRosterComponent.prototype, 'getSeasonRosters');
+    getComponent(playersWithLabel.slice(0, 2), playersWithLabel, true);
+    expect(spy).toHaveBeenCalled();
+    spy.mockClear();
+  });
+
+  test('does not fetch season rosters if user can\'t update', () => {
+    const spy = jest.spyOn(GameRosterComponent.prototype, 'getSeasonRosters');
+    getComponent(playersWithLabel.slice(0, 2), playersWithLabel, false);
+    expect(spy).not.toHaveBeenCalled();
+    spy.mockClear();
+  });
+});
 
 describe('Component functions', () => {
   test('getOptions', () => {
