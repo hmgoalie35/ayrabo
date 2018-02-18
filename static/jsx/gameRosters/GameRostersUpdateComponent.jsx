@@ -172,9 +172,12 @@ export default class GameRostersUpdateComponent extends React.Component {
   render() {
     const {
       homeTeamName,
+      homeTeamId,
       awayTeamName,
+      awayTeamId,
       canUpdateHomeTeamRoster,
       canUpdateAwayTeamRoster,
+      seasonId,
     } = this.props;
 
     const {
@@ -191,7 +194,9 @@ export default class GameRostersUpdateComponent extends React.Component {
         <form onSubmit={this.handleSubmit}>
           <div className="row">
             <GameRosterComponent
-              team={homeTeamName}
+              teamName={homeTeamName}
+              teamId={homeTeamId}
+              seasonId={seasonId}
               selectedPlayers={selectedHomeTeamPlayers}
               allPlayers={homeTeamPlayers}
               canUpdate={canUpdateHomeTeamRoster}
@@ -200,7 +205,9 @@ export default class GameRostersUpdateComponent extends React.Component {
               handleRemovePlayer={this.handleRemoveHomeTeamPlayer}
             />
             <GameRosterComponent
-              team={awayTeamName}
+              teamName={awayTeamName}
+              teamId={awayTeamId}
+              seasonId={seasonId}
               selectedPlayers={selectedAwayTeamPlayers}
               allPlayers={awayTeamPlayers}
               canUpdate={canUpdateAwayTeamRoster}
@@ -246,6 +253,7 @@ export default class GameRostersUpdateComponent extends React.Component {
 GameRostersUpdateComponent.propTypes = {
   gameId: PropTypes.number.isRequired,
   sportId: PropTypes.number.isRequired,
+  seasonId: PropTypes.number.isRequired,
   homeTeamId: PropTypes.number.isRequired,
   homeTeamName: PropTypes.string.isRequired,
   awayTeamId: PropTypes.number.isRequired,
