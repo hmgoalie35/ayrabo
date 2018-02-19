@@ -80,7 +80,7 @@ Feature: Update a game
     And I press "update_game_btn" which opens "roster-warning-modal"
     And I should see "Changing the home team for this game will clear the home team roster if one was set."
     And I should see "Changing the away team for this game will clear the away team roster if one was set."
-    And I should see "You will need to set new home team rosters or away team rosters."
+    And I should see "You will need to set new home or away team rosters."
     And I press "js-modal-continue"
     Then I should be on the "teams:games:list" page with kwargs "team_pk=1"
     And I should see "Your game has been updated."
