@@ -1,6 +1,6 @@
 from factory import django, SubFactory
 
-from accounts.tests import UserFactory
+from users.tests import UserFactory
 from sports.models import SportRegistration
 from sports.tests import SportFactory
 

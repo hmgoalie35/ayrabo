@@ -1,7 +1,6 @@
 """
 A module that contains useful methods for testing
 """
-from django.contrib.auth.models import User
 from django.db.models import Q
 from django.test import TestCase
 from django.urls import reverse
@@ -13,6 +12,7 @@ from coaches.tests import CoachFactory
 from managers.tests import ManagerFactory
 from players.tests import HockeyPlayerFactory
 from referees.tests import RefereeFactory
+from users.models import User
 
 
 def get_user(username_or_email):

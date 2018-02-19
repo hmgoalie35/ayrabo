@@ -5,9 +5,10 @@ from behave import *
 from django.core import mail
 from generic_steps import find_element
 
-from accounts.tests import UserFactory, EmailAddressFactory
+from accounts.tests import EmailAddressFactory
 from ayrabo.utils.testing import get_user
 from userprofiles.tests import UserProfileFactory
+from users.tests import UserFactory
 
 
 def create_unconfirmed_account(user_data, create_userprofile):
@@ -184,5 +185,5 @@ def step_impl(context, username_or_email, permissions):
             setattr(user, permission, True)
         else:
             raise Exception(
-                    '{} is not a valid permission. Choose from {}'.format(permission, valid_permissions))
+                '{} is not a valid permission. Choose from {}'.format(permission, valid_permissions))
         user.save()

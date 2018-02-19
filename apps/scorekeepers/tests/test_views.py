@@ -1,6 +1,6 @@
 from django.urls import reverse
 
-from accounts.tests import UserFactory
+from users.tests import UserFactory
 from coaches.tests import CoachFactory
 from ayrabo.utils.testing import BaseTestCase
 from managers.tests import ManagerFactory

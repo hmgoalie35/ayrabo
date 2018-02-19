@@ -56,6 +56,12 @@
         command: "migrate --noinput"
         virtualenv: "{{ venv_path }}"
 
+    - name: Remove stale contenttypes
+      django_manage:
+        app_path: "{{ ongoing_deployment }}"
+        command: "remove_stale_contenttypes --noinput"
+        virtualenv: "{{ venv_path }}"
+
     - name: Run seeds
       django_manage:
         app_path: "{{ ongoing_deployment }}"

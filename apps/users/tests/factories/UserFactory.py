@@ -1,8 +1,7 @@
 import factory
-from django.contrib.auth import get_user_model
 from factory import PostGenerationMethodCall, django, Faker
 
-User = get_user_model()
+from users.models import User
 
 
 class UserFactory(django.DjangoModelFactory):
@@ -12,7 +11,7 @@ class UserFactory(django.DjangoModelFactory):
     email = factory.sequence(lambda x: 'user{x}@ayrabo.com'.format(x=x))
     username = factory.LazyAttribute(lambda obj: obj.email)
     password = PostGenerationMethodCall('set_password', 'myweakpassword')
-    userprofile = factory.RelatedFactory('userprofiles.tests.factories.UserProfileFactory.UserProfileFactory', 'user')
+    userprofile = factory.RelatedFactory('userprofiles.tests.UserProfileFactory', 'user')
 
     class Meta:
         model = User

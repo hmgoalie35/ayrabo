@@ -1,7 +1,7 @@
 from django.core.exceptions import ValidationError
 from django.db.utils import IntegrityError
 
-from accounts.tests import UserFactory
+from users.tests import UserFactory
 from ayrabo.utils.testing import BaseTestCase
 from sports.tests import SportRegistrationFactory
 from teams.tests import TeamFactory

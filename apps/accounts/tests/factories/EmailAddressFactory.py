@@ -2,7 +2,7 @@ import factory
 from allauth.account.models import EmailAddress
 from factory import django
 
-from .UserFactory import UserFactory
+from users.tests.factories.UserFactory import UserFactory
 
 
 class EmailAddressFactory(django.DjangoModelFactory):

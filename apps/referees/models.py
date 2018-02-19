@@ -1,4 +1,3 @@
-from django.contrib.auth.models import User
 from django.core.validators import ValidationError
 from django.db import models
 from django.utils import timezone
@@ -6,6 +5,7 @@ from django.utils import timezone
 from common import managers
 from leagues.models import League
 from sports.models import SportRegistration
+from users.models import User
 
 
 class Referee(models.Model):
@@ -31,9 +31,9 @@ class Referee(models.Model):
             qs = SportRegistration.objects.filter(user=self.user, sport=sport)
             if qs.exists() and not qs.first().has_role('Referee'):
                 raise ValidationError(
-                        '{user} - {sport} might not have a sportregistration object or the sportregistration '
-                        'object does not have the referee role assigned'.format(
-                                user=self.user.email, sport=sport.name)
+                    '{user} - {sport} might not have a sportregistration object or the sportregistration '
+                    'object does not have the referee role assigned'.format(
+                        user=self.user.email, sport=sport.name)
                 )
 
     def __str__(self):

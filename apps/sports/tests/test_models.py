@@ -5,7 +5,7 @@ from django.db.utils import IntegrityError
 from django.urls import reverse
 from django.utils.text import slugify
 
-from accounts.tests import UserFactory
+from users.tests import UserFactory
 from coaches.tests import CoachFactory
 from divisions.tests import DivisionFactory
 from ayrabo.utils.testing import BaseTestCase

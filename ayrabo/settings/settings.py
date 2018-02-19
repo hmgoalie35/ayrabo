@@ -72,6 +72,8 @@ RUNNING_AUTOMATED_TESTS = False
 
 ALLOWED_HOSTS = [host.strip() for host in ENV_SETTINGS.get('ALLOWED_HOSTS', '').split(',')]
 
+AUTH_USER_MODEL = 'users.User'
+
 # Application definition
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -116,6 +118,7 @@ INSTALLED_APPS = [
     'sports.apps.SportsConfig',
     'teams.apps.TeamsConfig',
     'userprofiles.apps.UserprofilesConfig',
+    'users.apps.UsersConfig',
 ]
 
 CRISPY_TEMPLATE_PACK = 'bootstrap3'

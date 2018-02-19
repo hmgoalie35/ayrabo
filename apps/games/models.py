@@ -41,8 +41,8 @@ class AbstractGame(models.Model):
                                related_name='%(class)ss')
     # Used to track which team this game was created for
     team = models.ForeignKey('teams.Team', null=True, verbose_name='Team', on_delete=models.PROTECT)
-    created_by = models.ForeignKey('auth.User', null=True, verbose_name='Created By', related_name='%(class)ss_created',
-                                   on_delete=models.PROTECT)
+    created_by = models.ForeignKey('users.User', null=True, verbose_name='Created By',
+                                   related_name='%(class)ss_created', on_delete=models.PROTECT)
     created = models.DateTimeField(verbose_name='Created', default=timezone_util.now)
     updated = models.DateTimeField(verbose_name='Updated', auto_now=True)
 

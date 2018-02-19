@@ -5,6 +5,8 @@
 * Break tasks into reusable roles (nodejs), installing virtualenv, npm packages, etc.
 * Can have the namecheap dns manager handle accessing the site via domain name, ip address, www.<domain-name> (www is a subdomain that is auto routed). Or can have nginx server_name listen on all 3. I'd do both. Make sure to test
 * When site load increases and need to add load balancer, might be a good idea to only allow load balancer to connect to app servers. Use firewall on app servers to only allow connections from load balancer.
+* Use nginx mainline (which is recommended) https://nginx.org/en/linux_packages.html?&_ga=2.144552892.821590664.1519019270-1715584878.1519019270#mainline
+    * Might need to update nginx boilerplates (server boilerplate and actual nginx config)
 
 #### Deployment:
 * ~~Run dist upgrade.~~
