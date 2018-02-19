@@ -5,7 +5,7 @@ from leagues.tests import LeagueFactory
 from sports.tests import SportFactory
 from teams.tests import TeamFactory
 from coaches.tests import CoachFactory
-from accounts.tests import UserFactory
+from users.tests import UserFactory
 
 
 class CoachFormTests(BaseTestCase):

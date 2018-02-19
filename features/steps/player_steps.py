@@ -1,13 +1,13 @@
 from behave import *
-from django.contrib.auth.models import User
 
-from accounts.tests import UserFactory
+from users.tests import UserFactory
 from ayrabo.utils.testing import get_user
 from players.tests import HockeyPlayerFactory
 from sports.models import Sport
 from sports.tests import SportFactory
 from teams.models import Team
 from teams.tests import TeamFactory
+from users.models import User
 
 
 @step('The following player objects? exists?')

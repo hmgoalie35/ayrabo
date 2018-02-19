@@ -1,4 +1,4 @@
-from accounts.tests import UserFactory
+from users.tests import UserFactory
 from api.v1.users.serializers import UserSerializer
 from ayrabo.utils.testing import BaseAPITestCase
 

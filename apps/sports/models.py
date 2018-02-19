@@ -1,4 +1,3 @@
-from django.contrib.auth.models import User
 from django.db import models
 from django.urls import reverse
 from django.utils import timezone
@@ -9,6 +8,7 @@ import managers as managers_app
 import players as players_app
 import referees as referees_app
 import scorekeepers as scorekeepers_app
+from users.models import User
 from .exceptions import RoleDoesNotExistException, InvalidNumberOfRolesException
 
 

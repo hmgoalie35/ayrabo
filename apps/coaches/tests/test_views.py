@@ -1,6 +1,6 @@
 from django.urls import reverse
 
-from accounts.tests import UserFactory
+from users.tests import UserFactory
 from coaches.forms import CoachForm
 from coaches.formset_helpers import CoachFormSetHelper
 from coaches.models import Coach

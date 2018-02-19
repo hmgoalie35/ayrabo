@@ -1,10 +1,10 @@
 from django import forms
-from django.contrib.auth.models import User
 
 from ayrabo.utils import set_fields_disabled
 from ayrabo.utils.form_fields import TeamModelChoiceField
 from ayrabo.utils.formsets import BaseModelFormSet
 from teams.models import Team
+from users.models import User
 from . import models
 
 

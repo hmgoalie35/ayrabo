@@ -1,7 +1,7 @@
 import factory
 from factory import django, Faker
 
-from accounts.tests import UserFactory
+from users.tests import UserFactory
 from coaches.models import Coach
 from teams.tests import TeamFactory
 

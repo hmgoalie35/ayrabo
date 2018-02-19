@@ -1,6 +1,6 @@
 from rest_framework import status
 
-from accounts.tests import UserFactory
+from users.tests import UserFactory
 from ayrabo.utils.testing import BaseAPITestCase
 from scorekeepers.tests import ScorekeeperFactory
 from sports.tests import SportRegistrationFactory

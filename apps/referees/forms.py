@@ -1,9 +1,9 @@
 from django import forms
-from django.contrib.auth.models import User
 
 from ayrabo.utils import set_fields_disabled
 from ayrabo.utils.formsets import BaseModelFormSet
 from leagues.models import League
+from users.models import User
 from .models import Referee
 
 

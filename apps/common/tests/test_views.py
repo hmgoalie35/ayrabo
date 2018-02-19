@@ -4,7 +4,7 @@ from django.conf import settings
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.urls import reverse
 
-from accounts.tests import UserFactory
+from users.tests import UserFactory
 from divisions.tests import DivisionFactory
 from ayrabo.utils.testing import BaseTestCase
 from leagues.tests import LeagueFactory

@@ -1,11 +1,9 @@
 from allauth.account.models import EmailConfirmationHMAC, EmailAddress
-from django.contrib.auth import get_user_model
 from django.core import mail
 from django.urls import reverse
 
 from ayrabo.utils.testing import BaseTestCase
-
-User = get_user_model()
+from users.models import User
 
 
 class NewConfirmationEmailViewTests(BaseTestCase):
@@ -47,7 +45,7 @@ class NewConfirmationEmailViewTests(BaseTestCase):
         mail.outbox = []
         invalid_email = 'myinvalidemail@ayrabo.com'
         response = self.post_to_account_new_email_confirmation(
-                {'email': invalid_email, 'request_path': self.invalid_request_path})
+            {'email': invalid_email, 'request_path': self.invalid_request_path})
 
         error_msg = '{email} is not a valid e-mail address or has already been confirmed.'.format(email=invalid_email)
         self.assertHasMessage(response, error_msg)
@@ -64,14 +62,14 @@ class NewConfirmationEmailViewTests(BaseTestCase):
         email_address.save()
         self.assertTrue(EmailAddress.objects.get(user=self.user).verified)
         response = self.post_to_account_new_email_confirmation(
-                {'email': self.user.email, 'request_path': self.invalid_request_path})
+            {'email': self.user.email, 'request_path': self.invalid_request_path})
         error_msg = '{email} is not a valid e-mail address or has already been confirmed.'.format(email=self.user.email)
         self.assertHasMessage(response, error_msg)
 
     def test_existent_email_address(self):
         mail.outbox = []
         response = self.post_to_account_new_email_confirmation(
-                {'email': self.user.email, 'request_path': self.valid_request_path})
+            {'email': self.user.email, 'request_path': self.valid_request_path})
 
         success_msg = 'A new confirmation email has been sent to {email}.'.format(email=self.user.email)
         self.assertHasMessage(response, success_msg)

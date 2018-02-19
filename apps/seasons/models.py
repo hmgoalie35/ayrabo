@@ -1,7 +1,6 @@
 import datetime
 import logging
 
-from django.contrib.auth.models import User
 from django.core.validators import ValidationError
 from django.db import models
 from django.db.models.signals import m2m_changed
@@ -10,6 +9,7 @@ from django.urls import reverse
 from django.utils import timezone
 
 from teams.models import Team
+from users.models import User
 
 logger = logging.getLogger()
 
@@ -84,8 +84,8 @@ def validate_leagues(action, instance, pk_set, reverse, **kwargs):
                     # Remove the pk from the set so it is not added
                     pk_set.remove(pk)
                     errors.append(
-                            error_msg.format(cls.__name__.lower(), str(obj), obj.pk,
-                                             instance.division.league.full_name))
+                        error_msg.format(cls.__name__.lower(), str(obj), obj.pk,
+                                         instance.division.league.full_name))
                 elif not reverse and obj.division.league_id != instance.league_id:
                     # Remove the pk from the set so it is not added
                     pk_set.remove(pk)
@@ -144,4 +144,4 @@ class HockeySeasonRoster(AbstractSeasonRoster):
                                                    default=True).exclude(pk=self.pk)
             if self.default and qs.exists():
                 raise ValidationError(
-                        {'default': 'A default season roster for this team and season already exists.'})
+                    {'default': 'A default season roster for this team and season already exists.'})

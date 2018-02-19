@@ -3,7 +3,7 @@ import datetime
 from django.utils import timezone
 from factory import django, SubFactory, LazyFunction, LazyAttribute, post_generation
 
-from accounts.tests import UserFactory
+from users.tests import UserFactory
 from games import models
 from locations.tests import LocationFactory
 from players.tests import HockeyPlayerFactory

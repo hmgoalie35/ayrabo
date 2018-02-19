@@ -2,7 +2,7 @@ import datetime
 
 from behave import *
 
-from accounts.tests import UserFactory
+from users.tests import UserFactory
 from ayrabo.utils.testing import get_user
 from players.tests import HockeyPlayerFactory
 from seasons.models import Season

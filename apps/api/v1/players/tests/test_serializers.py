@@ -1,4 +1,4 @@
-from accounts.tests import UserFactory
+from users.tests import UserFactory
 from ayrabo.utils.testing import BaseAPITestCase
 from players.tests import HockeyPlayerFactory
 from sports.tests import SportFactory

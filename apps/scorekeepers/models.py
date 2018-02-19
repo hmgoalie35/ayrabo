@@ -7,7 +7,7 @@ from sports.models import SportRegistration
 
 
 class Scorekeeper(models.Model):
-    user = models.ForeignKey('auth.User', verbose_name='User')
+    user = models.ForeignKey('users.User', verbose_name='User')
     sport = models.ForeignKey('sports.Sport', verbose_name='Sport')
     created = models.DateTimeField(default=timezone.now, verbose_name='Created')
     is_active = models.BooleanField(default=True, verbose_name='Is Active')

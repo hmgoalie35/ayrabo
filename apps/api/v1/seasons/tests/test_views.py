@@ -1,6 +1,6 @@
 import datetime
 
-from accounts.tests import UserFactory
+from users.tests import UserFactory
 from divisions.tests import DivisionFactory
 from ayrabo.utils.testing import BaseAPITestCase
 from leagues.tests import LeagueFactory

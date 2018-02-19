@@ -1,7 +1,6 @@
 import datetime
 
 from allauth.account.models import EmailAddress
-from django.contrib.auth.models import User
 from django.contrib.sites.models import Site
 from django.utils.text import slugify
 from faker import Faker
@@ -14,6 +13,7 @@ from sports.models import Sport, SportRegistration
 from teams.models import Team
 from userprofiles.models import UserProfile
 from userprofiles.tests.factories.UserProfileFactory import generate_height
+from users.models import User
 
 site = Site.objects.first()
 site.domain = 'ayrabo.com'
