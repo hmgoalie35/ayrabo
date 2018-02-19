@@ -2,7 +2,7 @@ from behave import *
 
 from coaches.models import Coach
 from coaches.tests import CoachFactory
-from escoresheet.utils.testing import get_user
+from ayrabo.utils.testing import get_user
 from teams.models import Team
 from teams.tests import TeamFactory
 

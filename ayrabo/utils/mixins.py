@@ -4,8 +4,8 @@ from django.http import Http404
 from django.shortcuts import redirect
 from django.urls import reverse
 
-from escoresheet.utils import handle_sport_not_configured
-from escoresheet.utils.exceptions import SportNotConfiguredException
+from ayrabo.utils import handle_sport_not_configured
+from ayrabo.utils.exceptions import SportNotConfiguredException
 from sports.models import SportRegistration
 
 

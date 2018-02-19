@@ -1,8 +1,8 @@
 from django import forms
 from django.contrib.auth.models import User
 
-from escoresheet.utils import set_fields_disabled
-from escoresheet.utils.formsets import BaseModelFormSet
+from ayrabo.utils import set_fields_disabled
+from ayrabo.utils.formsets import BaseModelFormSet
 from leagues.models import League
 from .models import Referee
 

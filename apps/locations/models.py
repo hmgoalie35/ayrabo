@@ -7,7 +7,7 @@ from django.utils.text import slugify
 from localflavor.us import models as us_models
 from localflavor.us.us_states import US_STATES
 
-from escoresheet.utils.model_fields import WebsiteField
+from ayrabo.utils.model_fields import WebsiteField
 
 PHONE_NUMBER_REGEX = re.compile(r'^\(?[2-9]\d{2}\)? \d{3}-\d{4}$')
 

@@ -4,7 +4,7 @@ import pytz
 
 from common.tests import GenericChoiceFactory
 from divisions.tests import DivisionFactory
-from escoresheet.utils.testing import BaseAPITestCase
+from ayrabo.utils.testing import BaseAPITestCase
 from games.tests import HockeyGameFactory
 from leagues.tests import LeagueFactory
 from players.tests import HockeyPlayerFactory

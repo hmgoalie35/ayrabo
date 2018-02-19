@@ -5,7 +5,7 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from django.urls import reverse
 
 from accounts.tests import UserFactory
-from escoresheet.utils.testing import BaseTestCase
+from ayrabo.utils.testing import BaseTestCase
 from locations.models import Location
 from locations.tests import LocationFactory
 from managers.tests import ManagerFactory

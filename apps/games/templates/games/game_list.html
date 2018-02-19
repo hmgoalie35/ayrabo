@@ -91,7 +91,7 @@
                         {% if game.home_team.id in team_ids_for_manager or game.away_team.id in team_ids_for_manager or is_scorekeeper %}
                           <li>
                             <a id="update-game-rosters-{{ game.pk }}" href="{% url 'sports:games:rosters:update' sport.slug game.pk %}">
-                              <i class="fa fa-wrench fa-ess-gray"></i>&nbsp;Rosters
+                              <i class="fa fa-wrench fa-ayrabo-gray"></i>&nbsp;Rosters
                             </a>
                           </li>
                         {% endif %}

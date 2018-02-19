@@ -1,6 +1,6 @@
 from behave import *
 
-from escoresheet.utils.testing import get_user
+from ayrabo.utils.testing import get_user
 from scorekeepers.tests import ScorekeeperFactory
 from sports.models import Sport
 from sports.tests import SportFactory

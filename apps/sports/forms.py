@@ -1,7 +1,7 @@
 from django import forms
 from django.utils.translation import ugettext_lazy as _
 
-from escoresheet.utils.formsets import BaseModelFormSet
+from ayrabo.utils.formsets import BaseModelFormSet
 from .models import Sport, SportRegistration
 
 

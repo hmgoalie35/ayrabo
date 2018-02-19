@@ -16,8 +16,8 @@ from userprofiles.models import UserProfile
 from userprofiles.tests.factories.UserProfileFactory import generate_height
 
 site = Site.objects.first()
-site.domain = 'escoresheet.com'
-site.name = site.domain
+site.domain = 'ayrabo.com'
+site.name = 'ayrabo'
 site.save()
 
 fake = Faker()

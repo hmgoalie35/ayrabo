@@ -4,7 +4,7 @@ from rest_framework.test import APITestCase
 
 from accounts.tests import UserFactory
 from divisions.tests import DivisionFactory
-from escoresheet.utils.testing import BaseAPITestCase
+from ayrabo.utils.testing import BaseAPITestCase
 from leagues.tests import LeagueFactory
 from managers.tests import ManagerFactory
 from players.tests import HockeyPlayerFactory

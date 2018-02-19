@@ -2,7 +2,7 @@ import datetime
 
 from accounts.tests import UserFactory
 from divisions.tests import DivisionFactory
-from escoresheet.utils.testing import BaseAPITestCase
+from ayrabo.utils.testing import BaseAPITestCase
 from leagues.tests import LeagueFactory
 from managers.tests import ManagerFactory
 from scorekeepers.tests import ScorekeeperFactory

@@ -1,6 +1,6 @@
 from accounts.tests import UserFactory
 from divisions.tests import DivisionFactory
-from escoresheet.utils.testing import BaseAPITestCase
+from ayrabo.utils.testing import BaseAPITestCase
 from leagues.tests import LeagueFactory
 from players.tests import HockeyPlayerFactory
 from seasons.tests import HockeySeasonRosterFactory, SeasonFactory

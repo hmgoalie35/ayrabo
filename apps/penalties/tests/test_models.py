@@ -3,7 +3,7 @@ import datetime
 from django.db import IntegrityError
 
 from common.tests import GenericChoiceFactory
-from escoresheet.utils.testing import BaseTestCase
+from ayrabo.utils.testing import BaseTestCase
 from games.tests import HockeyGameFactory
 from penalties.tests import GenericPenaltyChoiceFactory, HockeyPenaltyFactory
 from periods.tests import HockeyPeriodFactory

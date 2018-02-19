@@ -1,6 +1,6 @@
 from common.models import GenericChoice
 from common.tests import GenericChoiceFactory
-from escoresheet.utils.testing import BaseTestCase
+from ayrabo.utils.testing import BaseTestCase
 from leagues.tests import LeagueFactory
 from sports.models import Sport
 from sports.tests import SportFactory

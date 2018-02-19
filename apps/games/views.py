@@ -6,8 +6,8 @@ from django.urls import reverse_lazy
 from django.views import generic
 
 from common.views import CsvBulkUploadView
-from escoresheet.utils.exceptions import SportNotConfiguredException
-from escoresheet.utils.mixins import HasPermissionMixin, HandleSportNotConfiguredMixin
+from ayrabo.utils.exceptions import SportNotConfiguredException
+from ayrabo.utils.mixins import HasPermissionMixin, HandleSportNotConfiguredMixin
 from games.forms import HockeyGameCreateForm, DATETIME_INPUT_FORMAT
 from games.models import HockeyGame
 from managers.models import Manager

@@ -3,7 +3,7 @@ from django.urls import reverse
 
 from accounts.tests import UserFactory
 from divisions.tests import DivisionFactory
-from escoresheet.utils.testing import BaseTestCase
+from ayrabo.utils.testing import BaseTestCase
 from leagues.tests import LeagueFactory
 from players.forms import HockeyPlayerForm
 from players.formset_helpers import HockeyPlayerFormSetHelper

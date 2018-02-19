@@ -22,7 +22,7 @@ env:
 #    - TEST_SUITE=accept
 
   global:
-    - DJANGO_SETTINGS_MODULE="escoresheet.settings.settings"
+    - DJANGO_SETTINGS_MODULE="ayrabo.settings.settings"
     - TRAVIS_NODE_VERSION="8"
 
 script:

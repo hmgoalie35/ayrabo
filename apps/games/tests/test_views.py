@@ -10,7 +10,7 @@ from django.urls import reverse
 from accounts.tests import UserFactory
 from common.tests import GenericChoiceFactory
 from divisions.tests import DivisionFactory
-from escoresheet.utils.testing import BaseTestCase
+from ayrabo.utils.testing import BaseTestCase
 from games.forms import DATETIME_INPUT_FORMAT
 from games.models import HockeyGame
 from games.tests import HockeyGameFactory

@@ -1,7 +1,7 @@
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError
 
-from escoresheet.utils.testing import BaseTestCase
+from ayrabo.utils.testing import BaseTestCase
 from locations.tests import TeamLocationFactory
 from teams.tests import TeamFactory
 from . import LocationFactory

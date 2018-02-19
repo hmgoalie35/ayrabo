@@ -1,7 +1,7 @@
 import datetime
 
 from divisions.tests import DivisionFactory
-from escoresheet.utils.testing import BaseTestCase
+from ayrabo.utils.testing import BaseTestCase
 from leagues.tests import LeagueFactory
 from players.tests import HockeyPlayerFactory
 from seasons.forms import HockeySeasonRosterCreateForm, HockeySeasonRosterUpdateForm

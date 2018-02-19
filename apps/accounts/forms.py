@@ -4,7 +4,7 @@ from crispy_forms.layout import Layout, Field, Submit, HTML, Div
 from django import forms
 from django.contrib.auth.password_validation import password_validators_help_texts
 
-from escoresheet.utils import remove_form_placeholders, add_autofocus_to_field
+from ayrabo.utils import remove_form_placeholders, add_autofocus_to_field
 
 PASSWORD_GUIDLINES_HTML = """
 <span

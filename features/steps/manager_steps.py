@@ -1,6 +1,6 @@
 from behave import *
 
-from escoresheet.utils.testing import get_user
+from ayrabo.utils.testing import get_user
 from managers.tests import ManagerFactory
 from teams.models import Team
 from teams.tests import TeamFactory

@@ -5,7 +5,7 @@ from django.views import generic
 from django.views.generic import base
 
 from common.views import BaseCreateRelatedObjectsView
-from escoresheet.utils.mappings import SPORT_PLAYER_MODEL_MAPPINGS
+from ayrabo.utils.mappings import SPORT_PLAYER_MODEL_MAPPINGS
 from sports.models import SportRegistration
 from . import forms
 from .formset_helpers import HockeyPlayerFormSetHelper, BaseballPlayerFormSetHelper

@@ -1,4 +1,4 @@
-from escoresheet.utils.testing import BaseTestCase
+from ayrabo.utils.testing import BaseTestCase
 from referees.models import Referee
 from referees.tests import RefereeFactory
 

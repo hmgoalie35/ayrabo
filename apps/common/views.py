@@ -12,8 +12,8 @@ from django.views import generic
 from django.views.generic.base import ContextMixin
 
 from common.forms import CsvBulkUploadForm
-from escoresheet.utils import handle_sport_not_configured
-from escoresheet.utils.exceptions import SportNotConfiguredException
+from ayrabo.utils import handle_sport_not_configured
+from ayrabo.utils.exceptions import SportNotConfiguredException
 from leagues.models import League
 from players.models import AbstractPlayer
 from sports.models import SportRegistration

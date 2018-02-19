@@ -1,5 +1,5 @@
 from accounts.tests import UserFactory
-from escoresheet.utils.testing import BaseAPITestCase
+from ayrabo.utils.testing import BaseAPITestCase
 from players.tests import HockeyPlayerFactory
 from sports.tests import SportFactory
 from teams.tests import TeamFactory

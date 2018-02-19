@@ -1,5 +1,5 @@
 from divisions.tests import DivisionFactory
-from escoresheet.utils.testing import BaseTestCase
+from ayrabo.utils.testing import BaseTestCase
 from leagues.tests import LeagueFactory
 from players.forms import HockeyPlayerForm
 from sports.tests import SportFactory

@@ -28,10 +28,10 @@ Feature: Forgotten password
 
   Scenario: Request a password reset with invalid email
     Given I am on the "account_reset_password" page
-    When I fill in "id_email" with "myinvalidemail@escoresheet.com"
+    When I fill in "id_email" with "myinvalidemail@ayrabo.com"
     And I press "password_reset_btn"
     Then I should see "The e-mail address is not assigned to any user account"
-    And "myinvalidemail@escoresheet.com" should have no emails
+    And "myinvalidemail@ayrabo.com" should have no emails
 
   Scenario: Invalid password reset key
     Given I am on the "account_reset_password" page

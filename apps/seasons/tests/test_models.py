@@ -5,7 +5,7 @@ from django.db import IntegrityError
 from django.urls import reverse
 
 from divisions.tests import DivisionFactory
-from escoresheet.utils.testing import BaseTestCase
+from ayrabo.utils.testing import BaseTestCase
 from leagues.tests import LeagueFactory
 from players.tests import HockeyPlayerFactory
 from seasons.models import Season, HockeySeasonRoster

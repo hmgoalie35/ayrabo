@@ -2,7 +2,7 @@ from django.urls import reverse
 
 from accounts.tests import UserFactory
 from coaches.tests import CoachFactory
-from escoresheet.utils.testing import BaseTestCase
+from ayrabo.utils.testing import BaseTestCase
 from managers.tests import ManagerFactory
 from scorekeepers.models import Scorekeeper
 from scorekeepers.tests import ScorekeeperFactory

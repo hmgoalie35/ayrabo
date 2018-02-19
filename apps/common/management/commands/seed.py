@@ -2,6 +2,7 @@ from django.contrib.sites.models import Site
 from django.core.exceptions import ValidationError
 from django.core.management.base import BaseCommand
 from django.db import IntegrityError
+from django.db.models import Q
 
 from common.models import GenericChoice
 from penalties.models import GenericPenaltyChoice
@@ -66,7 +67,8 @@ GENERIC_PENALTY_CHOICES = {
     ]
 }
 
-SITE_NAME = 'escoresheet.com'
+SITE_DOMAIN = 'ayrabo.com'
+SITE_NAME = 'ayrabo'
 
 
 def get_object(cls, **kwargs):
@@ -99,8 +101,8 @@ class Command(BaseCommand):
 
         self.stdout.write('Updating default site name...')
         try:
-            site = Site.objects.get(name='example.com')
-            site.domain = SITE_NAME
+            site = Site.objects.get(Q(name='example.com') | Q(name='escoresheet.com'))
+            site.domain = SITE_DOMAIN
             site.name = SITE_NAME
             site.save()
         except Site.DoesNotExist:
