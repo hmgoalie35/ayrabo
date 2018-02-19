@@ -9,9 +9,10 @@ from django.urls import reverse
 from django.views import generic
 from django.views.generic.base import ContextMixin
 
-from escoresheet.utils import get_namespace_for_role
+from ayrabo.utils import get_namespace_for_role
 from players import forms as player_forms
 from players.models import HockeyPlayer, BasketballPlayer, BaseballPlayer
+from scorekeepers.models import Scorekeeper
 from sports.forms import SportRegistrationCreateForm, SportRegistrationModelFormSet
 from sports.formset_helpers import SportRegistrationCreateFormSetHelper
 from sports.models import SportRegistration, Sport
@@ -55,10 +56,10 @@ class SportRegistrationCreateView(LoginRequiredMixin, ContextMixin, generic.View
         context['remaining_sport_count'] = remaining_sport_count
         context['user_registered_for_all_sports'] = context.get('remaining_sport_count') == 0
         context['formset'] = SportRegistrationFormSet(
-                self.request.POST or None,
-                queryset=SportRegistration.objects.none(),
-                prefix='sportregistrations',
-                form_kwargs={'sports_already_registered_for': sports_already_registered_for}
+            self.request.POST or None,
+            queryset=SportRegistration.objects.none(),
+            prefix='sportregistrations',
+            form_kwargs={'sports_already_registered_for': sports_already_registered_for}
         )
         context['helper'] = SportRegistrationCreateFormSetHelper
         return context
@@ -69,6 +70,24 @@ class SportRegistrationCreateView(LoginRequiredMixin, ContextMixin, generic.View
             messages.info(request, self.already_registered_msg)
             return redirect(request.META.get('HTTP_REFERER', '/'))
         return render(request, self.template_name, context)
+
+    def handle_scorekeeper_role(self, sr):
+        scorekeeper = Scorekeeper.objects.create(user=self.request.user, sport=sr.sport)
+        if sr.roles == ['Scorekeeper']:
+            sr.is_complete = True
+            sr.save()
+        return scorekeeper
+
+    def _get_redirect_url(self, sport_registrations):
+        redirect_kwargs = {}
+        if all([sr.is_complete for sr in sport_registrations]):
+            url = 'home'
+        else:
+            first_sport_reg = sport_registrations[0]
+            namespace_for_role = first_sport_reg.get_next_namespace_for_registration()
+            url = 'sportregistrations:{}:create'.format(namespace_for_role)
+            redirect_kwargs.update({'pk': first_sport_reg.id})
+        return url, redirect_kwargs
 
     def post(self, request, *args, **kwargs):
         context = self.get_context_data(**kwargs)
@@ -88,13 +107,13 @@ class SportRegistrationCreateView(LoginRequiredMixin, ContextMixin, generic.View
                     form.instance.user = request.user
                     form.instance.set_roles(form.cleaned_data.get('roles', []))
                     sr = form.save()
+                    if sr.has_role('Scorekeeper'):
+                        self.handle_scorekeeper_role(sr)
                     sport_names.append(sr.sport.name)
                     sport_registrations.append(sr)
-            first_sport_reg = sport_registrations[0]
-            namespace_for_role = first_sport_reg.get_next_namespace_for_registration()
-            url = 'sportregistrations:{role}:create'.format(role=namespace_for_role)
+            url, redirect_kwargs = self._get_redirect_url(sport_registrations)
             messages.success(request, 'You have been registered for {}.'.format(', '.join(sport_names)))
-            return redirect(reverse(url, kwargs={'pk': first_sport_reg.id}))
+            return redirect(reverse(url, kwargs=redirect_kwargs))
 
         return render(request, self.template_name, context)
 
@@ -124,6 +143,11 @@ class SportRegistrationDetailView(LoginRequiredMixin, ContextMixin, generic.View
         for role in SportRegistration.ROLES:
             role_url_mapping[role] = self._get_url_for_role(role, pk=sr.pk)
         context['role_url_mapping'] = role_url_mapping
+
+        tab = self.request.GET.get('tab', None)
+        roles = [role.lower() for role in sr_roles]
+        roles.append('available-roles')
+        context['tab'] = tab if tab in roles else None
         return context
 
     def get(self, request, *args, **kwargs):

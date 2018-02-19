@@ -8,7 +8,7 @@ from django.utils.text import slugify
 from accounts.tests import UserFactory
 from coaches.tests import CoachFactory
 from divisions.tests import DivisionFactory
-from escoresheet.utils.testing import BaseTestCase
+from ayrabo.utils.testing import BaseTestCase
 from leagues.tests import LeagueFactory
 from managers.tests import ManagerFactory
 from players.tests import HockeyPlayerFactory
@@ -72,7 +72,7 @@ class SportRegistrationModelTests(BaseTestCase):
                          reverse('sportregistrations:detail', kwargs={'pk': ice_hockey.pk}))
 
     def test_current_available_roles(self):
-        self.assertListEqual(SportRegistration.ROLES, ['Player', 'Coach', 'Referee', 'Manager'])
+        self.assertListEqual(SportRegistration.ROLES, ['Player', 'Coach', 'Referee', 'Manager', 'Scorekeeper'])
 
     def test_set_roles_param_not_a_list(self):
         sr = SportRegistrationFactory()
@@ -121,14 +121,14 @@ class SportRegistrationModelTests(BaseTestCase):
         self.assertFalse(sr.has_role('InvalidRole'))
 
     def test_user_unique_with_sport(self):
-        user = UserFactory(email='testing@example.com')
+        user = UserFactory(email='testing@ayrabo.com')
         sport = SportFactory(name='Ice Hockey')
         SportRegistrationFactory(user=user, sport=sport)
         with self.assertRaises(IntegrityError):
             SportRegistrationFactory(user=user, sport=sport)
 
     def test_get_related_role_objects_all_roles(self):
-        user = UserFactory(email='testing@example.com')
+        user = UserFactory(email='testing@ayrabo.com')
         sport = SportFactory(name='Ice Hockey')
         league = LeagueFactory(full_name='Long Island Amateur Hockey League', sport=sport)
         division = DivisionFactory(name='Midget Minor AA', league=league)
@@ -164,7 +164,7 @@ class SportRegistrationModelTests(BaseTestCase):
         self.assertNotIn(r, referees)
 
     def test_get_related_role_objects_3_roles(self):
-        user = UserFactory(email='testing@example.com')
+        user = UserFactory(email='testing@ayrabo.com')
         sport = SportFactory(name='Ice Hockey')
         league = LeagueFactory(full_name='Long Island Amateur Hockey League', sport=sport)
         division = DivisionFactory(name='Midget Minor AA', league=league)
@@ -181,7 +181,7 @@ class SportRegistrationModelTests(BaseTestCase):
         self.assertListEqual(referee, list(result.get('Referee')))
 
     def test_get_related_role_objects_2_roles(self):
-        user = UserFactory(email='testing@example.com')
+        user = UserFactory(email='testing@ayrabo.com')
         sport = SportFactory(name='Ice Hockey')
         league = LeagueFactory(full_name='Long Island Amateur Hockey League', sport=sport)
         division = DivisionFactory(name='Midget Minor AA', league=league)
@@ -195,7 +195,7 @@ class SportRegistrationModelTests(BaseTestCase):
         self.assertListEqual(coach, list(result.get('Coach')))
 
     def test_get_related_role_objects_1_role(self):
-        user = UserFactory(email='testing@example.com')
+        user = UserFactory(email='testing@ayrabo.com')
         sport = SportFactory(name='Ice Hockey')
         league = LeagueFactory(full_name='Long Island Amateur Hockey League', sport=sport)
         division = DivisionFactory(name='Midget Minor AA', league=league)
@@ -207,7 +207,7 @@ class SportRegistrationModelTests(BaseTestCase):
         self.assertListEqual(manager, list(result.get('Manager')))
 
     def test_get_related_role_objects_no_roles(self):
-        user = UserFactory(email='testing@example.com')
+        user = UserFactory(email='testing@ayrabo.com')
         sport = SportFactory(name='Ice Hockey')
         sr = SportRegistrationFactory(user=user, sport=sport)
         sr.set_roles([])
@@ -215,7 +215,7 @@ class SportRegistrationModelTests(BaseTestCase):
         self.assertDictEqual({}, result)
 
     def test_remove_role_when_role_dne(self):
-        user = UserFactory(email='testing@example.com')
+        user = UserFactory(email='testing@ayrabo.com')
         sport = SportFactory(name='Ice Hockey')
         sr = SportRegistrationFactory(user=user, sport=sport)
         sr.set_roles(['Player', 'Coach'])
@@ -224,7 +224,7 @@ class SportRegistrationModelTests(BaseTestCase):
             sr.remove_role('Referee')
 
     def test_remove_role_when_last_role(self):
-        user = UserFactory(email='testing@example.com')
+        user = UserFactory(email='testing@ayrabo.com')
         sport = SportFactory(name='Ice Hockey')
         sr = SportRegistrationFactory(user=user, sport=sport)
         sr.set_roles(['Player'])
@@ -232,7 +232,7 @@ class SportRegistrationModelTests(BaseTestCase):
             sr.remove_role('Player')
 
     def test_remove_role_valid(self):
-        user = UserFactory(email='testing@example.com')
+        user = UserFactory(email='testing@ayrabo.com')
         sport = SportFactory(name='Ice Hockey')
         sr = SportRegistrationFactory(user=user, sport=sport)
         roles = ['Player', 'Coach', 'Referee', 'Manager']
@@ -241,7 +241,7 @@ class SportRegistrationModelTests(BaseTestCase):
         self.assertEqual(sorted(sr.roles), sorted(list(set(roles) - {'Coach'})))
 
     def test_remove_role_case_insensitive(self):
-        user = UserFactory(email='testing@example.com')
+        user = UserFactory(email='testing@ayrabo.com')
         sport = SportFactory(name='Ice Hockey')
         sr = SportRegistrationFactory(user=user, sport=sport)
         roles = ['Player', 'Coach', 'Referee', 'Manager']

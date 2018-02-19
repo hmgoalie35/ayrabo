@@ -3,7 +3,7 @@ from django.urls import reverse
 
 from accounts.tests import UserFactory
 from divisions.tests import DivisionFactory
-from escoresheet.utils.testing import BaseTestCase
+from ayrabo.utils.testing import BaseTestCase
 from leagues.tests import LeagueFactory
 from managers.tests import ManagerFactory
 from players.tests import HockeyPlayerFactory
@@ -23,7 +23,7 @@ class SeasonRosterCreateViewTests(BaseTestCase):
         cls.liahl_season = SeasonFactory(league=cls.liahl)
 
     def setUp(self):
-        self.email = 'user@example.com'
+        self.email = 'user@ayrabo.com'
         self.password = 'myweakpassword'
         self.user = UserFactory(email=self.email, password=self.password)
 
@@ -141,7 +141,11 @@ class SeasonRosterCreateViewTests(BaseTestCase):
     # This is only testing hockey season rosters
     # TODO add in tests for other sports as they become available
     def test_post_valid_hockeyseasonroster_form_data(self):
-        post_data = {'season': [self.liahl_season.pk], 'players': [player.pk for player in self.hockey_players]}
+        post_data = {
+            'season': [self.liahl_season.pk],
+            'players': [player.pk for player in self.hockey_players],
+            'name': 'Main Squad'
+        }
         response = self.client.post(
                 reverse('teams:season_rosters:create', kwargs={'team_pk': self.icecats.pk}),
                 data=post_data,
@@ -170,7 +174,6 @@ class SeasonRosterCreateViewTests(BaseTestCase):
 
     def test_duplicate_name_for_season_and_team(self):
         HockeySeasonRosterFactory(season=self.liahl_season, team=self.icecats, name='Main Squad')
-        HockeySeasonRosterFactory(season=self.liahl_season, team=self.icecats, name='')
         player_ids = [player.pk for player in self.hockey_players]
         post_data = {'season': [self.liahl_season.pk], 'players': player_ids, 'name': 'Main Squad'}
         response = self.client.post(self.url, data=post_data)
@@ -187,7 +190,7 @@ class SeasonRosterListViewTests(BaseTestCase):
         cls.liahl_season = SeasonFactory(league=cls.liahl)
 
     def setUp(self):
-        self.email = 'user@example.com'
+        self.email = 'user@ayrabo.com'
         self.password = 'myweakpassword'
         self.user = UserFactory(email=self.email, password=self.password)
 
@@ -266,7 +269,7 @@ class SeasonRosterUpdateViewTests(BaseTestCase):
         cls.liahl_season = SeasonFactory(league=cls.liahl)
 
     def setUp(self):
-        self.email = 'user@example.com'
+        self.email = 'user@ayrabo.com'
         self.password = 'myweakpassword'
         self.user = UserFactory(email=self.email, password=self.password)
 
@@ -371,7 +374,8 @@ class SeasonRosterUpdateViewTests(BaseTestCase):
     def test_post_valid_changed_form(self):
         post_data = {
             'players': self.hockey_player_ids,
-            'default': True
+            'default': True,
+            'name': 'Bash Brothers'
         }
         response = self.client.post(self.url, data=post_data, follow=True)
         self.assertTrue(HockeySeasonRoster.objects.first().default)

@@ -2,7 +2,7 @@ from django.urls import reverse
 
 from accounts.tests import UserFactory
 from divisions.tests import DivisionFactory
-from escoresheet.utils.testing import BaseTestCase
+from ayrabo.utils.testing import BaseTestCase
 from leagues.tests import LeagueFactory
 from managers.forms import ManagerForm
 from managers.formset_helpers import ManagerFormSetHelper
@@ -25,7 +25,7 @@ class ManagersCreateViewTests(BaseTestCase):
 
     def setUp(self):
         self.url = 'sportregistrations:{role}:create'
-        self.email = 'user@example.com'
+        self.email = 'user@ayrabo.com'
         self.password = 'myweakpassword'
         self.post_data = {
             'managers-TOTAL_FORMS': 1,

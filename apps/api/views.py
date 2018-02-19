@@ -1,7 +1,6 @@
 from rest_framework import generics
 from rest_framework.authtoken.models import Token
 from rest_framework.generics import get_object_or_404
-from rest_framework.permissions import AllowAny
 from rest_framework.renderers import TemplateHTMLRenderer
 from rest_framework.response import Response
 from rest_framework.reverse import reverse as drf_reverse
@@ -18,7 +17,6 @@ class APIHomeView(APIView):
     displays "Api Home" as a breadcrumb.
     """
     renderer_classes = [TemplateHTMLRenderer]
-    permission_classes = [AllowAny]
 
     def get(self, request, *args, **kwargs):
         api_versions = {}

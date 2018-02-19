@@ -1,7 +1,7 @@
 from behave import *
 
 from api.tests import TokenFactory
-from escoresheet.utils.testing import get_user
+from ayrabo.utils.testing import get_user
 
 
 @step('"(?P<username_or_email>.*)" has "(?P<token>.*)" as an api token')

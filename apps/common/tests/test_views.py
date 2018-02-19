@@ -6,7 +6,7 @@ from django.urls import reverse
 
 from accounts.tests import UserFactory
 from divisions.tests import DivisionFactory
-from escoresheet.utils.testing import BaseTestCase
+from ayrabo.utils.testing import BaseTestCase
 from leagues.tests import LeagueFactory
 from sports.tests import SportFactory, SportRegistrationFactory
 from teams.tests import TeamFactory
@@ -25,7 +25,7 @@ class BaseCreateRelatedObjectsViewTests(BaseTestCase):
 
     def setUp(self):
         self.url = 'sportregistrations:{role}:create'
-        self.email = 'user@example.com'
+        self.email = 'user@ayrabo.com'
         self.password = 'myweakpassword'
         self.post_data = {
             'players-TOTAL_FORMS': 1,
@@ -88,7 +88,7 @@ class BaseCreateRelatedObjectsViewTests(BaseTestCase):
 class CsvBulkUploadViewTests(BaseTestCase):
     def setUp(self):
         self.url = reverse('bulk_upload_locations')
-        self.email = 'user@example.com'
+        self.email = 'user@ayrabo.com'
         self.password = 'myweakpassword'
         self.test_file_path = os.path.join(settings.BASE_DIR, 'static', 'csv_examples')
         self.user = UserFactory(email=self.email, password=self.password, is_staff=True)
@@ -99,7 +99,7 @@ class CsvBulkUploadViewTests(BaseTestCase):
         self.assertRedirects(response, result_url)
 
     def test_staff_member_required(self):
-        email = 'user1@example.com'
+        email = 'user1@ayrabo.com'
         password = 'myweakpassword'
         UserFactory(email=email, password=password, is_staff=False)
         self.client.login(email=email, password=password)

@@ -5,11 +5,11 @@ Feature: List what sports I am currently registered for
 
   Background: User account exists
     Given The following confirmed user account exists
-      | first_name | last_name | email            | password       |
-      | John       | Doe       | user@example.com | myweakpassword |
-    Given "user@example.com" is completely registered for "Ice Hockey" with roles "Player, Coach, Referee, Manager"
-    And "user@example.com" is completely registered for "Baseball" with roles "Player, Coach, Referee, Manager"
-    And I login with "user@example.com" and "myweakpassword"
+      | first_name | last_name | email           | password       |
+      | John       | Doe       | user@ayrabo.com | myweakpassword |
+    Given "user@ayrabo.com" is completely registered for "Ice Hockey" with roles "Player, Coach, Referee, Manager"
+    And "user@ayrabo.com" is completely registered for "Baseball" with roles "Player, Coach, Referee, Manager"
+    And I login with "user@ayrabo.com" and "myweakpassword"
 
   Scenario: View my sport registrations
     Given I am on the "account_home" page

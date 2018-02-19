@@ -12,8 +12,8 @@ from django.views import generic
 from django.views.generic.base import ContextMixin
 
 from common.forms import CsvBulkUploadForm
-from escoresheet.utils import handle_sport_not_configured
-from escoresheet.utils.exceptions import SportNotConfiguredException
+from ayrabo.utils import handle_sport_not_configured
+from ayrabo.utils.exceptions import SportNotConfiguredException
 from leagues.models import League
 from players.models import AbstractPlayer
 from sports.models import SportRegistration
@@ -96,6 +96,14 @@ class BaseCreateRelatedObjectsView(LoginRequiredMixin, ContextMixin, generic.Vie
         context['role'] = role
         return context
 
+    def get_user_registered_for_all_msg(self, role):
+        role = role.lower()
+        if role == 'referee':
+            msg = 'leagues'
+        else:
+            msg = 'teams'
+        return self.already_registered_msg.format(msg)
+
     def get(self, *args, **kwargs):
         try:
             context = self.get_context_data(**kwargs)
@@ -104,7 +112,7 @@ class BaseCreateRelatedObjectsView(LoginRequiredMixin, ContextMixin, generic.Vie
         if context.get('user_registered_for_all', False):
             role = self.get_role()
             sr = context.get('sport_registration')
-            messages.info(self.request, self.already_registered_msg.format('leagues' if role == 'Referee' else 'teams'))
+            messages.info(self.request, self.get_user_registered_for_all_msg(role))
             return redirect(sr.get_absolute_url())
 
         return render(self.request, self.get_template_name(), context)
@@ -118,7 +126,7 @@ class BaseCreateRelatedObjectsView(LoginRequiredMixin, ContextMixin, generic.Vie
         if context.get('user_registered_for_all', False):
             role = self.get_role()
             sr = context.get('sport_registration')
-            messages.info(self.request, self.already_registered_msg.format('leagues' if role == 'Referee' else 'teams'))
+            messages.info(self.request, self.get_user_registered_for_all_msg(role))
             return redirect(sr.get_absolute_url())
 
         formset = context.get('formset')
@@ -185,14 +193,16 @@ class CsvBulkUploadView(LoginRequiredMixin, generic.FormView):
         csv_file = TextIOWrapper(uploaded_file)
         reader = csv.DictReader(csv_file)
         data = {}
+        raw_data = []
         count = 0
         for row in reader:
+            raw_data.append(row)
             row_data = self.get_row_data(row, count)
             data.update(row_data)
             count += 1
         data['form-TOTAL_FORMS'] = count
         data['form-INITIAL_FORMS'] = 0
-        return data
+        return data, raw_data
 
     def get_formset_class(self):
         kwargs = {}
@@ -202,11 +212,14 @@ class CsvBulkUploadView(LoginRequiredMixin, generic.FormView):
             kwargs['form'] = self.model_form_class
         return forms.modelformset_factory(self.model, **kwargs)
 
+    def get_model_form_kwargs(self, data, raw_data):
+        return {}
+
     def form_valid(self, form):
         uploaded_file = form.cleaned_data.get('file')
-        data = self.parse_data(uploaded_file)
+        data, raw_data = self.parse_data(uploaded_file)
         FormSetClass = self.get_formset_class()
-        formset = FormSetClass(data)
+        formset = FormSetClass(data, form_kwargs=self.get_model_form_kwargs(data, raw_data))
         if not formset.is_valid():
             context = self.get_context_data()
             context['formset'] = formset

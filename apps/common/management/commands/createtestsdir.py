@@ -49,11 +49,11 @@ class Command(BaseCommand):
 
         # Create test_models file
         test_models_file_path = os.path.join(tests_module_path, 'test_models.py')
-        self.create_file(test_models_file_path, 'from escoresheet.utils.testing import BaseTestCase\n')
+        self.create_file(test_models_file_path, 'from ayrabo.utils.testing import BaseTestCase\n')
 
         # Create test_views file
         test_views_file_path = os.path.join(tests_module_path, 'test_views.py')
-        self.create_file(test_views_file_path, 'from escoresheet.utils.testing import BaseTestCase\n')
+        self.create_file(test_views_file_path, 'from ayrabo.utils.testing import BaseTestCase\n')
 
         # Create factories module
         factories_module_path = os.path.join(tests_module_path, 'factories')

@@ -6,7 +6,7 @@ cache:
     - node_modules
 
 python:
-  - "3.5"
+  - "3.6"
 
 install:
   - source $HOME/.nvm/nvm.sh
@@ -22,14 +22,14 @@ env:
 #    - TEST_SUITE=accept
 
   global:
-    - DJANGO_SETTINGS_MODULE="escoresheet.settings.settings"
-    - TRAVIS_NODE_VERSION="6"
+    - DJANGO_SETTINGS_MODULE="ayrabo.settings.settings"
+    - TRAVIS_NODE_VERSION="8"
 
 script:
   - bash run_tests.sh # $TEST_SUITE
 
 git:
-  depth: 10
+  depth: 5
 
 branches:
   only:

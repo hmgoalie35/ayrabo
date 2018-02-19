@@ -8,12 +8,12 @@ from seasons.models import Season
 
 
 class SeasonFactory(django.DjangoModelFactory):
-    class Meta:
-        model = Season
-
     start_date = factory.LazyFunction(datetime.date.today)
     end_date = factory.LazyAttribute(lambda obj: obj.start_date + datetime.timedelta(days=365))
     league = factory.SubFactory(LeagueFactory)
+
+    class Meta:
+        model = Season
 
     @post_generation
     def teams(self, create, extracted, **kwargs):

@@ -4,14 +4,14 @@ Feature: Multiple manager registration
 
   Background: Finish userprofile creation
     Given The following confirmed user account exists
-      | first_name | last_name | email            | password       |
-      | John       | Doe       | user@example.com | myweakpassword |
+      | first_name | last_name | email           | password       |
+      | John       | Doe       | user@ayrabo.com | myweakpassword |
     And The following team object exists
       | name                  | division        | league                            | sport      |
       | Green Machine IceCats | Midget Minor AA | Long Island Amateur Hockey League | Ice Hockey |
       | Long Island Edge      | Midget Minor AA | Long Island Amateur Hockey League | Ice Hockey |
-    And "user@example.com" is registered for "Ice Hockey" with role "Manager"
-    And I login with "user@example.com" and "myweakpassword"
+    And "user@ayrabo.com" is registered for "Ice Hockey" with role "Manager"
+    And I login with "user@ayrabo.com" and "myweakpassword"
 
   Scenario: Submit valid manager form
     Given I am on the "sports.SportRegistration" "" "sportregistrations:managers:create" page with url kwargs "pk=pk"

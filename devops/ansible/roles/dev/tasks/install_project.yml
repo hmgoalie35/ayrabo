@@ -1,3 +1,8 @@
+- name: Copy over .env
+  template:
+    src: ../../deploy/templates/.env.example.j2
+    dest: ../../.env
+
 - name: Create venv and install requirements
   pip:
     chdir: "{{ project_root }}"
@@ -6,11 +11,13 @@
     state: present
     requirements: "requirements.txt"
 
-- name: Install npm packages
-  npm:
-    path: "{{ project_root }}"
-    production: no
-    state: present
+  # The npm module was only working w/ state: latest after the node v8 update. It doesn't seem like it was actually
+  # updating the packages to the latest versions but I don't want to take a chance.
+  - name: Install npm packages
+    shell: npm install
+    args:
+      chdir: "{{ project_root }}"
+      creates: "{{ project_root }}/node_modules"
 
 - name: Install pre-commit
   shell: "source {{ venv_path }}/bin/activate && pre-commit install"
@@ -20,8 +27,8 @@
 
 - name: Symlinking local settings file
   file:
-    path: "{{ project_root }}/escoresheet/settings/local_settings.py"
-    src: "{{ project_root }}/escoresheet/settings/local_settings.py.dev"
+    path: "{{ project_root }}/ayrabo/settings/local_settings.py"
+    src: "{{ project_root }}/ayrabo/settings/local_settings.dev.py"
     state: link
 
 # If getting errors make sure have latest docker-py, docker-compose, PyYAML, docker for pip2 and pip3. Use -U

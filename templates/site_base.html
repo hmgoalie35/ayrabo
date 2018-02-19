@@ -1,4 +1,4 @@
-{% load webpack_static from webpack_loader %}
+{% load webpack_static render_bundle get_files from webpack_loader %}
 
 <!DOCTYPE html>
 <html lang="{{ LANGUAGE_CODE }}">
@@ -6,16 +6,32 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>escoresheet | {% block title %}Sport scoresheets for the digital age{% endblock %}</title>
+  <title>{% block title %}Sport scoresheets for the digital age{% endblock %} | ayrabo</title>
   <!--[if lt IE 9]>
       <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
       <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
   <![endif]-->
+  <script>
+    var modernBrowser = 'fetch' in window && 'Promise' in window && 'assign' in Object && 'keys' in Object;
+    if (!modernBrowser) {
+      console.log('Old browser detected, downloading polyfills...');
+      var scriptElement = document.createElement('script');
+      scriptElement.async = false;
+      {% get_files 'polyfills' 'js' as polyfills %}
+      scriptElement.src = '{{ polyfills.0.url }}';
+      document.head.appendChild(scriptElement);
+    }
+  </script>
 
-  <link rel="stylesheet" href="{% webpack_static 'css/main.css' %}">
+
+  {% render_bundle 'styleMain' 'css' %}
+  {% render_bundle 'vendor' 'css' %}
   <link rel="stylesheet" href="{% webpack_static 'vendor/font-awesome/css/font-awesome.min.css' %}">
   <link rel="stylesheet" href="{% webpack_static 'vendor/animate.min.css' %}">
+  <link rel="stylesheet" href="{% webpack_static 'vendor/noty.css' %}">
   <link rel="stylesheet" href="{% webpack_static 'vendor/bootstrap-select/css/bootstrap-select.min.css' %}">
+  <link rel="stylesheet" href="{% webpack_static 'vendor/bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css' %}">
+  <link rel="stylesheet" href="{% webpack_static 'vendor/datatables/dataTables.bootstrap.css' %}">
 
   {% block extra_style %}
   {% endblock %}
@@ -31,6 +47,17 @@
 {% block navbar %}
   {% include 'navbar.html' %}
 {% endblock %}
+
+<div class="hidden api-error js-api-error">
+  <div class="alert alert-danger alert-dismissible" role="alert">
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+      <i aria-hidden="true" class="fa fa-close"></i>
+    </button>
+    <i class="fa fa-exclamation-triangle"></i>
+    &nbsp;We are currently experiencing some issues. Please try refreshing the page.
+  </div>
+</div>
+
 
 {% block content %}
 {% endblock %}
@@ -58,15 +85,22 @@
 
 <script src="{% webpack_static 'vendor/jquery.min.js' %}"></script>
 <script src="{% webpack_static 'vendor/bootstrap.min.js' %}"></script>
-<script src="{% webpack_static 'vendor/jquery.noty.packaged.min.js' %}"></script>
+<script src="{% webpack_static 'vendor/noty.min.js' %}"></script>
+<script src="{% webpack_static 'vendor/moment.min.js' %}"></script>
+<script src="{% webpack_static 'vendor/locales.min.js' %}"></script>
+<script src="{% webpack_static 'vendor/moment-timezone.min.js' %}"></script>
 <script src="{% webpack_static 'vendor/bootstrap-select/js/bootstrap-select.min.js' %}"></script>
-<script src="{% webpack_static 'js/main.js' %}"></script>
+<script src="{% webpack_static 'vendor/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js' %}"></script>
+<script src="{% webpack_static 'vendor/datatables/jquery.dataTables.js' %}"></script>
+<script src="{% webpack_static 'vendor/datatables/dataTables.bootstrap.js' %}"></script>
+{% render_bundle 'jqueryMain' 'js' %}
+{% render_bundle 'reactMain' 'js' %}
 
 {% block extra_js %}
 {% endblock %}
 
 {% block messages %}
-  {# noty needs jquery to be loaded #}
+  {# Need the noty script to be loaded first #}
   {% include 'messages.html' %}
 {% endblock %}
 

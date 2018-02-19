@@ -7,6 +7,7 @@ from django.db import models
 from django.db.models.signals import m2m_changed
 from django.dispatch import receiver
 from django.urls import reverse
+from django.utils import timezone
 
 from teams.models import Team
 
@@ -103,17 +104,17 @@ class AbstractSeasonRoster(models.Model):
     being scratched, hurt, etc.
     Multiple season rosters can be created for a season/team.
     """
+    name = models.CharField(verbose_name='Name', max_length=255)
     season = models.ForeignKey(Season)
     team = models.ForeignKey(Team, related_name='season_rosters')
     default = models.BooleanField(default=False, verbose_name='Default Season Roster')
-    created = models.DateTimeField(auto_now_add=True, verbose_name='Created')
-    name = models.CharField(verbose_name='Name', max_length=255, blank=True)
+    created = models.DateTimeField(default=timezone.now, verbose_name='Created')
     created_by = models.ForeignKey(User, null=True, related_name='season_rosters', verbose_name='Created By')
 
     def clean(self):
         if hasattr(self, 'name') and hasattr(self, 'team') and hasattr(self, 'season'):
             model_cls = self.__class__
-            if model_cls.objects.filter(name=self.name, team=self.team, season=self.season).exclude(name='').exclude(
+            if model_cls.objects.filter(name=self.name, team=self.team, season=self.season).exclude(
                     pk=self.pk).exists():
                 raise ValidationError({'name': 'Name must be unique for this team and season.'})
 

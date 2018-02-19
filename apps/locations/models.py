@@ -2,13 +2,14 @@ import re
 
 from django.core.validators import RegexValidator
 from django.db import models
+from django.utils import timezone
 from django.utils.text import slugify
 from localflavor.us import models as us_models
 from localflavor.us.us_states import US_STATES
 
-from escoresheet.utils.model_fields import WebsiteField
+from ayrabo.utils.model_fields import WebsiteField
 
-PHONE_NUMBER_REGEX = re.compile(r'^\(?[2-9]\d{2}\)?-\d{3}-\d{4}$')
+PHONE_NUMBER_REGEX = re.compile(r'^\(?[2-9]\d{2}\)? \d{3}-\d{4}$')
 
 
 class Location(models.Model):
@@ -25,7 +26,7 @@ class Location(models.Model):
                                         RegexValidator(regex=PHONE_NUMBER_REGEX, message='Enter a valid phone number.',
                                                        code='invalid')])
     website = WebsiteField()
-    created = models.DateTimeField(auto_now_add=True, verbose_name='Created')
+    created = models.DateTimeField(default=timezone.now, verbose_name='Created')
     updated = models.DateTimeField(auto_now=True, verbose_name='Updated')
 
     def clean(self):
@@ -33,6 +34,9 @@ class Location(models.Model):
         # blank slug because this doesn't check if self.name exists. 2. validate_unique runs after clean, so don't want
         # to save things before all validation is finished.
         self.slug = slugify(self.name)
+
+    class Meta:
+        ordering = ['name']
 
     def __str__(self):
         return self.name
@@ -45,7 +49,7 @@ class TeamLocation(models.Model):
     team = models.ForeignKey('teams.Team')
     location = models.ForeignKey(Location)
     primary = models.BooleanField(default=False, verbose_name='Primary Location')
-    created = models.DateTimeField(auto_now_add=True, verbose_name='Created')
+    created = models.DateTimeField(default=timezone.now, verbose_name='Created')
     updated = models.DateTimeField(auto_now=True, verbose_name='Updated')
 
     class Meta:

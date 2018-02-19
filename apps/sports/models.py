@@ -1,12 +1,14 @@
 from django.contrib.auth.models import User
 from django.db import models
 from django.urls import reverse
+from django.utils import timezone
 from django.utils.text import slugify
 
 import coaches as coaches_app
 import managers as managers_app
 import players as players_app
 import referees as referees_app
+import scorekeepers as scorekeepers_app
 from .exceptions import RoleDoesNotExistException, InvalidNumberOfRolesException
 
 
@@ -18,7 +20,7 @@ class Sport(models.Model):
                             error_messages={'unique': 'Sport with this name already exists (case-insensitive)'})
     slug = models.SlugField(unique=True)
     description = models.TextField(null=True, blank=True)
-    created = models.DateTimeField(auto_now_add=True, verbose_name='Created')
+    created = models.DateTimeField(default=timezone.now, verbose_name='Created')
 
     class Meta:
         ordering = ['name']
@@ -41,7 +43,7 @@ class SportRegistration(models.Model):
     Player and Referee and another tied to sport Soccer with a roles_mask corresponding to Coach
     """
 
-    ROLES = ['Player', 'Coach', 'Referee', 'Manager']
+    ROLES = ['Player', 'Coach', 'Referee', 'Manager', 'Scorekeeper']
 
     user = models.ForeignKey(User)
     sport = models.ForeignKey(Sport)
@@ -118,6 +120,9 @@ class SportRegistration(models.Model):
         """
         return role.title() in self.roles or role in self.roles
 
+    def _get_objects(self, model_cls, filter_kwargs, selected_related=[]):
+        return model_cls.objects.active().filter(**filter_kwargs).select_related(*selected_related)
+
     def get_related_role_objects(self):
         """
         This function iterates through all of the roles for the sport registration and retrieves the appropriate
@@ -136,27 +141,33 @@ class SportRegistration(models.Model):
         obj_role_mappings = {}
         roles = self.roles
         user = self.user_id
+        sport = self.sport
+        sport_name = sport.name
+
         for role in roles:
             if role == 'Player':
-                sport_name = self.sport.name
                 players = None
                 model_cls = SPORT_MODEL_MAPPINGS.get(sport_name)
                 if model_cls is not None:
-                    players = model_cls.objects.active().filter(
-                            user=user, sport=self.sport).select_related('team', 'team__division')
+                    players = self._get_objects(model_cls, {'user': user, 'sport': sport}, ['team', 'team__division'])
                 obj_role_mappings['Player'] = players if players and players.exists() else None
             elif role == 'Coach':
-                coaches = coaches_app.models.Coach.objects.active().filter(
-                        user=user, team__division__league__sport=self.sport).select_related('team', 'team__division')
+                coaches = self._get_objects(coaches_app.models.Coach,
+                                            {'user': user, 'team__division__league__sport': sport},
+                                            ['team', 'team__division'])
                 obj_role_mappings['Coach'] = coaches if coaches.exists() else None
             elif role == 'Manager':
-                managers = managers_app.models.Manager.objects.active().filter(
-                        user=user, team__division__league__sport=self.sport).select_related('team', 'team__division')
+                managers = self._get_objects(managers_app.models.Manager,
+                                             {'user': user, 'team__division__league__sport': sport},
+                                             ['team', 'team__division'])
                 obj_role_mappings['Manager'] = managers if managers.exists() else None
             elif role == 'Referee':
-                referees = referees_app.models.Referee.objects.active().filter(
-                        user=user, league__sport=self.sport).select_related('league')
+                referees = self._get_objects(referees_app.models.Referee, {'user': user, 'league__sport': sport},
+                                             ['league'])
                 obj_role_mappings['Referee'] = referees if referees.exists() else None
+            elif role == 'Scorekeeper':
+                scorekeepers = self._get_objects(scorekeepers_app.models.Scorekeeper, {'user': user, 'sport': sport})
+                obj_role_mappings['Scorekeeper'] = scorekeepers if scorekeepers.exists() else None
         return obj_role_mappings
 
     # TODO Figure out a better way to do this, it seems really inefficient to run get_related_objects on every request.
@@ -177,6 +188,8 @@ class SportRegistration(models.Model):
             namespace = 'referees'
         elif self.has_role('Manager') and related_objects.get('Manager') is None:
             namespace = 'managers'
+        elif self.has_role('Scorekeeper') and related_objects.get('Scorekeeper') is None:
+            namespace = 'scorekeepers'
         else:
             namespace = None
 

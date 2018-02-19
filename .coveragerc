@@ -14,7 +14,7 @@ omit =
     */migrations/*
     */apps.py
     */tests/*
-    escoresheet/utils/*
+    ayrabo/utils/*
     */management/*
     */test_*.py
     venv/*

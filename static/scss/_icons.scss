@@ -27,3 +27,15 @@
 .fa-danger {
   @extend .text-danger;
 }
+
+.fa-warning {
+  color: $brand-warning;
+}
+
+.fa-white {
+  color: $white;
+}
+
+.fa-ayrabo-gray {
+  color: $ess-gray;
+}

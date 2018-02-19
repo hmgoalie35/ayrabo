@@ -1,14 +1,15 @@
 from django.shortcuts import get_object_or_404
 from rest_framework import views, status
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
-from api import permissions
+from api.permissions import IsObjectOwner
 from sports.exceptions import InvalidNumberOfRolesException
 from sports.models import SportRegistration
 
 
 class BaseDeactivateApiView(views.APIView):
-    permission_classes = (permissions.IsObjectOwner,)
+    permission_classes = (IsAuthenticated, IsObjectOwner)
 
     def get_url_lookup_kwarg(self):
         raise NotImplementedError()
@@ -42,11 +43,14 @@ class BaseDeactivateApiView(views.APIView):
         obj.is_active = False
         obj.save()
 
+        sport = sport_registration.sport
         filter_kwargs = {'user': user}
         if role == 'referee':
-            filter_kwargs['league__sport'] = sport_registration.sport
+            filter_kwargs['league__sport'] = sport
+        elif role == 'scorekeeper':
+            filter_kwargs['sport'] = sport
         else:
-            filter_kwargs['team__division__league__sport'] = sport_registration.sport
+            filter_kwargs['team__division__league__sport'] = sport
 
         active_objs = model_cls.objects.active().filter(**filter_kwargs)
         if not active_objs.exists():

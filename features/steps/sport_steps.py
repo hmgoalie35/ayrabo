@@ -17,5 +17,4 @@ def step_impl(context, sport_name):
 def step_impl(context):
     for row in context.table:
         data = row.as_dict()
-
         SportFactory(**data)

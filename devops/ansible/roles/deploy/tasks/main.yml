@@ -14,6 +14,7 @@
         repo: "{{ repo }}"
         clone: yes
         update: yes
+        depth: 5
         version: "{{ deployment_version }}"
         dest: "{{ ongoing_deployment }}"
 
@@ -30,11 +31,13 @@
         state: present
         requirements: "requirements.txt"
 
+    # The npm module was only working w/ state: latest after the node v8 update. It doesn't seem like it was actually
+    # updating the packages to the latest versions but I don't want to take a chance.
     - name: Install npm packages
-      npm:
-        path: "{{ ongoing_deployment }}"
-        production: yes
-        state: present
+      shell: npm install --production
+      args:
+        chdir: "{{ ongoing_deployment }}"
+        creates: "{{ ongoing_deployment }}/node_modules"
 
     - name: Run production webpack build
       command: npm run build

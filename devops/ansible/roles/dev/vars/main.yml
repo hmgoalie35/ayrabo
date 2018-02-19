@@ -1,3 +1,12 @@
 project_root: "{{ playbook_dir|dirname|dirname }}"
 venv_path: "{{ project_root }}/venv"
-venv_python_version: python3.5
+
+db_password: oW3G009MzbyGm1kyfugkV4G3n71QtDY7
+db_user: ess
+db_name: ess
+email_host: smtp.mailtrap.io
+email_host_user: REPLACE_ME
+email_host_password: REPLACE_ME
+email_port: 2525
+secret_key: REMOVE_THIS_LINE
+google_maps_api_key: ASK_HARRIS

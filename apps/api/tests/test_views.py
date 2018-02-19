@@ -15,7 +15,7 @@ class ObtainAuthTokenTests(APITestCase):
     """
 
     def test_token_created(self):
-        email = 'user@example.com'
+        email = 'user@ayrabo.com'
         password = 'myweakpassword'
         user = UserFactory(email=email, password=password)
         response = self.client.post(reverse('obtain_api_token'), data={'username': email, 'password': password})
@@ -26,7 +26,7 @@ class ObtainAuthTokenTests(APITestCase):
 
 class RevokeAuthTokenTests(APITestCase):
     def setUp(self):
-        self.email = 'user@example.com'
+        self.email = 'user@ayrabo.com'
         self.password = 'myweakpassword'
         self.user = UserFactory(email=self.email, password=self.password)
         SportRegistrationFactory(user=self.user)

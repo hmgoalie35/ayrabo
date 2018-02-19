@@ -76,7 +76,17 @@ $(function () {
     }
   };
 
+  var enableBootstrapSelect = function () {
+    var type = $("#role_type").data("text") === 'referee' ? 'league' : 'team';
+    var $selects = $("select[id$=-" + type + "]").filter(function (index, element) {
+      var elementId = $(element).attr('id');
+      return !elementId.includes("-__prefix__-");
+    });
+    $($selects).enableBootstrapSelect({ header: 'Select a ' + type });
+  };
+
   toggleAddFormBtnDisabled();
+  enableBootstrapSelect();
 
 
   $add_form_btn.click(function (e) {
@@ -93,6 +103,7 @@ $(function () {
       incrementTotalForms();
       toggleAddFormBtnDisabled();
       $('[data-toggle="tooltip"]').tooltip();
+      enableBootstrapSelect();
     }
     return false;
   });
@@ -104,6 +115,7 @@ $(function () {
       toggleAddFormBtnDisabled();
       fixFormNumbers($(this));
       $(this).remove();
+      enableBootstrapSelect();
     });
   });
 

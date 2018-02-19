@@ -1,12 +1,12 @@
-# escoresheet
+# ayrabo
 Sport scoresheets for the digital age
 
-Dev: [![Build Status](https://travis-ci.org/hmgoalie35/escoresheet.svg?branch=dev)](https://travis-ci.org/hmgoalie35/escoresheet)
+Dev: [![Build Status](https://travis-ci.org/hmgoalie35/ayrabo.svg?branch=dev)](https://travis-ci.org/hmgoalie35/ayrabo)
 
-Prod: [![Build Status](https://travis-ci.org/hmgoalie35/escoresheet.svg?branch=master)](https://travis-ci.org/hmgoalie35/escoresheet)
+Prod: [![Build Status](https://travis-ci.org/hmgoalie35/ayrabo.svg?branch=master)](https://travis-ci.org/hmgoalie35/ayrabo)
 
 # About
-This is a personal/entrepreneurial project I had the idea for in college and started working on after graduating in May 2016. Having played club ice hockey for 4 years, I was always shocked at how painful it was to report game scores to the league. Team managers would have to call and tell the league the score of the game, and then manually enter in goals, assists, penalties, etc. on a website. I thought it would be a great idea to simply cut out all of this unneeded work. Cue escoresheet (name is a WIP). The goal is to provide a web based scoresheet that can facilitate keeping score for scorekeepers and keep everybody updated with the progress of the game. Every goal, assist, penalty, etc. for a given game is automatically synced to our servers, which allows us to live update our site to keep the game stats up to date. I aim to make this compatible with any sport, not just ice hockey. Users can even register as players/coaches/managers/referees for multiple sports and all of their stats will be available in one centralized location.
+This is a personal/entrepreneurial project I had the idea for in college and started working on after graduating in May 2016. Having played club ice hockey for 4 years, I was always shocked at how painful it was to report game scores to the league. Team managers would have to call and tell the league the score of the game, and then manually enter in goals, assists, penalties, etc. on a website. I thought it would be a great idea to simply cut out all of this unneeded work. Cue ayrabo (name is a WIP). The goal is to provide a web based scoresheet that can facilitate keeping score for scorekeepers and keep everybody updated with the progress of the game. Every goal, assist, penalty, etc. for a given game is automatically synced to our servers, which allows us to live update our site to keep the game stats up to date. I aim to make this compatible with any sport, not just ice hockey. Users can even register as players/coaches/managers/referees for multiple sports and all of their stats will be available in one centralized location.
 
 One potential problem is internet access in/on arenas, fields, etc. In this day and age it is becoming easier and easier to put up a wifi hotspot in the most unexpected places. My solution to this is an offline application that can by synced with our servers when the game is finished. Simply connect the device to the internet and voila. 
 
@@ -20,23 +20,24 @@ A license has been intentionally excluded. See http://choosealicense.com/no-lice
 
 This project uses pre-commit, whenever you commit files flake8 and some other code quality tools will run to help prevent bugs/errors.
 
-1. Clone the repo and cd into it.
-2. Checkout the latest `dev` branch.
-3. Signup for mailtrap https://mailtrap.io/. Emails sent during development will go to mailtrap.
-4. Make sure `python python-dev python-pip libssl-dev libfontconfig` are installed.
+* Clone the repo and cd into it.
+* Checkout the latest `dev` branch.
+* Signup for [mailtrap](https://mailtrap.io/). Emails sent during development will go to mailtrap.
+* Install `python python-dev python-pip libssl-dev libfontconfig`
     * If on osx install `brew install libmagic`
-5. Install ansible: `sudo pip install ansible`
-6. Run `cp devops/ansible/roles/deploy/templates/.env.example.j2 .env`.
-    * Fill in the email values with your mailtrap settings.
+* Install `python3.6 python3.6-dev python3-pip`
+    * Can use `sudo add-apt-repository ppa:deadsnakes/ppa` if on linux.
+* Install [docker](https://docs.docker.com/engine/installation/)
+* Install ansible: `sudo pip install ansible==2.3.2.0`
+* Run `devops/ansible/devops.py -m dev -s dev`
+* A `.env` file will be generated in the repo
+    * Replace `REPLACE_ME` w/ your mailtrap settings.
     * Set `ALLOWED_HOSTS` TO `*`.
     * Remove the `SECRET_KEY` line.
     * Fill in the remaining values.
     * **NOTE:** Do not surround the values in `''` or `""`.
-7. Run `devops/ansible/devops.py -m dev -s dev -t install_dependencies`
-    * Your computer will reboot.
-8. After reboot run `devops/ansible/devops.py -m dev -s dev -t install_project`.
-9. In a separate terminal window run `npm run dev`.
-10. Run the test suite
+* In a separate terminal window run `npm run dev`.
+* Run the test suite
     * `source venv/bin/activate && bash run_tests.sh`.
 
 Docker is being used to run a postgres db server. You can start the postgres container by running `docker-compose up -d` from the `devops/docker` directory.
@@ -44,7 +45,7 @@ Docker is being used to run a postgres db server. You can start the postgres con
 # Integration Tests
 
 ### Writing Integration Tests
-  * See [Writing Integration Tests](https://github.com/hmgoalie35/escoresheet/wiki/Writing-Integration-Tests)
+  * See [Writing Integration Tests](https://github.com/hmgoalie35/ayrabo/wiki/Writing-Integration-Tests)
 
 ### Running Integration Tests (via selenium, phantomjs)
 1. Make sure you are in the directory where manage.py is
@@ -55,7 +56,7 @@ Docker is being used to run a postgres db server. You can start the postgres con
 # Functional and Unit Tests
 
 ### Writing Functional and Unit Tests
-  * See [Writing Unit & Functional Tests](https://github.com/hmgoalie35/escoresheet/wiki/Writing-Unit-&-Functional-Tests)
+  * See [Writing Unit & Functional Tests](https://github.com/hmgoalie35/ayrabo/wiki/Writing-Unit-&-Functional-Tests)
 
 ### Running Functional and Unit Tests
 1. Make sure you are in the directory where manage.py is

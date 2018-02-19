@@ -5,9 +5,9 @@ Feature: Change password when logged in
 
   Background: User account exists
     Given The following confirmed user accounts exists
-      | first_name | last_name | email            | password       |
-      | John       | Doe       | user@example.com | myweakpassword |
-    And "user@example.com" is completely registered for "Ice Hockey" with roles "Coach, Referee"
+      | first_name | last_name | email           | password       |
+      | John       | Doe       | user@ayrabo.com | myweakpassword |
+    And "user@ayrabo.com" is completely registered for "Ice Hockey" with roles "Coach, Referee"
 
   Scenario: Navigate to change password page when not authenticated
     Given I am on the "home" page
@@ -15,7 +15,7 @@ Feature: Change password when logged in
     Then I should be on the "account_login" page
 
   Scenario: Change password when entering correct current password
-    Given I login with "user@example.com" and "myweakpassword"
+    Given I login with "user@ayrabo.com" and "myweakpassword"
     And I am on the "account_change_password" page
     When I fill in "id_oldpassword" with "myweakpassword"
     And I fill in "id_password1" with "mynewpassword"
@@ -25,7 +25,7 @@ Feature: Change password when logged in
     And I should be on the "account_home" page
 
   Scenario: Change password when entering incorrect current password
-    Given I login with "user@example.com" and "myweakpassword"
+    Given I login with "user@ayrabo.com" and "myweakpassword"
     And I am on the "account_change_password" page
     When I fill in "id_oldpassword" with "notmycurrentpassword"
     And I fill in "id_password1" with "mynewpassword"

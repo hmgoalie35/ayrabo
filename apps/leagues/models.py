@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils import timezone
 from django.utils.text import slugify
 
 from sports.models import Sport
@@ -13,7 +14,7 @@ class League(models.Model):
     abbreviated_name = models.CharField(max_length=32, verbose_name='Abbreviated Name')
     slug = models.SlugField(verbose_name='Slug')
     sport = models.ForeignKey(Sport, verbose_name='Sport')
-    created = models.DateTimeField(auto_now_add=True, verbose_name='Created')
+    created = models.DateTimeField(default=timezone.now, verbose_name='Created')
 
     class Meta:
         ordering = ['full_name']

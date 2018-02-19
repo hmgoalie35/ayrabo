@@ -6,7 +6,7 @@ from django.urls import reverse
 from accounts.tests import UserFactory
 from coaches.tests import CoachFactory
 from divisions.tests import DivisionFactory
-from escoresheet.utils.testing import BaseTestCase
+from ayrabo.utils.testing import BaseTestCase
 from leagues.tests import LeagueFactory
 from players.tests import HockeyPlayerFactory
 from referees.tests import RefereeFactory
@@ -180,7 +180,7 @@ class MiddlewareAddsToSessionTests(BaseTestCase):
 
     @classmethod
     def setUpTestData(cls):
-        cls.user = UserFactory(email='user@example.com', password='myweakpassword')
+        cls.user = UserFactory(email='user@ayrabo.com', password='myweakpassword')
         cls.ice_hockey = SportFactory(name='Ice Hockey')
         cls.baseball = SportFactory(name='Baseball')
 

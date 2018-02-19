@@ -2,7 +2,9 @@ from django.conf.urls import url, include
 
 from . import views
 
-sport_urls = []
+sport_urls = [
+    url('^(?P<slug>[-\w]+)/games/', include('games.roster_urls', namespace='games')),
+]
 
 sport_registration_urls = [
     url(r'^create/$', views.SportRegistrationCreateView.as_view(), name='create'),
@@ -11,7 +13,8 @@ sport_registration_urls = [
     url(r'^(?P<pk>\d+)/players/', include('players.urls', namespace='players')),
     url(r'^(?P<pk>\d+)/coaches/', include('coaches.urls', namespace='coaches')),
     url(r'^(?P<pk>\d+)/referees/', include('referees.urls', namespace='referees')),
-    url(r'^(?P<pk>\d+)/managers/', include('managers.sport_registration_urls', namespace='managers')),
+    url(r'^(?P<pk>\d+)/managers/', include('managers.urls', namespace='managers')),
+    url(r'^(?P<pk>\d+)/scorekeepers/', include('scorekeepers.urls', namespace='scorekeepers')),
 ]
 
 urlpatterns = [

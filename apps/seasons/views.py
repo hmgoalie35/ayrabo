@@ -6,9 +6,9 @@ from django.urls import reverse
 from django.views import generic
 from django.views.generic.base import ContextMixin
 
-from escoresheet.utils import handle_sport_not_configured
-from escoresheet.utils.exceptions import SportNotConfiguredException
-from escoresheet.utils.mixins import UserHasRolesMixin
+from ayrabo.utils import handle_sport_not_configured
+from ayrabo.utils.exceptions import SportNotConfiguredException
+from ayrabo.utils.mixins import UserHasRolesMixin
 from managers.models import Manager
 from teams.models import Team
 from .forms import HockeySeasonRosterCreateForm, HockeySeasonRosterUpdateForm

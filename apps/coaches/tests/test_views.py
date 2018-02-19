@@ -6,7 +6,7 @@ from coaches.formset_helpers import CoachFormSetHelper
 from coaches.models import Coach
 from coaches.tests import CoachFactory
 from divisions.tests import DivisionFactory
-from escoresheet.utils.testing import BaseTestCase
+from ayrabo.utils.testing import BaseTestCase
 from leagues.tests import LeagueFactory
 from referees.tests import RefereeFactory
 from sports.tests import SportFactory, SportRegistrationFactory
@@ -25,7 +25,7 @@ class CoachesCreateViewTests(BaseTestCase):
 
     def setUp(self):
         self.url = 'sportregistrations:{role}:create'
-        self.email = 'user@example.com'
+        self.email = 'user@ayrabo.com'
         self.password = 'myweakpassword'
         self.post_data = {
             'coaches-TOTAL_FORMS': 1,
@@ -299,7 +299,7 @@ class CoachesUpdateViewTests(BaseTestCase):
     def setUpTestData(cls):
         cls.ice_hockey = SportFactory(name='Ice Hockey')
         cls.url = 'sportregistrations:coaches:update'
-        cls.email = 'user@example.com'
+        cls.email = 'user@ayrabo.com'
         cls.password = 'myweakpassword'
         cls.user = UserFactory(email=cls.email, password=cls.password)
         cls.league = LeagueFactory(full_name='Long Island Amateur Hockey League', sport=cls.ice_hockey)

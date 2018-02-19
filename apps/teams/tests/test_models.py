@@ -2,7 +2,7 @@ from django.db.utils import IntegrityError
 from django.utils.text import slugify
 
 from divisions.tests import DivisionFactory
-from escoresheet.utils.testing import BaseTestCase
+from ayrabo.utils.testing import BaseTestCase
 from leagues.tests import LeagueFactory
 from sports.tests import SportFactory
 from teams.models import Team

@@ -11,7 +11,7 @@ from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.select import Select
 from selenium.webdriver.support.ui import WebDriverWait
 
-from escoresheet.utils.testing import get_user
+from ayrabo.utils.testing import string_to_kwargs_dict, get_user
 
 
 def find_element(context, element_to_find, multiple=False):
@@ -37,23 +37,6 @@ def find_element(context, element_to_find, multiple=False):
         except (NoSuchElementException, WebDriverException):
             pass
     raise NoSuchElementException('{element} does not exist on the page'.format(element=element_to_find))
-
-
-def string_to_kwargs_dict(string):
-    """
-    Given a string of the form "a=b, c=d" returns a dictionary of key-value pairs. i.e {'a': 'b', 'c': 'd'}
-    The purpose is so the return dictionary can be used with ** to pass kwargs to functions.
-
-    :param string: A string of the form "a=b, c=d"
-    :return: A dictionary of key value pairs. The key is derived from the left side of = and the value is from the right
-      side
-    """
-    ret_val = {}
-    for kwarg in string.split(', '):
-        val = kwarg.strip().split('=')
-        for i in range(len(val) - 1):
-            ret_val[val[i]] = val[i + 1]
-    return ret_val
 
 
 def navigate_to_page(context, url, url_kwargs=None):
@@ -97,6 +80,12 @@ def step_impl(context, url):
     navigate_to_page(context, url)
 
 
+@step('I am on the "(?P<url>[^"]*)" page with kwargs "(?P<url_kwargs>[^"]*)"')
+def step_impl(context, url, url_kwargs):
+    kwargs = string_to_kwargs_dict(url_kwargs)
+    navigate_to_page(context, url, kwargs)
+
+
 @step('I go to the "(?P<url>[^"]*)" page')
 def step_impl(context, url):
     navigate_to_page(context, url)
@@ -109,6 +98,12 @@ def step_impl(context, url):
     if '?' in current_url:
         current_url = current_url.split('?')[0]
     context.test.assertEqual(current_url, context.get_url(url))
+
+
+@step('I should be on the "(?P<url>.*)" page with kwargs "(?P<url_kwargs>[^"]*)"')
+def step_impl(context, url, url_kwargs):
+    kwargs = string_to_kwargs_dict(url_kwargs)
+    context.test.assertEqual(context.driver.current_url, context.get_url(url, **kwargs))
 
 
 @step('I am on the absolute url page for "(?P<model_class>.*)" and "(?P<kwarg_data>.*)"')
@@ -131,7 +126,7 @@ def step_impl(context, model_class, kwarg_data):
 
 
 @step(
-        'I am on the "(?P<model_class>[^"]*)" "(?P<model_kwargs>[^"]*)" "(?P<url_or_url_name>[^"]*)" page with url kwargs "(?P<url_kwargs>[^"]*)"')  # noqa
+    'I am on the "(?P<model_class>[^"]*)" "(?P<model_kwargs>[^"]*)" "(?P<url_or_url_name>[^"]*)" page with url kwargs "(?P<url_kwargs>[^"]*)"')  # noqa
 def step_impl(context, model_class, model_kwargs, url_or_url_name, url_kwargs):
     url_kwargs_dict = string_to_kwargs_dict(url_kwargs)
     obj = get_first_obj_for_model(model_class, model_kwargs)
@@ -145,7 +140,7 @@ def step_impl(context, model_class, model_kwargs, url_or_url_name, url_kwargs):
 
 
 @step(
-        'I go to the "(?P<model_class>[^"]*)" "(?P<model_kwargs>[^"]*)" "(?P<url_or_url_name>[^"]*)" page with url kwargs "(?P<url_kwargs>[^"]*)"')  # noqa
+    'I go to the "(?P<model_class>[^"]*)" "(?P<model_kwargs>[^"]*)" "(?P<url_or_url_name>[^"]*)" page with url kwargs "(?P<url_kwargs>[^"]*)"')  # noqa
 def step_impl(context, model_class, model_kwargs, url_or_url_name, url_kwargs):
     url_kwargs_dict = string_to_kwargs_dict(url_kwargs)
     obj = get_first_obj_for_model(model_class, model_kwargs)
@@ -159,7 +154,7 @@ def step_impl(context, model_class, model_kwargs, url_or_url_name, url_kwargs):
 
 
 @step(
-        'I should be on the "(?P<model_class>[^"]*)" "(?P<model_kwargs>[^"]*)" "(?P<url_or_url_name>[^"]*)" page with url kwargs "(?P<url_kwargs>[^"]*)"')  # noqa
+    'I should be on the "(?P<model_class>[^"]*)" "(?P<model_kwargs>[^"]*)" "(?P<url_or_url_name>[^"]*)" page with url kwargs "(?P<url_kwargs>[^"]*)"')  # noqa
 def step_impl(context, model_class, model_kwargs, url_or_url_name, url_kwargs):
     url_kwargs_dict = string_to_kwargs_dict(url_kwargs)
     obj = get_first_obj_for_model(model_class, model_kwargs)
@@ -198,7 +193,7 @@ def step_impl(context, element, modal_id):
     the_element = find_element(context, element)
     the_element.click()
     WebDriverWait(context.driver, 10).until(
-            expected_conditions.element_to_be_clickable((By.ID, modal_id)),
+        expected_conditions.element_to_be_clickable((By.ID, modal_id)),
     )
 
 
@@ -228,6 +223,12 @@ def step_impl(context, prefix, kwargs):
 @step('I should see "(?P<text>.*)"')
 def step_impl(context, text):
     context.test.assertIn(text, str(context.driver.page_source))
+
+
+@step('The page should contain "(?P<text>.*)"')
+def step_impl(context, text):
+    bodyText = find_element(context, 'body').text
+    context.test.assertIn(text, bodyText)
 
 
 @step('I should not see "(?P<text>.*)"')
@@ -284,7 +285,7 @@ def step_impl(context, deselect, select_option, element):
 
     if not success:
         raise NoSuchElementException(
-                'Cannot locate {select_option} by value, visible text or index'.format(select_option=select_option))
+            'Cannot locate {select_option} by value, visible text or index'.format(select_option=select_option))
 
 
 @step('I select (?P<num_selections>\d+) [a-zA-Z]+ from "(?P<element>[^"]*)"')
@@ -317,7 +318,7 @@ def step_impl(context, file_name, element):
 def step_impl(context, element, negate):
     the_element = find_element(context, element)
     WebDriverWait(context.driver, 10).until(
-            expected_conditions.visibility_of_element_located((By.ID, element)),
+        expected_conditions.visibility_of_element_located((By.ID, element)),
     )
     is_displayed = the_element.is_displayed()
     if negate:
@@ -366,6 +367,11 @@ def step_impl(context, element, text):
 def step_impl(context, element):
     with context.test.assertRaises(NoSuchElementException):
         find_element(context, element)
+
+
+@step('"(?P<element>[^"]*)" should exist on the page')
+def step_impl(context, element):
+    find_element(context, element)
 
 
 @step('The "(?P<attribute>[^"]*)" attribute for "(?P<element>[^"]*)" should have values "(?P<values>[^"]*)"')

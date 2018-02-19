@@ -1,13 +1,13 @@
 from django.urls import reverse
 
 from accounts.tests import UserFactory
-from escoresheet.utils.testing import BaseTestCase
+from ayrabo.utils.testing import BaseTestCase
 from sports.tests import SportRegistrationFactory
 
 
 class HomeViewTests(BaseTestCase):
     def setUp(self):
-        self.email = 'user@example.com'
+        self.email = 'user@ayrabo.com'
         self.password = 'myweakpassword'
 
     def test_unauthenticated(self):

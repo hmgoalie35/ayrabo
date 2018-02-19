@@ -4,7 +4,7 @@ from __future__ import unicode_literals
 
 import django.core.validators
 from django.db import migrations
-import escoresheet.utils.model_fields
+import ayrabo.utils.model_fields
 
 
 class Migration(migrations.Migration):
@@ -17,6 +17,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='location',
             name='website',
-            field=escoresheet.utils.model_fields.WebsiteField(blank=True, help_text='Make sure to include http:// or https://', max_length=255, validators=[django.core.validators.URLValidator(schemes=['http', 'https'])], verbose_name='Website'),
+            field=ayrabo.utils.model_fields.WebsiteField(blank=True, help_text='Make sure to include http:// or https://', max_length=255, validators=[django.core.validators.URLValidator(schemes=['http', 'https'])], verbose_name='Website'),
         ),
     ]

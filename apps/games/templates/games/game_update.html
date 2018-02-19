@@ -1,0 +1,128 @@
+{% extends 'site_base.html' %}
+{% load crispy_forms_tags ess_utils %}
+
+{% block title %}Update Game #{{ game.pk }} {{ game.home_team.name }} vs. {{ game.away_team.name }}{% endblock %}
+
+{% block content %}
+  <div class="container">
+
+    <div class="row">
+      <div class="col-md-12">
+        <div class="text-center">
+          <h3>Update Game #{{ game.pk }}</h3>
+          {% with home_team=game.home_team away_team=game.away_team %}
+            <h4>{{ home_team.name }} {{ home_team.division.name }} vs. {{ away_team.name }} {{ away_team.division.name }}</h4>
+          {% endwith %}
+        </div>
+      </div>
+    </div>
+
+    <br>
+
+    {% if form.disable %}
+      <div class="row">
+        <div class="col-md-offset-3 col-md-6">
+          <div class="text-center">
+            <div class="alert alert-danger" role="alert">
+              Updates to this game are no longer permitted.<br>
+              Please <a href="{% url 'contact_us' %}" class="alert-link">contact us</a> with any questions.
+            </div>
+          </div>
+        </div>
+      </div>
+    {% endif %}
+
+    <div class="row">
+      <div class="col-md-offset-1 col-md-10">
+        <form action="" method="post">
+          {% csrf_token %}
+          <div class="row">
+            {% crispy form %}
+          </div>
+          <br>
+          <div class="row">
+            <div class="col-md-12">
+              <div class="text-center">
+                {% if form.disable %}
+                  <button role="button" class="btn btn-back js-btn-back">Back</button>
+                {% else %}
+                  <button id="update_game_btn" type="submit" role="button" class="btn btn-success">Update</button>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    {% if game.home_players.exists or game.away_players.exists %}
+      <div class="modal fade" tabindex="-1" role="dialog" id="roster-warning-modal">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+              <h4 class="modal-title">Are You Sure?</h4>
+            </div>
+            <div class="modal-body">
+              Changing the home team for this game will clear the home team roster if one was set.
+              <br>
+              Changing the away team for this game will clear the away team roster if one was set.
+              <br><br>
+              You will need to set new home or away team rosters.
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-link" data-dismiss="modal">Cancel</button>
+              <button type="button" class="btn btn-warning js-modal-continue">Continue</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    {% endif %}
+
+  </div>
+{% endblock %}
+
+{% block extra_js %}
+  <script>
+    $(function () {
+      var homeTeamId = {{ game.home_team_id }};
+      var homeTeamRostersSet = {{ game.home_players.exists|booltojson }};
+      var awayTeamId = {{ game.away_team_id }};
+      var awayTeamRostersSet = {{ game.away_players.exists|booltojson }};
+
+      $('.js-modal-continue').click(function () {
+        $('form').submit();
+      });
+
+      $('#update_game_btn').click(function (e) {
+        var newHomeTeamId = parseInt($('#id_home_team').val(), 10);
+        var newAwayTeamId = parseInt($('#id_away_team').val(), 10);
+        if ((homeTeamRostersSet && homeTeamId !== newHomeTeamId) || (awayTeamRostersSet && awayTeamId !== newAwayTeamId)) {
+          e.preventDefault();
+          e.stopPropagation();
+          $('#roster-warning-modal').modal('toggle');
+        }
+      });
+
+      var team_options = { header: 'Select a team' };
+      $("#id_home_team").enableBootstrapSelect(team_options);
+      $("#id_away_team").enableBootstrapSelect(team_options);
+      $("#id_type").enableBootstrapSelect({ header: 'Select a game type' });
+      $("#id_point_value").enableBootstrapSelect({ header: 'Select a point value' });
+      $("#id_location").enableBootstrapSelect({ header: 'Select a location' });
+      $("#id_timezone").enableBootstrapSelect({ header: 'Select a timezone' });
+      $("#id_season").enableBootstrapSelect({ header: 'Select a season' });
+      $("#id_status").enableBootstrapSelect({ header: 'Select a status' });
+      var $game_start = $("#id_start");
+      var $game_end = $("#id_end");
+      $game_start.enableDatetimepicker();
+      $game_end.enableDatetimepicker();
+
+      $game_start.on('dp.change', function (e) {
+        $game_end.data('DateTimePicker').minDate(e.date);
+      });
+    });
+  </script>
+{% endblock %}

@@ -39,6 +39,10 @@ class UserProfileUpdateView(LoginRequiredMixin, SuccessMessageMixin, generic.Upd
         context['data'] = data
         api_tokens = Token.objects.filter(user=self.request.user)
         context['api_token'] = api_tokens.first() if api_tokens.exists() else None
+
+        tab = self.request.GET.get('tab', None)
+        # Handle people manually putting in query strings.
+        context['tab'] = tab if tab in ['my-account', 'my-sports'] else None
         return context
 
     def get_object(self, queryset=None):
