@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils import timezone
 from django.utils.text import slugify
 
 from divisions.models import Division
@@ -15,7 +16,7 @@ class Team(models.Model):
     division = models.ForeignKey(Division)
     locations = models.ManyToManyField('locations.Location', through='locations.TeamLocation', verbose_name='Locations',
                                        related_name='teams')
-    created = models.DateTimeField(auto_now_add=True, verbose_name='Created')
+    created = models.DateTimeField(default=timezone.now, verbose_name='Created')
 
     """
     The fields below are not really necessary to store in this model for the MVP, a link to the team's website would

@@ -7,6 +7,7 @@ from django.db import models
 from django.db.models.signals import m2m_changed
 from django.dispatch import receiver
 from django.urls import reverse
+from django.utils import timezone
 
 from teams.models import Team
 
@@ -107,7 +108,7 @@ class AbstractSeasonRoster(models.Model):
     season = models.ForeignKey(Season)
     team = models.ForeignKey(Team, related_name='season_rosters')
     default = models.BooleanField(default=False, verbose_name='Default Season Roster')
-    created = models.DateTimeField(auto_now_add=True, verbose_name='Created')
+    created = models.DateTimeField(default=timezone.now, verbose_name='Created')
     created_by = models.ForeignKey(User, null=True, related_name='season_rosters', verbose_name='Created By')
 
     def clean(self):

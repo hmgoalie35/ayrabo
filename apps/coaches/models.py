@@ -1,6 +1,7 @@
 from django.contrib.auth.models import User
 from django.core.validators import ValidationError
 from django.db import models
+from django.utils import timezone
 
 from common import managers
 from sports.models import SportRegistration
@@ -24,7 +25,7 @@ class Coach(models.Model):
     user = models.ForeignKey(User, related_name='coaches')
     position = models.CharField(max_length=255, verbose_name='Position', choices=POSITIONS)
     team = models.ForeignKey(Team)
-    created = models.DateTimeField(auto_now_add=True, verbose_name='Created')
+    created = models.DateTimeField(default=timezone.now, verbose_name='Created')
     is_active = models.BooleanField(default=True, verbose_name='Is Active')
 
     objects = managers.ActiveManager()
@@ -41,9 +42,9 @@ class Coach(models.Model):
             qs = SportRegistration.objects.filter(user=self.user, sport=sport)
             if qs.exists() and not qs.first().has_role('Coach'):
                 raise ValidationError(
-                        '{user} - {sport} might not have a sportregistration object or the '
-                        'sportregistration object does not have the coach role assigned'.format(
-                                user=self.user.email, sport=sport.name))
+                    '{user} - {sport} might not have a sportregistration object or the '
+                    'sportregistration object does not have the coach role assigned'.format(
+                        user=self.user.email, sport=sport.name))
 
     def __str__(self):
         return 'Coach {last_name}'.format(last_name=self.user.last_name)

@@ -1,6 +1,7 @@
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
+from django.utils import timezone
 
 from common.managers import GenericChoiceManager
 
@@ -39,7 +40,7 @@ class HockeyPenalty(AbstractPenalty):
                                on_delete=models.PROTECT)
     time_in = models.DurationField(verbose_name='Time In')
     time_out = models.DurationField(verbose_name='Time Out')
-    created = models.DateTimeField(verbose_name='Created', auto_now_add=True)
+    created = models.DateTimeField(verbose_name='Created', default=timezone.now)
     updated = models.DateTimeField(verbose_name='Updated', auto_now=True)
 
     class Meta:

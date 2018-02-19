@@ -3,6 +3,7 @@ from collections import OrderedDict
 from django.contrib.auth.models import User
 from django.core.validators import MinValueValidator, MaxValueValidator, ValidationError
 from django.db import models
+from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 
 from common import managers
@@ -27,7 +28,7 @@ class AbstractPlayer(models.Model):
     jersey_number = models.SmallIntegerField(verbose_name='Jersey Number',
                                              validators=[MinValueValidator(MIN_JERSEY_NUMBER),
                                                          MaxValueValidator(MAX_JERSEY_NUMBER)])
-    created = models.DateTimeField(auto_now_add=True, verbose_name='Created')
+    created = models.DateTimeField(default=timezone.now, verbose_name='Created')
     is_active = models.BooleanField(default=True, verbose_name='Is Active')
 
     objects = managers.ActiveManager()

@@ -4,7 +4,7 @@ import pytz
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db import models
-from django.utils import timezone
+from django.utils import timezone as timezone_util
 
 from periods.models import HockeyPeriod
 
@@ -43,7 +43,7 @@ class AbstractGame(models.Model):
     team = models.ForeignKey('teams.Team', null=True, verbose_name='Team', on_delete=models.PROTECT)
     created_by = models.ForeignKey('auth.User', null=True, verbose_name='Created By', related_name='%(class)ss_created',
                                    on_delete=models.PROTECT)
-    created = models.DateTimeField(verbose_name='Created', auto_now_add=True)
+    created = models.DateTimeField(verbose_name='Created', default=timezone_util.now)
     updated = models.DateTimeField(verbose_name='Updated', auto_now=True)
 
     def datetime_localized(self, dt):
@@ -61,7 +61,7 @@ class AbstractGame(models.Model):
         return self.datetime_formatted(self.end)
 
     def can_update(self):
-        return self.status not in ['completed'] and timezone.now() <= self.end + self.GRACE_PERIOD
+        return self.status not in ['completed'] and timezone_util.now() <= self.end + self.GRACE_PERIOD
 
     def init_periods(self, duration):
         """
@@ -86,9 +86,9 @@ class AbstractGame(models.Model):
         """
         # Remove the tzinfo that Django automatically interprets in (the tz set in the user's profile). `make_naive`
         # defaults to removing the currently active tz.
-        naive_dt = timezone.make_naive(dt)
+        naive_dt = timezone_util.make_naive(dt)
         # Convert to the correct timezone specified for this game.
-        aware_dt = timezone.make_aware(naive_dt, pytz.timezone(self.timezone))
+        aware_dt = timezone_util.make_aware(naive_dt, pytz.timezone(self.timezone))
         # Convert to UTC.
         utc_dt = aware_dt.astimezone(pytz.utc)
         return utc_dt
@@ -141,7 +141,7 @@ class HockeyGoal(models.Model):
     empty_net = models.BooleanField(verbose_name='Empty Net', default=False)
     value = models.PositiveSmallIntegerField(verbose_name='Value', choices=HOCKEY_GOAL_VALUES,
                                              default=HOCKEY_GOAL_VALUES[0][0])
-    created = models.DateTimeField(verbose_name='Created', auto_now_add=True)
+    created = models.DateTimeField(verbose_name='Created', default=timezone_util.now)
     updated = models.DateTimeField(verbose_name='Updated', auto_now=True)
 
     def clean(self):
@@ -159,7 +159,7 @@ class HockeyAssist(models.Model):
     player = models.ForeignKey('players.HockeyPlayer', verbose_name='Player', related_name='assists',
                                on_delete=models.PROTECT)
     goal = models.ForeignKey(HockeyGoal, verbose_name='Goal', related_name='assists', on_delete=models.PROTECT)
-    created = models.DateTimeField(verbose_name='Created', auto_now_add=True)
+    created = models.DateTimeField(verbose_name='Created', default=timezone_util.now)
     updated = models.DateTimeField(verbose_name='Updated', auto_now=True)
 
     def clean(self):

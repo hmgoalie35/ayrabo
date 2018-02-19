@@ -2,6 +2,7 @@ import re
 
 from django.core.validators import RegexValidator
 from django.db import models
+from django.utils import timezone
 from django.utils.text import slugify
 from localflavor.us import models as us_models
 from localflavor.us.us_states import US_STATES
@@ -25,7 +26,7 @@ class Location(models.Model):
                                         RegexValidator(regex=PHONE_NUMBER_REGEX, message='Enter a valid phone number.',
                                                        code='invalid')])
     website = WebsiteField()
-    created = models.DateTimeField(auto_now_add=True, verbose_name='Created')
+    created = models.DateTimeField(default=timezone.now, verbose_name='Created')
     updated = models.DateTimeField(auto_now=True, verbose_name='Updated')
 
     def clean(self):
@@ -48,7 +49,7 @@ class TeamLocation(models.Model):
     team = models.ForeignKey('teams.Team')
     location = models.ForeignKey(Location)
     primary = models.BooleanField(default=False, verbose_name='Primary Location')
-    created = models.DateTimeField(auto_now_add=True, verbose_name='Created')
+    created = models.DateTimeField(default=timezone.now, verbose_name='Created')
     updated = models.DateTimeField(auto_now=True, verbose_name='Updated')
 
     class Meta:
