@@ -104,7 +104,7 @@
             </table>
           {% else %}
             <br><br>
-            <h3>There are no games for this team.</h3>
+            <h3 id="no-games-header">There are no games for this team.</h3>
             {% if can_create_game %}
               <a id="create-game-btn-empty-state" href="{% url 'teams:games:create' team.pk %}"
                  class="btn btn-sm btn-success">
@@ -144,9 +144,9 @@
             zeroRecords: 'No games match your search criteria.',
           },
         });
-        $('.js-loading').remove();
-        $('.js-table-section').removeClass('hidden');
       {% endif %}
+      $('.js-loading').remove();
+      $('.js-table-section').removeClass('hidden');
     });
   </script>
 {% endblock %}
