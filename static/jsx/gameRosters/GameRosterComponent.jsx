@@ -45,6 +45,8 @@ export default class GameRosterComponent extends React.Component {
   }
 
   getOptions(selectedPlayers, allPlayers) {
+    // Could also add disabled property (which was undocumented)
+    // https://github.com/ericgio/react-bootstrap-typeahead/issues/86
     const ids = selectedPlayers.map(player => player.id);
     return allPlayers.filter(player => !ids.includes(player.id));
   }

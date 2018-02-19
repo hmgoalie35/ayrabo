@@ -1,5 +1,5 @@
 {% extends 'site_base.html' %}
-{% load crispy_forms_tags %}
+{% load crispy_forms_tags ess_utils %}
 
 {% block title %}Update Game #{{ game.pk }} {{ game.home_team.name }} vs. {{ game.away_team.name }}{% endblock %}
 
@@ -19,18 +19,18 @@
 
     <br>
 
-  {% if form.disable %}
-    <div class="row">
-      <div class="col-md-offset-3 col-md-6">
-        <div class="text-center">
-          <div class="alert alert-danger" role="alert">
-            Updates to this game are no longer permitted.<br>
-            Please <a href="{% url 'contact_us' %}" class="alert-link">contact us</a> with any questions.
+    {% if form.disable %}
+      <div class="row">
+        <div class="col-md-offset-3 col-md-6">
+          <div class="text-center">
+            <div class="alert alert-danger" role="alert">
+              Updates to this game are no longer permitted.<br>
+              Please <a href="{% url 'contact_us' %}" class="alert-link">contact us</a> with any questions.
+            </div>
           </div>
         </div>
       </div>
-    </div>
-  {% endif %}
+    {% endif %}
 
     <div class="row">
       <div class="col-md-offset-1 col-md-10">
@@ -55,12 +55,57 @@
       </div>
     </div>
 
+    {% if game.home_players.exists or game.away_players.exists %}
+      <div class="modal fade" tabindex="-1" role="dialog" id="roster-warning-modal">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+              <h4 class="modal-title">Are You Sure?</h4>
+            </div>
+            <div class="modal-body">
+              Changing the home team for this game will clear the home team roster if one was set.
+              <br>
+              Changing the away team for this game will clear the away team roster if one was set.
+              <br><br>
+              You will need to set new home or away team rosters.
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-link" data-dismiss="modal">Cancel</button>
+              <button type="button" class="btn btn-warning js-modal-continue">Continue</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    {% endif %}
+
   </div>
 {% endblock %}
 
 {% block extra_js %}
   <script>
     $(function () {
+      var homeTeamId = {{ game.home_team_id }};
+      var homeTeamRostersSet = {{ game.home_players.exists|booltojson }};
+      var awayTeamId = {{ game.away_team_id }};
+      var awayTeamRostersSet = {{ game.away_players.exists|booltojson }};
+
+      $('.js-modal-continue').click(function () {
+        $('form').submit();
+      });
+
+      $('#update_game_btn').click(function (e) {
+        var newHomeTeamId = parseInt($('#id_home_team').val(), 10);
+        var newAwayTeamId = parseInt($('#id_away_team').val(), 10);
+        if ((homeTeamRostersSet && homeTeamId !== newHomeTeamId) || (awayTeamRostersSet && awayTeamId !== newAwayTeamId)) {
+          e.preventDefault();
+          e.stopPropagation();
+          $('#roster-warning-modal').modal('toggle');
+        }
+      });
+
       var team_options = { header: 'Select a team' };
       $("#id_home_team").enableBootstrapSelect(team_options);
       $("#id_away_team").enableBootstrapSelect(team_options);

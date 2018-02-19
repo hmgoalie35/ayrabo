@@ -22,6 +22,23 @@ def get_user(username_or_email):
     return User.objects.get(Q(email=username_or_email) | Q(username=username_or_email))
 
 
+def string_to_kwargs_dict(string):
+    """
+    Given a string of the form "a=b, c=d" returns a dictionary of key-value pairs. i.e {'a': 'b', 'c': 'd'}
+    The purpose is so the return dictionary can be used with ** to pass kwargs to functions.
+
+    :param string: A string of the form "a=b, c=d"
+    :return: A dictionary of key value pairs. The key is derived from the left side of = and the value is from the right
+      side
+    """
+    ret_val = {}
+    for kwarg in string.split(', '):
+        val = kwarg.strip().split('=')
+        for i in range(len(val) - 1):
+            ret_val[val[i]] = val[i + 1]
+    return ret_val
+
+
 class BaseTestCase(TestCase):
     # Helper methods
     def get_user(self, username_or_email):
