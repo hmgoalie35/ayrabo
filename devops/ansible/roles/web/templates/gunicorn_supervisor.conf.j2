@@ -1,5 +1,5 @@
 [program:gunicorn]
-command={{ current_symlink }}/venv/bin/gunicorn -c {{ sites_dir }}/gunicorn.conf escoresheet.wsgi
+command={{ current_symlink }}/venv/bin/gunicorn -c {{ sites_dir }}/gunicorn.conf ayrabo.wsgi
 user={{ ansible_env['USER'] }}
 autostart=true
 autorestart=true

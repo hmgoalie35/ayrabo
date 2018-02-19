@@ -2,7 +2,7 @@ from django import forms
 from django.contrib import admin
 from django.utils import timezone
 
-from escoresheet.utils.form_fields import SeasonModelChoiceField, TeamModelChoiceField
+from ayrabo.utils.form_fields import SeasonModelChoiceField, TeamModelChoiceField
 from games.models import HockeyGame
 from seasons.models import Season
 from sports.models import Sport

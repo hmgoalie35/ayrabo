@@ -1,7 +1,7 @@
 from django.db import IntegrityError
 
 from common.tests import GenericChoiceFactory
-from escoresheet.utils.testing import BaseTestCase
+from ayrabo.utils.testing import BaseTestCase
 from games.tests import HockeyGameFactory
 from periods.tests import HockeyPeriodFactory
 from sports.tests import SportFactory

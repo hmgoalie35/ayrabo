@@ -3,8 +3,8 @@
     "model": "sites.site",
     "pk": 1,
     "fields": {
-      "domain": "escoresheet.com",
-      "name": "escoresheet.com"
+      "domain": "ayrabo.com",
+      "name": "ayrabo"
     }
   },
   {

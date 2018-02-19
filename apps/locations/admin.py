@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from escoresheet.utils.admin import format_website_link
+from ayrabo.utils.admin import format_website_link
 from locations.models import Location
 
 

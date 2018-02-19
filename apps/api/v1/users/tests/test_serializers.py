@@ -1,6 +1,6 @@
 from accounts.tests import UserFactory
 from api.v1.users.serializers import UserSerializer
-from escoresheet.utils.testing import BaseAPITestCase
+from ayrabo.utils.testing import BaseAPITestCase
 
 
 class UserSerializerTests(BaseAPITestCase):

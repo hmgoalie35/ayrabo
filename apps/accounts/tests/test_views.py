@@ -3,7 +3,7 @@ from django.contrib.auth import get_user_model
 from django.core import mail
 from django.urls import reverse
 
-from escoresheet.utils.testing import BaseTestCase
+from ayrabo.utils.testing import BaseTestCase
 
 User = get_user_model()
 

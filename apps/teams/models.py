@@ -3,7 +3,7 @@ from django.utils import timezone
 from django.utils.text import slugify
 
 from divisions.models import Division
-from escoresheet.utils.model_fields import WebsiteField
+from ayrabo.utils.model_fields import WebsiteField
 
 
 class Team(models.Model):

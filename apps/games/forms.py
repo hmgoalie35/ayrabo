@@ -6,8 +6,8 @@ from django.core.exceptions import ValidationError
 from django.forms import widgets
 from django.utils import timezone
 
-from escoresheet.utils.form_fields import SeasonModelChoiceField, TeamModelChoiceField
-from escoresheet.utils.mixins import DisableFormFieldsMixin
+from ayrabo.utils.form_fields import SeasonModelChoiceField, TeamModelChoiceField
+from ayrabo.utils.mixins import DisableFormFieldsMixin
 from games.models import HockeyGame
 from seasons.models import Season
 from teams.models import Team

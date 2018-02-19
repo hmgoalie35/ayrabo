@@ -4,8 +4,8 @@ from django import forms
 from django.contrib.admin import widgets
 from django.core.exceptions import ValidationError
 
-from escoresheet.utils import set_fields_disabled
-from escoresheet.utils.form_fields import SeasonModelChoiceField, TeamModelChoiceField, TeamModelMultipleChoiceField
+from ayrabo.utils import set_fields_disabled
+from ayrabo.utils.form_fields import SeasonModelChoiceField, TeamModelChoiceField, TeamModelMultipleChoiceField
 from players.models import HockeyPlayer
 from teams.models import Team
 from .models import Season, HockeySeasonRoster

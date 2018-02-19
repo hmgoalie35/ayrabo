@@ -27,8 +27,8 @@
 
 - name: Symlinking local settings file
   file:
-    path: "{{ project_root }}/escoresheet/settings/local_settings.py"
-    src: "{{ project_root }}/escoresheet/settings/local_settings.dev.py"
+    path: "{{ project_root }}/ayrabo/settings/local_settings.py"
+    src: "{{ project_root }}/ayrabo/settings/local_settings.dev.py"
     state: link
 
 # If getting errors make sure have latest docker-py, docker-compose, PyYAML, docker for pip2 and pip3. Use -U

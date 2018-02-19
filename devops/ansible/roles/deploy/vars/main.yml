@@ -1,4 +1,4 @@
-repo: https://github.com/hmgoalie35/escoresheet.git
+repo: https://github.com/hmgoalie35/ayrabo.git
 
 all_deployments_dir: "{{ ansible_env.HOME }}/deployments"
 failed_deployments_dir: "{{ all_deployments_dir }}/failed_deployments"

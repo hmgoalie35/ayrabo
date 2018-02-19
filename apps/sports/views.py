@@ -9,7 +9,7 @@ from django.urls import reverse
 from django.views import generic
 from django.views.generic.base import ContextMixin
 
-from escoresheet.utils import get_namespace_for_role
+from ayrabo.utils import get_namespace_for_role
 from players import forms as player_forms
 from players.models import HockeyPlayer, BasketballPlayer, BaseballPlayer
 from scorekeepers.models import Scorekeeper

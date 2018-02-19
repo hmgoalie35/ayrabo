@@ -5,7 +5,7 @@ from django.core.management import call_command
 from django.utils.six import StringIO
 
 from divisions.tests import DivisionFactory
-from escoresheet.utils.testing import BaseTestCase
+from ayrabo.utils.testing import BaseTestCase
 from leagues.tests import LeagueFactory
 from seasons.models import Season
 from seasons.tests import SeasonFactory

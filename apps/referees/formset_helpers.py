@@ -1,4 +1,4 @@
-from escoresheet.utils.formsets import BaseFormSetHelper
+from ayrabo.utils.formsets import BaseFormSetHelper
 
 
 class RefereeFormSetHelper(BaseFormSetHelper):

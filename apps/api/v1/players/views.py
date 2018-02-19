@@ -4,7 +4,7 @@ from rest_framework.permissions import IsAuthenticated
 
 from api.exceptions import SportNotConfiguredAPIException
 from api.v1.common.views import BaseDeactivateApiView
-from escoresheet.utils.mappings import SPORT_PLAYER_MODEL_MAPPINGS, SPORT_PLAYER_SERIALIZER_MAPPINGS
+from ayrabo.utils.mappings import SPORT_PLAYER_MODEL_MAPPINGS, SPORT_PLAYER_SERIALIZER_MAPPINGS
 from teams.models import Team
 
 

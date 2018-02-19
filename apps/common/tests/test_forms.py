@@ -1,7 +1,7 @@
 from django.core.files.uploadedfile import SimpleUploadedFile
 
 from common.forms import CsvBulkUploadForm
-from escoresheet.utils.testing import BaseTestCase
+from ayrabo.utils.testing import BaseTestCase
 
 
 class CsvBulkUploadFormTests(BaseTestCase):

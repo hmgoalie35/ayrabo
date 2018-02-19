@@ -1,9 +1,9 @@
 {
-  "name": "escoresheet",
+  "name": "ayrabo",
   "version": "0.0.1",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/hmgoalie35/escoresheet.git"
+    "url": "git+https://github.com/hmgoalie35/ayrabo.git"
   },
   "license": "UNLICENSED",
   "author": "Harris Pittinsky",

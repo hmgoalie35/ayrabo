@@ -3,7 +3,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import get_object_or_404, redirect
 from django.views import generic
 
-from escoresheet.utils.mixins import HasPermissionMixin
+from ayrabo.utils.mixins import HasPermissionMixin
 from scorekeepers.models import Scorekeeper
 from sports.models import SportRegistration, Sport
 
