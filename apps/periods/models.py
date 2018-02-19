@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils import timezone
 
 
 class AbstractPlayingPeriod(models.Model):
@@ -7,7 +8,7 @@ class AbstractPlayingPeriod(models.Model):
     """
     duration = models.DurationField(verbose_name='Duration')
     complete = models.BooleanField(verbose_name='Complete', default=False)
-    created = models.DateTimeField(verbose_name='Created', auto_now_add=True)
+    created = models.DateTimeField(verbose_name='Created', default=timezone.now)
     updated = models.DateTimeField(verbose_name='Updated', auto_now=True)
 
     class Meta:

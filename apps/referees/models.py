@@ -1,6 +1,7 @@
 from django.contrib.auth.models import User
 from django.core.validators import ValidationError
 from django.db import models
+from django.utils import timezone
 
 from common import managers
 from leagues.models import League
@@ -15,7 +16,7 @@ class Referee(models.Model):
     """
     user = models.ForeignKey(User, related_name='referees')
     league = models.ForeignKey(League)
-    created = models.DateTimeField(auto_now_add=True, verbose_name='Created')
+    created = models.DateTimeField(default=timezone.now, verbose_name='Created')
     is_active = models.BooleanField(default=True, verbose_name='Is Active')
 
     objects = managers.ActiveManager()
