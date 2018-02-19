@@ -1,3 +1,4 @@
 {% extends 'error_base.html' %}
 
-{% block error_text %}Not Found{% endblock %}
+{% block title %}Page Not Found{% endblock %}
+{% block error %}The requested URL {{ request_path }} was not found on this server (404){% endblock %}
