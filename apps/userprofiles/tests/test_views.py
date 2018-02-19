@@ -17,7 +17,7 @@ from .factories.UserProfileFactory import UserProfileFactory
 
 class UserProfileCreateViewTests(BaseTestCase):
     def setUp(self):
-        self.email = 'user@example.com'
+        self.email = 'user@ayrabo.com'
         self.password = 'myweakpassword'
         self.ice_hockey = SportFactory(name='Ice Hockey')
         self.baseball = SportFactory(name='Baseball')
@@ -111,7 +111,7 @@ class UserProfileCreateViewTests(BaseTestCase):
 
 class UserProfileUpdateViewTests(BaseTestCase):
     def setUp(self):
-        self.email = 'user@example.com'
+        self.email = 'user@ayrabo.com'
         self.password = 'myweakpassword'
 
         self.post_data = factory.build(dict, FACTORY_CLASS=UserProfileFactory)
@@ -138,8 +138,8 @@ class UserProfileUpdateViewTests(BaseTestCase):
 
     def test_context_populated(self):
         self.client.logout()
-        user = UserFactory(email='testing@example.com', password=self.password)
-        self.client.login(email='testing@example.com', password=self.password)
+        user = UserFactory(email='testing@ayrabo.com', password=self.password)
+        self.client.login(email='testing@ayrabo.com', password=self.password)
         league = LeagueFactory(full_name='Long Island Amateur Hockey League', sport=self.sport)
         division = DivisionFactory(name='Midget Minor AA', league=league)
         team = TeamFactory(name='Green Machine Icecats', division=division)

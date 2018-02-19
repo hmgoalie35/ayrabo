@@ -19,7 +19,7 @@ class ScorekeepersCreateViewTests(BaseTestCase):
         self.hockey_team = TeamFactory(division__league__sport=self.ice_hockey)
         self.baseball_team = TeamFactory(division__league__sport=self.baseball)
 
-        self.email = 'user@example.com'
+        self.email = 'user@ayrabo.com'
         self.password = 'myweakpassword'
         self.user = UserFactory(email=self.email, password=self.password)
         self.sr = SportRegistrationFactory(user=self.user, sport=self.ice_hockey)

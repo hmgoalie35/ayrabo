@@ -5,15 +5,15 @@ Feature: Register for a sport
 
   Background: User account exists
     Given The following confirmed user account exists
-      | first_name | last_name | email            | password       |
-      | John       | Doe       | user@example.com | myweakpassword |
+      | first_name | last_name | email           | password       |
+      | John       | Doe       | user@ayrabo.com | myweakpassword |
     And The following team object exists
       | name                  | division        | league                            | sport      |
       | Green Machine IceCats | Midget Minor AA | Long Island Amateur Hockey League | Ice Hockey |
     And The following sport exists "Ice Hockey"
     And The following sport exists "Baseball"
     And The following sport exists "Basketball"
-    And I login with "user@example.com" and "myweakpassword"
+    And I login with "user@ayrabo.com" and "myweakpassword"
 
   Scenario: Redirected to new sport registration page after userprofile created
     Given I go to the "home" page
@@ -89,9 +89,9 @@ Feature: Register for a sport
     And I should see "You have been registered for Ice Hockey, Baseball."
 
   Scenario: Already registered for all 3 sports
-    Given "user@example.com" is completely registered for "Ice Hockey" with roles "Player, Coach"
-    And "user@example.com" is completely registered for "Baseball" with roles "Player, Manager"
-    And "user@example.com" is completely registered for "Basketball" with roles "Player, Referee"
+    Given "user@ayrabo.com" is completely registered for "Ice Hockey" with roles "Player, Coach"
+    And "user@ayrabo.com" is completely registered for "Baseball" with roles "Player, Manager"
+    And "user@ayrabo.com" is completely registered for "Basketball" with roles "Player, Referee"
     When I go to the "sportregistrations:create" page
     Then I should see "You have already registered for all available sports. Check back later to see if any new sports have been added."
     And I should be on the "home" page
@@ -109,8 +109,8 @@ Feature: Register for a sport
     And I should be on the "sportregistrations:create" page
 
   Scenario: Already registered for ice hockey and baseball. They should not be options in select box
-    Given "user@example.com" is completely registered for "Ice Hockey" with roles "Player, Coach"
-    Given "user@example.com" is completely registered for "Baseball" with roles "Player, Coach"
+    Given "user@ayrabo.com" is completely registered for "Ice Hockey" with roles "Player, Coach"
+    Given "user@ayrabo.com" is completely registered for "Baseball" with roles "Player, Coach"
     And I am on the "sportregistrations:create" page
     Then "add_another_form_btn" should be disabled
     And "id_sportregistrations-0-sport" should not have the option "Ice Hockey"

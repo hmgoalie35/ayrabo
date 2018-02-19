@@ -5,19 +5,19 @@ Feature: Update a game
 
   Background: User exists
     Given The following confirmed user account exists
-      | first_name | last_name | email             | password       |
-      | John       | Doe       | user@example.com  | myweakpassword |
-      | Jane       | Doe       | user1@example.com | myweakpassword |
+      | first_name | last_name | email            | password       |
+      | John       | Doe       | user@ayrabo.com  | myweakpassword |
+      | Jane       | Doe       | user1@ayrabo.com | myweakpassword |
     And The following team objects exist
       | id | name                  | division        | league                            | sport      |
       | 1  | Green Machine IceCats | Midget Minor AA | Long Island Amateur Hockey League | Ice Hockey |
       | 2  | Long Island Edge      | Midget Minor AA | Long Island Amateur Hockey League | Ice Hockey |
       | 3  | Aviator Gulls         | Midget Minor AA | Long Island Amateur Hockey League | Ice Hockey |
-    And "user@example.com" is completely registered for "Ice Hockey" with role "Manager"
-    And "user1@example.com" is completely registered for "Ice Hockey" with role "Player"
+    And "user@ayrabo.com" is completely registered for "Ice Hockey" with role "Manager"
+    And "user1@ayrabo.com" is completely registered for "Ice Hockey" with role "Player"
     And The following manager objects exist
       | username_or_email | team                  |
-      | user@example.com  | Green Machine IceCats |
+      | user@ayrabo.com   | Green Machine IceCats |
     And The following generic choice objects exist
       | content_type | short_value | long_value | type             |
       | sports.Sport | exhibition  | Exhibition | game_type        |
@@ -35,7 +35,7 @@ Feature: Update a game
       | 1  | Green Machine IceCats | Long Island Edge      | league | 2           | Iceland  | today               | today               | US/Eastern | 1      |
       | 2  | Long Island Edge      | Green Machine IceCats | league | 2           | Iceland  | 10/30/2017 07:00 PM | 10/30/2017 09:00 PM | US/Eastern | 1      |
       | 3  | Long Island Edge      | Aviator Gulls         | league | 2           | Iceland  | 10/31/2017 07:00 PM | 10/31/2017 09:00 PM | US/Eastern | 1      |
-    And I login with "user@example.com" and "myweakpassword"
+    And I login with "user@ayrabo.com" and "myweakpassword"
 
   Scenario: Navigate to game update page
     Given I am on the "teams:games:list" page with kwargs "team_pk=1"

@@ -4,19 +4,19 @@ Feature: List games for a team
 
   Background: User exists
     Given The following confirmed user account exists
-      | first_name | last_name | email             | password       |
-      | John       | Doe       | user@example.com  | myweakpassword |
-      | Jane       | Doe       | user1@example.com | myweakpassword |
+      | first_name | last_name | email            | password       |
+      | John       | Doe       | user@ayrabo.com  | myweakpassword |
+      | Jane       | Doe       | user1@ayrabo.com | myweakpassword |
     And The following team objects exist
       | id | name                  | division        | league                            | sport      |
       | 1  | Green Machine IceCats | Midget Minor AA | Long Island Amateur Hockey League | Ice Hockey |
       | 2  | Long Island Edge      | Midget Minor AA | Long Island Amateur Hockey League | Ice Hockey |
       | 3  | Aviator Gulls         | Midget Minor AA | Long Island Amateur Hockey League | Ice Hockey |
-    And "user@example.com" is completely registered for "Ice Hockey" with role "Manager"
-    And "user1@example.com" is completely registered for "Ice Hockey" with role "Player"
+    And "user@ayrabo.com" is completely registered for "Ice Hockey" with role "Manager"
+    And "user1@ayrabo.com" is completely registered for "Ice Hockey" with role "Player"
     And The following manager objects exist
       | username_or_email | team                  |
-      | user@example.com  | Green Machine IceCats |
+      | user@ayrabo.com   | Green Machine IceCats |
     And The following generic choice objects exist
       | content_type | short_value | long_value | type             |
       | sports.Sport | exhibition  | Exhibition | game_type        |
@@ -28,32 +28,32 @@ Feature: List games for a team
     And The following season object exists
       | id | league                            | start_date | end_date   | teams                 |
       | 1  | Long Island Amateur Hockey League | 2017-09-14 | 2018-09-14 | Green Machine IceCats |
-    And I login with "user@example.com" and "myweakpassword"
+    And I login with "user@ayrabo.com" and "myweakpassword"
 
   Scenario: Navigate to hockey game list page as manager
-    Given I am on the absolute url page for "sports.SportRegistration" and "user__email=user@example.com, sport__name=Ice Hockey"
+    Given I am on the absolute url page for "sports.SportRegistration" and "user__email=user@ayrabo.com, sport__name=Ice Hockey"
     And I press "manager_tab"
     And I press "actions-dropdown-manager-green-machine-icecats"
     And I press "list_games_manager_btn_green-machine-icecats"
     Then I should be on the "teams:games:list" page with kwargs "team_pk=1"
 
   Scenario: Navigate to hockey game list page as player
-    Given I add the "Player" role to "user@example.com" for "Ice Hockey"
+    Given I add the "Player" role to "user@ayrabo.com" for "Ice Hockey"
     And The following player object exists
       | username_or_email | sport      | team                  |
-      | user@example.com  | Ice Hockey | Green Machine IceCats |
-    And I am on the absolute url page for "sports.SportRegistration" and "user__email=user@example.com, sport__name=Ice Hockey"
+      | user@ayrabo.com   | Ice Hockey | Green Machine IceCats |
+    And I am on the absolute url page for "sports.SportRegistration" and "user__email=user@ayrabo.com, sport__name=Ice Hockey"
     And I press "player_tab"
     And I press "actions-dropdown-player-green-machine-icecats"
     And I press "list_games_player_btn_green-machine-icecats"
     Then I should be on the "teams:games:list" page with kwargs "team_pk=1"
 
   Scenario: Navigate to hockey game list page as coach
-    Given I add the "Coach" role to "user@example.com" for "Ice Hockey"
+    Given I add the "Coach" role to "user@ayrabo.com" for "Ice Hockey"
     And The following coach object exists
       | username_or_email | team                  |
-      | user@example.com  | Green Machine IceCats |
-    And I am on the absolute url page for "sports.SportRegistration" and "user__email=user@example.com, sport__name=Ice Hockey"
+      | user@ayrabo.com   | Green Machine IceCats |
+    And I am on the absolute url page for "sports.SportRegistration" and "user__email=user@ayrabo.com, sport__name=Ice Hockey"
     And I press "coach_tab"
     And I press "actions-dropdown-coach-green-machine-icecats"
     And I press "list_games_coach_btn_green-machine-icecats"
@@ -95,7 +95,7 @@ Feature: List games for a team
       | Green Machine IceCats | Long Island Edge      | league | 2           | Iceland  | 10/23/2017 07:00 PM | 10/23/2017 09:00 PM | US/Eastern | 1      |
       | Long Island Edge      | Green Machine IceCats | league | 2           | Iceland  | 10/30/2017 07:00 PM | 10/30/2017 09:00 PM | US/Eastern | 1      |
       | Long Island Edge      | Aviator Gulls         | league | 2           | Iceland  | 10/31/2017 07:00 PM | 10/31/2017 09:00 PM | US/Eastern | 1      |
-    And I login with "user1@example.com" and "myweakpassword"
+    And I login with "user1@ayrabo.com" and "myweakpassword"
     And I am on the "teams:games:list" page with kwargs "team_pk=1"
     Then "create-game-btn" should not exist on the page
     And "create-game-btn-empty-state" should not exist on the page

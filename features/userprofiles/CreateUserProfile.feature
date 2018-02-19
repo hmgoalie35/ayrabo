@@ -5,11 +5,11 @@ Feature: User profiles
 
   Background: User account exists
     Given The following confirmed user account exists
-      | first_name | last_name | email            | password       | create_userprofile |
-      | John       | Doe       | user@example.com | myweakpassword | false              |
+      | first_name | last_name | email           | password       | create_userprofile |
+      | John       | Doe       | user@ayrabo.com | myweakpassword | false              |
     And The following sport exists "Ice Hockey"
     And The following sport exists "Baseball"
-    And I login with "user@example.com" and "myweakpassword"
+    And I login with "user@ayrabo.com" and "myweakpassword"
 
 # Userprofile does not exist, create profile page
   Scenario: Prompted to fill out user profile after logging in for the first time

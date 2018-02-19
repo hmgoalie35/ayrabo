@@ -4,16 +4,16 @@ Feature: Location details
 
   Background: Users exist
     Given The following confirmed user account exists
-      | first_name | last_name | email            | password       |
-      | John       | Doe       | user@example.com | myweakpassword |
+      | first_name | last_name | email           | password       |
+      | John       | Doe       | user@ayrabo.com | myweakpassword |
     And The following team objects exist
       | id | name                  | division        | league                            | sport      |
       | 1  | Green Machine IceCats | Midget Minor AA | Long Island Amateur Hockey League | Ice Hockey |
       | 2  | Long Island Edge      | Midget Minor AA | Long Island Amateur Hockey League | Ice Hockey |
-    And "user@example.com" is completely registered for "Ice Hockey" with role "Manager"
+    And "user@ayrabo.com" is completely registered for "Ice Hockey" with role "Manager"
     And The following manager objects exist
       | username_or_email | team                  |
-      | user@example.com  | Green Machine IceCats |
+      | user@ayrabo.com   | Green Machine IceCats |
     And The following generic choice objects exist
       | content_type | short_value | long_value | type             |
       | sports.Sport | exhibition  | Exhibition | game_type        |
@@ -28,7 +28,7 @@ Feature: Location details
     And The following game object exists
       | home_team             | away_team        | type   | point_value | location | start               | end                 | timezone   | season |
       | Green Machine IceCats | Long Island Edge | league | 2           | Iceland  | 10/23/2017 07:00 PM | 10/23/2017 09:00 PM | US/Eastern | 1      |
-    And I login with "user@example.com" and "myweakpassword"
+    And I login with "user@ayrabo.com" and "myweakpassword"
 
   Scenario: Navigate to location detail page
     Given I am on the "/teams/1/games/" page

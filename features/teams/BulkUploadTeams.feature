@@ -5,16 +5,16 @@ Feature: Bulk upload teams from csv
 
   Background: Staff user exists and is logged into admin panel
     Given The following confirmed user account exists
-      | first_name | last_name | email                 | password       |
-      | John       | Doe       | user@example.com      | myweakpassword |
-      | Jane       | Doe       | non_staff@example.com | myweakpassword |
-    And "user@example.com" has the following permissions "is_staff is_superuser"
-    And "user@example.com" is completely registered for "Ice Hockey" with roles "Coach, Referee"
-    And "non_staff@example.com" is completely registered for "Ice Hockey" with roles "Coach, Referee"
+      | first_name | last_name | email                | password       |
+      | John       | Doe       | user@ayrabo.com      | myweakpassword |
+      | Jane       | Doe       | non_staff@ayrabo.com | myweakpassword |
+    And "user@ayrabo.com" has the following permissions "is_staff is_superuser"
+    And "user@ayrabo.com" is completely registered for "Ice Hockey" with roles "Coach, Referee"
+    And "non_staff@ayrabo.com" is completely registered for "Ice Hockey" with roles "Coach, Referee"
 
   Scenario: Navigate to bulk upload team page
     Given I am on the "admin:login" page
-    And I fill in "id_username" with "user@example.com"
+    And I fill in "id_username" with "user@ayrabo.com"
     And I fill in "id_password" with "myweakpassword"
     And I press "#login-form > div.submit-row > input[type='submit']"
     And I am on the "admin:teams_team_changelist" page
@@ -23,7 +23,7 @@ Feature: Bulk upload teams from csv
 
   Scenario: Download example csv
     Given I am on the "admin:login" page
-    And I fill in "id_username" with "user@example.com"
+    And I fill in "id_username" with "user@ayrabo.com"
     And I fill in "id_password" with "myweakpassword"
     And I press "#login-form > div.submit-row > input[type='submit']"
     And I am on the "admin:teams_team_changelist" page
@@ -34,13 +34,13 @@ Feature: Bulk upload teams from csv
     Then I should be on the "account_login" page
 
   Scenario: Must be staff to access bulk upload team page
-    Given I login with "non_staff@example.com" and "myweakpassword"
+    Given I login with "non_staff@ayrabo.com" and "myweakpassword"
     When I go to the "bulk_upload_teams" page
     Then I should be on the "home" page
 
   Scenario: Upload valid file
     Given I am on the "admin:login" page
-    And I fill in "id_username" with "user@example.com"
+    And I fill in "id_username" with "user@ayrabo.com"
     And I fill in "id_password" with "myweakpassword"
     And I press "#login-form > div.submit-row > input[type='submit']"
     And I am on the "bulk_upload_teams" page
@@ -51,7 +51,7 @@ Feature: Bulk upload teams from csv
 
   Scenario: Upload invalid file
     Given I am on the "admin:login" page
-    And I fill in "id_username" with "user@example.com"
+    And I fill in "id_username" with "user@ayrabo.com"
     And I fill in "id_password" with "myweakpassword"
     And I press "#login-form > div.submit-row > input[type='submit']"
     And I am on the "bulk_upload_teams" page
