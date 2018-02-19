@@ -180,7 +180,7 @@ class MiddlewareAddsToSessionTests(BaseTestCase):
 
     @classmethod
     def setUpTestData(cls):
-        cls.user = UserFactory(email='user@example.com', password='myweakpassword')
+        cls.user = UserFactory(email='user@ayrabo.com', password='myweakpassword')
         cls.ice_hockey = SportFactory(name='Ice Hockey')
         cls.baseball = SportFactory(name='Baseball')
 

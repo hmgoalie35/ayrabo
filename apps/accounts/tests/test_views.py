@@ -13,7 +13,7 @@ class NewConfirmationEmailViewTests(BaseTestCase):
         return self.client.post(reverse('account_new_email_confirmation'), data, follow=True)
 
     def setUp(self):
-        self.email = 'user@example.com'
+        self.email = 'user@ayrabo.com'
         # In order to have an email confirmation generated, need to POST to the 'account_register' url/view
         self.client.post(reverse('account_register'),
                          {'email': self.email, 'username': self.email, 'first_name': 'John',
@@ -45,7 +45,7 @@ class NewConfirmationEmailViewTests(BaseTestCase):
 
     def test_nonexistent_email_address(self):
         mail.outbox = []
-        invalid_email = 'myinvalidemail@example.com'
+        invalid_email = 'myinvalidemail@ayrabo.com'
         response = self.post_to_account_new_email_confirmation(
                 {'email': invalid_email, 'request_path': self.invalid_request_path})
 

@@ -17,7 +17,7 @@ class LocationDetailViewTests(BaseTestCase):
     url = 'locations:detail'
 
     def setUp(self):
-        self.email = 'user@example.com'
+        self.email = 'user@ayrabo.com'
         self.password = 'myweakpassword'
         self.user = UserFactory(email=self.email, password=self.password)
         sport = SportFactory(name='Ice Hockey')
@@ -57,7 +57,7 @@ class LocationDetailViewTests(BaseTestCase):
 class BulkUploadLocationsViewTests(BaseTestCase):
     def setUp(self):
         self.url = reverse('bulk_upload_locations')
-        self.email = 'user@example.com'
+        self.email = 'user@ayrabo.com'
         self.password = 'myweakpassword'
         self.test_file_path = os.path.join(settings.BASE_DIR, 'static', 'csv_examples')
         self.user = UserFactory(email=self.email, password=self.password, is_staff=True)

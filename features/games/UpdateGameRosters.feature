@@ -6,22 +6,22 @@ Feature: Update game rosters
   Background: User exists
     Given The following confirmed user account exists
       | first_name | last_name | email              | password       |
-      | John       | Doe       | user@example.com   | myweakpassword |
-      | Jane       | Doe       | user1@example.com  | myweakpassword |
+      | John       | Doe       | user@ayrabo.com    | myweakpassword |
+      | Jane       | Doe       | user1@ayrabo.com   | myweakpassword |
       | Michael    | Scott     | michael@scott.com  | myweakpassword |
       | Dwight     | Schrute   | dwight@schrute.com | myweakpassword |
     And The following team objects exist
       | id | name                  | division        | league                            | sport      |
       | 1  | Green Machine IceCats | Midget Minor AA | Long Island Amateur Hockey League | Ice Hockey |
       | 2  | Long Island Edge      | Midget Minor AA | Long Island Amateur Hockey League | Ice Hockey |
-    And "user@example.com" is completely registered for "Ice Hockey" with role "Manager"
-    And "user1@example.com" is completely registered for "Ice Hockey" with role "Manager"
+    And "user@ayrabo.com" is completely registered for "Ice Hockey" with role "Manager"
+    And "user1@ayrabo.com" is completely registered for "Ice Hockey" with role "Manager"
     And "michael@scott.com" is completely registered for "Ice Hockey" with role "Scorekeeper"
     And "dwight@schrute.com" is completely registered for "Ice Hockey" with role "Player"
     And The following manager objects exist
       | username_or_email | team                  |
-      | user@example.com  | Green Machine IceCats |
-      | user1@example.com | Long Island Edge      |
+      | user@ayrabo.com   | Green Machine IceCats |
+      | user1@ayrabo.com  | Long Island Edge      |
     And The following scorekeeper object exists
       | username_or_email | sport      |
       | michael@scott.com | Ice Hockey |
@@ -43,14 +43,14 @@ Feature: Update game rosters
       | 1  | Green Machine IceCats | Long Island Edge | league | 2           | Iceland  | today | today | US/Eastern | 1      |
 
   Scenario: Navigate to game roster update page as home team manager
-    Given I login with "user@example.com" and "myweakpassword"
+    Given I login with "user@ayrabo.com" and "myweakpassword"
     And I am on the "teams:games:list" page with kwargs "team_pk=1"
     When I press "actions-dropdown-1"
     And I press "update-game-rosters-1"
     Then I should be on the "sports:games:rosters:update" page with kwargs "slug=ice-hockey, game_pk=1"
 
   Scenario: Navigate to game roster update page as away team manager
-    Given I login with "user1@example.com" and "myweakpassword"
+    Given I login with "user1@ayrabo.com" and "myweakpassword"
     And I am on the "teams:games:list" page with kwargs "team_pk=1"
     When I press "actions-dropdown-1"
     And I press "update-game-rosters-1"

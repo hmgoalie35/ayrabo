@@ -13,7 +13,7 @@ class DeactivateManagerApiViewTests(APITestCase):
 
     def setUp(self):
         self.url = 'v1:sportregistrations:managers:deactivate'
-        self.email = 'user@example.com'
+        self.email = 'user@ayrabo.com'
         self.password = 'myweakpassword'
         self.user = UserFactory(email=self.email, password=self.password)
         self.sr = SportRegistrationFactory(user=self.user)

@@ -7,7 +7,7 @@ from sports.tests import SportRegistrationFactory
 
 class HomeViewTests(BaseTestCase):
     def setUp(self):
-        self.email = 'user@example.com'
+        self.email = 'user@ayrabo.com'
         self.password = 'myweakpassword'
 
     def test_unauthenticated(self):

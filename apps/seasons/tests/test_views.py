@@ -23,7 +23,7 @@ class SeasonRosterCreateViewTests(BaseTestCase):
         cls.liahl_season = SeasonFactory(league=cls.liahl)
 
     def setUp(self):
-        self.email = 'user@example.com'
+        self.email = 'user@ayrabo.com'
         self.password = 'myweakpassword'
         self.user = UserFactory(email=self.email, password=self.password)
 
@@ -190,7 +190,7 @@ class SeasonRosterListViewTests(BaseTestCase):
         cls.liahl_season = SeasonFactory(league=cls.liahl)
 
     def setUp(self):
-        self.email = 'user@example.com'
+        self.email = 'user@ayrabo.com'
         self.password = 'myweakpassword'
         self.user = UserFactory(email=self.email, password=self.password)
 
@@ -269,7 +269,7 @@ class SeasonRosterUpdateViewTests(BaseTestCase):
         cls.liahl_season = SeasonFactory(league=cls.liahl)
 
     def setUp(self):
-        self.email = 'user@example.com'
+        self.email = 'user@ayrabo.com'
         self.password = 'myweakpassword'
         self.user = UserFactory(email=self.email, password=self.password)
 

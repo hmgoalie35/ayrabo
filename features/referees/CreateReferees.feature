@@ -4,14 +4,14 @@ Feature: Multiple referee registration
 
   Background: Finish userprofile creation
     Given The following confirmed user account exists
-      | first_name | last_name | email            | password       |
-      | John       | Doe       | user@example.com | myweakpassword |
+      | first_name | last_name | email           | password       |
+      | John       | Doe       | user@ayrabo.com | myweakpassword |
     And The following league objects exist
       | full_name                         | sport      |
       | Long Island Amateur Hockey League | Ice Hockey |
       | National Hockey League            | Ice Hockey |
-    And "user@example.com" is registered for "Ice Hockey" with role "Referee"
-    And I login with "user@example.com" and "myweakpassword"
+    And "user@ayrabo.com" is registered for "Ice Hockey" with role "Referee"
+    And I login with "user@ayrabo.com" and "myweakpassword"
 
   Scenario: Submit valid referee form
     Given I am on the "sports.SportRegistration" "" "sportregistrations:referees:create" page with url kwargs "pk=pk"

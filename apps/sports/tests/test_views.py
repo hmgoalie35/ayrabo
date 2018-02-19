@@ -21,7 +21,7 @@ class SportRegistrationCreateViewTests(BaseTestCase):
 
     def setUp(self):
         self.url = reverse('sportregistrations:create')
-        self.email = 'user@example.com'
+        self.email = 'user@ayrabo.com'
         self.password = 'myweakpassword'
         self.post_data = {
             'sportregistrations-TOTAL_FORMS': 1,
@@ -209,7 +209,7 @@ class SportRegistrationDetailViewTests(BaseTestCase):
         cls.team = TeamFactory(name='Green Machine Icecats', division=cls.division)
 
     def setUp(self):
-        self.email = 'user@example.com'
+        self.email = 'user@ayrabo.com'
         self.password = 'myweakpassword'
         self.user = UserFactory(email=self.email, password=self.password)
         self.sr = SportRegistrationFactory(user=self.user, sport=self.ice_hockey, is_complete=True, roles_mask=15)
@@ -238,7 +238,7 @@ class SportRegistrationDetailViewTests(BaseTestCase):
 
     def test_not_object_owner(self):
         self.client.logout()
-        other_user = UserFactory(email='otheruser@example.com', password=self.password)
+        other_user = UserFactory(email='otheruser@ayrabo.com', password=self.password)
         SportRegistrationFactory(user=other_user, sport=self.ice_hockey, is_complete=True)
         self.client.login(email=other_user.email, password=self.password)
         response = self.client.get(self.url)

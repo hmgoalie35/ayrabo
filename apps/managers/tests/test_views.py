@@ -25,7 +25,7 @@ class ManagersCreateViewTests(BaseTestCase):
 
     def setUp(self):
         self.url = 'sportregistrations:{role}:create'
-        self.email = 'user@example.com'
+        self.email = 'user@ayrabo.com'
         self.password = 'myweakpassword'
         self.post_data = {
             'managers-TOTAL_FORMS': 1,

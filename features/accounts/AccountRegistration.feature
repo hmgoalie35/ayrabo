@@ -7,7 +7,7 @@ Feature: Register for an account
     Given I am on the "account_register" page
     When I fill in "id_first_name" with "John"
     And I fill in "id_last_name" with "Doe"
-    And I fill in "id_email" with "user@example.com"
+    And I fill in "id_email" with "user@ayrabo.com"
     And I fill in "id_password1" with "myweakpassword"
     And I fill in "id_password2" with "myweakpassword"
     And I press "id_submit"
@@ -15,20 +15,20 @@ Feature: Register for an account
     And I should see "Verify Your E-mail Address"
     And I should see "An email with a confirmation link has been sent to your email address. Please follow the"
     # Note this does not test confirming the account, that is done below.
-    And A user account should exist for "user@example.com"
+    And A user account should exist for "user@ayrabo.com"
 
   Scenario: Confirm email address with a valid link
     Given The following unconfirmed user accounts exist
-      | first_name | last_name | email            | password       |
-      | John       | Doe       | user@example.com | myweakpassword |
-    When I confirm "user@example.com" via "email_link"
-    Then I should see "You have confirmed user@example.com."
+      | first_name | last_name | email           | password       |
+      | John       | Doe       | user@ayrabo.com | myweakpassword |
+    When I confirm "user@ayrabo.com" via "email_link"
+    Then I should see "You have confirmed user@ayrabo.com."
     And I should be on the "account_login" page
 
   Scenario: Attempt to confirm email address with an invalid link
     Given The following unconfirmed user accounts exist
-      | first_name | last_name | email            | password       |
-      | John       | Doe       | user@example.com | myweakpassword |
+      | first_name | last_name | email           | password       |
+      | John       | Doe       | user@ayrabo.com | myweakpassword |
 
     When I follow an invalid email link
     Then I should see "This confirmation link is invalid or has expired."

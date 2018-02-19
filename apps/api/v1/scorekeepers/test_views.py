@@ -10,7 +10,7 @@ class DeactivateScorekeeperApiViewTests(BaseAPITestCase):
     url = 'v1:sportregistrations:scorekeepers:deactivate'
 
     def setUp(self):
-        self.email = 'user@example.com'
+        self.email = 'user@ayrabo.com'
         self.password = 'myweakpassword'
         self.user = UserFactory(email=self.email, password=self.password)
         self.sr = SportRegistrationFactory(user=self.user)

@@ -7,12 +7,12 @@ Feature: Division: used to organize a league (i.e. NHL -> Atlantic, Metropolitan
 
   Background: Staff user exists and is logged into admin panel
     Given The following confirmed user account exists
-      | first_name | last_name | email            | password       |
-      | John       | Doe       | user@example.com | myweakpassword |
-    And "user@example.com" has the following permissions "is_staff is_superuser"
-    And "user@example.com" is completely registered for "Ice Hockey" with roles "Coach, Referee"
+      | first_name | last_name | email           | password       |
+      | John       | Doe       | user@ayrabo.com | myweakpassword |
+    And "user@ayrabo.com" has the following permissions "is_staff is_superuser"
+    And "user@ayrabo.com" is completely registered for "Ice Hockey" with roles "Coach, Referee"
     And I am on the "admin:login" page
-    And I fill in "id_username" with "user@example.com"
+    And I fill in "id_username" with "user@ayrabo.com"
     And I fill in "id_password" with "myweakpassword"
     And I press "#login-form > div.submit-row > input[type='submit']"
 

@@ -29,7 +29,7 @@ class HockeyGameCreateViewTests(BaseTestCase):
     url = 'teams:games:create'
 
     def setUp(self):
-        self.email = 'user@example.com'
+        self.email = 'user@ayrabo.com'
         self.password = 'myweakpassword'
 
         self.ice_hockey = SportFactory(name='Ice Hockey')
@@ -86,7 +86,7 @@ class HockeyGameCreateViewTests(BaseTestCase):
 
     def test_not_team_manager(self):
         team = TeamFactory(division=self.mm_aa)
-        email = 'user2@example.com'
+        email = 'user2@ayrabo.com'
         self._create_user(self.ice_hockey, team, ['Manager'], user={'email': email, 'password': self.password})
         self.login(email=email, password=self.password)
         response = self.client.get(self.format_url(team_pk=1))
@@ -119,7 +119,7 @@ class HockeyGameCreateViewTests(BaseTestCase):
     # Testing some generic functionality in this test...
     def test_get_sport_not_configured(self):
         baseball = SportFactory(name='Baseball')
-        email = 'user2@example.com'
+        email = 'user2@ayrabo.com'
         team = TeamFactory(id=5, name='New York Yankees', division__league__sport=baseball)
         self._create_user(baseball, team, ['Manager'], user={'email': email, 'password': self.password})
         self.login(email=email, password=self.password)
@@ -227,7 +227,7 @@ class HockeyGameListViewTests(BaseTestCase):
         self.mm_aa = DivisionFactory(name='Midget Minor AA', league=self.liahl)
         self.icecats = TeamFactory(id=1, name='Green Machine IceCats', division=self.mm_aa)
 
-        self.email = 'user@example.com'
+        self.email = 'user@ayrabo.com'
         self.password = 'myweakpassword'
         self.user = UserFactory(email=self.email, password=self.password)
         self.sport_registration = SportRegistrationFactory(user=self.user, sport=self.ice_hockey)
@@ -332,7 +332,7 @@ class HockeyGameUpdateViewTests(BaseTestCase):
         self.mock_now.return_value = self.now
         self.addCleanup(self.patcher.stop)
 
-        self.email = 'user@example.com'
+        self.email = 'user@ayrabo.com'
         self.password = 'myweakpassword'
 
         self.ice_hockey = SportFactory(name='Ice Hockey')
@@ -394,7 +394,7 @@ class HockeyGameUpdateViewTests(BaseTestCase):
 
     def test_not_team_manager(self):
         user, _, _ = self._create_user(self.ice_hockey, self.t3, ['Manager'],
-                                       user={'email': 'user1@example.com', 'password': self.password})
+                                       user={'email': 'user1@ayrabo.com', 'password': self.password})
         self.login(user=user)
         response = self.client.get(self.formatted_url)
         self.assert_404(response)
@@ -525,7 +525,7 @@ class GameRostersUpdateViewTests(BaseTestCase):
     url = 'sports:games:rosters:update'
 
     def setUp(self):
-        self.email = 'user@example.com'
+        self.email = 'user@ayrabo.com'
         self.password = 'myweakpassword'
 
         self.ice_hockey = SportFactory(name='Ice Hockey')
@@ -656,7 +656,7 @@ class BulkUploadHockeyGamesViewTests(BaseTestCase):
     url = 'bulk_upload_hockeygames'
 
     def setUp(self):
-        self.email = 'user@example.com'
+        self.email = 'user@ayrabo.com'
         self.password = 'myweakpassword'
         self.test_file_path = os.path.join(settings.BASE_DIR, 'static', 'csv_examples')
         self.user = UserFactory(email=self.email, password=self.password, is_staff=True)

@@ -5,8 +5,8 @@ Feature: Create game
 
   Background: User exists
     Given The following confirmed user account exists
-      | first_name | last_name | email            | password       |
-      | John       | Doe       | user@example.com | myweakpassword |
+      | first_name | last_name | email           | password       |
+      | John       | Doe       | user@ayrabo.com | myweakpassword |
     And The following team object exists
       | id | name                  | division        | league                            | sport      |
       | 1  | Green Machine IceCats | Midget Minor AA | Long Island Amateur Hockey League | Ice Hockey |
@@ -14,10 +14,10 @@ Feature: Create game
       | 3  | Long Island Rebels    | Midget Minor AA | Long Island Amateur Hockey League | Ice Hockey |
       | 4  | Nassau County Lions   | Midget Minor AA | Long Island Amateur Hockey League | Ice Hockey |
       | 5  | Aviator Gulls         | Midget Minor AA | Long Island Amateur Hockey League | Ice Hockey |
-    And "user@example.com" is completely registered for "Ice Hockey" with role "Manager"
+    And "user@ayrabo.com" is completely registered for "Ice Hockey" with role "Manager"
     And The following manager objects exist
       | username_or_email | team                  |
-      | user@example.com  | Green Machine IceCats |
+      | user@ayrabo.com   | Green Machine IceCats |
     And The following generic choice objects exist
       | content_type | short_value | long_value | type             |
       | sports.Sport | exhibition  | Exhibition | game_type        |
@@ -29,10 +29,10 @@ Feature: Create game
     And The following season object exists
       | league                            | start_date | end_date   | teams                 |
       | Long Island Amateur Hockey League | 2017-09-14 | 2018-09-14 | Green Machine IceCats |
-    And I login with "user@example.com" and "myweakpassword"
+    And I login with "user@ayrabo.com" and "myweakpassword"
 
   Scenario: Navigate to game create page
-    Given I am on the absolute url page for "sports.SportRegistration" and "user__email=user@example.com, sport__name=Ice Hockey"
+    Given I am on the absolute url page for "sports.SportRegistration" and "user__email=user@ayrabo.com, sport__name=Ice Hockey"
     And I press "manager_tab"
     And I press "actions-dropdown-manager-green-machine-icecats"
     And I press "create_game_btn_green-machine-icecats"
@@ -56,7 +56,7 @@ Feature: Create game
     And I fill in "id_end" with "12/26/2017 09:00 PM"
     And I select "LIAHL: 2017-2018 Season" from "id_season"
     And I press "create_game_btn"
-    Then I should be on the absolute url page for "sports.SportRegistration" and "user__email=user@example.com, sport__name=Ice Hockey"
+    Then I should be on the absolute url page for "sports.SportRegistration" and "user__email=user@ayrabo.com, sport__name=Ice Hockey"
     And I should see "Your game has been created."
 
   Scenario: Invalid form
