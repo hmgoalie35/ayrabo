@@ -33,16 +33,24 @@
 * Need to have proxy strip X-Forwarded-Proto header and then set it myself so nobody can spoof the header
 * Speed up virtualenv, npm installs. Correctly organize dev, testing, prod dependencies for npm and pip
     * checksums of package.json and requirements.txt, if didn't change copy over node_modules and venv?
+    * Use `pip wheel` after a deployment. Store generated wheels in some global dir, then try to install from the wheel cache (need to see if this actually speeds things up). Should always run pip wheel even if deployment fails.
+    * requirements folder w/ base.txt, dev.txt, prod.txt
+    * For npm, can use `npm pack` or `tar --totals -ca -f name.tar.gz node_modules`. .xz ext smallest, then .bz2 then .gz
 * On single server setup, when gunicorn restarts at end of deployment, you get 502 bad gateway. But maintenance mode and multiple app servers should mitigate this. Looking into sending SIGHUP or how to hot swap gunicorn binaries might be a good additive measure.
 * Limit file upload sizes in nginx conf/django settings
 * reload nginx config, update supervisor so have 0 downtime
     * will gracefully kill itself, however the current gunicorn setup (executable living in non global location will make this difficult. Need to hot swap binaries)
+* fact_caching & related settings, ask_sudo_pass config settings
+* Zero downtime deployments
+    * https://docs.ansible.com/ansible/latest/playbooks_delegation.html#delegation-rolling-updates-and-local-actions (likely use pre_task)
+    * http://docs.gunicorn.org/en/stable/signals.html
 
 ### Usage
-* A few preconditions must be met on the remote hosts before running the playbooks
-    * python 2 is installed.
-    * A user named `ess` must exist.
-    * ssh keys must be set up for `ess`
+* Install python2 and any other necessary packages
+    * `sudo apt-get install python python-dev python-apt python-pip python-virtualenv`
+* Create user `ess`
+* Setup ssh keys for the `ess` user
+* Use the `devops.py` wrapper script
 
 ### NOTES
 * Don't need `become_user: root` because the default is `root`
@@ -55,6 +63,7 @@
 * When deploying to multiple servers, take one nginx out of the load balancer, or maybe shut down that server?
     * https://www.nginx.com/resources/wiki/start/topics/tutorials/commandline/#stopping-or-restarting-nginx
 * Caching: https://www.nginx.com/resources/admin-guide/content-caching/
+    * See https://www.pivotaltracker.com/story/show/152580031
 * Actual ssl certificate, not snakeoil...
     * `sudo mkdir /etc/nginx/ssl && sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/nginx/ssl/nginx.key -out /etc/nginx/ssl/nginx.crt`
 * Postgres & Django
