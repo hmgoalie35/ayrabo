@@ -1,5 +1,5 @@
-- include: nodejs.yml
-- include: nginx.yml
+- include_tasks: nodejs.yml
+- include_tasks: nginx.yml
 
 - name: Create all deployments directory
   file:
@@ -16,4 +16,4 @@
     path: "{{ sites_dir }}"
     state: directory
 
-- include: gunicorn.yml
+- include_tasks: gunicorn.yml

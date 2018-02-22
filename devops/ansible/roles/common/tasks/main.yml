@@ -19,7 +19,7 @@
     repo: ppa:deadsnakes/ppa
     state: present
 
-- include: ../../../utils/update_apt_cache.yml
+- import_tasks: ../../../utils/update_apt_cache.yml
 
 - name: Upgrade system packages
   apt:

@@ -36,6 +36,6 @@
     dest: "/etc/nginx/sites-enabled/{{ ansible_default_ipv4.address }}"
     state: link
 
-- include: ../../utils/reload_nginx_conf.yml
+- include_tasks: ../../../utils/reload_nginx_conf.yml
 
 # TODO nginx supervisor

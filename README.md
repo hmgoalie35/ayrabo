@@ -28,7 +28,7 @@ This project uses pre-commit, whenever you commit files flake8 and some other co
 * Install `python3.6 python3.6-dev python3-pip`
     * Can use `sudo add-apt-repository ppa:deadsnakes/ppa` if on linux.
 * Install [docker](https://docs.docker.com/engine/installation/)
-* Install ansible: `sudo pip install ansible==2.3.2.0`
+* Install ansible: `sudo pip install ansible==2.4.3.0`
 * Run `devops/ansible/devops.py -m dev -s dev`
 * A `.env` file will be generated in the repo
     * Replace `REPLACE_ME` w/ your mailtrap settings.

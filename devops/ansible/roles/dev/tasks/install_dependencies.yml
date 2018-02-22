@@ -1,4 +1,4 @@
-- include: ../../db/tasks/add_postgres_apt.yml
+- include_tasks: ../../db/tasks/add_postgres_apt.yml
 
 - name: Update/upgrade system dependencies
   apt:
@@ -29,7 +29,7 @@
     - vim
     - postgresql-client-9.6
 
-- include: ../../web/tasks/nodejs.yml
+- include_tasks: ../../web/tasks/nodejs.yml
 
 - name: Update pip
   pip:
