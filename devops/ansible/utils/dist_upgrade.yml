@@ -1,0 +1,7 @@
+- name: Update/upgrade system dependencies
+  become: yes
+  apt:
+    update_cache: "{{ update_cache|default(yes) }}"
+    upgrade: dist
+    autoremove: yes
+    autoclean: yes

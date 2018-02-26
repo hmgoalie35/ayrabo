@@ -11,9 +11,9 @@
       default: master
       private: no
   vars_files:
-    - "{{ server_type }}_vars.yml"
-    - "roles/deploy/vars/main.yml"
+    - "vars/{{ server_type }}.yml"
 
   roles:
+    - web
     - deploy
     - cron

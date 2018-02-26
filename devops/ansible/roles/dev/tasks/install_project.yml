@@ -1,7 +1,7 @@
 - name: Copy over .env
   template:
     src: ../../deploy/templates/.env.example.j2
-    dest: ../../.env
+    dest: "{{ project_root }}/.env"
 
 - name: Create venv and install requirements
   pip:
@@ -11,13 +11,12 @@
     state: present
     requirements: "requirements.txt"
 
-  # The npm module was only working w/ state: latest after the node v8 update. It doesn't seem like it was actually
-  # updating the packages to the latest versions but I don't want to take a chance.
-  - name: Install npm packages
-    shell: npm install
-    args:
-      chdir: "{{ project_root }}"
-      creates: "{{ project_root }}/node_modules"
+# The npm module was only working w/ state: latest after the node v8 update. It doesn't seem like it was actually
+# updating the packages to the latest versions but I don't want to take a chance.
+- name: Install npm packages
+  shell: npm install
+  args:
+    chdir: "{{ project_root }}"
 
 - name: Install pre-commit
   shell: "source {{ venv_path }}/bin/activate && pre-commit install"

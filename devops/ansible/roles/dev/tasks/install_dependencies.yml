@@ -1,11 +1,9 @@
-- include_tasks: ../../db/tasks/add_postgres_apt.yml
+- import_role:
+    name: postgres
 
-- name: Update/upgrade system dependencies
-  apt:
+- import_tasks: ../../../utils/dist_upgrade.yml
+  vars:
     update_cache: yes
-    upgrade: dist
-    autoremove: yes
-    autoclean: yes
 
 - name: Install packages
   apt:
@@ -29,7 +27,8 @@
     - vim
     - postgresql-client-9.6
 
-- include_tasks: ../../web/tasks/nodejs.yml
+- import_role:
+    name: nodejs
 
 - name: Update pip
   pip:
