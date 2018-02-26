@@ -13,19 +13,19 @@
   apt_repository:
     repo: ppa:git-core/ppa
     state: present
+    update_cache: no
 
 - name: Add python PPA
   apt_repository:
     repo: ppa:deadsnakes/ppa
     state: present
+    update_cache: no
 
 - import_tasks: ../../../utils/update_apt_cache.yml
 
-- name: Upgrade system packages
-  apt:
-    upgrade: dist
-    autoremove: yes
-    autoclean: yes
+- import_tasks: ../../../utils/dist_upgrade.yml
+  vars:
+    update_cache: no
 
 - name: Install common packages
   apt:

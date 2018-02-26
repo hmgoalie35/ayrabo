@@ -25,6 +25,7 @@ server {
 }
 
 server {
+    # TODO add ssl before default_server?
     listen 443 default_server;
     listen [::]:443 default_server;
     server_name "";
@@ -59,8 +60,7 @@ server {
 
     location @proxy_server {
         include proxy_params;
-
-        # proxy_redirect off;
+        proxy_redirect off;
         proxy_pass   http://app_server;
     }
 

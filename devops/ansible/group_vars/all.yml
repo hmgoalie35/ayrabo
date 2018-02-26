@@ -1,1 +1,4 @@
 venv_python_version: python3.6
+node_version: 8
+remote_user: '{{ ansible_env["USER"] }}'
+repo: https://github.com/hmgoalie35/ayrabo.git

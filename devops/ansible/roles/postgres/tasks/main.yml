@@ -3,6 +3,7 @@
     filename: pgdg
     repo: "deb http://apt.postgresql.org/pub/repos/apt/ {{ ansible_distribution_release }}-pgdg main"
     state: present
+    update_cache: yes
 
 - name: Add postgres apt signing key
   apt_key:

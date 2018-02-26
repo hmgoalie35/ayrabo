@@ -1,7 +1,7 @@
 ### Using ansible in this project
 * Install python2 and related packages on the machine running the playbooks (see command below)
 * Install python2 and related packages on the server
-    * `sudo apt-get install python python-dev python-apt python-pip python-virtualenv`
+    * `sudo apt-get install python python-dev python-apt python-pip python-virtualenv -y`
 * Create user `ess`
 * Setup ssh keys for the `ess` user
 * Use the `devops.py` wrapper script

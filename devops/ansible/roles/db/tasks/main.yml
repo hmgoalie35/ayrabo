@@ -1,7 +1,7 @@
-- import_tasks: add_postgres_apt.yml
-- import_tasks: ../../../utils/update_apt_cache.yml
+- import_role:
+    name: postgres
 
-- name: Install postgres
+- name: Install postgres server
   apt:
     name: "{{ item }}"
     state: present

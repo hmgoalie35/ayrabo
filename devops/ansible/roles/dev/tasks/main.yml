@@ -1,7 +1,5 @@
 - block:
-  - include_tasks: install_dependencies.yml
+  - import_tasks: install_dependencies.yml
     become: yes
-    tags: install_dependencies
-  - include_tasks: install_project.yml
-    tags: install_project
+  - import_tasks: install_project.yml
   when: "ansible_system == 'Linux'"
