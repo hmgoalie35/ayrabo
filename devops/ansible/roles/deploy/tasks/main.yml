@@ -27,12 +27,6 @@
         state: present
         requirements: "requirements.txt"
 
-    - name: Create the maintenance page
-      django_manage:
-        app_path: "{{ ongoing_deployment }}"
-        command: "create_maintenance_page --dir {{ sites_dir }} --file maintenance.html"
-        virtualenv: "{{ venv_path }}"
-
     # The npm module was only working w/ state: latest after the node v8 update. It doesn't seem like it was actually
     # updating the packages to the latest versions but I don't want to take a chance.
     - name: Install npm packages
@@ -44,6 +38,12 @@
       command: npm run build
       args:
         chdir: "{{ ongoing_deployment }}"
+
+    - name: Create the maintenance page
+      django_manage:
+        app_path: "{{ ongoing_deployment }}"
+        command: "create_maintenance_page --file {{ maintenance_file }}"
+        virtualenv: "{{ venv_path }}"
 
     - name: Collect static
       django_manage:
