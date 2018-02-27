@@ -1,0 +1,25 @@
+- name: Toggle maintenance mode for webservers
+  hosts: webservers
+  remote_user: ess
+  vars_prompt:
+    - name: maintenance_mode
+      prompt: Enable or disable maintenance mode. Choose from (on|off)
+      private: no
+  tasks:
+    - name: Get {{ maintenance_on_file|basename }} stat
+      stat:
+        path: "{{ maintenance_on_file }}"
+      register: maintenance_on_file_stat
+
+    - name: Get {{ maintenance_off_file|basename }} stat
+      stat:
+        path: "{{ maintenance_off_file }}"
+      register: maintenance_off_file_stat
+
+    - name: Enable maintenance mode
+      command: mv "{{ maintenance_off_file }}" "{{ maintenance_on_file }}"
+      when: maintenance_mode == 'on' and maintenance_off_file_stat.stat.exists
+
+    - name: Disable maintenance mode
+      command: mv "{{ maintenance_on_file }}" "{{ maintenance_off_file }}"
+      when: maintenance_mode == 'off' and maintenance_on_file_stat.stat.exists

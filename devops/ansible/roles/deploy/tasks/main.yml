@@ -42,7 +42,7 @@
     - name: Create the maintenance page
       django_manage:
         app_path: "{{ ongoing_deployment }}"
-        command: "create_maintenance_page --file {{ maintenance_file }}"
+        command: "create_maintenance_page --file {{ maintenance_off_file }}"
         virtualenv: "{{ venv_path }}"
 
     - name: Collect static

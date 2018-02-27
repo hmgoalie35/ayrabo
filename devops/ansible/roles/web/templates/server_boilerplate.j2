@@ -57,7 +57,7 @@ server {
     location / {
         alias {{ sites_dir }}/;
         # $uri was a huge security hole. We were able to traverse the directory structure and download any files.
-        try_files {{ maintenance_on_file }} @proxy_server;
+        try_files {{ maintenance_on_file|basename }} @proxy_server;
     }
 
     location @proxy_server {
