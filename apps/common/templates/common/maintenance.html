@@ -1,0 +1,29 @@
+{% extends 'site_base.html' %}
+
+{% block title %}We are temporarily down for maintenance{% endblock %}
+
+{% block navbar %}
+  <nav class="navbar navbar-default navbar-static-top">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <a class="navbar-brand" href="{% url 'home' %}">ayrabo</a>
+      </div>
+    </div>
+  </nav>
+{% endblock %}
+
+{% block content %}
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="text-center">
+          <br>
+          <h3>We are temporarily down for maintenance</h3>
+          <p>Please try again later or <a href="mailto:{{ support_email }}">contact us</a> for more information.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block footer %}{% endblock %}
