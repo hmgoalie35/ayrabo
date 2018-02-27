@@ -36,6 +36,7 @@ sys.path.append(os.path.join(BASE_DIR, 'apps'))
 
 ADMINS = [('Harris Pittinsky', 'harris@pittinsky.com'), ]
 MANAGERS = ADMINS
+SUPPORT_EMAIL = 'harris@pittinsky.com'
 
 IGNORABLE_404_URLS = [
     re.compile(r'^/apple-touch-icon.*\.png$'),

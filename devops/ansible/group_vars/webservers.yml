@@ -12,5 +12,5 @@ current_symlink: "{{ sites_dir }}/current"
 previous_symlink: "{{ sites_dir }}/previous"
 
 maintenance_file: "{{ sites_dir }}/maintenance.html"
-maintenance_on_file: "{{ sites_dir }}/maintenance_on.html"
-maintenance_off_file: "{{ sites_dir }}/maintenance_off.html"
+maintenance_on_file: "maintenance_on.html"
+maintenance_off_file: "maintenance_off.html"
