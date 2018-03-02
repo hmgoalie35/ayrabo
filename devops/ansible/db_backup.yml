@@ -1,0 +1,16 @@
+- name: Backup the database
+  hosts: dbservers
+  remote_user: ess
+
+  vars_files:
+    - "vars/{{ server_type }}.yml"
+
+  tasks:
+    - name: Create db backups directory
+      file:
+        path: "{{ db_backup_dir }}"
+        state: directory
+
+    # See README for some background info
+    - name: Backing up db to {{ db_backup_file }}
+      command: pg_dump -w -E {{ db_encoding }} -F c -f {{ db_backup_file }} {{ db_name }}

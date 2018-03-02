@@ -24,3 +24,20 @@
     * timezone: utc
     * max connections: need to decide
     * default_transaction_isolation: 'read committed'
+
+### Postgres backups/restores
+* We do not need to specify the host connection info because the ansible task runs on the dbserver.
+    * For reference we can use something like `-h {{ db_host|default('localhost') }} -U {{ db_user }} -w`
+    * If host connection options are needed, you will likely need password auth for the db_user. Set a `PGPASSWORD` env var. i.e. `environment:\nPGPASSWORD: "{{ db_password }}"` (replace `\n` with an actual line break)
+* Note the use of `-w`. This should always be used and prevents password prompts (which can lead to playbooks hanging). `-w` fails the connection attempt if auth doesn't succeed via other methods.
+* We shouldn't need `become: yes` and `become_user: postgres` at all because the regular user's permissions should be sufficient.
+#### Postgres backups
+* We always dump the whole database because it's better to have more in the backup and then choose to restore less with `pg_restore`.
+* We are using a custom directory dump format (`-F c`). Files will end in `.backup` and are compressed by default.
+
+#### Postgres restores
+* Postgres returns non zero codes when restores were actually successful but there might have been soft errors (table already exists, so won't create it) or warnings. Ansible will mark the task as failed which is certainly not what we want. We could register the result of the command in a variable and change ansible's `failed_when` to inspect the stdout of the variable but that is hacky and brittle.
+* A consistent error I was getting when restoring the whole database was `must be owner of extension plpgsql`. Seems like there really isn't a workaround if restoring the whole db is the goal. Solution is to only restore the `public` schema. The error goes away and ansible doesn't fail the task.
+* The ansible task for restoring currently assumes the database exists (maybe there are no tables, or tables are missing, or columns/rows are missing, etc).
+* The restore process currently drops existing tables if they exist (so ansible doesn't fail due to soft warnings/errors at the end of the command execution), and only restores the `public` schema.
+* We could utilize other options such as `--single-transaction` (which implies `--exit-on-error`) and `--create` but `--single-transaction` isn't compatible w/ `--clean --if-exists`. `--create` didn't seem to work.
