@@ -51,7 +51,7 @@ class Devops(object):
         if self.mode in ['dev', 'provision', 'deploy']:
             command.append('-K')
 
-        if self.mode in ['provision', 'deploy']:
+        if self.mode in ['provision', 'deploy', 'db_backup', 'db_restore']:
             command.append('--vault-password-file')
             command.append(VAULT_PASSWORD_FILE)
             command.append('--extra-vars')
@@ -72,15 +72,6 @@ class Devops(object):
         return command
 
     def init(self):
-        """
-        TODO:
-            1. Maintenance mode
-            2. Deploying arbitrary branches (collect static, migrate, etc.) to arbitrary servers
-            3. Rollback
-            4. DB backups/restores
-            5. Applying new nginx conf (Just need to run web role...)
-            6. If deployment, enforce development version being specified, etc.
-        """
         parser = self.get_parser()
         self.args = vars(parser.parse_args())
         self.server_type = self.args.get('server')

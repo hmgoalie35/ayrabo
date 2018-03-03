@@ -1,0 +1,3 @@
+db_encoding: UTF8
+db_backup_dir: "{{ ansible_env.HOME }}/backups"
+db_backup_file: "{{ db_backup_dir }}/{{ ansible_date_time.iso8601_basic_short }}.backup"
