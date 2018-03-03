@@ -41,3 +41,6 @@
 * The ansible task for restoring currently assumes the database exists (maybe there are no tables, or tables are missing, or columns/rows are missing, etc).
 * The restore process currently drops existing tables if they exist (so ansible doesn't fail due to soft warnings/errors at the end of the command execution), and only restores the `public` schema.
 * We could utilize other options such as `--single-transaction` (which implies `--exit-on-error`) and `--create` but `--single-transaction` isn't compatible w/ `--clean --if-exists`. `--create` didn't seem to work.
+* NOTE: If it is desired to wipe the whole db prior to a restore, we may want to create the new db from `template0` (might fix the plpgsql error above).
+    * The pg_restore docs mention `template0`, just search the page for that term.
+    * Also see https://www.postgresql.org/docs/9.6/static/manage-ag-templatedbs.html
