@@ -1,5 +1,6 @@
 {% extends 'site_base.html' %}
 {% load crispy_forms_tags ess_utils %}
+{% load render_bundle from webpack_loader %}
 
 {% block title %}Update Game Rosters{% endblock %}
 
@@ -20,6 +21,8 @@
 {% endblock %}
 
 {% block extra_js %}
+  {% render_bundle 'vendor' 'js' %}
+  {% render_bundle 'gameRosters' 'js' %}
   <script>
     $(function () {
       App.initGameRostersUpdateComponent({
