@@ -1,5 +1,6 @@
 const path = require('path');
 const webpack = require('webpack');
+const glob = require('glob');
 
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
@@ -18,13 +19,28 @@ const PATHS = {
     main: path.join(jsRoot, 'main.js'),
   },
   jsx: {
-    main: path.join(jsxRoot, 'main.jsx'),
     vendor: path.join(jsxRoot, 'vendor.jsx'),
   },
   scss: {
     main: path.join(scssRoot, 'main.scss'),
   },
   dist: path.join(staticRoot, 'dist')
+};
+
+const generateEntryPoints = () => {
+  const retVal = {
+    jqueryMain: PATHS.js.main,
+    // styleMain.js is never used
+    styleMain: PATHS.scss.main,
+    polyfills: ['babel-polyfill', 'raf/polyfill'],
+    vendor: PATHS.jsx.vendor,
+  };
+  const entryPoints = glob.sync(path.join(jsxRoot, '**/entry.jsx'));
+  entryPoints.map((entry) => {
+    const entryName = path.basename(path.dirname(entry));
+    retVal[entryName] = entry;
+  });
+  return retVal;
 };
 
 module.exports = function (env, argv) {
@@ -38,16 +54,10 @@ module.exports = function (env, argv) {
   }
 
   const extractScss = new ExtractTextPlugin(`css/${cssFileName}.css`);
+  const entryPoints = generateEntryPoints();
 
   return {
-    entry: {
-      jqueryMain: PATHS.js.main,
-      reactMain: PATHS.jsx.main,
-      // styleMain.js is never used
-      styleMain: PATHS.scss.main,
-      polyfills: ['babel-polyfill', 'raf/polyfill'],
-      vendor: PATHS.jsx.vendor,
-    },
+    entry: entryPoints,
     output: {
       filename: `js/${jsFileName}.js`,
       path: PATHS.dist,
@@ -126,6 +136,17 @@ module.exports = function (env, argv) {
       extractScss,
       new BundleTracker({ filename: './webpack-stats.json' }),
       new webpack.HashedModuleIdsPlugin(),
+      // Anything shared b/w the vendor file and actual feature code will be moved to the vendor
+      // chunk. Ex: react, react-dom, etc. The order here matters. After moving shared code  to the
+      // vendor chunk, any other shared code will be moved to the commons chunk. Right now commons
+      // should just contain the webpack boilerplate. Eventually other duplicated code not in the
+      // vendor file will get moved there (because that's what happens when a chunk name isn't the
+      // same as an entry point). I think adding another name called manifest should move the
+      // webpack boilerplate to that chunk and leave duplicated code in commons.
+      new webpack.optimize.CommonsChunkPlugin({
+        names: ['vendor', 'commons'],
+        minChunks: 2
+      }),
       new CopyWebpackPlugin([
         {
           from: 'jquery/dist/jquery.min.js',

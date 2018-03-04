@@ -1,8 +1,8 @@
 /* eslint-disable import/prefer-default-export */
 import { render } from 'react-dom';
 
-import GameRostersUpdateComponent from './gameRosters/GameRostersUpdateComponent';
-import { withErrorHandling } from './common/ErrorHandler';
+import GameRostersUpdateComponent from './GameRostersUpdateComponent';
+import { withErrorHandling } from './../common/ErrorHandler';
 
 
 export const initGameRostersUpdateComponent = opts =>
