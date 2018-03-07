@@ -40,7 +40,7 @@ This project uses pre-commit, whenever you commit files flake8 and some other co
 * Run the test suite
     * `source venv/bin/activate && bash run_tests.sh`.
 
-Docker is being used to run a postgres db server. You can start the postgres container by running `docker-compose up -d` from the `devops/docker` directory.
+Docker is being used to run a postgres db server. You can start the postgres container by running `docker-compose up -d` from the main project directory.
 
 # Integration Tests
 

@@ -34,7 +34,7 @@
 - name: Build and start docker containers in detached mode (this may take a while)
   shell: "docker-compose up -d"
   args:
-    chdir: "{{ project_root }}/devops/docker"
+    chdir: "{{ project_root }}"
     executable: "/bin/bash"
 
 - name: Wait for postgres container to start up
