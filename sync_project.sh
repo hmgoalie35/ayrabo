@@ -24,8 +24,7 @@ npm install
 
 print_step "Starting postgres service"
 
-COMPOSE_FILE=devops/docker/docker-compose.yml
-docker-compose -f ${COMPOSE_FILE} build --pull && docker-compose -f ${COMPOSE_FILE} up -d
+docker-compose build --pull && docker-compose up -d
 
 print_step "Running migrations"
 python manage.py migrate

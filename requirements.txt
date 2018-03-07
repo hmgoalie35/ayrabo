@@ -3,7 +3,7 @@ behave==1.2.5
 behave-django==1.1.0
 coreapi==2.3.3
 coverage==4.5.1
-Django==1.11.10
+Django==1.11.11
 django-allauth==0.34.0
 django-crispy-forms==1.7.0
 django-debug-toolbar==1.9.1
