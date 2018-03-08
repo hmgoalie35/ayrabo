@@ -16,6 +16,11 @@ class UserProfileCreateView(LoginRequiredMixin, generic.CreateView):
     success_url = reverse_lazy('sportregistrations:create')
     form_class = UserProfileCreateForm
 
+    def dispatch(self, request, *args, **kwargs):
+        if hasattr(request.user, 'userprofile'):
+            return redirect(reverse('home'))
+        return super().dispatch(request, *args, **kwargs)
+
     def form_valid(self, form):
         form.instance.user = self.request.user
         return super(UserProfileCreateView, self).form_valid(form)
