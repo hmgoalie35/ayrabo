@@ -1,5 +1,7 @@
 import datetime
 
+from crispy_forms.helper import FormHelper
+from crispy_forms.layout import Layout, Div
 from django import forms
 from django.contrib.admin import widgets
 from django.core.exceptions import ValidationError
@@ -59,37 +61,39 @@ class HockeySeasonRosterAdminForm(forms.ModelForm):
 
 
 class HockeySeasonRosterCreateForm(forms.ModelForm):
-    """
-    Form for creating a hockey season roster that optimizes db access through select_related and excludes any
-    seasons, teams, players that belong to different leagues or divisions
-    """
-
     def __init__(self, *args, **kwargs):
-        league = kwargs.pop('league', None)
-        read_only_fields = kwargs.pop('read_only_fields', None)
-        team = kwargs.pop('team', None)
+        self.team = kwargs.pop('team')
 
-        super(HockeySeasonRosterCreateForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
-        if read_only_fields:
-            set_fields_disabled(read_only_fields, self.fields)
+        self.helper = FormHelper()
+        # csrf token manually included in template
+        self.helper.disable_csrf = True
+        self.helper.form_tag = False
+        self.helper.layout = Layout(
+            'name',
+            'season',
+            'players',
+            Div(
+                'default',
+                css_class='text-center'
+            )
+        )
 
-        if league:
-            today = datetime.date.today()
-            self.fields['season'].queryset = Season.objects.filter(
-                league__full_name=league).exclude(end_date__lt=today).select_related('league')
-            self.fields['team'].queryset = Team.objects.filter(
-                division__league__full_name=league).select_related('division')
+        league = self.team.division.league
+        today = datetime.date.today()
 
-        if team:
-            self.fields['players'].queryset = HockeyPlayer.objects.active().filter(team=team).select_related('user')
+        self.fields['season'].queryset = Season.objects.filter(league=league).exclude(
+            end_date__lt=today).select_related('league')
+        self.fields['players'].queryset = HockeyPlayer.objects.active().filter(team=self.team).select_related('user')
 
-    season = SeasonModelChoiceField(queryset=Season.objects.all().select_related('league'))
-    players = forms.ModelMultipleChoiceField(queryset=HockeyPlayer.objects.active().select_related('user'))
+    # querysets are overridden in form constructor anyway
+    season = SeasonModelChoiceField(queryset=Season.objects.none())
+    players = forms.ModelMultipleChoiceField(queryset=HockeyPlayer.objects.none())
 
     class Meta:
         model = HockeySeasonRoster
-        fields = ['name', 'team', 'season', 'players', 'default']
+        fields = ['name', 'season', 'players', 'default']
 
 
 class HockeySeasonRosterUpdateForm(forms.ModelForm):
