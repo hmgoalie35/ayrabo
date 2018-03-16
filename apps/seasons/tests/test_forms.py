@@ -1,5 +1,6 @@
 import datetime
 
+from ayrabo.utils.form_fields import PlayerModelMultipleChoiceField
 from ayrabo.utils.testing import BaseTestCase
 from divisions.tests import DivisionFactory
 from leagues.tests import LeagueFactory
@@ -55,6 +56,10 @@ class HockeySeasonRosterCreateFormTests(BaseTestCase):
         qs = form.fields['players'].queryset.values_list('id', flat=True)
         self.assertNotIn(hockeyplayer_different_team.id, qs)
         self.assertNotIn(inactive_player.id, qs)
+
+    def test_players_displayed_correctly(self):
+        form = self.get_form()
+        self.assertIsInstance(form.fields['players'], PlayerModelMultipleChoiceField)
 
 
 class HockeySeasonRosterUpdateFormTests(BaseTestCase):

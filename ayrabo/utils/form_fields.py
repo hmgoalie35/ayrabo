@@ -17,3 +17,13 @@ class TeamModelChoiceField(forms.ModelChoiceField):
 class SeasonModelChoiceField(forms.ModelChoiceField):
     def label_from_instance(self, obj):
         return '{}: {}-{} Season'.format(obj.league.abbreviated_name, obj.start_date.year, obj.end_date.year)
+
+
+class PlayerModelMultipleChoiceField(forms.ModelMultipleChoiceField):
+    def __init__(self, *args, **kwargs):
+        self.position_field = kwargs.pop('position_field')
+        super().__init__(*args, **kwargs)
+
+    def label_from_instance(self, obj):
+        position = getattr(obj, self.position_field)
+        return '#{} {} {}'.format(obj.jersey_number, obj.user.get_full_name(), position)

@@ -5,8 +5,7 @@ from sports.models import Sport, SportRegistration
 from sports.tests import SportRegistrationFactory
 
 
-@step(
-        '"(?P<username_or_email>.*)" is (?P<is_complete>completely )?registered for "(?P<sport_name>.*)" with roles? "(?P<roles>.*)"')  # noqa
+@step('"(?P<username_or_email>.*)" is (?P<is_complete>completely )?registered for "(?P<sport_name>.*)" with roles? "(?P<roles>.*)"')  # noqa
 def step_impl(context, username_or_email, is_complete, sport_name, roles):
     split_roles = roles.split(',')
     if ',' not in roles and len(split_roles) > 1:

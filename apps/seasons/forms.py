@@ -7,7 +7,8 @@ from django.contrib.admin import widgets
 from django.core.exceptions import ValidationError
 
 from ayrabo.utils import set_fields_disabled
-from ayrabo.utils.form_fields import SeasonModelChoiceField, TeamModelChoiceField, TeamModelMultipleChoiceField
+from ayrabo.utils.form_fields import SeasonModelChoiceField, TeamModelChoiceField, TeamModelMultipleChoiceField, \
+    PlayerModelMultipleChoiceField
 from players.models import HockeyPlayer
 from teams.models import Team
 from .models import Season, HockeySeasonRoster
@@ -89,7 +90,7 @@ class HockeySeasonRosterCreateForm(forms.ModelForm):
 
     # querysets are overridden in form constructor anyway
     season = SeasonModelChoiceField(queryset=Season.objects.none())
-    players = forms.ModelMultipleChoiceField(queryset=HockeyPlayer.objects.none())
+    players = PlayerModelMultipleChoiceField(position_field='position', queryset=HockeyPlayer.objects.none())
 
     class Meta:
         model = HockeySeasonRoster

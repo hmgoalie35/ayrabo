@@ -13,20 +13,10 @@ Feature: Create season rosters
       | New York Yankees      | American League East | Major League Baseball             | Baseball   |
     And I login with "user@ayrabo.com" and "myweakpassword"
 
-  Scenario Outline: Can't create season roster w/o manager role
-    Given "user@ayrabo.com" is completely registered for "Ice Hockey" with role "<role>"
-    When I go to the "teams.Team" "" "teams:season_rosters:create" page with url kwargs "team_pk=pk"
-    Then I should be on the "home" page
-    And I should see "You do not have permission to perform this action."
-
-    Examples: Player, Coach, Referee roles
-      | role    |
-      | Player  |
-      | Coach   |
-      | Referee |
-
-  Scenario: Create season roster for green machine icecats
-    Given "user@ayrabo.com" is completely registered for "Ice Hockey" with role "Manager"
+  Scenario: Navigate to season roster create page
+    Given The following sport registration exists
+      | id | username_or_email | sport      | roles   | complete |
+      | 20 | user@ayrabo.com   | Ice Hockey | Manager | true     |
     And The following manager objects exist
       | username_or_email | team                  |
       | user@ayrabo.com   | Green Machine IceCats |
@@ -37,8 +27,10 @@ Feature: Create season rosters
     Then I should be on the "teams.Team" "" "teams:season_rosters:create" page with url kwargs "team_pk=pk"
     And I should see "Create Season Roster for Green Machine IceCats"
 
-  Scenario: Submit valid ice hockey create season roster form
-    Given "user@ayrabo.com" is completely registered for "Ice Hockey" with role "Manager"
+  Scenario: Submit valid ice hockey form
+    Given The following sport registration exists
+      | id | username_or_email | sport      | roles   | complete |
+      | 25 | user@ayrabo.com   | Ice Hockey | Manager | true     |
     And The following manager object exists
       | username_or_email | team                  |
       | user@ayrabo.com   | Green Machine IceCats |
@@ -57,10 +49,10 @@ Feature: Create season rosters
     And I select "1" from "id_season"
     And I select 5 players from "id_players"
     And I press "create_season_roster_btn"
-    Then I should see "Season roster created for Green Machine IceCats."
-    And I should be on the "home" page
+    Then I should see "Your season roster has been created."
+    And I should be on the "sportregistrations:detail" page with kwargs "pk=25"
 
-  Scenario: Submit invalid ice hockey create season roster form
+  Scenario: Submit invalid ice hockey form
     Given "user@ayrabo.com" is completely registered for "Ice Hockey" with role "Manager"
     And The following manager object exists
       | username_or_email | team                  |
