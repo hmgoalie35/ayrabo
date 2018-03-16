@@ -14,7 +14,7 @@ Feature: List season rosters
 
   Scenario Outline: Can't view season roster list page w/o manager role
     Given "user@ayrabo.com" is completely registered for "Ice Hockey" with role "<role>"
-    When I go to the "teams.Team" "" "teams:season_rosters:create" page with url kwargs "team_pk=pk"
+    When I go to the "teams.Team" "" "teams:season_rosters:list" page with url kwargs "team_pk=pk"
     Then I should be on the "home" page
     And I should see "You do not have permission to perform this action."
 
