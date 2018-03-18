@@ -5,17 +5,17 @@ from ayrabo.utils.testing import BaseTestCase
 from divisions.tests import DivisionFactory
 from leagues.tests import LeagueFactory
 from players.tests import HockeyPlayerFactory
-from seasons.forms import HockeySeasonRosterCreateForm, HockeySeasonRosterUpdateForm
-from seasons.tests import SeasonFactory, HockeySeasonRosterFactory
+from seasons.forms import HockeySeasonRosterCreateUpdateForm
+from seasons.tests import SeasonFactory
 from sports.tests import SportFactory
 from teams.tests import TeamFactory
 
 
-class HockeySeasonRosterCreateFormTests(BaseTestCase):
-    form_cls = HockeySeasonRosterCreateForm
+class HockeySeasonRosterCreateUpdateFormTests(BaseTestCase):
+    form_cls = HockeySeasonRosterCreateUpdateForm
 
-    def get_form(self):
-        return self.form_cls(team=self.team)
+    def get_form(self, **kwargs):
+        return self.form_cls(team=self.team, **kwargs)
 
     def setUp(self):
         self.sport = SportFactory(name='Ice Hockey')
@@ -61,26 +61,6 @@ class HockeySeasonRosterCreateFormTests(BaseTestCase):
         form = self.get_form()
         self.assertIsInstance(form.fields['players'], PlayerModelMultipleChoiceField)
 
-
-class HockeySeasonRosterUpdateFormTests(BaseTestCase):
-    def setUp(self):
-        self.sport = SportFactory(name='Ice Hockey')
-        self.league = LeagueFactory(sport=self.sport, full_name='Long Island Amateur Hockey League')
-        self.division = DivisionFactory(league=self.league, name='Midget Minor AA')
-        self.team = TeamFactory(division=self.division)
-        self.form_cls = HockeySeasonRosterUpdateForm
-
-    def test_hockeyplayers_filtered_by_team(self):
-        HockeyPlayerFactory.create_batch(5, team=self.team, sport=self.sport)
-        hockeyplayer_different_team = HockeyPlayerFactory(sport=self.sport)
-        inactive_player = HockeyPlayerFactory(team=self.team, sport=self.sport, is_active=False)
-
-        form = self.form_cls(team=self.team)
-        players_field = form.fields['players']
-        self.assertNotIn(hockeyplayer_different_team, players_field.queryset)
-        self.assertNotIn(inactive_player, players_field.queryset)
-
-    def test_season_disabled(self):
-        form = self.form_cls(instance=HockeySeasonRosterFactory())
-        fields = form.fields
-        self.assertTrue(fields['season'].disabled)
+    def test_disabling_fields(self):
+        form = self.get_form(disable=['season'])
+        self.assertTrue(form.fields['season'].disabled)

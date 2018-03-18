@@ -6,9 +6,9 @@ from django import forms
 from django.contrib.admin import widgets
 from django.core.exceptions import ValidationError
 
-from ayrabo.utils import set_fields_disabled
 from ayrabo.utils.form_fields import SeasonModelChoiceField, TeamModelChoiceField, TeamModelMultipleChoiceField, \
     PlayerModelMultipleChoiceField
+from ayrabo.utils.mixins import DisableFormFieldsMixin
 from players.models import HockeyPlayer
 from teams.models import Team
 from .models import Season, HockeySeasonRoster
@@ -61,11 +61,13 @@ class HockeySeasonRosterAdminForm(forms.ModelForm):
         fields = '__all__'
 
 
-class HockeySeasonRosterCreateForm(forms.ModelForm):
+class HockeySeasonRosterCreateUpdateForm(DisableFormFieldsMixin, forms.ModelForm):
     def __init__(self, *args, **kwargs):
-        self.team = kwargs.pop('team')
-
+        self.team = kwargs.pop('team', None)
         super().__init__(*args, **kwargs)
+        # When being used as an update form, just grab the team from the instance.
+        if not self.team:
+            self.team = self.instance.team
 
         self.helper = FormHelper()
         # csrf token manually included in template
@@ -91,26 +93,6 @@ class HockeySeasonRosterCreateForm(forms.ModelForm):
     # querysets are overridden in form constructor anyway
     season = SeasonModelChoiceField(queryset=Season.objects.none())
     players = PlayerModelMultipleChoiceField(position_field='position', queryset=HockeyPlayer.objects.none())
-
-    class Meta:
-        model = HockeySeasonRoster
-        fields = ['name', 'season', 'players', 'default']
-
-
-class HockeySeasonRosterUpdateForm(forms.ModelForm):
-    """
-    Form for updating a hockey season roster that optimizes db access and excludes any players belonging to different
-    teams
-    """
-
-    def __init__(self, *args, **kwargs):
-        team = kwargs.pop('team', None)
-        super(HockeySeasonRosterUpdateForm, self).__init__(*args, **kwargs)
-        set_fields_disabled(['season'], self.fields)
-        if team:
-            self.fields['players'].queryset = HockeyPlayer.objects.active().filter(team=team).select_related('user')
-
-    players = forms.ModelMultipleChoiceField(queryset=HockeyPlayer.objects.active().select_related('user'))
 
     class Meta:
         model = HockeySeasonRoster

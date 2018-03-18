@@ -39,6 +39,10 @@ def string_to_kwargs_dict(string):
     return ret_val
 
 
+def clean_kwargs(kwargs):
+    return {k: v for k, v in kwargs.items() if v}
+
+
 class BaseTestCase(TestCase):
     # Helper methods
     def get_user(self, username_or_email):
