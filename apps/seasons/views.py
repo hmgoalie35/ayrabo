@@ -1,13 +1,11 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
-from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse
 from django.views import generic
 
-from ayrabo.utils import handle_sport_not_configured
 from ayrabo.utils.exceptions import SportNotConfiguredException
-from ayrabo.utils.mixins import UserHasRolesMixin, HasPermissionMixin, HandleSportNotConfiguredMixin
+from ayrabo.utils.mixins import HasPermissionMixin, HandleSportNotConfiguredMixin
 from managers.models import Manager
 from sports.models import SportRegistration
 from teams.models import Team
@@ -78,43 +76,47 @@ class SeasonRosterCreateView(LoginRequiredMixin,
         return super().post(request, *args, **kwargs)
 
 
-class SeasonRosterListView(LoginRequiredMixin, UserHasRolesMixin, generic.TemplateView):
-    roles_to_check = ['Manager']
+class SeasonRosterListView(LoginRequiredMixin, HandleSportNotConfiguredMixin, HasPermissionMixin, generic.ListView):
     template_name = 'seasons/season_roster_list.html'
+    context_object_name = 'season_rosters'
+
+    def _get_team(self):
+        if hasattr(self, 'team'):
+            return self.team
+        self.team = get_object_or_404(
+            Team.objects.select_related('division', 'division__league', 'division__league__sport'),
+            pk=self.kwargs.get('team_pk')
+        )
+        self.sport = self.team.division.league.sport
+        return self.team
+
+    def _get_players(self, season_roster):
+        return season_roster.players.active().order_by('jersey_number').select_related('user')
+
+    def has_permission_func(self):
+        user = self.request.user
+        team = self._get_team()
+        return Manager.objects.active().filter(user=user, team=team).exists()
+
+    def get_queryset(self):
+        season_roster_cls = SPORT_MODEL_MAPPINGS.get(self.sport.name)
+        if season_roster_cls is None:
+            raise SportNotConfiguredException(self.sport)
+        # Datatables is ordering by season, desc. It seems to be doing a lexicographical sort so it works, but isn't
+        # the best way to sort season rosters.
+        return season_roster_cls.objects.filter(team=self.team).select_related(
+            'season', 'team', 'team__division', 'created_by')
 
     def get_context_data(self, **kwargs):
-        context = super(SeasonRosterListView, self).get_context_data(**kwargs)
-
-        team = get_object_or_404(Team.objects.select_related('division', 'division__league', 'division__league__sport'),
-                                 pk=kwargs.get('team_pk', None))
-
-        # Can also do Manager.objects.filter(user=self.request.user, team=team)
-        is_user_manager_for_team = team.manager_set.active().filter(user=self.request.user).exists()
-        if not is_user_manager_for_team:
-            raise Http404
-
-        sport_name = team.division.league.sport.name
-        season_roster_cls = SPORT_MODEL_MAPPINGS.get(sport_name)
-        if season_roster_cls is None:
-            raise SportNotConfiguredException(sport_name)
-
-        season_rosters = {}
-        temp = season_roster_cls.objects.order_by('-created').filter(team=team).select_related(
-            'season', 'team', 'team__division')
-        for season_roster in temp:
-            season_rosters[season_roster] = season_roster.players.active().select_related('user').order_by(
-                'jersey_number')
-        context['season_rosters'] = season_rosters
-        context['team'] = team
-
+        context = super().get_context_data(**kwargs)
+        season_rosters = context.pop(self.context_object_name)
+        context['season_rosters'] = {roster: self._get_players(roster) for roster in season_rosters}
+        context['team'] = self.team
         return context
 
     def get(self, request, *args, **kwargs):
-        try:
-            self.get_context_data(**kwargs)
-        except SportNotConfiguredException as e:
-            return handle_sport_not_configured(self.request, self, e)
-        return super(SeasonRosterListView, self).get(request, *args, **kwargs)
+        self._get_team()
+        return super().get(request, *args, **kwargs)
 
 
 class SeasonRosterUpdateView(LoginRequiredMixin,

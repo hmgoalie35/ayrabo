@@ -1,4 +1,3 @@
-from django.core import mail
 from django.urls import reverse
 
 from ayrabo.utils.testing import BaseTestCase
@@ -143,49 +142,40 @@ class SeasonRosterListViewTests(BaseTestCase):
 
         self.hockey_players = HockeyPlayerFactory.create_batch(5, sport=self.ice_hockey, team=self.icecats)
         self.formatted_url = self.format_url(team_pk=self.icecats.pk)
-        self.client.login(email=self.email, password=self.password)
+        self.login(user=self.user)
 
-    # GET
-    def test_get_anonymous(self):
+    # General
+    def test_login_required(self):
         self.client.logout()
         response = self.client.get(self.formatted_url)
-        result_url = '%s?next=%s' % (reverse('account_login'), self.formatted_url)
-        self.assertRedirects(response, result_url)
+        self.assertRedirects(response, self.get_login_required_url(self.formatted_url))
 
-    def test_correct_template(self):
-        response = self.client.get(self.formatted_url)
-        self.assertTemplateUsed(response, 'seasons/season_roster_list.html')
-
-    def test_get_redirects_if_no_manager_role(self):
-        self.hockey_sr.set_roles(['Player', 'Coach'])
-        response = self.client.get(self.formatted_url, follow=True)
-        self.assertRedirects(response, reverse('home'))
-        self.assertHasMessage(response, 'You do not have permission to perform this action.')
-
-    def test_get_sport_not_configured(self):
+    def test_sport_not_configured(self):
         team = TeamFactory()
         ManagerFactory(team=team, user=self.user)
-        response = self.client.get(reverse('teams:season_rosters:list', kwargs={'team_pk': team.pk}), follow=True)
+        response = self.client.get(self.format_url(team_pk=team.pk), follow=True)
         self.assertTemplateUsed(response, 'sport_not_configured_msg.html')
-        msg = "{sport} hasn't been configured correctly in our system. " \
-              "If you believe this is an error please contact us.".format(sport=team.division.league.sport.name)
-        self.assertEqual(response.context['message'], msg)
-        self.assertEqual(len(mail.outbox), 1)
 
-    def test_get_invalid_team_pk(self):
-        response = self.client.get(reverse('teams:season_rosters:list', kwargs={'team_pk': 1000}))
-        self.assert_404(response)
-
-    def test_get_user_not_team_manager(self):
+    def test_has_permission_false_not_manager(self):
         team = TeamFactory(division=self.mm_aa)
-        response = self.client.get(reverse('teams:season_rosters:list', kwargs={'team_pk': team.pk}))
+        response = self.client.get(self.format_url(team_pk=team.pk))
         self.assert_404(response)
 
-    def test_get_inactive_manager(self):
+    def test_has_permission_false_inactive_manager(self):
         self.hockey_manager.is_active = False
         self.hockey_manager.save()
-        response = self.client.get(reverse('teams:season_rosters:list', kwargs={'team_pk': self.icecats.pk}))
+        response = self.client.get(self.formatted_url)
         self.assert_404(response)
+
+    def test_team_dne(self):
+        response = self.client.get(self.format_url(team_pk=1000))
+        self.assert_404(response)
+
+    # GET
+    def test_get(self):
+        response = self.client.get(self.formatted_url)
+        self.assert_200(response)
+        self.assertTemplateUsed(response, 'seasons/season_roster_list.html')
 
     def test_get_context_populated(self):
         season_rosters = HockeySeasonRosterFactory.create_batch(5, season=self.liahl_season, team=self.icecats)
@@ -196,9 +186,7 @@ class SeasonRosterListViewTests(BaseTestCase):
         response = self.client.get(self.formatted_url)
         context = response.context
         self.assertEqual(context['team'].pk, self.icecats.pk)
-
         self.assertEqual(set(context['season_rosters']), set(season_rosters))
-
         self.assertEqual(context['season_rosters'][season_rosters[0]].count(), 3)
 
 

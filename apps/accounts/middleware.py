@@ -62,12 +62,6 @@ class AccountAndSportRegistrationCompleteMiddleware(MiddlewareMixin):
                     sports[sport_registration.id] = sport.name
                 request.session['my_sports'] = sports
 
-                # Used in UserHasRoles mixin
-                user_roles = set()
-                for sport_reg in complete_sport_registrations:
-                    user_roles.update(sport_reg.roles)
-                request.session['user_roles'] = list(sorted(user_roles))
-
                 return None
             elif redirect_url != request.path:
                 return redirect(redirect_url)

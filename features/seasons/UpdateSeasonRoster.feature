@@ -29,7 +29,8 @@ Feature: Update season roster
       | username_or_email | team                  |
       | user@ayrabo.com   | Green Machine IceCats |
     And I am on the "teams:season_rosters:list" page with kwargs "team_pk=1"
-    When I press "update_link"
+    When I press "actions-dropdown-1"
+    And I press "update-season-roster-1-link"
     Then I should be on the "teams:season_rosters:update" page with kwargs "team_pk=1, pk=1"
     And I should see "Update Season Roster for Green Machine IceCats"
     And I should see "Midget Minor AA - LIAHL"
