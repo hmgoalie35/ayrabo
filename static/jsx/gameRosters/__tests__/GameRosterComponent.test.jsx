@@ -17,6 +17,7 @@ const getComponent = (selectedPlayers, allPlayers, canUpdate = true, handleAddPl
   const props = {
     teamName: 'Green Machine IceCats Midget Minor AA',
     teamId: 3,
+    teamLogo: 'logo.png',
     seasonId: 4,
     canUpdate,
     teamType: 'Home',
@@ -71,9 +72,10 @@ describe('render', () => {
     expect(component.find('h4').text()).toEqual('Home Team');
   });
 
-  test('team name displayed', () => {
+  test('team name and logo displayed', () => {
     const component = getComponent([], playersWithLabel);
     expect(component.find('strong').text()).toEqual('Green Machine IceCats Midget Minor AA');
+    expect(component.find('img').exists()).toBe(true);
   });
 
   test('selectedPlayers null', () => {

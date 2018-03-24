@@ -7,7 +7,6 @@ from . import models
 class HockeyPlayerAdmin(admin.ModelAdmin):
     list_display = ['id', 'user', 'position', 'handedness', 'jersey_number', 'team', 'division', 'league', 'sport',
                     'is_active']
-    list_display_links = ['user']
     search_fields = ['id', 'user__email', 'user__first_name', 'user__last_name', 'jersey_number', 'team__name']
 
 
@@ -15,7 +14,6 @@ class HockeyPlayerAdmin(admin.ModelAdmin):
 class BaseballPlayerAdmin(admin.ModelAdmin):
     list_display = ['id', 'user', 'position', 'catches', 'bats', 'jersey_number', 'team', 'division', 'league', 'sport',
                     'is_active']
-    list_display_links = ['user']
     search_fields = ['id', 'user__email', 'user__first_name', 'user__last_name', 'jersey_number', 'team__name']
 
 
@@ -23,5 +21,4 @@ class BaseballPlayerAdmin(admin.ModelAdmin):
 class BasketballPlayerAdmin(admin.ModelAdmin):
     list_display = ['id', 'user', 'team', 'position', 'shoots', 'jersey_number', 'team', 'division', 'league', 'sport',
                     'is_active']
-    list_display_links = ['user']
     search_fields = ['id', 'user__email', 'user__first_name', 'user__last_name', 'jersey_number', 'team__name']

@@ -29,7 +29,8 @@ Feature: Remove roles from sport registration
     And I should see "This will additionally revoke your ice hockey coach privileges."
     When I press "deactivate-green-machine-icecats-coach-btn"
     And I wait for a page refresh
-    Then "Green Machine IceCats" should show up 1 time
+    # 2 times because the image logo alt text is the team name
+    Then "Green Machine IceCats" should show up 2 times
 
   Scenario: Multiple roles, deactivate last manager registration
     Given "user@ayrabo.com" is completely registered for "Ice Hockey" with roles "Referee, Manager"
@@ -70,7 +71,8 @@ Feature: Remove roles from sport registration
     And I should see "This will additionally revoke your ice hockey player privileges."
     When I press "deactivate-green-machine-icecats-player-btn"
     And I wait for a page refresh
-    Then "Green Machine IceCats" should show up 1 time
+    # 2 times because the image logo alt text is the team name
+    Then "Green Machine IceCats" should show up 2 times
     And I should not see "Players"
 
   Scenario: Multiple roles, deactivate last referee registration
@@ -149,4 +151,5 @@ Feature: Remove roles from sport registration
     And I wait for a page refresh
     Then I should see "Long Island Edge"
     And I should see "Nassau County Lions"
-    And "Green Machine IceCats" should show up 2 times
+    # 3 times because the image logo alt text is the team name
+    And "Green Machine IceCats" should show up 3 times
