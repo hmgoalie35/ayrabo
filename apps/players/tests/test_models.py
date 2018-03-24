@@ -57,8 +57,8 @@ class PlayerModelTests(BaseTestCase):
         t = TeamFactory()
         player = HockeyPlayerFactory(team=t)
         expected = {
-            'Team': t.name,
-            'Division': t.division.name,
+            'Team': t,
+            'Division': t.division,
             'Jersey Number': player.jersey_number
         }
         fields = player.fields
@@ -103,8 +103,8 @@ class HockeyPlayerModelTests(BaseTestCase):
         t = TeamFactory()
         player = HockeyPlayerFactory(team=t)
         expected = {
-            'Team': t.name,
-            'Division': t.division.name,
+            'Team': t,
+            'Division': t.division,
             'Jersey Number': player.jersey_number,
             'Position': player.get_position_display(),
             'Handedness': player.get_handedness_display()
@@ -147,8 +147,8 @@ class BaseballPlayerModelTests(BaseTestCase):
         t = TeamFactory()
         player = BaseballPlayerFactory(team=t)
         expected = {
-            'Team': t.name,
-            'Division': t.division.name,
+            'Team': t,
+            'Division': t.division,
             'Jersey Number': player.jersey_number,
             'Position': player.get_position_display(),
             'Catches': player.get_catches_display(),
@@ -193,8 +193,8 @@ class BasketballPlayerModelTests(BaseTestCase):
         t = TeamFactory()
         player = BasketballPlayerFactory(team=t)
         expected = {
-            'Team': t.name,
-            'Division': t.division.name,
+            'Team': t,
+            'Division': t.division,
             'Jersey Number': player.jersey_number,
             'Position': player.get_position_display(),
             'Shoots': player.get_shoots_display(),
