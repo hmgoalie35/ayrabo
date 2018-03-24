@@ -75,7 +75,6 @@ describe('render', () => {
   test('team name and logo displayed', () => {
     const component = getComponent([], playersWithLabel);
     expect(component.find('strong').text()).toEqual('Green Machine IceCats Midget Minor AA');
-    console.log(component.find('img'));
     expect(component.find('img').exists()).toBe(true);
   });
 
