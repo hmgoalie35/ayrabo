@@ -14,7 +14,7 @@ class Team(models.Model):
     """
     name = models.CharField(max_length=255, verbose_name='Name')
     slug = models.SlugField(verbose_name='Slug')
-    logo = ThumbnailerImageField(verbose_name='Logo', upload_to=UploadTo('teams/logos/'), null=True)
+    logo = ThumbnailerImageField(verbose_name='Logo', upload_to=UploadTo('teams/logos/'), null=True, blank=True)
     website = WebsiteField()
     division = models.ForeignKey(Division)
     locations = models.ManyToManyField('locations.Location', through='locations.TeamLocation', verbose_name='Locations',

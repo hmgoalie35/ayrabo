@@ -7,6 +7,7 @@ from teams.models import Team
 
 class TeamFactory(django.DjangoModelFactory):
     name = Sequence(lambda x: 'Team {}'.format(x))
+    logo = django.ImageField(filename='logo.jpeg', format='JPEG')
     website = Faker('url')
     division = factory.SubFactory(DivisionFactory)
 
