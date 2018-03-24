@@ -1,6 +1,4 @@
-import os
-
-from .settings import DATABASES, CACHES, REST_FRAMEWORK, BASE_DIR
+from .settings import DATABASES, CACHES, REST_FRAMEWORK
 
 DEBUG = True
 
@@ -29,5 +27,3 @@ INTERNAL_IPS = ['127.0.0.1', 'localhost']
 REST_FRAMEWORK['DEFAULT_AUTHENTICATION_CLASSES'].append('rest_framework.authentication.BasicAuthentication')
 
 THUMBNAIL_DEBUG = True
-
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')

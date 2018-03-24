@@ -42,4 +42,9 @@
     path: "{{ sites_dir }}"
     state: directory
 
+- name: Create media directory
+  file:
+    path: "{{ media_root }}"
+    state: directory
+
 - import_tasks: gunicorn.yml
