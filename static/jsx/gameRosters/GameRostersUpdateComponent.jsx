@@ -174,8 +174,10 @@ export default class GameRostersUpdateComponent extends React.Component {
     const {
       homeTeamName,
       homeTeamId,
+      homeTeamLogo,
       awayTeamName,
       awayTeamId,
+      awayTeamLogo,
       canUpdateHomeTeamRoster,
       canUpdateAwayTeamRoster,
       seasonId,
@@ -197,6 +199,7 @@ export default class GameRostersUpdateComponent extends React.Component {
             <GameRosterComponent
               teamName={homeTeamName}
               teamId={homeTeamId}
+              teamLogo={homeTeamLogo}
               seasonId={seasonId}
               selectedPlayers={selectedHomeTeamPlayers}
               allPlayers={homeTeamPlayers}
@@ -208,6 +211,7 @@ export default class GameRostersUpdateComponent extends React.Component {
             <GameRosterComponent
               teamName={awayTeamName}
               teamId={awayTeamId}
+              teamLogo={awayTeamLogo}
               seasonId={seasonId}
               selectedPlayers={selectedAwayTeamPlayers}
               allPlayers={awayTeamPlayers}
@@ -257,8 +261,15 @@ GameRostersUpdateComponent.propTypes = {
   seasonId: PropTypes.number.isRequired,
   homeTeamId: PropTypes.number.isRequired,
   homeTeamName: PropTypes.string.isRequired,
+  homeTeamLogo: PropTypes.string,
   awayTeamId: PropTypes.number.isRequired,
   awayTeamName: PropTypes.string.isRequired,
+  awayTeamLogo: PropTypes.string,
   canUpdateHomeTeamRoster: PropTypes.bool.isRequired,
   canUpdateAwayTeamRoster: PropTypes.bool.isRequired,
+};
+
+GameRostersUpdateComponent.defaultProps = {
+  homeTeamLogo: '',
+  awayTeamLogo: '',
 };

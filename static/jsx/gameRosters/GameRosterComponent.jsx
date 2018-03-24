@@ -64,6 +64,7 @@ export default class GameRosterComponent extends React.Component {
   render() {
     const {
       teamName,
+      teamLogo,
       selectedPlayers,
       allPlayers,
       canUpdate,
@@ -109,7 +110,10 @@ export default class GameRosterComponent extends React.Component {
     return (
       <div className="col-md-6 game-roster-component">
         <h4 className="text-center">{teamType} Team</h4>
-        <div className="text-center mb10"><strong>{teamName}</strong></div>
+        <div className="text-center mb10">
+          {teamLogo && <img className="mr3" src={teamLogo} alt={teamName} />}
+          <strong>{teamName}</strong>
+        </div>
         {(selectedPlayers !== null && allPlayers !== null) &&
         <React.Fragment>
           <Typeahead
@@ -146,6 +150,7 @@ export default class GameRosterComponent extends React.Component {
 GameRosterComponent.propTypes = {
   teamName: PropTypes.string.isRequired,
   teamId: PropTypes.number.isRequired,
+  teamLogo: PropTypes.string.isRequired,
   seasonId: PropTypes.number.isRequired,
   selectedPlayers: PropTypes.arrayOf(playerPropType),
   allPlayers: PropTypes.arrayOf(playerPropType),

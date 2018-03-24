@@ -84,8 +84,8 @@ class BulkUploadTeamsView(LoginRequiredMixin, FormView):
 
             # Attempt to create a team, ignoring duplicates.
             try:
-                team = Team(name=team_name, website=website, division=division_obj)
-                team.full_clean(exclude=['slug'])
+                team = Team(name=team_name, website=website, division=division_obj, logo=None)
+                team.full_clean(exclude=['slug', 'logo'])
                 team.save()
                 successful_teams_created += 1
             except ValidationError as e:

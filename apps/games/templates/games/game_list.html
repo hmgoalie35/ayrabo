@@ -55,8 +55,14 @@
               {% for game in games %}
                 <tr>
                   <td data-title="#">{{ game.pk }}</td>
-                  <td data-title="Home">{{ game.home_team }}</td>
-                  <td data-title="Away">{{ game.away_team }}</td>
+                  <td data-title="Home">
+                    {% include 'includes/team_logo.html' with team=game.home_team %}
+                    {{ game.home_team }}
+                  </td>
+                  <td data-title="Away">
+                    {% include 'includes/team_logo.html' with team=game.away_team %}
+                    {{ game.away_team }}
+                  </td>
                   <td data-title="Type">{{ game.type }}</td>
                   <td data-title="Status">{{ game.get_status_display }}</td>
                   <td data-title="Location">
