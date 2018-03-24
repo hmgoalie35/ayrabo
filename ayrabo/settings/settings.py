@@ -94,6 +94,7 @@ INSTALLED_APPS = [
     'debug_toolbar',
     'django_extensions',
     'django_filters',
+    'easy_thumbnails',
     'localflavor',
     'rest_framework',
     'rest_framework.authtoken',
@@ -416,6 +417,21 @@ REST_FRAMEWORK = {
 
 # Google Maps API
 GOOGLE_MAPS_API_KEY = ENV_SETTINGS.get('GOOGLE_MAPS_API_KEY')
+
+# Easy thumbnails
+THUMBNAIL_ALIASES = {
+    # Project wide aliases
+    '': {
+        'sm': {'size': (30, 30)},
+    }
+}
+
+THUMBNAIL_CACHE_DIMENSIONS = True
+THUMBNAIL_DEBUG = False
+THUMBNAIL_NAMER = 'easy_thumbnails.namers.hashed'
+THUMBNAIL_PRESERVE_EXTENSIONS = True
+THUMBNAIL_SUBDIR = 'thumbnails'
+THUMBNAIL_WIDGET_OPTIONS = THUMBNAIL_ALIASES.get('').get('sm')
 
 try:
     # Running in testing mode
