@@ -1,9 +1,11 @@
 from django.db import models
 from django.utils import timezone
 from django.utils.text import slugify
+from easy_thumbnails.fields import ThumbnailerImageField
 
-from divisions.models import Division
+from ayrabo.utils import UploadTo
 from ayrabo.utils.model_fields import WebsiteField
+from divisions.models import Division
 
 
 class Team(models.Model):
@@ -12,6 +14,7 @@ class Team(models.Model):
     """
     name = models.CharField(max_length=255, verbose_name='Name')
     slug = models.SlugField(verbose_name='Slug')
+    logo = ThumbnailerImageField(verbose_name='Logo', upload_to=UploadTo('teams/logos/'), null=True)
     website = WebsiteField()
     division = models.ForeignKey(Division)
     locations = models.ManyToManyField('locations.Location', through='locations.TeamLocation', verbose_name='Locations',

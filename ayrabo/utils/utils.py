@@ -1,9 +1,13 @@
 """
 A module to store useful helper functions used throughout the code base
 """
+import os
+
 from django.conf import settings
 from django.core import mail
 from django.shortcuts import render
+from django.utils.crypto import get_random_string
+from django.utils.deconstruct import deconstructible
 
 
 def remove_form_placeholders(field_list):
@@ -54,7 +58,7 @@ def email_admins_sport_not_configured(sport_name, view_cls):
         mail.mail_admins(subject,
                          '{sport} incorrectly configured on the {page} ({cls}) page. '
                          'You will likely need to add a mapping to the appropriate dictionary.'.format(
-                                 sport=sport_name, page=view_cls.request.path, cls=view_cls.__class__.__name__))
+                             sport=sport_name, page=view_cls.request.path, cls=view_cls.__class__.__name__))
 
 
 def handle_sport_not_configured(request, cls, e):
@@ -84,3 +88,17 @@ def get_namespace_for_role(role):
         'Scorekeeper': 'scorekeepers'
     }
     return mappings.get(role, None)
+
+
+@deconstructible
+class UploadTo(object):
+    def __init__(self, path):
+        self.path = path
+
+    def __call__(self, instance, filename):
+        parts = os.path.splitext(filename)
+        unique_filename = '{}{}'.format(get_random_string(12), parts[1])
+        return os.path.join(self.path, unique_filename)
+
+    def __eq__(self, other):
+        return self.path == other.path

@@ -7,7 +7,6 @@ from .models import Season, HockeySeasonRoster
 @admin.register(Season)
 class SeasonAdmin(admin.ModelAdmin):
     list_display = ['id', 'season', 'start_date', 'end_date', 'league', 'sport', 'expired']
-    list_display_links = ['season']
     search_fields = ['id', 'start_date', 'end_date']
     filter_horizontal = ['teams']
     form = SeasonAdminForm
@@ -31,7 +30,6 @@ class SeasonAdmin(admin.ModelAdmin):
 @admin.register(HockeySeasonRoster)
 class HockeySeasonRosterAdmin(admin.ModelAdmin):
     list_display = ['id', 'name', 'season', 'team', 'division', 'default', 'expired', 'created_by', 'created']
-    list_display_links = ['id', 'name']
     search_fields = ['team__name', 'season__start_date', 'season__end_date']
     filter_horizontal = ['players']
     readonly_fields = ['created_by']

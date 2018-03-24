@@ -6,7 +6,6 @@ from . import models, forms
 @admin.register(models.Sport)
 class SportAdmin(admin.ModelAdmin):
     list_display = ('id', 'name', 'slug', 'description')
-    list_display_links = ['name']
     search_fields = ('name',)
     prepopulated_fields = {'slug': ('name',)}
 
@@ -14,7 +13,6 @@ class SportAdmin(admin.ModelAdmin):
 @admin.register(models.SportRegistration)
 class SportRegistrationAdmin(admin.ModelAdmin):
     list_display = ['id', 'user', 'roles_mask', 'roles_mask_to_string', 'is_complete', 'sport']
-    list_display_links = ['user']
     search_fields = ['user__email', 'user__first_name', 'user__last_name', 'sport__name']
     form = forms.SportRegistrationAdminForm
     readonly_fields = ['roles_mask']

@@ -10,6 +10,5 @@ class UserProfileAdmin(admin.ModelAdmin):
         'id', 'user', 'gender', 'birthday', 'height', 'weight',
         'language',
         'timezone']
-    list_display_links = ['user']
     search_fields = ['user__email']
     form = UserProfileAdminForm

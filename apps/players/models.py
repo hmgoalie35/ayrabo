@@ -53,8 +53,8 @@ class AbstractPlayer(models.Model):
         :return: OrderedDict where the keys are user friendly display names and the values are the value of the field.
         """
         fields = OrderedDict()
-        fields['Team'] = self.team.name
-        fields['Division'] = self.division.name
+        fields['Team'] = self.team
+        fields['Division'] = self.division
         fields['Jersey Number'] = self.jersey_number
         return fields
 

@@ -17,7 +17,10 @@
     <tbody>
     {% for obj in related_objs %}
       <tr>
-        <td data-title="Team">{{ obj.team.name }}</td>
+        <td data-title="Team">
+          {% include 'includes/team_logo.html' with team=obj.team %}
+          {{ obj.team.name }}
+        </td>
         <td data-title="Division">{{ obj.team.division }}</td>
         <td data-title="">
           <div class="dropdown table-dropdown">

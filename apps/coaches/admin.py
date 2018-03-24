@@ -6,7 +6,6 @@ from .models import Coach
 @admin.register(Coach)
 class CoachAdmin(admin.ModelAdmin):
     list_display = ['id', 'name', 'user', 'position', 'team', 'division', 'league', 'sport', 'is_active']
-    list_display_links = ['name']
     search_fields = ['user__email', 'position']
 
     def name(self, obj):

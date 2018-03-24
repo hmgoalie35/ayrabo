@@ -20,7 +20,12 @@
     {% for obj in related_objs %}
       <tr>
         {% for field_name, field_value in obj.fields.items %}
-          <td data-title="{{ field_name }}">{{ field_value }}</td>
+          <td data-title="{{ field_name }}">
+            {% if field_name|lower == 'team' %}
+              {% include 'includes/team_logo.html' with team=field_value %}
+            {% endif %}
+            {{ field_value }}
+          </td>
         {% endfor %}
         <td data-title="">
           <div class="dropdown table-dropdown">
