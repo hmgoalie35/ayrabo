@@ -365,7 +365,8 @@ WEBPACK_LOADER = {
 }
 
 MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+# We could pull this from .env, but I think this is a little cleaner for now
+MEDIA_ROOT = os.path.abspath(os.path.join('../../', 'media'))
 
 # Django all auth
 ACCOUNT_AUTHENTICATION_METHOD = 'email'
