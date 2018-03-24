@@ -3,7 +3,6 @@ import re
 from allauth.account.models import EmailAddress
 from behave import *
 from django.core import mail
-from generic_steps import find_element
 
 from accounts.tests import EmailAddressFactory
 from ayrabo.utils.testing import get_user
@@ -39,8 +38,6 @@ def confirm_account(context, username_or_email, method='manual'):
 
         confirmation_link = re.search(r'https?://example.com(?P<link>.+/)', str(email_body)).group('link')
         context.driver.get(context.get_url(confirmation_link))
-        confirm_btn = find_element(context, 'confirm_email_btn')
-        confirm_btn.click()
     else:
         email_address_obj = EmailAddress.objects.get(user=get_user(username_or_email))
         email_address_obj.verified = True
