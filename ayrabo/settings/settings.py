@@ -28,7 +28,7 @@ dot_env_path = os.path.join(BASE_DIR, '.env')
 if os.path.exists(dot_env_path):
     with open(dot_env_path) as f:
         for line in f:
-            # Only split on one `=`, it's possible for the value to contains a `=`
+            # Only split on one `=`, it's possible for the value to contain `=`
             k, v = line.strip().split('=', 1)
             if v:
                 ENV_SETTINGS[k] = v
