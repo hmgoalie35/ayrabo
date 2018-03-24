@@ -8,8 +8,10 @@ cache:
 python:
   - "3.6"
 
-install:
+before_install:
   - cp .env.testing .env
+
+install:
   - source $HOME/.nvm/nvm.sh
   - nvm install $TRAVIS_NODE_VERSION
   - nvm use $TRAVIS_NODE_VERSION
