@@ -8,6 +8,7 @@ ongoing_deployment: "{{ all_deployments_dir }}/{{ deployment_version|regex_repla
 venv_path: "{{ ongoing_deployment }}/venv"
 
 sites_dir: "{{ ansible_env.HOME }}/sites"
+media_root: "{{ sites_dir }}/media"
 current_symlink: "{{ sites_dir }}/current"
 previous_symlink: "{{ sites_dir }}/previous"
 
