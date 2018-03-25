@@ -28,8 +28,10 @@ dot_env_path = os.path.join(BASE_DIR, '.env')
 if os.path.exists(dot_env_path):
     with open(dot_env_path) as f:
         for line in f:
-            k, v = line.strip().split('=')
-            ENV_SETTINGS[k] = v
+            # Only split on one `=`, it's possible for the value to contain `=`
+            k, v = line.strip().split('=', 1)
+            if v:
+                ENV_SETTINGS[k] = v
 
 # Custom django apps are in apps/ directory, so add it to path
 sys.path.append(os.path.join(BASE_DIR, 'apps'))
@@ -64,14 +66,13 @@ SECURE_SSL_REDIRECT = True
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 # SECURITY WARNING: keep the secret key used in production secret!
-DEV_KEY = '9(31c+k9q8p++7a46ite17(@a3os_*)gg@+yqn4_5isb^v5=tr'
-SECRET_KEY = ENV_SETTINGS.get('SECRET_KEY', DEV_KEY)
+SECRET_KEY = ENV_SETTINGS.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 RUNNING_AUTOMATED_TESTS = False
 
-ALLOWED_HOSTS = [host.strip() for host in ENV_SETTINGS.get('ALLOWED_HOSTS', '').split(',')]
+ALLOWED_HOSTS = [host.strip() for host in ENV_SETTINGS.get('ALLOWED_HOSTS').split(',')]
 
 AUTH_USER_MODEL = 'users.User'
 
@@ -175,7 +176,7 @@ DATABASES = {
         'NAME': ENV_SETTINGS.get('POSTGRES_DB'),
         'USER': ENV_SETTINGS.get('POSTGRES_USER'),
         'PASSWORD': ENV_SETTINGS.get('POSTGRES_PASSWORD'),
-        'HOST': ENV_SETTINGS.get('POSTGRES_HOST', 'localhost'),
+        'HOST': ENV_SETTINGS.get('POSTGRES_HOST'),
         'PORT': ENV_SETTINGS.get('POSTGRES_PORT', 5432),
         # For now leave as the default
         'CONN_MAX_AGE': 0,
@@ -365,7 +366,7 @@ WEBPACK_LOADER = {
 }
 
 MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_ROOT = ENV_SETTINGS.get('MEDIA_ROOT')
 
 # Django all auth
 ACCOUNT_AUTHENTICATION_METHOD = 'email'
