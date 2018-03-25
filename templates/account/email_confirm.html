@@ -66,12 +66,12 @@
   </div>
 {% endblock %}
 
-{% if user.is_anonymous and confirmation %}
-  {% block extra_js %}
+{% block extra_js %}
+  {% if user.is_anonymous and confirmation %}
     <script>
       $(function () {
-        $("#confirm-email").submit();        
+        $("#confirm-email").submit();
       });
     </script>
-  {% endblock %}
-{% endif %}
+  {% endif %}
+{% endblock %}
