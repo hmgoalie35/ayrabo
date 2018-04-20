@@ -8,7 +8,6 @@ from locations.models import Location
 class LocationAdmin(admin.ModelAdmin):
     list_display = ['id', 'name', 'slug', 'street_number', 'street', 'city', 'state', 'zip_code', 'phone_number',
                     'website_link', 'created']
-    list_display_links = ['name']
     search_fields = ['id', 'name', 'street', 'street_number', 'city', 'state', 'zip_code']
     list_filter = ['city', 'state']
 

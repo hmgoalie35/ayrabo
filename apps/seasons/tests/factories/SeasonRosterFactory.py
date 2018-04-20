@@ -1,8 +1,8 @@
 import factory
 from factory import django, post_generation
 
-from accounts.tests import UserFactory
 from seasons.models import AbstractSeasonRoster, HockeySeasonRoster
+from users.tests import UserFactory
 
 
 class AbstractSeasonRosterFactory(django.DjangoModelFactory):

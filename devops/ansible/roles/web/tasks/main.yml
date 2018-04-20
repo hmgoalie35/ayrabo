@@ -1,5 +1,31 @@
-- include: nodejs.yml
-- include: nginx.yml
+- import_role:
+    name: nodejs
+
+- import_role:
+    name: nginx
+
+- name: Copy global nginx config
+  become: yes
+  template:
+    src: "nginx.conf.j2"
+    dest: "/etc/nginx/nginx.conf"
+
+- name: Create server config {{ ansible_default_ipv4.address }}
+  become: yes
+  template:
+    src: "server_boilerplate.j2"
+    dest: "/etc/nginx/sites-available/{{ ansible_default_ipv4.address }}"
+
+- name: Enable server config for {{ ansible_default_ipv4.address }}
+  become: yes
+  file:
+    src: "/etc/nginx/sites-available/{{ ansible_default_ipv4.address }}"
+    dest: "/etc/nginx/sites-enabled/{{ ansible_default_ipv4.address }}"
+    state: link
+
+- import_tasks: ../../../utils/reload_nginx_conf.yml
+
+# TODO nginx supervisor
 
 - name: Create all deployments directory
   file:
@@ -16,4 +42,9 @@
     path: "{{ sites_dir }}"
     state: directory
 
-- include: gunicorn.yml
+- name: Create media directory
+  file:
+    path: "{{ media_root }}"
+    state: directory
+
+- import_tasks: gunicorn.yml

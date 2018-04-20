@@ -1,25 +1,19 @@
-from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import Http404
-from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib.messages.views import SuccessMessageMixin
+from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse
 from django.views import generic
-from django.views.generic.base import ContextMixin
 
-from ayrabo.utils import handle_sport_not_configured
 from ayrabo.utils.exceptions import SportNotConfiguredException
-from ayrabo.utils.mixins import UserHasRolesMixin
+from ayrabo.utils.mixins import HasPermissionMixin, HandleSportNotConfiguredMixin
 from managers.models import Manager
+from sports.models import SportRegistration
 from teams.models import Team
-from .forms import HockeySeasonRosterCreateForm, HockeySeasonRosterUpdateForm
+from .forms import HockeySeasonRosterCreateUpdateForm
 from .models import HockeySeasonRoster
 
-SPORT_CREATE_FORM_MAPPINGS = {
-    'Ice Hockey': HockeySeasonRosterCreateForm
-}
-
-SPORT_UPDATE_FORM_MAPPINGS = {
-    'Ice Hockey': HockeySeasonRosterUpdateForm
+SPORT_FORM_MAPPINGS = {
+    'Ice Hockey': HockeySeasonRosterCreateUpdateForm
 }
 
 SPORT_MODEL_MAPPINGS = {
@@ -27,154 +21,164 @@ SPORT_MODEL_MAPPINGS = {
 }
 
 
-class SeasonRosterCreateView(LoginRequiredMixin, UserHasRolesMixin, ContextMixin, generic.View):
+class SeasonRosterCreateView(LoginRequiredMixin,
+                             HandleSportNotConfiguredMixin,
+                             HasPermissionMixin,
+                             SuccessMessageMixin,
+                             generic.CreateView):
     template_name = 'seasons/season_roster_create.html'
-    roles_to_check = ['Manager']
-    user_has_no_role_msg = 'You do not have permission to perform this action.'
+    success_message = 'Your season roster has been created.'
+
+    def _get_team(self):
+        if hasattr(self, 'team'):
+            return self.team
+        self.team = get_object_or_404(
+            Team.objects.select_related('division', 'division__league', 'division__league__sport'),
+            pk=self.kwargs.get('team_pk')
+        )
+        self.sport = self.team.division.league.sport
+        return self.team
+
+    def has_permission_func(self):
+        user = self.request.user
+        team = self._get_team()
+        return Manager.objects.active().filter(user=user, team=team).exists()
+
+    def get_form_class(self):
+        form_cls = SPORT_FORM_MAPPINGS.get(self.sport.name)
+        if form_cls is None:
+            raise SportNotConfiguredException(self.sport)
+        return form_cls
+
+    def get_form_kwargs(self):
+        form_kwargs = super().get_form_kwargs()
+        instance = self.get_form_class().Meta.model(team=self.team, created_by=self.request.user)
+
+        form_kwargs['team'] = self.team
+        form_kwargs['instance'] = instance
+        return form_kwargs
 
     def get_context_data(self, **kwargs):
-        context = super(SeasonRosterCreateView, self).get_context_data(**kwargs)
-        team = get_object_or_404(Team.objects.select_related('division', 'division__league', 'division__league__sport'),
-                                 pk=kwargs.get('team_pk', None))
-
-        # A user has many manager objects, with each manager object being tied to a team
-        manager_objects = Manager.objects.active().filter(user=self.request.user).select_related(
-                'team', 'team__division__league__sport')
-        teams_managed = [manager.team for manager in manager_objects]
-        if team not in teams_managed:
-            raise Http404
-
-        sport_name = team.division.league.sport.name
-
-        form_cls = SPORT_CREATE_FORM_MAPPINGS.get(sport_name)
-        if form_cls is None:
-            raise SportNotConfiguredException(sport_name)
-
-        form = form_cls(self.request.POST or None, initial={'team': team.pk}, read_only_fields=['team'],
-                        league=team.division.league.full_name, team=team)
-        context['team'] = team
-        context['form'] = form
-        context['sport_name'] = sport_name
+        context = super().get_context_data(**kwargs)
+        context['team'] = self.team
         return context
 
+    def get_success_url(self):
+        sport_registration = SportRegistration.objects.filter(user=self.request.user, sport=self.sport).first()
+        return sport_registration.get_absolute_url() if sport_registration else reverse('home')
+
     def get(self, request, *args, **kwargs):
-        try:
-            context = self.get_context_data(**kwargs)
-        except SportNotConfiguredException as e:
-            return handle_sport_not_configured(self.request, self, e)
-        return render(request, self.template_name, context)
+        self._get_team()
+        return super().get(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
-        try:
-            context = self.get_context_data(**kwargs)
-        except SportNotConfiguredException as e:
-            return handle_sport_not_configured(self.request, self, e)
-
-        form = context.get('form')
-        if form.is_valid():
-            form.instance.created_by = request.user
-            form.save()
-            messages.success(request, 'Season roster created for {team}.'.format(
-                    team=context.get('team')))
-            return redirect(reverse('home'))
-        return render(request, self.template_name, context)
+        self._get_team()
+        return super().post(request, *args, **kwargs)
 
 
-class SeasonRosterListView(LoginRequiredMixin, UserHasRolesMixin, generic.TemplateView):
-    roles_to_check = ['Manager']
+class SeasonRosterListView(LoginRequiredMixin, HandleSportNotConfiguredMixin, HasPermissionMixin, generic.ListView):
     template_name = 'seasons/season_roster_list.html'
+    context_object_name = 'season_rosters'
+
+    def _get_team(self):
+        if hasattr(self, 'team'):
+            return self.team
+        self.team = get_object_or_404(
+            Team.objects.select_related('division', 'division__league', 'division__league__sport'),
+            pk=self.kwargs.get('team_pk')
+        )
+        self.sport = self.team.division.league.sport
+        return self.team
+
+    def _get_players(self, season_roster):
+        return season_roster.players.active().order_by('jersey_number').select_related('user')
+
+    def has_permission_func(self):
+        user = self.request.user
+        team = self._get_team()
+        return Manager.objects.active().filter(user=user, team=team).exists()
+
+    def get_queryset(self):
+        season_roster_cls = SPORT_MODEL_MAPPINGS.get(self.sport.name)
+        if season_roster_cls is None:
+            raise SportNotConfiguredException(self.sport)
+        # Datatables is ordering by season, desc. It seems to be doing a lexicographical sort so it works, but isn't
+        # the best way to sort season rosters.
+        return season_roster_cls.objects.filter(team=self.team).select_related(
+            'season', 'team', 'team__division', 'created_by')
 
     def get_context_data(self, **kwargs):
-        context = super(SeasonRosterListView, self).get_context_data(**kwargs)
-
-        team = get_object_or_404(Team.objects.select_related('division', 'division__league', 'division__league__sport'),
-                                 pk=kwargs.get('team_pk', None))
-
-        # Can also do Manager.objects.filter(user=self.request.user, team=team)
-        is_user_manager_for_team = team.manager_set.active().filter(user=self.request.user).exists()
-        if not is_user_manager_for_team:
-            raise Http404
-
-        sport_name = team.division.league.sport.name
-        season_roster_cls = SPORT_MODEL_MAPPINGS.get(sport_name)
-        if season_roster_cls is None:
-            raise SportNotConfiguredException(sport_name)
-
-        season_rosters = {}
-        temp = season_roster_cls.objects.order_by('-created').filter(team=team).select_related(
-                'season', 'team', 'team__division')
-        for season_roster in temp:
-            season_rosters[season_roster] = season_roster.players.active().select_related('user').order_by(
-                'jersey_number')
-        context['season_rosters'] = season_rosters
-        context['team'] = team
-
+        context = super().get_context_data(**kwargs)
+        season_rosters = context.pop(self.context_object_name)
+        context['season_rosters'] = {roster: self._get_players(roster) for roster in season_rosters}
+        context['team'] = self.team
         return context
 
     def get(self, request, *args, **kwargs):
-        try:
-            self.get_context_data(**kwargs)
-        except SportNotConfiguredException as e:
-            return handle_sport_not_configured(self.request, self, e)
-        return super(SeasonRosterListView, self).get(request, *args, **kwargs)
+        self._get_team()
+        return super().get(request, *args, **kwargs)
 
 
-class SeasonRosterUpdateView(LoginRequiredMixin, UserHasRolesMixin, ContextMixin, generic.View):
-    roles_to_check = ['Manager']
+class SeasonRosterUpdateView(LoginRequiredMixin,
+                             HandleSportNotConfiguredMixin,
+                             HasPermissionMixin,
+                             SuccessMessageMixin,
+                             generic.UpdateView):
     template_name = 'seasons/season_roster_update.html'
+    context_object_name = 'season_roster'
+    success_message = 'Your season roster has been updated.'
+
+    def _get_team(self):
+        if hasattr(self, 'team'):
+            return self.team
+        self.team = get_object_or_404(
+            Team.objects.select_related('division', 'division__league', 'division__league__sport'),
+            pk=self.kwargs.get('team_pk')
+        )
+        self.sport = self.team.division.league.sport
+        return self.team
+
+    def has_permission_func(self):
+        user = self.request.user
+        team = self._get_team()
+        season_roster = self.get_object()
+        return team.id == season_roster.team_id and Manager.objects.active().filter(user=user, team=team).exists()
+
+    def get_form_class(self):
+        form_cls = SPORT_FORM_MAPPINGS.get(self.sport.name)
+        if form_cls is None:
+            raise SportNotConfiguredException(self.sport)
+        return form_cls
+
+    def get_form_kwargs(self):
+        form_kwargs = super().get_form_kwargs()
+        form_kwargs['disable'] = ['season']
+        return form_kwargs
+
+    def get_object(self, queryset=None):
+        model_cls = SPORT_MODEL_MAPPINGS.get(self.sport.name)
+        if model_cls is None:
+            raise SportNotConfiguredException(self.sport)
+        pk = self.kwargs.get(self.pk_url_kwarg, None)
+        return get_object_or_404(model_cls.objects.select_related('season', 'team'), pk=pk)
 
     def get_context_data(self, **kwargs):
-        context = super(SeasonRosterUpdateView, self).get_context_data(**kwargs)
-        team = get_object_or_404(Team.objects.select_related('division', 'division__league', 'division__league__sport'),
-                                 pk=kwargs.get('team_pk', None))
-
-        is_user_manager_for_team = team.manager_set.active().filter(user=self.request.user).exists()
-        if not is_user_manager_for_team:
-            raise Http404
-
-        sport_name = team.division.league.sport.name
-
-        season_roster_cls = SPORT_MODEL_MAPPINGS.get(sport_name)
-        if season_roster_cls is None:
-            raise SportNotConfiguredException(sport_name)
-
-        season_roster = get_object_or_404(season_roster_cls.objects.select_related('season'), pk=kwargs.get('pk', None))
-
-        if season_roster.team_id != team.id:
-            raise Http404
-
-        form_cls = SPORT_UPDATE_FORM_MAPPINGS.get(sport_name)
-        if form_cls is None:
-            raise SportNotConfiguredException(sport_name)
-
-        form = form_cls(self.request.POST or None, instance=season_roster, team=team)
-
-        context['season_roster'] = season_roster
-        context['sport_name'] = sport_name
-        context['team'] = team
-        context['form'] = form
-
+        context = super().get_context_data(**kwargs)
+        context['team'] = self.team
         return context
 
+    def form_valid(self, form):
+        if form.has_changed():
+            return super().form_valid(form)
+        return redirect(self.get_success_url())
+
+    def get_success_url(self):
+        return reverse('teams:season_rosters:list', kwargs={'team_pk': self.team.pk})
+
     def get(self, request, *args, **kwargs):
-        try:
-            context = self.get_context_data(**kwargs)
-        except SportNotConfiguredException as e:
-            return handle_sport_not_configured(self.request, self, e)
-        return render(request, self.template_name, context)
+        self._get_team()
+        return super().get(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
-        try:
-            context = self.get_context_data(**kwargs)
-        except SportNotConfiguredException as e:
-            return handle_sport_not_configured(self.request, self, e)
-        team = context.get('team')
-        form = context.get('form')
-        if form.is_valid():
-            if form.has_changed():
-                form.save()
-                messages.success(
-                        request, 'Season roster for {team} successfully updated.'.format(team=team))
-            return redirect(reverse('teams:season_rosters:list', kwargs={'team_pk': team.pk}))
-
-        return render(request, self.template_name, context)
+        self._get_team()
+        return super().post(request, *args, **kwargs)

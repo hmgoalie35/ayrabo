@@ -11,17 +11,20 @@
       <div class="col-sm-12">
         <div class="text-center">
           <h3>Update Season Roster for {{ team.name }}</h3>
-          <h4 class="text-muted">{{ team.division.name }} - {{ team.division.league.full_name }}</h4>
-          <h5 class="text-muted">Created: {{ season_roster.created }}</h5>
+          <h4 class="text-muted">{{ team.division.name }} - {{ team.division.league.abbreviated_name }}</h4>
         </div>
       </div>
     </div>
+
+    <br>
 
     <div class="row">
       <div class="col-sm-offset-4 col-sm-4 col-sm-offset-4">
         <form action="" method="post">
           {% csrf_token %}
-          {{ form | crispy }}
+
+          {% crispy form %}
+
           <br>
           <div class="text-center">
             <a class="btn btn-back js-btn-back">Back</a>
@@ -37,7 +40,9 @@
 {% block extra_js %}
   <script>
     $(function () {
-      $(".selectmultiple.form-control[name$='players']").enableBootstrapSelect({ header: "Update players for season roster" });
+      $(".selectmultiple.form-control[name$='players']").enableBootstrapSelect({ header: "Select/Deselect players" });
+      {# Only doing this so select caret is consistent #}
+      $("#id_season").enableBootstrapSelect({ header: "Select a season" });
     });
   </script>
 {% endblock %}

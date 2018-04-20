@@ -4,13 +4,11 @@ from itertools import permutations, cycle
 
 import pytz
 from allauth.account.models import EmailAddress
-from django.contrib.auth.models import User
 from django.core.management import BaseCommand
 from django.db.models import Q
 from django.utils.timezone import activate
 from faker import Faker
 
-from accounts.tests import UserFactory
 from common.management.testing_data import liahl_divisions
 from common.models import GenericChoice
 from divisions.models import Division
@@ -23,6 +21,8 @@ from seasons.models import Season
 from sports.models import SportRegistration
 from teams.models import Team
 from userprofiles.tests import UserProfileFactory
+from users.models import User
+from users.tests import UserFactory
 
 faker = Faker()
 

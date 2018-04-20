@@ -1,0 +1,18 @@
+- name: Add nginx ppa
+  become: yes
+  apt_repository:
+    repo: ppa:nginx/stable
+    state: present
+    update_cache: yes
+
+- name: Install nginx
+  become: yes
+  apt:
+    name: nginx
+    state: present
+
+- name: Remove default enabled site
+  become: yes
+  file:
+    path: /etc/nginx/sites-enabled/default
+    state: absent

@@ -20,8 +20,8 @@ export default class APIClient {
       dataType: 'json',
       // Browser will automatically send sessionid cookie because it is marked as httponly
       headers: {},
-      // 30 seconds
-      timeout: 30000,
+      // 10 seconds
+      timeout: 10000,
     };
     return $.ajax($.extend(defaults, options));
   }

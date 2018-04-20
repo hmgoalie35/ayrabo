@@ -2,7 +2,7 @@ import datetime
 
 import pytz
 
-from accounts.tests import UserFactory
+from users.tests import UserFactory
 from common.tests import GenericChoiceFactory
 from divisions.tests import DivisionFactory
 from ayrabo.utils.testing import BaseAPITestCase

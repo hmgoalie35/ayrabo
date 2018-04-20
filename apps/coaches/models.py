@@ -1,4 +1,3 @@
-from django.contrib.auth.models import User
 from django.core.validators import ValidationError
 from django.db import models
 from django.utils import timezone
@@ -6,6 +5,7 @@ from django.utils import timezone
 from common import managers
 from sports.models import SportRegistration
 from teams.models import Team
+from users.models import User
 
 
 class Coach(models.Model):

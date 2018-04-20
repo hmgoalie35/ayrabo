@@ -3,9 +3,10 @@ import datetime
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError
 from django.urls import reverse
+from django.utils import timezone
 
-from divisions.tests import DivisionFactory
 from ayrabo.utils.testing import BaseTestCase
+from divisions.tests import DivisionFactory
 from leagues.tests import LeagueFactory
 from players.tests import HockeyPlayerFactory
 from seasons.models import Season, HockeySeasonRoster
@@ -155,7 +156,7 @@ class AbstractSeasonRosterModelTests(BaseTestCase):
 
     def test_default_ordering(self):
         rosters = []
-        start_time = datetime.datetime.now()
+        start_time = timezone.now()
         for i in range(5):
             rosters.append(HockeySeasonRosterFactory(created=start_time + datetime.timedelta(hours=i * 10)))
 
@@ -163,7 +164,7 @@ class AbstractSeasonRosterModelTests(BaseTestCase):
 
     def test_get_latest(self):
         rosters = []
-        start_time = datetime.datetime.now()
+        start_time = timezone.now()
         for i in range(5):
             rosters.append(HockeySeasonRosterFactory(created=start_time + datetime.timedelta(hours=i * 10)))
 

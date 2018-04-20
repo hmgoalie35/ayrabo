@@ -1,1 +1,5 @@
 venv_python_version: python3.6
+node_version: 8
+remote_user: '{{ ansible_env["USER"] }}'
+repo: https://github.com/hmgoalie35/ayrabo.git
+datetime: "{{ ansible_date_time.month }}_{{ ansible_date_time.day }}_{{ ansible_date_time.year }}_{{ ansible_date_time.hour }}_{{ ansible_date_time.minute }}_{{ ansible_date_time.second }}"

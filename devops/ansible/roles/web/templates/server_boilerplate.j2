@@ -25,6 +25,7 @@ server {
 }
 
 server {
+    # TODO add ssl before default_server?
     listen 443 default_server;
     listen [::]:443 default_server;
     server_name "";
@@ -50,17 +51,18 @@ server {
      }
 
     location /media/ {
-        alias {{ current_symlink }}/media/;
+        alias {{ media_root }}/;
     }
 
     location / {
-        try_files $uri @proxy_server;
+        alias {{ sites_dir }}/;
+        # $uri was a huge security hole. We were able to traverse the directory structure and download any files.
+        try_files {{ maintenance_on_file|basename }} @proxy_server;
     }
 
     location @proxy_server {
         include proxy_params;
-
-        # proxy_redirect off;
+        proxy_redirect off;
         proxy_pass   http://app_server;
     }
 

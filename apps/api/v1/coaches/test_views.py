@@ -2,7 +2,7 @@ from rest_framework import status
 from rest_framework.reverse import reverse
 from rest_framework.test import APITestCase
 
-from accounts.tests import UserFactory
+from users.tests import UserFactory
 from coaches.tests import CoachFactory
 from sports.tests import SportRegistrationFactory
 

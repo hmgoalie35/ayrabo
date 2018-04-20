@@ -1,7 +1,7 @@
-- include: add_postgres_apt.yml
-- include: ../../../utils/update_apt_cache.yml
+- import_role:
+    name: postgres
 
-- name: Install postgres
+- name: Install postgres server
   apt:
     name: "{{ item }}"
     state: present
@@ -31,23 +31,30 @@
   lineinfile:
     path: "/etc/postgresql/9.6/main/postgresql.conf"
     insertafter: EOF
-    # TODO Add webserver ip addresses here, or just change to *.
-    # If it is desired to have people connect to the db via pgadmin, etc. Set this to * and limit who can connect
-    # with pg_hba.conf.
-    # This setting specifies the TCP/IP address(es) on which the server is to listen for connections.
+    # TODO Update this:
+    # If webserver & dbserver are on the same machine, we could even fallback to unix sockets (which by default are listened on. Need to allow that in pg_hba).
+    # Otherwise we need to add the ipv4 & ipv6 (if exists) addresses of the dbserver here. Probably don't want to use *, 0.0.0.0, ::.
+    # Info https://www.postgresql.org/docs/9.6/static/runtime-config-connection.html.
+
+    # listen_addresses specifies the ip address(es) the server should listen for connections.
+    # * means listen on every available ip interface, 0.0.0.0 and :: allow listening on all ipv4/ipv6 addresses respectively.
     # pg_hba.conf deals with allowing/denying the connections.
-    line: "listen_addresses = 'localhost'"
+
+    line: "listen_addresses = '0.0.0.0, ::'"
     state: present
 
 # https://www.postgresql.org/docs/current/static/auth-pg-hba-conf.html
-- name: Permit {{ db_user }} to connect to postgres
+- name: Allow {{ db_user }} to connect to postgres
   lineinfile:
     path: "/etc/postgresql/9.6/main/pg_hba.conf"
     insertafter: EOF
-    line: "host    {{ db_name }}             {{ db_user }}             {{ item }}                   md5"
+    line: "host  {{ db_name }}  {{ db_user }} {{ item }}  md5"
     state: present
-  # TODO Add webserver ip addresses here, will want to loop over list of users to add to this if connecting via
-  # pgadmin or something.
+    # TODO Update this:
+    # If webserver & dbserver are on the same machine, we could even fallback to unix sockets here.
+    # Otherwise we need to add the ipv4 & ipv6 (if exists) addresses of the dbserver here.
+    # We will probably need to do this for multiple users at some point.
+    # Also might be good to reject all other connections.
   with_items:
     - "0.0.0.0/0"
     - "::0/0"
@@ -57,20 +64,27 @@
     name: postgresql
     state: restarted
 
-- name: Create database
+- name: Create {{ db_user }} user
+  become_user: postgres
+  postgresql_user:
+    name: "{{ db_user }}"
+    password: "{{ db_password }}"
+    encrypted: yes
+    state: present
+
+- name: Create {{ db_name }} database
   become_user: postgres
   postgresql_db:
     name: "{{ db_name }}"
-    encoding: UTF8
+    encoding: "{{ db_encoding }}"
+    owner: "{{ db_user }}"
     state: present
 
-- name: Add database users
+- name: Configure role attributes for {{ db_user }}
   become_user: postgres
   postgresql_user:
-    db: "{{ db_name }}"
-    encrypted: yes
     name: "{{ db_user }}"
-    password: "{{ db_password }}"
+    db: "{{ db_name }}"
     role_attr_flags: CREATEDB
     state: present
 

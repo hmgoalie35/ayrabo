@@ -4,9 +4,12 @@ venv_path: "{{ project_root }}/venv"
 db_password: oW3G009MzbyGm1kyfugkV4G3n71QtDY7
 db_user: ess
 db_name: ess
+db_host: localhost
 email_host: smtp.mailtrap.io
 email_host_user: REPLACE_ME
 email_host_password: REPLACE_ME
 email_port: 2525
-secret_key: REMOVE_THIS_LINE
+allowed_hosts: "*"
+secret_key: "9(31c+k9q8p++7a46ite17(@a3os_*)gg@+yqn4_5isb^v5=tr"
 google_maps_api_key: ASK_HARRIS
+media_root: "{{ project_root }}/media"

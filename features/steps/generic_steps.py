@@ -4,7 +4,6 @@ import re
 from behave import *
 from django.apps import apps
 from django.conf import settings
-from django.contrib.auth.models import User
 from selenium.common.exceptions import NoSuchElementException, WebDriverException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions
@@ -12,6 +11,7 @@ from selenium.webdriver.support.select import Select
 from selenium.webdriver.support.ui import WebDriverWait
 
 from ayrabo.utils.testing import string_to_kwargs_dict, get_user
+from users.models import User
 
 
 def find_element(context, element_to_find, multiple=False):

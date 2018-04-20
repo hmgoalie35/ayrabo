@@ -1,6 +1,5 @@
 from collections import OrderedDict
 
-from django.contrib.auth.models import User
 from django.core.validators import MinValueValidator, MaxValueValidator, ValidationError
 from django.db import models
 from django.utils import timezone
@@ -9,6 +8,7 @@ from django.utils.translation import ugettext_lazy as _
 from common import managers
 from sports.models import Sport, SportRegistration
 from teams.models import Team
+from users.models import User
 
 
 class AbstractPlayer(models.Model):
@@ -53,8 +53,8 @@ class AbstractPlayer(models.Model):
         :return: OrderedDict where the keys are user friendly display names and the values are the value of the field.
         """
         fields = OrderedDict()
-        fields['Team'] = self.team.name
-        fields['Division'] = self.division.name
+        fields['Team'] = self.team
+        fields['Division'] = self.division
         fields['Jersey Number'] = self.jersey_number
         return fields
 
@@ -65,9 +65,9 @@ class AbstractPlayer(models.Model):
             qs = SportRegistration.objects.filter(user=self.user, sport=self.sport)
             if qs.exists() and not qs.first().has_role('Player'):
                 raise ValidationError(
-                        '{user} - {sport} might not have a sportregistration object or the '
-                        'sportregistration object does not have the player role assigned'.format(
-                                user=self.user.email, sport=self.sport.name))
+                    '{user} - {sport} might not have a sportregistration object or the '
+                    'sportregistration object does not have the player role assigned'.format(
+                        user=self.user.email, sport=self.sport.name))
 
     class Meta:
         abstract = True
@@ -118,7 +118,7 @@ class HockeyPlayer(AbstractPlayer):
                 user=self.user)
             if qs.exists():
                 error_msg = 'Please choose another number, {jersey_number} is currently unavailable for {team}'.format(
-                        jersey_number=self.jersey_number, team=self.team.name)
+                    jersey_number=self.jersey_number, team=self.team.name)
                 raise ValidationError({
                     'jersey_number': _(error_msg)})
 
@@ -168,10 +168,10 @@ class BaseballPlayer(AbstractPlayer):
         if hasattr(self, 'team'):
             # If we do not exclude the current user this validation error will always be triggered.
             qs = BaseballPlayer.objects.active().filter(team=self.team, jersey_number=self.jersey_number).exclude(
-                    user=self.user)
+                user=self.user)
             if qs.exists():
                 error_msg = 'Please choose another number, {jersey_number} is currently unavailable for {team}'.format(
-                        jersey_number=self.jersey_number, team=self.team.name)
+                    jersey_number=self.jersey_number, team=self.team.name)
                 raise ValidationError({
                     'jersey_number': _(error_msg)})
 
@@ -205,9 +205,9 @@ class BasketballPlayer(AbstractPlayer):
         if hasattr(self, 'team'):
             # If we do not exclude the current user this validation error will always be triggered.
             qs = BasketballPlayer.objects.active().filter(team=self.team, jersey_number=self.jersey_number).exclude(
-                    user=self.user)
+                user=self.user)
             if qs.exists():
                 error_msg = 'Please choose another number, {jersey_number} is currently unavailable for {team}'.format(
-                        jersey_number=self.jersey_number, team=self.team.name)
+                    jersey_number=self.jersey_number, team=self.team.name)
                 raise ValidationError({
                     'jersey_number': _(error_msg)})

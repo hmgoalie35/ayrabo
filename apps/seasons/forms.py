@@ -1,11 +1,14 @@
 import datetime
 
+from crispy_forms.helper import FormHelper
+from crispy_forms.layout import Layout, Div
 from django import forms
 from django.contrib.admin import widgets
 from django.core.exceptions import ValidationError
 
-from ayrabo.utils import set_fields_disabled
-from ayrabo.utils.form_fields import SeasonModelChoiceField, TeamModelChoiceField, TeamModelMultipleChoiceField
+from ayrabo.utils.form_fields import SeasonModelChoiceField, TeamModelChoiceField, TeamModelMultipleChoiceField, \
+    PlayerModelMultipleChoiceField
+from ayrabo.utils.mixins import DisableFormFieldsMixin
 from players.models import HockeyPlayer
 from teams.models import Team
 from .models import Season, HockeySeasonRoster
@@ -58,54 +61,38 @@ class HockeySeasonRosterAdminForm(forms.ModelForm):
         fields = '__all__'
 
 
-class HockeySeasonRosterCreateForm(forms.ModelForm):
-    """
-    Form for creating a hockey season roster that optimizes db access through select_related and excludes any
-    seasons, teams, players that belong to different leagues or divisions
-    """
-
+class HockeySeasonRosterCreateUpdateForm(DisableFormFieldsMixin, forms.ModelForm):
     def __init__(self, *args, **kwargs):
-        league = kwargs.pop('league', None)
-        read_only_fields = kwargs.pop('read_only_fields', None)
-        team = kwargs.pop('team', None)
+        self.team = kwargs.pop('team', None)
+        super().__init__(*args, **kwargs)
+        # When being used as an update form, just grab the team from the instance.
+        if not self.team:
+            self.team = self.instance.team
 
-        super(HockeySeasonRosterCreateForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        # csrf token manually included in template
+        self.helper.disable_csrf = True
+        self.helper.form_tag = False
+        self.helper.layout = Layout(
+            'name',
+            'season',
+            'players',
+            Div(
+                'default',
+                css_class='text-center'
+            )
+        )
 
-        if read_only_fields:
-            set_fields_disabled(read_only_fields, self.fields)
+        league = self.team.division.league
+        today = datetime.date.today()
 
-        if league:
-            today = datetime.date.today()
-            self.fields['season'].queryset = Season.objects.filter(
-                league__full_name=league).exclude(end_date__lt=today).select_related('league')
-            self.fields['team'].queryset = Team.objects.filter(
-                division__league__full_name=league).select_related('division')
+        self.fields['season'].queryset = Season.objects.filter(league=league).exclude(
+            end_date__lt=today).select_related('league')
+        self.fields['players'].queryset = HockeyPlayer.objects.active().filter(team=self.team).select_related('user')
 
-        if team:
-            self.fields['players'].queryset = HockeyPlayer.objects.active().filter(team=team).select_related('user')
-
-    season = SeasonModelChoiceField(queryset=Season.objects.all().select_related('league'))
-    players = forms.ModelMultipleChoiceField(queryset=HockeyPlayer.objects.active().select_related('user'))
-
-    class Meta:
-        model = HockeySeasonRoster
-        fields = ['name', 'team', 'season', 'players', 'default']
-
-
-class HockeySeasonRosterUpdateForm(forms.ModelForm):
-    """
-    Form for updating a hockey season roster that optimizes db access and excludes any players belonging to different
-    teams
-    """
-
-    def __init__(self, *args, **kwargs):
-        team = kwargs.pop('team', None)
-        super(HockeySeasonRosterUpdateForm, self).__init__(*args, **kwargs)
-        set_fields_disabled(['season'], self.fields)
-        if team:
-            self.fields['players'].queryset = HockeyPlayer.objects.active().filter(team=team).select_related('user')
-
-    players = forms.ModelMultipleChoiceField(queryset=HockeyPlayer.objects.active().select_related('user'))
+    # querysets are overridden in form constructor anyway
+    season = SeasonModelChoiceField(queryset=Season.objects.none())
+    players = PlayerModelMultipleChoiceField(position_field='position', queryset=HockeyPlayer.objects.none())
 
     class Meta:
         model = HockeySeasonRoster

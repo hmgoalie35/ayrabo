@@ -1,5 +1,4 @@
 gunicorn_logs_dir: "/var/log/gunicorn"
 gunicorn_socket: "unix:/tmp/gunicorn.sock"
-gunicorn_pid: "{{ sites_dir }}/gunicorn.pid"
-nginx_pid: "/run/nginx.pid"
-node_version: 8
+gunicorn_pidfile: "{{ sites_dir }}/gunicorn.pid"
+nginx_pidfile: "/run/nginx.pid"

@@ -1,10 +1,6 @@
-- name: Perform dist upgrade
-  become: yes
-  apt:
+- import_tasks: ../../../utils/dist_upgrade.yml
+  vars:
     update_cache: yes
-    upgrade: dist
-    autoremove: yes
-    autoclean: yes
 
 - block:
     # TODO setup github keys https://docs.ansible.com/ansible/github_key_module.html
@@ -37,12 +33,17 @@
       shell: npm install --production
       args:
         chdir: "{{ ongoing_deployment }}"
-        creates: "{{ ongoing_deployment }}/node_modules"
 
     - name: Run production webpack build
       command: npm run build
       args:
         chdir: "{{ ongoing_deployment }}"
+
+    - name: Create the maintenance page
+      django_manage:
+        app_path: "{{ ongoing_deployment }}"
+        command: "create_maintenance_page --file {{ maintenance_off_file }}"
+        virtualenv: "{{ venv_path }}"
 
     - name: Collect static
       django_manage:
@@ -54,6 +55,12 @@
       django_manage:
         app_path: "{{ ongoing_deployment }}"
         command: "migrate --noinput"
+        virtualenv: "{{ venv_path }}"
+
+    - name: Remove stale contenttypes
+      django_manage:
+        app_path: "{{ ongoing_deployment }}"
+        command: "remove_stale_contenttypes --noinput"
         virtualenv: "{{ venv_path }}"
 
     - name: Run seeds
@@ -108,7 +115,7 @@
     # As of now there are a few seconds where the user could get a 502 bad gateway error. This should be fine with
     # loadbalancing and multiple webservers, but for true 0 downtime deployments look at http://docs.gunicorn.org/en/stable/signals.html
     # The simple HUP signal doesn't work. Need to switch binary on the fly.
-    - include: ../../utils/restart_gunicorn.yml
+    - import_tasks: ../../utils/restart_gunicorn.yml
 
     - name: Save current deployment to deployment history file
       lineinfile:
@@ -164,7 +171,7 @@
         state: link
       when: current_symlink_stat is defined and current_symlink_stat.stat.exists
 
-    - include: ../../utils/restart_gunicorn.yml
+    - import_tasks: ../../utils/restart_gunicorn.yml
       when: current_symlink_stat is defined and current_symlink_stat.stat.exists
 
     # TODO Clean up failed_deployments/ dir (cron?)

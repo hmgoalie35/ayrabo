@@ -4,7 +4,7 @@ from leagues.tests import LeagueFactory
 from managers.forms import ManagerForm
 from sports.tests import SportFactory
 from teams.tests import TeamFactory
-from accounts.tests import UserFactory
+from users.tests import UserFactory
 from managers.tests import ManagerFactory
 
 

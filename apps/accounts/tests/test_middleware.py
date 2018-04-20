@@ -3,15 +3,15 @@ from unittest.mock import Mock
 
 from django.urls import reverse
 
-from accounts.tests import UserFactory
+from ayrabo.utils.testing import BaseTestCase
 from coaches.tests import CoachFactory
 from divisions.tests import DivisionFactory
-from ayrabo.utils.testing import BaseTestCase
 from leagues.tests import LeagueFactory
 from players.tests import HockeyPlayerFactory
 from referees.tests import RefereeFactory
 from sports.tests import SportFactory, SportRegistrationFactory
 from teams.tests import TeamFactory
+from users.tests import UserFactory
 from ..middleware import AccountAndSportRegistrationCompleteMiddleware
 
 
@@ -192,29 +192,6 @@ class MiddlewareAddsToSessionTests(BaseTestCase):
         self.request.configure_mock(**{'user': self.user, 'user.is_authenticated.return_value': True})
         self.request.path = '/'
         self.request.session = {}
-
-    def test_single_sport_registration(self):
-        self.hockey_sr.set_roles(['Player', 'Coach'])
-        self.middleware.process_request(self.request)
-        session = self.request.session
-        self.assertListEqual(session.get('user_roles'), ['Coach', 'Player'])
-
-    def test_multiple_sport_registrations(self):
-        """
-        This tests that all roles from all sport registrations are added to the session
-        """
-        self.hockey_sr.set_roles(['Referee'])
-        self.baseball_sr.set_roles(['Manager'])
-        self.middleware.process_request(self.request)
-        session = self.request.session
-        self.assertListEqual(session.get('user_roles'), ['Manager', 'Referee'])
-
-    def test_same_role_not_duplicated(self):
-        self.hockey_sr.set_roles(['Player', 'Coach', 'Referee'])
-        self.baseball_sr.set_roles(['Coach', 'Manager'])
-        self.middleware.process_request(self.request)
-        session = self.request.session
-        self.assertEqual(session.get('user_roles').count('Coach'), 1)
 
     def test_my_sports_populated(self):
         self.middleware.process_request(self.request)

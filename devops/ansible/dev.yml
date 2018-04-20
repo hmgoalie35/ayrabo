@@ -1,5 +1,5 @@
-- name: Set up local dev environment
-  hosts: all
+- name: Set up a local development environment
+  hosts: local
   connection: local
 
   roles:

@@ -1,6 +1,6 @@
-user {{ ansible_env['USER'] }};
+user {{ remote_user }};
 worker_processes auto;
-pid {{ nginx_pid }};
+pid {{ nginx_pidfile }};
 include /etc/nginx/modules-enabled/*.conf;
 
 events {

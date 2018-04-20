@@ -1,5 +1,6 @@
 {% extends 'site_base.html' %}
-{% load crispy_forms_tags ess_utils %}
+{% load crispy_forms_tags ess_utils thumbnail %}
+{% load render_bundle from webpack_loader %}
 
 {% block title %}Update Game Rosters{% endblock %}
 
@@ -20,20 +21,31 @@
 {% endblock %}
 
 {% block extra_js %}
+  {% render_bundle 'vendor' 'js' %}
+  {% render_bundle 'gameRosters' 'js' %}
   <script>
     $(function () {
-      App.initGameRostersUpdateComponent({
+      var options = {
         container: 'game-roster-container',
         gameId: {{ game.id }},
         sportId: {{ sport.id }},
         seasonId: {{ game.season.id }},
         homeTeamId: {{ home_team.id }},
-        awayTeamId: {{ away_team.id }},
         homeTeamName: '{{ home_team_name }}',
+        awayTeamId: {{ away_team.id }},
         awayTeamName: '{{ away_team_name }}',
         canUpdateHomeTeamRoster: {{ can_update_home_team_roster|booltojson }},
         canUpdateAwayTeamRoster: {{ can_update_away_team_roster|booltojson }}
-      });
+      };
+      {% if home_team.logo %}
+        {% thumbnail home_team.logo 'sm' as home_team_thumb %}
+        options.homeTeamLogo = '{{ home_team_thumb|data_uri }}';
+      {% endif %}
+      {% if away_team.logo %}
+        {% thumbnail away_team.logo 'sm' as away_team_thumb %}
+        options.awayTeamLogo = '{{ away_team_thumb|data_uri }}';
+      {% endif %}
+      App.initGameRostersUpdateComponent(options);
     });
   </script>
 {% endblock %}

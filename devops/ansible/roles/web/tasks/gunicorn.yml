@@ -7,8 +7,8 @@
 - name: Create gunicorn log files
   become: yes
   file:
-    owner: "{{ ansible_env['USER'] }}"
-    group: "{{ ansible_env['USER'] }}"
+    owner: "{{ remote_user }}"
+    group: "{{ remote_user }}"
     path: "{{ gunicorn_logs_dir }}/{{ item }}.log"
     state: touch
 
