@@ -17,7 +17,7 @@ const PlayerComponent = (props) => {
   const { user } = player;
 
   return (
-    <div className={classNames('list-group-item text-left', { disabled: !canUpdate })}>
+    <div className={classNames('list-group-item text-left animated fadeIn', { disabled: !canUpdate })}>
       <span>{`#${player.jersey_number} ${user.first_name} ${user.last_name} ${player.position}`}</span>
       {canUpdate &&
       <span className="pull-right">
