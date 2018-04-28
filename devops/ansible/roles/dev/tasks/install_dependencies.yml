@@ -40,6 +40,6 @@
     name: "{{ item }}"
     state: present
   with_items:
-    - docker-compose==1.16.1
+    - docker-compose==1.21.0
     - PyYAML
     - virtualenv
