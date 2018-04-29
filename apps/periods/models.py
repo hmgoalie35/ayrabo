@@ -1,15 +1,14 @@
 from django.db import models
-from django.utils import timezone
+
+from common.models import TimestampedModel
 
 
-class AbstractPlayingPeriod(models.Model):
+class AbstractPlayingPeriod(TimestampedModel):
     """
     Abstract base class for periods, quarters, halves, etc.
     """
     duration = models.DurationField(verbose_name='Duration')
     complete = models.BooleanField(verbose_name='Complete', default=False)
-    created = models.DateTimeField(verbose_name='Created', default=timezone.now)
-    updated = models.DateTimeField(verbose_name='Updated', auto_now=True)
 
     class Meta:
         abstract = True

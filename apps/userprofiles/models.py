@@ -5,10 +5,11 @@ from django.conf.global_settings import LANGUAGES
 from django.core.validators import MinValueValidator, MaxValueValidator, RegexValidator
 from django.db import models
 
+from common.models import TimestampedModel
 from users.models import User
 
 
-class UserProfile(models.Model):
+class UserProfile(TimestampedModel):
     """
     Model used to store additional information for a user
     """

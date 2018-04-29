@@ -1,14 +1,14 @@
 from django.core.validators import ValidationError
 from django.db import models
-from django.utils import timezone
 
 from common import managers
+from common.models import TimestampedModel
 from sports.models import SportRegistration
 from teams.models import Team
 from users.models import User
 
 
-class Coach(models.Model):
+class Coach(TimestampedModel):
     """
     Represents a coach in the system. A user can have many Coach objects related to them provided each coach object
     is for a different team.
@@ -25,7 +25,6 @@ class Coach(models.Model):
     user = models.ForeignKey(User, related_name='coaches')
     position = models.CharField(max_length=255, verbose_name='Position', choices=POSITIONS)
     team = models.ForeignKey(Team)
-    created = models.DateTimeField(default=timezone.now, verbose_name='Created')
     is_active = models.BooleanField(default=True, verbose_name='Is Active')
 
     objects = managers.ActiveManager()

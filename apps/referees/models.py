@@ -1,14 +1,14 @@
 from django.core.validators import ValidationError
 from django.db import models
-from django.utils import timezone
 
 from common import managers
+from common.models import TimestampedModel
 from leagues.models import League
 from sports.models import SportRegistration
 from users.models import User
 
 
-class Referee(models.Model):
+class Referee(TimestampedModel):
     """
     Represents a referee in the system. A user can have many Referee objects related to them provided each referee
     object is for a different league.
@@ -16,7 +16,6 @@ class Referee(models.Model):
     """
     user = models.ForeignKey(User, related_name='referees')
     league = models.ForeignKey(League)
-    created = models.DateTimeField(default=timezone.now, verbose_name='Created')
     is_active = models.BooleanField(default=True, verbose_name='Is Active')
 
     objects = managers.ActiveManager()

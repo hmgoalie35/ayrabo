@@ -1,11 +1,11 @@
 from django.db import models
-from django.utils import timezone
 from django.utils.text import slugify
 
+from common.models import TimestampedModel
 from leagues.models import League
 
 
-class Division(models.Model):
+class Division(TimestampedModel):
     """
     Represents a division that belongs to a league.
     Teams belong to divisions.
@@ -14,7 +14,6 @@ class Division(models.Model):
     name = models.CharField(max_length=255, verbose_name='Name')
     slug = models.SlugField(verbose_name='Slug')
     league = models.ForeignKey(League)
-    created = models.DateTimeField(default=timezone.now, verbose_name='Created')
 
     def clean(self):
         self.slug = slugify(self.name)
