@@ -19,7 +19,10 @@
 
             <strong>Website:</strong><br>
             {% if location.website %}
-              <a href="{{ location.website }}">{{ location.website }}</a>
+              <a href="{{ location.website }}" target="_blank" rel="noopener noreferrer">
+                {{ location.website }}
+                <i class="fa fa-align-middle fa-external-link" aria-hidden="true"></i>
+              </a>
             {% else %}
               N/A
             {% endif %}
