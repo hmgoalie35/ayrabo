@@ -1,15 +1,14 @@
 from django.core.exceptions import ValidationError
 from django.db import models
-from django.utils import timezone
 
 from common import managers
+from common.models import TimestampedModel
 from sports.models import SportRegistration
 
 
-class Scorekeeper(models.Model):
+class Scorekeeper(TimestampedModel):
     user = models.ForeignKey('users.User', verbose_name='User')
     sport = models.ForeignKey('sports.Sport', verbose_name='Sport')
-    created = models.DateTimeField(default=timezone.now, verbose_name='Created')
     is_active = models.BooleanField(default=True, verbose_name='Is Active')
 
     objects = managers.ActiveManager()

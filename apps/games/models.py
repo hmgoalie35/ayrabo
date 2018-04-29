@@ -6,10 +6,11 @@ from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils import timezone as timezone_util
 
+from common.models import TimestampedModel
 from periods.models import HockeyPeriod
 
 
-class AbstractGame(models.Model):
+class AbstractGame(TimestampedModel):
     """
     Abstract class representing a game.
     """
@@ -43,8 +44,6 @@ class AbstractGame(models.Model):
     team = models.ForeignKey('teams.Team', null=True, verbose_name='Team', on_delete=models.PROTECT)
     created_by = models.ForeignKey('users.User', null=True, verbose_name='Created By',
                                    related_name='%(class)ss_created', on_delete=models.PROTECT)
-    created = models.DateTimeField(verbose_name='Created', default=timezone_util.now)
-    updated = models.DateTimeField(verbose_name='Updated', auto_now=True)
 
     def datetime_localized(self, dt):
         return dt.astimezone(pytz.timezone(self.timezone))
@@ -118,7 +117,7 @@ class BaseballGame(AbstractGame):
                                           related_name='away_games')
 
 
-class HockeyGoal(models.Model):
+class HockeyGoal(TimestampedModel):
     HOCKEY_GOAL_VALUES = (
         (1, '1'),
     )
@@ -141,8 +140,6 @@ class HockeyGoal(models.Model):
     empty_net = models.BooleanField(verbose_name='Empty Net', default=False)
     value = models.PositiveSmallIntegerField(verbose_name='Value', choices=HOCKEY_GOAL_VALUES,
                                              default=HOCKEY_GOAL_VALUES[0][0])
-    created = models.DateTimeField(verbose_name='Created', default=timezone_util.now)
-    updated = models.DateTimeField(verbose_name='Updated', auto_now=True)
 
     def clean(self):
         super().clean()
@@ -155,12 +152,10 @@ class HockeyGoal(models.Model):
         return '{}: {}'.format(self.player.user.last_name, self.time)
 
 
-class HockeyAssist(models.Model):
+class HockeyAssist(TimestampedModel):
     player = models.ForeignKey('players.HockeyPlayer', verbose_name='Player', related_name='assists',
                                on_delete=models.PROTECT)
     goal = models.ForeignKey(HockeyGoal, verbose_name='Goal', related_name='assists', on_delete=models.PROTECT)
-    created = models.DateTimeField(verbose_name='Created', default=timezone_util.now)
-    updated = models.DateTimeField(verbose_name='Updated', auto_now=True)
 
     def clean(self):
         super().clean()

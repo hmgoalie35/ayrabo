@@ -1,11 +1,11 @@
 from django.db import models
-from django.utils import timezone
 from django.utils.text import slugify
 
+from common.models import TimestampedModel
 from sports.models import Sport
 
 
-class League(models.Model):
+class League(TimestampedModel):
     """
     Represents a league. A sport has many leagues and a league has many divisions.
     """
@@ -14,7 +14,6 @@ class League(models.Model):
     abbreviated_name = models.CharField(max_length=32, verbose_name='Abbreviated Name')
     slug = models.SlugField(verbose_name='Slug')
     sport = models.ForeignKey(Sport, verbose_name='Sport')
-    created = models.DateTimeField(default=timezone.now, verbose_name='Created')
 
     class Meta:
         ordering = ['full_name']

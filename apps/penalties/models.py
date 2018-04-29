@@ -1,12 +1,12 @@
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
-from django.utils import timezone
 
 from common.managers import GenericChoiceManager
+from common.models import TimestampedModel
 
 
-class GenericPenaltyChoice(models.Model):
+class GenericPenaltyChoice(TimestampedModel):
     content_type = models.ForeignKey(ContentType, verbose_name='Content Type', on_delete=models.PROTECT)
     object_id = models.PositiveIntegerField(verbose_name='Object Id')
     content_object = GenericForeignKey()
@@ -23,7 +23,7 @@ class GenericPenaltyChoice(models.Model):
         return self.name
 
 
-class AbstractPenalty(models.Model):
+class AbstractPenalty(TimestampedModel):
     class Meta:
         abstract = True
 
@@ -40,8 +40,6 @@ class HockeyPenalty(AbstractPenalty):
                                on_delete=models.PROTECT)
     time_in = models.DurationField(verbose_name='Time In')
     time_out = models.DurationField(verbose_name='Time Out')
-    created = models.DateTimeField(verbose_name='Created', default=timezone.now)
-    updated = models.DateTimeField(verbose_name='Updated', auto_now=True)
 
     class Meta:
         verbose_name_plural = 'Hockey Penalties'
