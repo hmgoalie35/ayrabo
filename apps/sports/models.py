@@ -1,6 +1,5 @@
 from django.db import models
 from django.urls import reverse
-from django.utils import timezone
 from django.utils.text import slugify
 
 import coaches as coaches_app
@@ -8,11 +7,12 @@ import managers as managers_app
 import players as players_app
 import referees as referees_app
 import scorekeepers as scorekeepers_app
+from common.models import TimestampedModel
 from users.models import User
 from .exceptions import RoleDoesNotExistException, InvalidNumberOfRolesException
 
 
-class Sport(models.Model):
+class Sport(TimestampedModel):
     """
     Represents a sport. This is the top of the hierarchy.
     """
@@ -20,7 +20,6 @@ class Sport(models.Model):
                             error_messages={'unique': 'Sport with this name already exists (case-insensitive)'})
     slug = models.SlugField(unique=True)
     description = models.TextField(null=True, blank=True)
-    created = models.DateTimeField(default=timezone.now, verbose_name='Created')
 
     class Meta:
         ordering = ['name']
@@ -33,7 +32,7 @@ class Sport(models.Model):
         return self.name
 
 
-class SportRegistration(models.Model):
+class SportRegistration(TimestampedModel):
     """
     Model used to store what roles a user has for a sport. A user chooses to register for a sport and has the option to
     choose what role(s) they want for a specific sport

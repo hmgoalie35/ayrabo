@@ -6,15 +6,15 @@ from django.db import models
 from django.db.models.signals import m2m_changed
 from django.dispatch import receiver
 from django.urls import reverse
-from django.utils import timezone
 
+from common.models import TimestampedModel
 from teams.models import Team
 from users.models import User
 
 logger = logging.getLogger()
 
 
-class Season(models.Model):
+class Season(TimestampedModel):
     """
     Represents a season which is used to organize games, etc. under. A league has many seasons. A season has many teams
     and a team has many seasons.
@@ -97,7 +97,7 @@ def validate_leagues(action, instance, pk_set, reverse, **kwargs):
             # raise ValidationError(errors)
 
 
-class AbstractSeasonRoster(models.Model):
+class AbstractSeasonRoster(TimestampedModel):
     """
     Abstract base class used to represent a season roster. A season roster keeps tabs on all players for a team. This is
     different from a game roster because a game roster may not include all players in the season roster due to players
@@ -108,7 +108,6 @@ class AbstractSeasonRoster(models.Model):
     season = models.ForeignKey(Season)
     team = models.ForeignKey(Team, related_name='season_rosters')
     default = models.BooleanField(default=False, verbose_name='Default Season Roster')
-    created = models.DateTimeField(default=timezone.now, verbose_name='Created')
     created_by = models.ForeignKey(User, null=True, related_name='season_rosters', verbose_name='Created By')
 
     def clean(self):

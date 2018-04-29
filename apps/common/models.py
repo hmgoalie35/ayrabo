@@ -1,6 +1,7 @@
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
+from django.utils import timezone
 from easy_thumbnails.signal_handlers import generate_aliases_global
 from easy_thumbnails.signals import saved_file
 
@@ -9,7 +10,15 @@ from .managers import GenericChoiceManager
 saved_file.connect(generate_aliases_global)
 
 
-class GenericChoice(models.Model):
+class TimestampedModel(models.Model):
+    created = models.DateTimeField(verbose_name='Created', default=timezone.now)
+    updated = models.DateTimeField(verbose_name='Updated', auto_now=True)
+
+    class Meta:
+        abstract = True
+
+
+class GenericChoice(TimestampedModel):
     """
     Represents dynamic choices for a model class or instance. This aims to simulate the choices kwarg for a
     CharField, but in a more dynamic manner.

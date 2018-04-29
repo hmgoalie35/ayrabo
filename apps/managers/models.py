@@ -1,14 +1,14 @@
 from django.core.validators import ValidationError
 from django.db import models
-from django.utils import timezone
 
 from common import managers
+from common.models import TimestampedModel
 from sports.models import SportRegistration
 from teams.models import Team
 from users.models import User
 
 
-class Manager(models.Model):
+class Manager(TimestampedModel):
     """
     Represents a manager in the system. A user can have many manager objects related to them provided each manager
     object is for a different team.
@@ -16,7 +16,6 @@ class Manager(models.Model):
     """
     user = models.ForeignKey(User, related_name='managers')
     team = models.ForeignKey(Team)
-    created = models.DateTimeField(default=timezone.now, verbose_name='Created')
     is_active = models.BooleanField(default=True, verbose_name='Is Active')
 
     objects = managers.ActiveManager()
