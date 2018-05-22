@@ -2,6 +2,7 @@ import factory
 from factory import django, post_generation, Faker, Sequence
 
 from divisions.tests import DivisionFactory
+from organizations.tests import OrganizationFactory
 from teams.models import Team
 
 
@@ -10,6 +11,7 @@ class TeamFactory(django.DjangoModelFactory):
     logo = django.ImageField(filename='logo.jpeg', format='JPEG')
     website = Faker('url')
     division = factory.SubFactory(DivisionFactory)
+    organization = factory.LazyAttribute(lambda obj: OrganizationFactory(name=obj.name))
 
     class Meta:
         model = Team
