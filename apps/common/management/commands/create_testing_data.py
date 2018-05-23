@@ -16,6 +16,7 @@ from games.tests import HockeyGameFactory
 from leagues.models import League
 from locations.models import Location
 from managers.models import Manager
+from organizations.models import Organization
 from players.tests import HockeyPlayerFactory
 from seasons.models import Season
 from sports.models import SportRegistration
@@ -74,7 +75,8 @@ def create_division(name, league):
 
 
 def create_team(name, division):
-    return create_object(Team, exclude=['slug'], name=name, division=division)
+    organization, _ = Organization.objects.get_or_create(name=name)
+    return create_object(Team, exclude=['slug'], name=name, division=division, organization=organization)
 
 
 def generate_birthday(year):
