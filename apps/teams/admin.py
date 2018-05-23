@@ -13,9 +13,7 @@ class TeamLocationInline(admin.TabularInline):
 
 @admin.register(Team)
 class TeamAdmin(admin.ModelAdmin):
-    list_display = ['id', 'slug', 'name', 'get_logo', 'division', 'league', 'sport', 'website_link']
-    # list_filter = ['division__name', 'division__league__full_name', 'division__league__abbreviated_name',
-    #                'division__league__sport__name']
+    list_display = ['id', 'slug', 'name', 'get_logo', 'organization', 'division', 'league', 'sport', 'website_link']
     search_fields = ['name', 'division__name', 'division__league__abbreviated_name', 'division__league__sport__name']
     prepopulated_fields = {'slug': ('name',)}
     inlines = [TeamLocationInline]
@@ -24,10 +22,14 @@ class TeamAdmin(admin.ModelAdmin):
         ThumbnailerImageField: {'widget': ImageClearableFileInput},
     }
 
+    def get_queryset(self, request):
+        return Team.objects.all().select_related('division', 'division__league', 'division__league__sport',
+                                                 'organization')
+
     # WARNING: Do not add in an inline for Season.teams.through. With inlines, there is no way to validate the season's
-    # division and the team's division. So a staff member could accidentally add a team for basketball to a season
+    # division and the team's division. A staff member could accidentally add a team for basketball to a season
     # for hockey. The saving in the inline isn't caught by the m2m_changed signal and creating a custom form just for
-    # the admin in overkill.
+    # the admin is overkill.
 
     def website_link(self, obj):
         return format_website_link(obj)

@@ -19,6 +19,8 @@ class Team(TimestampedModel):
     division = models.ForeignKey(Division)
     locations = models.ManyToManyField('locations.Location', through='locations.TeamLocation', verbose_name='Locations',
                                        related_name='teams')
+    organization = models.ForeignKey('organizations.Organization', verbose_name='Organization',
+                                     on_delete=models.PROTECT, related_name='teams')
 
     """
     The fields below are not really necessary to store in this model for the MVP, a link to the team's website would

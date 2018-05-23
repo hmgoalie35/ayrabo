@@ -112,6 +112,7 @@ INSTALLED_APPS = [
     'leagues.apps.LeaguesConfig',
     'locations.apps.LocationsConfig',
     'managers.apps.ManagersConfig',
+    'organizations.apps.OrganizationsConfig',
     'penalties.apps.PenaltiesConfig',
     'periods.apps.PeriodsConfig',
     'players.apps.PlayersConfig',

@@ -10,6 +10,7 @@ from django.urls import reverse_lazy
 from django.views.generic import FormView
 
 from divisions.models import Division
+from organizations.models import Organization
 from .forms import BulkUploadTeamsForm
 from .models import Team
 
@@ -82,9 +83,11 @@ class BulkUploadTeamsView(LoginRequiredMixin, FormView):
                         'under the correct league and sport'.format(division=division))
                 return errors, successful_teams_created, line_no
 
+            organization, _ = Organization.objects.get_or_create(name=team_name)
             # Attempt to create a team, ignoring duplicates.
             try:
-                team = Team(name=team_name, website=website, division=division_obj, logo=None)
+                team = Team(name=team_name, website=website, division=division_obj, logo=None,
+                            organization=organization)
                 team.full_clean(exclude=['slug', 'logo'])
                 team.save()
                 successful_teams_created += 1
