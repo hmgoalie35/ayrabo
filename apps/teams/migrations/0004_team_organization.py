@@ -48,5 +48,10 @@ class Migration(migrations.Migration):
             name='organization',
             field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.PROTECT, related_name='teams', to='organizations.Organization', verbose_name='Organization'),
         ),
-        migrations.RunPython(forwards_func, reverse_func)
+        migrations.RunPython(forwards_func, reverse_func),
+        migrations.AlterField(
+            model_name='team',
+            name='organization',
+            field=models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='teams', to='organizations.Organization', verbose_name='Organization'),
+        ),
     ]

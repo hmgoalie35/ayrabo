@@ -19,7 +19,7 @@ class Team(TimestampedModel):
     division = models.ForeignKey(Division)
     locations = models.ManyToManyField('locations.Location', through='locations.TeamLocation', verbose_name='Locations',
                                        related_name='teams')
-    organization = models.ForeignKey('organizations.Organization', null=True, verbose_name='Organization',
+    organization = models.ForeignKey('organizations.Organization', verbose_name='Organization',
                                      on_delete=models.PROTECT, related_name='teams')
 
     """
