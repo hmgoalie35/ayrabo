@@ -4,7 +4,7 @@ from users.models import Permission
 
 
 class PermissionFactory(django.DjangoModelFactory):
-    user = SubFactory('users.UserFactory')
+    user = SubFactory('users.tests.UserFactory')
 
     class Meta:
         model = Permission
