@@ -9,9 +9,9 @@ from locations.views import BulkUploadLocationsView
 from teams.views import BulkUploadTeamsView
 
 urlpatterns = [
-    url(r'^admin/bulk-upload-teams/$', BulkUploadTeamsView.as_view(), name='bulk_upload_teams'),
-    url(r'^admin/bulk-upload-locations/$', BulkUploadLocationsView.as_view(), name='bulk_upload_locations'),
-    url(r'^admin/bulk-upload-hockey-games/$', BulkUploadHockeyGamesView.as_view(), name='bulk_upload_hockeygames'),
+    url(r'^admin/teams/bulk-upload$', BulkUploadTeamsView.as_view(), name='bulk_upload_teams'),
+    url(r'^admin/locations/bulk-upload$', BulkUploadLocationsView.as_view(), name='bulk_upload_locations'),
+    url(r'^admin/hockey-games/bulk-upload$', BulkUploadHockeyGamesView.as_view(), name='bulk_upload_hockeygames'),
     url(r'^admin/', admin.site.urls),
 
     url(r'^$', HomePageView.as_view(), name='home'),

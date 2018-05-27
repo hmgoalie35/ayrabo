@@ -271,8 +271,8 @@ class BulkUploadHockeyGamesView(CsvBulkUploadView):
     model = HockeyGame
     model_form_class = HockeyGameCreateForm
 
-    def get_model_form_kwargs(self, data, raw_data):
-        form_kwargs = super().get_model_form_kwargs(data, raw_data)
+    def get_model_form_kwargs(self, cleaned_data, raw_data):
+        form_kwargs = super().get_model_form_kwargs(cleaned_data, raw_data)
         try:
             form_kwargs['team'] = Team.objects.get(pk=raw_data[0].get('home_team'))
         except (Team.DoesNotExist, IndexError):

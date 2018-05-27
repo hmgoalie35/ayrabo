@@ -36,6 +36,7 @@
     "file-loader": "1.1.11",
     "font-awesome": "4.7.0",
     "glob": "7.1.2",
+    "hoek": "5.0.3",
     "jquery": "2.2.4",
     "lodash": "4.17.10",
     "moment": "2.20.1",
