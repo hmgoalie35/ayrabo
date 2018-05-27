@@ -3,14 +3,20 @@
 {% block object-tools-items %}
   {{ block.super }}
   <li>
-    <a id="bulk_upload_btn" href="{% block bulk_upload_url %}{% endblock %}" class="addlink">
+    <a
+      id="bulk_upload_btn"
+      href="{% block bulk_upload_url %}{% endblock %}"
+      class="addlink"
+    >
       Bulk Upload {% block object_type_plural %}{% endblock %}
     </a>
-    &nbsp;
-    <a id="download_example_csv_btn"
-       href="{% block example_file_path %}{% endblock %}"
-       class="addLink"
-       style="margin-left: 5px;">
+    <a
+      id="download_example_csv_btn"
+      href="{% block example_file_path %}{% endblock %}"
+      download
+      class="addLink"
+      style="margin-left: 5px;"
+    >
       Download Example .csv
     </a>
   </li>

@@ -182,27 +182,36 @@ class CsvBulkUploadView(LoginRequiredMixin, generic.FormView):
     def dispatch(self, request, *args, **kwargs):
         return super().dispatch(request, *args, **kwargs)
 
-    def get_row_data(self, row, count):
+    def get_form_value(self, key, value, row):
+        func_name = key.replace(' ', '_').lower()
+        func = getattr(self, 'get_{}'.format(func_name), None)
+        if func is not None:
+            return func(value, row)
+        return value
+
+    def as_form_data(self, row, count):
         data = {}
         for key, value in row.items():
-            new_key = 'form-{}-{}'.format(count, key.strip())
-            data[new_key] = value.strip()
+            key = key.strip()
+            value = value.strip()
+            new_key = 'form-{}-{}'.format(count, key)
+            data[new_key] = self.get_form_value(key, value, row)
         return data
 
-    def parse_data(self, uploaded_file):
+    def clean_data(self, uploaded_file):
         csv_file = TextIOWrapper(uploaded_file)
         reader = csv.DictReader(csv_file)
-        data = {}
+        cleaned_data = {}
         raw_data = []
         count = 0
         for row in reader:
             raw_data.append(row)
-            row_data = self.get_row_data(row, count)
-            data.update(row_data)
+            form_data = self.as_form_data(row, count)
+            cleaned_data.update(form_data)
             count += 1
-        data['form-TOTAL_FORMS'] = count
-        data['form-INITIAL_FORMS'] = 0
-        return data, raw_data
+        cleaned_data['form-TOTAL_FORMS'] = count
+        cleaned_data['form-INITIAL_FORMS'] = 0
+        return cleaned_data, raw_data
 
     def get_formset_class(self):
         kwargs = {}
@@ -217,9 +226,9 @@ class CsvBulkUploadView(LoginRequiredMixin, generic.FormView):
 
     def form_valid(self, form):
         uploaded_file = form.cleaned_data.get('file')
-        data, raw_data = self.parse_data(uploaded_file)
+        cleaned_data, raw_data = self.clean_data(uploaded_file)
         FormSetClass = self.get_formset_class()
-        formset = FormSetClass(data, form_kwargs=self.get_model_form_kwargs(data, raw_data))
+        formset = FormSetClass(cleaned_data, form_kwargs=self.get_model_form_kwargs(cleaned_data, raw_data))
         if not formset.is_valid():
             context = self.get_context_data()
             context['formset'] = formset
