@@ -7,7 +7,9 @@ from common.models import TimestampedModel
 
 
 class User(AbstractUser):
-    pass
+    def has_object_permission(self, name, obj):
+        content_type = ContentType.objects.get_for_model(obj)
+        return self.permissions.filter(name=name, content_type=content_type, object_id=obj.id).exists()
 
 
 class Permission(TimestampedModel):
@@ -15,7 +17,7 @@ class Permission(TimestampedModel):
         ('admin', 'Admin'),
     )
     user = models.ForeignKey('users.User', verbose_name='User', related_name='permissions')
-    name = models.CharField(max_length=255, choices=PERMISSION_CHOICES, verbose_name='Name')
+    name = models.CharField(max_length=255, choices=PERMISSION_CHOICES, verbose_name='Name', db_index=True)
     content_type = models.ForeignKey(ContentType, verbose_name='Content Type', related_name='permissions')
     object_id = models.PositiveIntegerField(verbose_name='Object ID')
     content_object = GenericForeignKey()
