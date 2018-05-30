@@ -12,7 +12,7 @@ class Division(TimestampedModel):
     A league has many divisions and a division has many teams.
     """
     name = models.CharField(max_length=255, verbose_name='Name')
-    slug = models.SlugField(verbose_name='Slug')
+    slug = models.SlugField(max_length=255, verbose_name='Slug')
     league = models.ForeignKey(League)
 
     def clean(self):

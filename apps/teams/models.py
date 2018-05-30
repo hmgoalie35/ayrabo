@@ -13,7 +13,7 @@ class Team(TimestampedModel):
     Represents a team. A division has many teams.
     """
     name = models.CharField(max_length=255, verbose_name='Name')
-    slug = models.SlugField(verbose_name='Slug')
+    slug = models.SlugField(max_length=255, verbose_name='Slug')
     logo = ThumbnailerImageField(verbose_name='Logo', upload_to=UploadTo('teams/logos/'), null=True)
     website = WebsiteField()
     division = models.ForeignKey(Division)

@@ -12,7 +12,7 @@ class League(TimestampedModel):
     full_name = models.CharField(max_length=255, verbose_name='Full Name',
                                  error_messages={'unique': 'League with this name already exists'})
     abbreviated_name = models.CharField(max_length=32, verbose_name='Abbreviated Name')
-    slug = models.SlugField(verbose_name='Slug')
+    slug = models.SlugField(max_length=255, verbose_name='Slug')
     sport = models.ForeignKey(Sport, verbose_name='Sport')
 
     class Meta:
