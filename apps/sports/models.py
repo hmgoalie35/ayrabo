@@ -18,7 +18,7 @@ class Sport(TimestampedModel):
     """
     name = models.CharField(max_length=255, unique=True,
                             error_messages={'unique': 'Sport with this name already exists (case-insensitive)'})
-    slug = models.SlugField(unique=True)
+    slug = models.SlugField(max_length=255, verbose_name='Slug', unique=True)
     description = models.TextField(null=True, blank=True)
 
     class Meta:
