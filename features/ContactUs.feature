@@ -8,4 +8,5 @@ Feature: Contact us page
     When I press "contact_us"
     Then I should be on the "contact_us" page
     And I should see "Contact Us"
-    And I should see "hpittin1@binghamton.edu"
+    And I should see "Harris Pittinsky"
+    And I should see "harris@pittinsky.com"
