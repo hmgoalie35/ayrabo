@@ -4,6 +4,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.db import models
 
 from common.models import TimestampedModel
+from users.managers import PermissionManager
 
 
 class User(AbstractUser):
@@ -21,6 +22,8 @@ class Permission(TimestampedModel):
     content_type = models.ForeignKey(ContentType, verbose_name='Content Type', related_name='permissions')
     object_id = models.PositiveIntegerField(verbose_name='Object ID')
     content_object = GenericForeignKey()
+
+    objects = PermissionManager()
 
     class Meta:
         unique_together = (
