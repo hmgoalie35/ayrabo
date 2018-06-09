@@ -125,8 +125,7 @@ def step_impl(context, model_class, kwarg_data):
     context.test.assertEqual(url_to_check, context.driver.current_url)
 
 
-@step(
-    'I am on the "(?P<model_class>[^"]*)" "(?P<model_kwargs>[^"]*)" "(?P<url_or_url_name>[^"]*)" page with url kwargs "(?P<url_kwargs>[^"]*)"')  # noqa
+@step('I am on the "(?P<model_class>[^"]*)" "(?P<model_kwargs>[^"]*)" "(?P<url_or_url_name>[^"]*)" page with url kwargs "(?P<url_kwargs>[^"]*)"')  # noqa
 def step_impl(context, model_class, model_kwargs, url_or_url_name, url_kwargs):
     url_kwargs_dict = string_to_kwargs_dict(url_kwargs)
     obj = get_first_obj_for_model(model_class, model_kwargs)
@@ -139,8 +138,7 @@ def step_impl(context, model_class, model_kwargs, url_or_url_name, url_kwargs):
     navigate_to_page(context, url_or_url_name, url_kwargs_dict)
 
 
-@step(
-    'I go to the "(?P<model_class>[^"]*)" "(?P<model_kwargs>[^"]*)" "(?P<url_or_url_name>[^"]*)" page with url kwargs "(?P<url_kwargs>[^"]*)"')  # noqa
+@step('I go to the "(?P<model_class>[^"]*)" "(?P<model_kwargs>[^"]*)" "(?P<url_or_url_name>[^"]*)" page with url kwargs "(?P<url_kwargs>[^"]*)"')  # noqa
 def step_impl(context, model_class, model_kwargs, url_or_url_name, url_kwargs):
     url_kwargs_dict = string_to_kwargs_dict(url_kwargs)
     obj = get_first_obj_for_model(model_class, model_kwargs)
@@ -153,8 +151,7 @@ def step_impl(context, model_class, model_kwargs, url_or_url_name, url_kwargs):
     navigate_to_page(context, url_or_url_name, url_kwargs_dict)
 
 
-@step(
-    'I should be on the "(?P<model_class>[^"]*)" "(?P<model_kwargs>[^"]*)" "(?P<url_or_url_name>[^"]*)" page with url kwargs "(?P<url_kwargs>[^"]*)"')  # noqa
+@step('I should be on the "(?P<model_class>[^"]*)" "(?P<model_kwargs>[^"]*)" "(?P<url_or_url_name>[^"]*)" page with url kwargs "(?P<url_kwargs>[^"]*)"')  # noqa
 def step_impl(context, model_class, model_kwargs, url_or_url_name, url_kwargs):
     url_kwargs_dict = string_to_kwargs_dict(url_kwargs)
     obj = get_first_obj_for_model(model_class, model_kwargs)

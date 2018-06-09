@@ -2,6 +2,7 @@ from behave import *
 
 from divisions.tests import DivisionFactory
 from leagues.tests import LeagueFactory
+from organizations.models import Organization
 from sports.tests import SportFactory
 from teams.tests import TeamFactory
 
@@ -36,4 +37,9 @@ def step_impl(context):
         if 'division' in data and league:
             division = DivisionFactory(name=data.pop('division'), league=league)
         data['division'] = division
+
+        if 'organization' in data:
+            organization = data.pop('organization')
+            data['organization'] = Organization.objects.get(id=organization)
+
         TeamFactory(**data)
