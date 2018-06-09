@@ -118,6 +118,8 @@ class UserProfileCreateViewTests(BaseTestCase):
 
 
 class UserProfileUpdateViewTests(BaseTestCase):
+    url = 'account_home'
+
     def setUp(self):
         self.email = 'user@ayrabo.com'
         self.password = 'myweakpassword'
@@ -127,22 +129,20 @@ class UserProfileUpdateViewTests(BaseTestCase):
         self.user = UserFactory.create(email=self.email, password=self.password)
         self.sport = SportFactory(name='Ice Hockey')
         SportRegistrationFactory(user=self.user, sport=self.sport, is_complete=True)
-        self.client.login(email=self.email, password=self.password)
+        self.login(email=self.email, password=self.password)
+
+    # General
+    def test_login_required(self):
+        self.client.logout()
+        url = self.format_url()
+        response = self.client.get(self.format_url())
+        self.assertRedirects(response, self.get_login_required_url(url))
 
     # GET
-    def test_get_anonymous_user(self):
-        self.client.logout()
-        response = self.client.get(reverse('account_home'))
-        result_url = '%s?next=%s' % (reverse('account_login'), reverse('account_home'))
-        self.assertRedirects(response, result_url)
-
-    def test_correct_template(self):
-        response = self.client.get(reverse('account_home'))
+    def test_get(self):
+        response = self.client.get(self.format_url())
         self.assertTemplateUsed(response, 'userprofiles/userprofile_update.html')
-
-    def test_200_status_code(self):
-        response = self.client.get(reverse('account_home'))
-        self.assertEqual(response.status_code, 200)
+        self.assert_200(response)
 
     def test_context_populated(self):
         self.client.logout()
@@ -157,7 +157,7 @@ class UserProfileUpdateViewTests(BaseTestCase):
         player = [HockeyPlayerFactory(user=user, team=team, sport=self.sport)]
         coach = [CoachFactory(user=user, team=team)]
         referee = [RefereeFactory(user=user, league=league)]
-        response = self.client.get(reverse('account_home'))
+        response = self.client.get(self.format_url())
 
         data = response.context['data'].get(sr)
         self.assertEqual(data.get('sport'), sr.sport)
@@ -171,25 +171,17 @@ class UserProfileUpdateViewTests(BaseTestCase):
 
     # POST
     # No need to test invalid values for height, weight, etc. That is done above (the forms are almost identical)
-    def test_post_anonymous_user(self):
-        self.client.logout()
-        self.post_data.pop('gender')
-        self.post_data.pop('birthday')
-        response = self.client.post(reverse('account_home'), data=self.post_data, follow=True)
-        result_url = '%s?next=%s' % (reverse('account_login'), reverse('account_home'))
-        self.assertRedirects(response, result_url)
-
     def test_post_no_changed_data(self):
         self.post_data.pop('gender')
         self.post_data.pop('birthday')
-        response = self.client.post(reverse('account_home'), data=self.post_data, follow=True)
+        response = self.client.post(self.format_url(), data=self.post_data, follow=True)
         self.assertRedirects(response, reverse('account_home'))
 
     def test_post_changed_data(self):
         # calling the factory will generate random values for all fields
         self.post_data.pop('gender')
         self.post_data.pop('birthday')
-        response = self.client.post(reverse('account_home'), data=self.post_data, follow=True)
+        response = self.client.post(self.format_url(), data=self.post_data, follow=True)
         success_msg = 'Your account has been updated.'
         self.assertHasMessage(response, success_msg)
         self.assertTemplateUsed('userprofiles/userprofile_update.html')
@@ -197,5 +189,5 @@ class UserProfileUpdateViewTests(BaseTestCase):
     def test_userprofile_exists_in_context(self):
         self.post_data.pop('gender')
         self.post_data.pop('birthday')
-        response = self.client.post(reverse('account_home'), data=self.post_data, follow=True)
+        response = self.client.post(self.format_url(), data=self.post_data, follow=True)
         self.assertIn('userprofile', response.context)
