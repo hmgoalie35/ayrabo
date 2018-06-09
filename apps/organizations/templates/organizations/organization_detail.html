@@ -130,7 +130,6 @@
       {% if teams %}
         $('.js-table').DataTable({
           dom: '<"pull-right"f>tpr',
-          // Initially sort by game start. If add/remove columns need to update this.
           order: [[1, 'desc']],
           columnDefs: [
             {
