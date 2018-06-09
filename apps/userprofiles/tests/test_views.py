@@ -167,6 +167,7 @@ class UserProfileUpdateViewTests(BaseTestCase):
         self.assertEqual(list(related_objects.get('Coach')), coach)
         self.assertEqual(list(related_objects.get('Referee')), referee)
         self.assertEqual(list(related_objects.get('Manager')), manager)
+        self.assertEqual(response.context['active_tab'], 'my_account')
 
     # POST
     # No need to test invalid values for height, weight, etc. That is done above (the forms are almost identical)
