@@ -57,6 +57,13 @@ class DisableFormFieldsMixin(object):
 
 
 class PreSelectedTabMixin(object):
+    """
+    This mixin takes the last tab selected by a user and makes it the active tab after a page refresh/navigation.
+    To use this mixin, redefine the `valid_tabs` and `default_tab` class variables on the desired view. The active tab
+    is stored in a `tab` query param and updated via javascript when the user toggles b/w tabs. To enable the
+    javascript functionality, add `data-toggle=<value>` to the DOM element (which will likely be an anchor tag).
+    `<value>` needs to be a value from `valid_tabs`. An `active_tab` variable will be available in the template.
+    """
     valid_tabs = None
     default_tab = None
 
