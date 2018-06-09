@@ -5,6 +5,7 @@ from django.urls import reverse, reverse_lazy
 from django.views import generic
 from rest_framework.authtoken.models import Token
 
+from ayrabo.utils.mixins import PreSelectedTabMixin
 from sports.models import SportRegistration
 from userprofiles.models import UserProfile
 from .forms import UserProfileCreateForm, UserProfileUpdateForm
@@ -26,13 +27,15 @@ class UserProfileCreateView(LoginRequiredMixin, generic.CreateView):
         return super(UserProfileCreateView, self).form_valid(form)
 
 
-class UserProfileUpdateView(LoginRequiredMixin, SuccessMessageMixin, generic.UpdateView):
+class UserProfileUpdateView(LoginRequiredMixin, SuccessMessageMixin, PreSelectedTabMixin, generic.UpdateView):
     model = UserProfile
     form_class = UserProfileUpdateForm
     template_name = 'userprofiles/userprofile_update.html'
     success_url = reverse_lazy('account_home')
     success_message = 'Your account has been updated.'
     context_object_name = 'userprofile'
+    valid_tabs = ['my_account', 'my_sports']
+    default_tab = 'my_account'
 
     def get_context_data(self, **kwargs):
         context = super(UserProfileUpdateView, self).get_context_data(**kwargs)
@@ -44,10 +47,6 @@ class UserProfileUpdateView(LoginRequiredMixin, SuccessMessageMixin, generic.Upd
         context['data'] = data
         api_tokens = Token.objects.filter(user=self.request.user)
         context['api_token'] = api_tokens.first() if api_tokens.exists() else None
-
-        tab = self.request.GET.get('tab', None)
-        # Handle people manually putting in query strings.
-        context['tab'] = tab if tab in ['my-account', 'my-sports'] else None
         return context
 
     def get_object(self, queryset=None):

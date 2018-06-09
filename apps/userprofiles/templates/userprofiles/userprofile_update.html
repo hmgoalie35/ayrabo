@@ -10,14 +10,14 @@
       <div class="col-sm-offset-3 col-sm-6">
         <br><br>
         <ul class="nav nav-tabs nav-justified" role="tablist">
-          <li role="presentation" class="{% if tab is None or tab == 'my-account' %}active{% endif %}">
-            <a href="#my_account" role="tab" data-toggle="tab" class="nav-tab" data-tab="my-account">
+          <li role="presentation" class="{% if active_tab == 'my_account' %}active{% endif %}">
+            <a href="#my_account" role="tab" data-toggle="tab" class="nav-tab" data-tab="my_account">
               <i class="fa fa-fw fa-user"></i>
               My Account
             </a>
           </li>
-          <li role="presentation" class="{% if tab == 'my-sports' %}active{% endif %}">
-            <a href="#my_sport_registrations" role="tab" data-toggle="tab" class="nav-tab" id="my-sports-tab" data-tab="my-sports">
+          <li role="presentation" class="{% if active_tab == 'my_sports' %}active{% endif %}">
+            <a href="#my_sport_registrations" role="tab" data-toggle="tab" class="nav-tab" id="my-sports-tab" data-tab="my_sports">
               <i class="fa fa-fw fa-list"></i>
               My Sports
             </a>
@@ -28,7 +28,7 @@
 
         <div class="tab-content">
 
-          <div role="tabpanel" class="tab-pane {% if tab is None or tab == 'my-account' %}active{% endif %}" id="my_account">
+          <div role="tabpanel" class="tab-pane {% if active_tab == 'my_account' %}active{% endif %}" id="my_account">
             <br>
             <div class="panel panel-primary">
               <div class="panel-heading">
@@ -85,7 +85,7 @@
             </div>
           </div>
 
-          <div role="tabpanel" class="tab-pane {% if tab == 'my-sports' %}active{% endif %}" id="my_sport_registrations">
+          <div role="tabpanel" class="tab-pane {% if active_tab == 'my_sports' %}active{% endif %}" id="my_sport_registrations">
             <br>
             <div class="panel panel-primary">
               <div class="panel-heading">

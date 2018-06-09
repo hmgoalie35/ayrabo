@@ -54,3 +54,38 @@ class DisableFormFieldsMixin(object):
                 if field_name in self.disable or self.disable == '__all__':
                     field = self.fields.get(field_name)
                     field.disabled = True
+
+
+class PreSelectedTabMixin(object):
+    """
+    This mixin takes the last tab selected by a user and makes it the active tab after a page refresh/navigation.
+    To use this mixin, redefine the `valid_tabs` and `default_tab` class variables on the desired view. The active tab
+    is stored in a `tab` query param and updated via javascript when the user toggles b/w tabs. To enable the
+    javascript functionality, add `data-toggle=<value>` to the DOM element (which will likely be an anchor tag).
+    `<value>` needs to be a value from `valid_tabs`. An `active_tab` variable will be available in the template.
+    """
+    valid_tabs = None
+    default_tab = None
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        valid_tabs = self.get_valid_tabs()
+        default_tab = self.get_default_tab()
+        # Validation of `valid_tabs` and `default_tab` class variables
+        assert isinstance(valid_tabs, list) and len(valid_tabs) > 0, 'valid_tabs must be a non-empty list'
+        assert isinstance(default_tab, str) and len(default_tab) > 0, 'default_tab must be a non-empty string'
+        assert default_tab in valid_tabs, '{} is not a valid choice, choose from {}'.format(default_tab,
+                                                                                            ', '.join(valid_tabs))
+
+    def get_default_tab(self):
+        return self.default_tab
+
+    def get_valid_tabs(self):
+        return self.valid_tabs
+
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+        tab = self.request.GET.get('tab', None)
+        context['active_tab'] = tab if tab in self.get_valid_tabs() else self.get_default_tab()
+        return context
