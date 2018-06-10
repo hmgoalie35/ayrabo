@@ -117,20 +117,14 @@
   <script>
     $(function () {
       {% if season_rosters %}
-        $('.js-table').DataTable({
+        $('.js-table').enableDataTable({
           dom: '<"pull-left"f>tpr',
           // Initially sort by season desc. If add/remove columns need to update this.
           order: [[1, 'desc']],
           columnDefs: [
             { orderable: false, targets: [2, 4, 5] },
           ],
-          pageLength: 10,
           language: {
-            paginate: {
-              previous: '<i class="fa fa-angle-double-left"></i>',
-              next: '<i class="fa fa-angle-double-right"></i>',
-            },
-            search: '',
             searchPlaceholder: 'Search season rosters',
             zeroRecords: 'No season rosters match your search criteria.',
           },

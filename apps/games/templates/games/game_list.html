@@ -131,7 +131,7 @@
   <script>
     $(function () {
       {% if games %}
-        $('.js-table').DataTable({
+        $('.js-table').enableDataTable({
           dom: '<"pull-left"f>tpr',
           // Initially sort by game start. If add/remove columns need to update this.
           order: [[6, 'desc']],
@@ -139,13 +139,7 @@
             { orderable: false, targets: 9 },
             { type: 'date', targets: [6, 7] },
           ],
-          pageLength: 10,
           language: {
-            paginate: {
-              previous: '<i class="fa fa-angle-double-left"></i>',
-              next: '<i class="fa fa-angle-double-right"></i>',
-            },
-            search: '',
             searchPlaceholder: 'Search games',
             zeroRecords: 'No games match your search criteria.',
           },

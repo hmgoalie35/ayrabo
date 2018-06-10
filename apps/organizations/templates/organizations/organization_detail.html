@@ -128,7 +128,7 @@
   <script>
     $(function () {
       {% if teams %}
-        $('.js-table').DataTable({
+        $('.js-table').enableDataTable({
           dom: '<"pull-right"f>tpr',
           order: [[1, 'desc']],
           columnDefs: [
@@ -137,13 +137,7 @@
               targets: 3
             }
           ],
-          pageLength: 10,
           language: {
-            paginate: {
-              previous: '<i class="fa fa-angle-double-left"></i>',
-              next: '<i class="fa fa-angle-double-right"></i>',
-            },
-            search: '',
             searchPlaceholder: 'Search teams',
             zeroRecords: 'No teams match your search criteria.',
           },
