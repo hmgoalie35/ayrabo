@@ -82,6 +82,25 @@ $(function () {
     return this;
   };
 
+  $.fn.enableDataTable = function (option_overrides) {
+    // Some attributes that should be specified: `dom`, `order`.
+    var options = {
+      pageLength: 10,
+      language: {
+        paginate: {
+          previous: '<i class="fa fa-angle-double-left"></i>',
+          next: '<i class="fa fa-angle-double-right"></i>',
+        },
+        search: '',
+        searchPlaceholder: 'Search items',
+        zeroRecords: 'No items match your search criteria.',
+      }
+    };
+    $.extend(true, options, option_overrides);
+    this.DataTable(options);
+    return this;
+  };
+
   $.fn.extend({
     animateCss: function (animationName, callback) {
       var animationEnd = (function (el) {
