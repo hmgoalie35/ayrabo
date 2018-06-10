@@ -53,7 +53,7 @@ $(function () {
         caret: '<span class="fa fa-caret-down"></span>'
       }
     };
-    $.extend(options, option_overrides);
+    $.extend(true, options, option_overrides);
     this.selectpicker(options);
     return this;
   };
@@ -77,7 +77,7 @@ $(function () {
         close: 'fa fa-times'
       }
     };
-    $.extend(options, option_overrides);
+    $.extend(true, options, option_overrides);
     this.datetimepicker(options);
     return this;
   };
