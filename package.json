@@ -55,10 +55,10 @@
     "webpack-bundle-tracker": "0.3.0"
   },
   "devDependencies": {
-    "babel-jest": "22.4.3",
+    "babel-jest": "23.0.1",
     "enzyme": "3.3.0",
     "enzyme-adapter-react-16": "1.1.1",
-    "jest": "22.4.3",
+    "jest": "23.1.0",
     "phantomjs-prebuilt": "2.1.16",
     "react-test-renderer": "16.3.2"
   },
