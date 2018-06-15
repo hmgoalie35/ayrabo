@@ -1,3 +1,4 @@
+import json
 import os
 import re
 
@@ -376,3 +377,9 @@ def step_impl(context, attribute, element, values):
     the_element = find_element(context, element)
     attribute_values = the_element.get_attribute(attribute)
     context.test.assertEqual(attribute_values, values)
+
+
+@step('I view the console logs')
+def step_impl(context):
+    logs = context.driver.get_log('browser')
+    print(json.dumps(logs, indent=2))

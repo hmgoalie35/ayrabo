@@ -18,7 +18,7 @@
     "babel-preset-env": "1.7.0",
     "babel-preset-react": "6.24.1",
     "bootstrap-sass": "3.3.7",
-    "bootstrap-select": "1.13.1",
+    "bootstrap-select": "1.12.4",
     "classnames": "2.2.6",
     "clean-webpack-plugin": "0.1.19",
     "copy-webpack-plugin": "4.5.1",
