@@ -1,37 +1,12 @@
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.shortcuts import get_object_or_404, Http404, render, redirect
+from django.shortcuts import Http404, get_object_or_404, redirect, render
 from django.views import generic
 from django.views.generic import base
 
-from coaches.formset_helpers import CoachFormSetHelper
 from coaches.models import Coach
-from common.views import BaseCreateRelatedObjectsView
 from sports.models import SportRegistration
 from . import forms
-
-
-class CoachesCreateView(BaseCreateRelatedObjectsView):
-    def get_formset_prefix(self):
-        return 'coaches'
-
-    def get_model_class(self, sport_name):
-        return Coach
-
-    def get_form_class(self, sport_name):
-        return forms.CoachForm
-
-    def get_formset_class(self, sport_name):
-        return forms.CoachModelFormSet
-
-    def get_formset_helper_class(self, sport_name):
-        return CoachFormSetHelper
-
-    def get_template_name(self):
-        return 'coaches/coaches_create.html'
-
-    def get_role(self):
-        return 'Coach'
 
 
 class CoachesUpdateView(LoginRequiredMixin, base.ContextMixin, generic.View):
