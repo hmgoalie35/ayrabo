@@ -1,8 +1,7 @@
 from django.urls import reverse
 
-from users.tests import UserFactory
-from divisions.tests import DivisionFactory
 from ayrabo.utils.testing import BaseTestCase
+from divisions.tests import DivisionFactory
 from leagues.tests import LeagueFactory
 from managers.forms import ManagerForm
 from managers.formset_helpers import ManagerFormSetHelper
@@ -11,6 +10,7 @@ from managers.tests import ManagerFactory
 from referees.tests import RefereeFactory
 from sports.tests import SportFactory, SportRegistrationFactory
 from teams.tests import TeamFactory
+from users.tests import UserFactory
 
 
 class ManagersCreateViewTests(BaseTestCase):
@@ -99,7 +99,7 @@ class ManagersCreateViewTests(BaseTestCase):
         response = self.client.post(self._format_url('managers', pk=self.sr.id), data=self.post_data, follow=True)
         self.assertFormsetError(response, 'formset', 1, 'team',
                                 '{} has already been selected. Please choose another team or remove this form.'.format(
-                                        self.team.name))
+                                    self.team.name))
 
     def test_post_already_registered_for_team(self):
         self.sr.set_roles(['Manager'])
@@ -127,7 +127,7 @@ class ManagersCreateViewTests(BaseTestCase):
         response = self.client.post(self._format_url('managers', pk=self.sr.id), data=self.post_data, follow=True)
         manager = Manager.objects.filter(user=self.user, team=self.team)
         self.assertTrue(manager.exists())
-        self.assertRedirects(response, self._format_url('players', pk=self.sr_2.id))
+        self.assertRedirects(response, reverse('sportregistrations:detail', kwargs={'pk': self.sr.pk}))
         self.assertHasMessage(response, 'You have been registered as a manager for the Green Machine IceCats.')
 
     def test_post_two_valid_forms(self):
@@ -141,10 +141,10 @@ class ManagersCreateViewTests(BaseTestCase):
         response = self.client.post(self._format_url('managers', pk=self.sr.id), data=self.post_data, follow=True)
         managers = Manager.objects.filter(user=self.user)
         self.assertEqual(managers.count(), 2)
-        self.assertRedirects(response, self._format_url('players', pk=self.sr_2.id))
+        self.assertRedirects(response, reverse('sportregistrations:detail', kwargs={'pk': self.sr.pk}))
         self.assertHasMessage(response,
                               'You have been registered as a manager for the Green Machine IceCats, {}.'.format(
-                                      t1.name))
+                                  t1.name))
 
     def test_post_three_valid_forms(self):
         l1 = LeagueFactory(full_name='National Hockey League', sport=self.ice_hockey)
@@ -163,10 +163,10 @@ class ManagersCreateViewTests(BaseTestCase):
         response = self.client.post(self._format_url('managers', pk=self.sr.id), data=self.post_data, follow=True)
         managers = Manager.objects.filter(user=self.user)
         self.assertEqual(managers.count(), 3)
-        self.assertRedirects(response, self._format_url('players', pk=self.sr_2.id))
+        self.assertRedirects(response, reverse('sportregistrations:detail', kwargs={'pk': self.sr.pk}))
         self.assertHasMessage(response,
                               'You have been registered as a manager for the Green Machine IceCats, {}, {}.'.format(
-                                      t1.name, t2.name))
+                                  t1.name, t2.name))
 
     def test_post_one_invalid_form(self):
         form_data = {
@@ -195,42 +195,10 @@ class ManagersCreateViewTests(BaseTestCase):
             'managers-1-team': '',
             'managers-TOTAL_FORMS': 2,
         }
-
         self.post_data.update(form_data)
-        response = self.client.post(self._format_url('managers', pk=self.sr.id), data=self.post_data, follow=True)
-        url = 'sportregistrations:{role}:create'.format(role='players')
-        self.assertRedirects(response, reverse(url, kwargs={'pk': self.sr_2.id}))
-
-    def test_next_sport_registration_fetched(self):
-        self.sr.set_roles(['Manager'])
-        form_data = {
-            'managers-0-team': self.team.id,
-        }
-        self.post_data.update(form_data)
-        response = self.client.post(self._format_url('managers', pk=self.sr.id), data=self.post_data, follow=True)
-        # sr_2 has role player
-        url = 'sportregistrations:{role}:create'.format(role='players')
-        self.assertRedirects(response, reverse(url, kwargs={'pk': self.sr_2.id}))
-
-    def test_no_remaining_sport_registrations(self):
-        self.sr.set_roles(['Manager'])
-        self.sr_2.set_roles(['Manager'])
-        form_data = {
-            'managers-0-team': self.team.id,
-        }
-        self.post_data.update(form_data)
-        self.client.post(self._format_url('managers', pk=self.sr.id), data=self.post_data, follow=True)
-
-        league = LeagueFactory(full_name='Major League Baseball', sport=self.baseball)
-        division = DivisionFactory(name='American League Central', league=league)
-        team = TeamFactory(name='Detroit Tigers', division=division)
-        self.post_data.update({
-            'managers-0-team': team.id,
-        })
-
-        response = self.client.post(self._format_url('managers', pk=self.sr_2.id), data=self.post_data, follow=True)
-
-        self.assertRedirects(response, reverse('home'))
+        url = self._format_url('managers', pk=self.sr.id)
+        response = self.client.post(url, data=self.post_data, follow=True)
+        self.assertRedirects(response, reverse('sportregistrations:detail', kwargs={'pk': self.sr.pk}))
 
     def test_post_add_manager_role_valid_form(self):
         self.sr.set_roles(['Referee'])

@@ -257,46 +257,6 @@ class PlayersCreateViewTests(BaseTestCase):
         url = 'sportregistrations:{role}:create'.format(role='coaches')
         self.assertRedirects(response, reverse(url, kwargs={'pk': self.sr.id}))
 
-    def test_next_sport_registration_fetched(self):
-        self.sr.set_roles(['Player'])
-        form_data = {
-            'players-0-team': self.team.id,
-            'players-0-jersey_number': 23,
-            'players-0-position': 'LW',
-            'players-0-handedness': 'Right',
-        }
-        self.post_data.update(form_data)
-        response = self.client.post(self._format_url('players', pk=self.sr.id), data=self.post_data, follow=True)
-        url = 'sportregistrations:{role}:create'.format(role='players')
-        self.assertRedirects(response, reverse(url, kwargs={'pk': self.sr_2.id}))
-
-    def test_no_remaining_sport_registrations(self):
-        self.sr.set_roles(['Player'])
-        self.sr_2.set_roles(['Player'])
-        form_data = {
-            'players-0-team': self.team.id,
-            'players-0-jersey_number': 23,
-            'players-0-position': 'LW',
-            'players-0-handedness': 'Right',
-        }
-        self.post_data.update(form_data)
-        self.client.post(self._format_url('players', pk=self.sr.id), data=self.post_data, follow=True)
-
-        league = LeagueFactory(full_name='Major League Baseball', sport=self.baseball)
-        division = DivisionFactory(name='American League Central', league=league)
-        team = TeamFactory(name='Detroit Tigers', division=division)
-        self.post_data.update({
-            'players-0-team': team.id,
-            'players-0-jersey_number': 23,
-            'players-0-position': 'C',
-            'players-0-catches': 'Right',
-            'players-0-bats': 'Right',
-        })
-
-        response = self.client.post(self._format_url('players', pk=self.sr_2.id), data=self.post_data, follow=True)
-
-        self.assertRedirects(response, reverse('home'))
-
     def test_post_add_player_role_valid_form(self):
         self.sr.set_roles(['Referee'])
         self.sr.is_complete = True

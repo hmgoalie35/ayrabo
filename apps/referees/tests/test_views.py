@@ -125,7 +125,7 @@ class RefereesCreateViewTests(BaseTestCase):
         response = self.client.post(self._format_url('referees', pk=self.sr.id), data=self.post_data, follow=True)
         manager = Referee.objects.filter(user=self.user, league=self.league)
         self.assertTrue(manager.exists())
-        self.assertRedirects(response, self._format_url('players', pk=self.sr_2.id))
+        self.assertRedirects(response, reverse('sportregistrations:detail', kwargs={'pk': self.sr.pk}))
         self.assertHasMessage(response, 'You have been registered as a referee for the LIAHL.')
 
     def test_post_two_valid_forms(self):
@@ -139,7 +139,7 @@ class RefereesCreateViewTests(BaseTestCase):
         response = self.client.post(self._format_url('referees', pk=self.sr.id), data=self.post_data, follow=True)
         referees = Referee.objects.filter(user=self.user)
         self.assertEqual(referees.count(), 2)
-        self.assertRedirects(response, self._format_url('players', pk=self.sr_2.id))
+        self.assertRedirects(response, reverse('sportregistrations:detail', kwargs={'pk': self.sr.pk}))
         self.assertHasMessage(response,
                               'You have been registered as a referee for the LIAHL, {}.'.format(l1.abbreviated_name))
 
@@ -156,7 +156,7 @@ class RefereesCreateViewTests(BaseTestCase):
         response = self.client.post(self._format_url('referees', pk=self.sr.id), data=self.post_data, follow=True)
         referees = Referee.objects.filter(user=self.user)
         self.assertEqual(referees.count(), 3)
-        self.assertRedirects(response, self._format_url('players', pk=self.sr_2.id))
+        self.assertRedirects(response, reverse('sportregistrations:detail', kwargs={'pk': self.sr.pk}))
         self.assertHasMessage(response,
                               'You have been registered as a referee for the LIAHL, {}, {}.'.format(l1.abbreviated_name,
                                                                                                     l2.abbreviated_name)
@@ -192,37 +192,7 @@ class RefereesCreateViewTests(BaseTestCase):
 
         self.post_data.update(form_data)
         response = self.client.post(self._format_url('referees', pk=self.sr.id), data=self.post_data, follow=True)
-        url = 'sportregistrations:{role}:create'.format(role='players')
-        self.assertRedirects(response, reverse(url, kwargs={'pk': self.sr_2.id}))
-
-    def test_next_sport_registration_fetched(self):
-        self.sr.set_roles(['Referee'])
-        form_data = {
-            'referees-0-league': self.league.id,
-        }
-        self.post_data.update(form_data)
-        response = self.client.post(self._format_url('referees', pk=self.sr.id), data=self.post_data, follow=True)
-        # sr_2 has role player
-        url = 'sportregistrations:{role}:create'.format(role='players')
-        self.assertRedirects(response, reverse(url, kwargs={'pk': self.sr_2.id}))
-
-    def test_no_remaining_sport_registrations(self):
-        self.sr.set_roles(['Referee'])
-        self.sr_2.set_roles(['Referee'])
-        form_data = {
-            'referees-0-league': self.league.id,
-        }
-        self.post_data.update(form_data)
-        self.client.post(self._format_url('referees', pk=self.sr.id), data=self.post_data, follow=True)
-
-        league = LeagueFactory(full_name='Major League Baseball', sport=self.baseball)
-        self.post_data.update({
-            'referees-0-league': league.id,
-        })
-
-        response = self.client.post(self._format_url('referees', pk=self.sr_2.id), data=self.post_data, follow=True)
-
-        self.assertRedirects(response, reverse('home'))
+        self.assertRedirects(response, reverse('sportregistrations:detail', kwargs={'pk': self.sr.pk}))
 
     def test_post_add_referee_role_valid_form(self):
         self.sr.set_roles(['Coach'])

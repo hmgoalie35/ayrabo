@@ -208,40 +208,6 @@ class CoachesCreateViewTests(BaseTestCase):
         url = 'sportregistrations:{role}:create'.format(role='referees')
         self.assertRedirects(response, reverse(url, kwargs={'pk': self.sr.id}))
 
-    def test_next_sport_registration_fetched(self):
-        self.sr.set_roles(['Coach'])
-        form_data = {
-            'coaches-0-team': self.team.id,
-            'coaches-0-position': 'head_coach'
-        }
-        self.post_data.update(form_data)
-        response = self.client.post(self._format_url('coaches', pk=self.sr.id), data=self.post_data, follow=True)
-        # sr_2 has role player
-        url = 'sportregistrations:{role}:create'.format(role='players')
-        self.assertRedirects(response, reverse(url, kwargs={'pk': self.sr_2.id}))
-
-    def test_no_remaining_sport_registrations(self):
-        self.sr.set_roles(['Coach'])
-        self.sr_2.set_roles(['Coach'])
-        form_data = {
-            'coaches-0-team': self.team.id,
-            'coaches-0-position': 'head_coach',
-        }
-        self.post_data.update(form_data)
-        self.client.post(self._format_url('coaches', pk=self.sr.id), data=self.post_data, follow=True)
-
-        league = LeagueFactory(full_name='Major League Baseball', sport=self.baseball)
-        division = DivisionFactory(name='American League Central', league=league)
-        team = TeamFactory(name='Detroit Tigers', division=division)
-        self.post_data.update({
-            'coaches-0-team': team.id,
-            'coaches-0-position': 'assistant_coach',
-        })
-
-        response = self.client.post(self._format_url('coaches', pk=self.sr_2.id), data=self.post_data, follow=True)
-
-        self.assertRedirects(response, reverse('home'))
-
     def test_post_add_coach_role_valid_form(self):
         self.sr.set_roles(['Referee'])
         self.sr.is_complete = True
