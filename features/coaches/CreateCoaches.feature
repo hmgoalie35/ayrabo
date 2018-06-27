@@ -19,7 +19,6 @@ Feature: Multiple coach registration
     And I select "head_coach" from "id_coaches-0-position"
     And I press "create_objects_btn"
     Then I should see "You have been registered as a coach for the Green Machine IceCats."
-    And I should be on the "home" page
 
   Scenario: Submit invalid coach form
     Given I am on the "sports.SportRegistration" "" "sportregistrations:coaches:create" page with url kwargs "pk=pk"
@@ -45,7 +44,6 @@ Feature: Multiple coach registration
     When I select "Green Machine IceCats - Midget Minor AA" from "id_coaches-0-team"
     And I select "assistant_coach" from "id_coaches-0-position"
     And I press "create_objects_btn"
-    Then I should be on the "home" page
 
   Scenario: Submit 2 valid forms
     Given I am on the "sports.SportRegistration" "" "sportregistrations:coaches:create" page with url kwargs "pk=pk"
@@ -57,5 +55,4 @@ Feature: Multiple coach registration
     And I select "assistant_coach" from "id_coaches-1-position"
     And I press "create_objects_btn"
     Then I should see "You have been registered as a coach for the Green Machine IceCats, Long Island Edge."
-    And I should be on the "home" page
 

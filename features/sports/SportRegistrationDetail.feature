@@ -43,7 +43,7 @@ Feature: Sport registration detail
     And I should see "Scorekeepers"
     # 6 because the team logo alt text is the team name
     And "Green Machine IceCats" should show up 6 times
-    And "Ice Hockey" should show up 5 times
+    And "Ice Hockey" should show up 4 times
     And I should see "Long Island Amateur Hockey League"
     And I press "available-roles-nav-tab"
     And "add_manager_role_link" should contain text "Register"
