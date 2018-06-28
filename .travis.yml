@@ -30,11 +30,6 @@ script:
 git:
   depth: 5
 
-branches:
-  only:
-    - dev
-    - master
-
 notifications:
   email:
     on_success: change
