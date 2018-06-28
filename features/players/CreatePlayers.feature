@@ -21,7 +21,6 @@ Feature: Multiple player registration
     And I select "Left" from "id_players-0-handedness"
     And I press "create_objects_btn"
     Then I should see "You have been registered as a player for the Green Machine IceCats."
-    And I should be on the "home" page
 
   Scenario: Submit invalid player form
     Given I am on the "sports.SportRegistration" "" "sportregistrations:players:create" page with url kwargs "pk=pk"
@@ -49,7 +48,6 @@ Feature: Multiple player registration
     And I select "G" from "id_players-0-position"
     And I select "Left" from "id_players-0-handedness"
     And I press "create_objects_btn"
-    Then I should be on the "home" page
 
   Scenario: Submit 2 valid forms
     Given I am on the "sports.SportRegistration" "" "sportregistrations:players:create" page with url kwargs "pk=pk"
@@ -65,5 +63,4 @@ Feature: Multiple player registration
     And I select "Left" from "id_players-1-handedness"
     And I press "create_objects_btn"
     Then I should see "You have been registered as a player for the Green Machine IceCats, Long Island Edge."
-    And I should be on the "home" page
 

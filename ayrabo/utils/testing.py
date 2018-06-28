@@ -75,6 +75,9 @@ class BaseTestCase(TestCase):
     def get_login_required_url(self, url):
         return '{}?next={}'.format(reverse('account_login'), url)
 
+    def get_session_value(self, key):
+        return self.client.session.get(key)
+
     def login(self, user=None, email=None, password=None):
         if user:
             return self.client.force_login(user)

@@ -46,7 +46,7 @@ class UserProfileCreateViewTests(BaseTestCase):
         user_with_profile = UserFactory.create(password=self.password)
         self.client.login(email=user_with_profile.email, password=self.password)
         response = self.client.get(self.format_url())
-        self.assertRedirects(response, reverse('sportregistrations:create'))
+        self.assertRedirects(response, reverse('home'))
 
     # GET
     def test_get(self):

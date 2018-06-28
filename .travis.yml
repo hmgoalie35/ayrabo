@@ -20,24 +20,15 @@ install:
   - npm run build
 
 env:
-#  matrix:
-#    - TEST_SUITE=unit
-#    - TEST_SUITE=accept
-
   global:
     - DJANGO_SETTINGS_MODULE="ayrabo.settings.settings"
     - TRAVIS_NODE_VERSION="8"
 
 script:
-  - bash run_tests.sh # $TEST_SUITE
+  - bash run_tests.sh
 
 git:
   depth: 5
-
-branches:
-  only:
-    - master
-    - dev
 
 notifications:
   email:

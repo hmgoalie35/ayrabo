@@ -17,11 +17,11 @@ Feature: Register for a sport
 
   Scenario: Redirected to new sport registration page after userprofile created
     Given I go to the "home" page
-    Then I should be on the "sportregistrations:create" page
+    Then I should be on the "home" page
 
   Scenario: Redirected when trying to navigate to profile create page when no sport registrations
     Given I go to the "account_complete_registration" page
-    Then I should be on the "sportregistrations:create" page
+    Then I should be on the "home" page
 
   Scenario: Informative text displayed to user
     Given I am on the "sportregistrations:create" page

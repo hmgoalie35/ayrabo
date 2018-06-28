@@ -18,7 +18,6 @@ Feature: Multiple referee registration
     When I select "Long Island Amateur Hockey League" from "id_referees-0-league"
     And I press "create_objects_btn"
     Then I should see "You have been registered as a referee for the LIAHL."
-    And I should be on the "home" page
 
   Scenario: Submit invalid referee form
     Given I am on the "sports.SportRegistration" "" "sportregistrations:referees:create" page with url kwargs "pk=pk"
@@ -43,7 +42,6 @@ Feature: Multiple referee registration
     And I press "add_another_form_btn"
     When I select "Long Island Amateur Hockey League" from "id_referees-0-league"
     And I press "create_objects_btn"
-    Then I should be on the "home" page
 
   Scenario: Submit 2 valid forms
     Given I am on the "sports.SportRegistration" "" "sportregistrations:referees:create" page with url kwargs "pk=pk"
@@ -53,5 +51,3 @@ Feature: Multiple referee registration
     And I select "National Hockey League" from "id_referees-1-league"
     And I press "create_objects_btn"
     Then I should see "You have been registered as a referee for the LIAHL, NHL."
-    And I should be on the "home" page
-
