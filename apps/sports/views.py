@@ -4,18 +4,17 @@ from django import forms
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import Http404
-from django.shortcuts import redirect, render, get_object_or_404
+from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.views import generic
 from django.views.generic.base import ContextMixin
 
-from ayrabo.utils import get_namespace_for_role
 from players import forms as player_forms
-from players.models import HockeyPlayer, BasketballPlayer, BaseballPlayer
+from players.models import BaseballPlayer, BasketballPlayer, HockeyPlayer
 from scorekeepers.models import Scorekeeper
 from sports.forms import SportRegistrationCreateForm, SportRegistrationModelFormSet
 from sports.formset_helpers import SportRegistrationCreateFormSetHelper
-from sports.models import SportRegistration, Sport
+from sports.models import Sport, SportRegistration
 
 SPORT_PLAYER_FORM_MAPPINGS = {
     'Ice Hockey': player_forms.HockeyPlayerForm,
@@ -78,17 +77,6 @@ class SportRegistrationCreateView(LoginRequiredMixin, ContextMixin, generic.View
             sr.save()
         return scorekeeper
 
-    def _get_redirect_url(self, sport_registrations):
-        redirect_kwargs = {}
-        if all([sr.is_complete for sr in sport_registrations]):
-            url = 'home'
-        else:
-            first_sport_reg = sport_registrations[0]
-            namespace_for_role = first_sport_reg.get_next_namespace_for_registration()
-            url = 'sportregistrations:{}:create'.format(namespace_for_role)
-            redirect_kwargs.update({'pk': first_sport_reg.id})
-        return url, redirect_kwargs
-
     def post(self, request, *args, **kwargs):
         context = self.get_context_data(**kwargs)
 
@@ -111,19 +99,14 @@ class SportRegistrationCreateView(LoginRequiredMixin, ContextMixin, generic.View
                         self.handle_scorekeeper_role(sr)
                     sport_names.append(sr.sport.name)
                     sport_registrations.append(sr)
-            url, redirect_kwargs = self._get_redirect_url(sport_registrations)
             messages.success(request, 'You have been registered for {}.'.format(', '.join(sport_names)))
-            return redirect(reverse(url, kwargs=redirect_kwargs))
+            return redirect(reverse('home'))
 
         return render(request, self.template_name, context)
 
 
 class SportRegistrationDetailView(LoginRequiredMixin, ContextMixin, generic.View):
     template_name = 'sports/sport_registration_detail.html'
-
-    def _get_url_for_role(self, role, **kwargs):
-        namespace = get_namespace_for_role(role)
-        return reverse('sportregistrations:{}:create'.format(namespace), kwargs=kwargs)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -134,19 +117,12 @@ class SportRegistrationDetailView(LoginRequiredMixin, ContextMixin, generic.View
         sport_name = sr.sport.name
         sr_roles = sorted(sr.roles)
         related_objects = OrderedDict(sorted(sr.get_related_role_objects().items(), key=lambda t: t[0]))
-        context['available_roles'] = sorted(set(SportRegistration.ROLES) - set(sr_roles))
         context['sport_registration'] = sr
         context['sr_roles'] = sr_roles
         context['related_objects'] = related_objects
         context['sport_name'] = sport_name
-        role_url_mapping = {}
-        for role in SportRegistration.ROLES:
-            role_url_mapping[role] = self._get_url_for_role(role, pk=sr.pk)
-        context['role_url_mapping'] = role_url_mapping
-
         tab = self.request.GET.get('tab', None)
         roles = [role.lower() for role in sr_roles]
-        roles.append('available-roles')
         context['tab'] = tab if tab in roles else None
         return context
 

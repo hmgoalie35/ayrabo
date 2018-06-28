@@ -26,13 +26,6 @@
                 </a>
               </li>
             {% endfor %}
-            {% if available_roles %}
-              <li role="presentation" class="{% if forloop.first and tab is None or tab == 'available-roles' %}active{% endif %}">
-                <a id="available-roles-nav-tab" href="#id_available_roles" role="tab" data-toggle="tab" class="nav-tab" data-tab="available-roles">
-                  Available Roles
-                </a>
-              </li>
-            {% endif %}
           </ul>
 
           <div class="tab-content">
@@ -52,35 +45,6 @@
                 {% endif %}
               </div>
             {% endfor %}
-
-            {% if available_roles %}
-              <div role="tabpanel" class="tab-pane {% if forloop.first and tab is None or tab == 'available-roles' %}active{% endif %}" id="id_available_roles">
-                <br>
-                <table class="table table-thin-th-border">
-                  <thead>
-                  <tr>
-                    <th>Role</th>
-                    <th>Link</th>
-                  </tr>
-                  </thead>
-                  <tbody>
-                  {% for role in available_roles %}
-                    <tr>
-                      <td class="text-left">{{ role }}</td>
-                      <td class="text-left">
-                        {% if role|lower == 'scorekeeper' %}
-                          <form action="{{ role_url_mapping|get:role }}" method="post" id="scorekeeper-form">
-                            {% csrf_token %}
-                          </form>
-                        {% endif %}
-                        <a href="{{ role_url_mapping|get:role }}" id="add_{{ role|lower }}_role_link">Register</a>
-                      </td>
-                    </tr>
-                  {% endfor %}
-                  </tbody>
-                </table>
-              </div>
-            {% endif %}
           </div>
           <br><br>
         </div>
@@ -113,15 +77,6 @@
         // always reset after close
         $(this).removeClass("dropup");
       });
-
-      {% if 'Scorekeeper' in available_roles %}
-        $("#add_scorekeeper_role_link").click(function (e) {
-          e.preventDefault();
-          e.stopPropagation();
-          $('#scorekeeper-form').submit();
-          return false;
-        });
-      {% endif %}
     });
   </script>
 {% endblock %}

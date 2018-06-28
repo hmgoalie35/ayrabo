@@ -1,5 +1,3 @@
-from django.urls import reverse
-
 from ayrabo.utils.testing import BaseTestCase
 from coaches.tests import CoachFactory
 from divisions.tests import DivisionFactory
@@ -10,13 +8,11 @@ from users.tests import UserFactory
 
 
 class CoachesUpdateViewTests(BaseTestCase):
-    def _format_url(self, **kwargs):
-        return reverse(self.url, kwargs=kwargs)
+    url = 'sportregistrations:coaches:update'
 
     @classmethod
     def setUpTestData(cls):
         cls.ice_hockey = SportFactory(name='Ice Hockey')
-        cls.url = 'sportregistrations:coaches:update'
         cls.email = 'user@ayrabo.com'
         cls.password = 'myweakpassword'
         cls.user = UserFactory(email=cls.email, password=cls.password)
@@ -32,32 +28,33 @@ class CoachesUpdateViewTests(BaseTestCase):
             'position': 'head_coach'
         }
         self.coach = CoachFactory(user=self.user, team=self.team, **self.post_data)
-        self.coach_url = self._format_url(pk=self.sr.pk, coach_pk=self.coach.pk)
+        self.coach_url = self.format_url(pk=self.sr.pk, coach_pk=self.coach.pk)
 
         self.client.login(email=self.email, password=self.password)
 
-    # GET
-    def test_get_anonymous(self):
+    # General
+    def test_login_required(self):
         self.client.logout()
         response = self.client.get(self.coach_url)
-        result_url = '{}?next={}'.format(reverse('account_login'), self.coach_url)
-        self.assertRedirects(response, result_url)
+        self.assertRedirects(response, self.get_login_required_url(self.coach_url))
 
+    # GET
     def test_get(self):
         response = self.client.get(self.coach_url)
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'coaches/coaches_update.html')
         context = response.context
+
+        self.assert_200(response)
+        self.assertTemplateUsed(response, 'coaches/coaches_update.html')
         self.assertIsNotNone(context['coach'])
         self.assertIsNotNone(context['sport_registration'])
         self.assertIsNotNone(context['form'])
 
     def test_get_sport_reg_dne(self):
-        response = self.client.get(self._format_url(pk=99, coach_pk=self.coach.pk))
+        response = self.client.get(self.format_url(pk=99, coach_pk=self.coach.pk))
         self.assertEqual(response.status_code, 404)
 
     def test_get_coach_obj_dne(self):
-        response = self.client.get(self._format_url(pk=self.sr.pk, coach_pk=99))
+        response = self.client.get(self.format_url(pk=self.sr.pk, coach_pk=99))
         self.assertEqual(response.status_code, 404)
 
     def test_get_not_obj_owner(self):
