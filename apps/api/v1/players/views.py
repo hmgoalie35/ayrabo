@@ -24,7 +24,7 @@ class PlayersListAPIView(generics.ListAPIView):
     filter_fields = ('is_active',)
 
     def _get_team(self):
-        if hasattr(self, 'team'):
+        if hasattr(self, 'team'):  # pragma: no cover
             return self.team
         self.team = get_object_or_404(
             Team.objects.select_related('division', 'division__league', 'division__league__sport'),

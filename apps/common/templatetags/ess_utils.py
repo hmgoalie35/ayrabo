@@ -14,7 +14,7 @@ SINGULAR_PLURAL_MAPPINGS = {
 
 
 @register.simple_tag
-def pluralize_roles(role, count=None):
+def pluralize_roles(role, count=None):  # pragma: no cover
     """
     Template tag used to display the plural form of a role. If an optional `count` is specified, then take it into
     account when pluralizing the role
@@ -30,18 +30,13 @@ def pluralize_roles(role, count=None):
 
 
 @register.filter
-def get(dictionary, key):
-    return dictionary.get(key)
-
-
-@register.filter
-def pluralize_role(value, role):
+def pluralize_role(value, role):  # pragma: no cover
     role_pluralized = SINGULAR_PLURAL_MAPPINGS.get(role, None)
     return '{}{}'.format(value, role_pluralized.lower() if role_pluralized is not None else role_pluralized)
 
 
 @register.filter
-def booltojson(value):
+def booltojson(value):  # pragma: no cover
     """
     Converts python booleans to javascript booleans.
     See https://code.djangoproject.com/ticket/17419 for why we don't have a generic `tojson` filter.

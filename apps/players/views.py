@@ -1,14 +1,13 @@
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.shortcuts import get_object_or_404, render, redirect, Http404
+from django.shortcuts import Http404, get_object_or_404, redirect, render
 from django.views import generic
 from django.views.generic import base
 
-from common.views import BaseCreateRelatedObjectsView
 from ayrabo.utils.mappings import SPORT_PLAYER_MODEL_MAPPINGS
 from sports.models import SportRegistration
 from . import forms
-from .formset_helpers import HockeyPlayerFormSetHelper, BaseballPlayerFormSetHelper
+from .formset_helpers import BaseballPlayerFormSetHelper, HockeyPlayerFormSetHelper
 
 SPORT_CREATE_PLAYER_FORM_MAPPINGS = {
     'Ice Hockey': forms.HockeyPlayerForm,
@@ -27,29 +26,6 @@ SPORT_PLAYER_FORMSET_HELPER_MAPPINGS = {
     'Basketball': None,
     'Baseball': BaseballPlayerFormSetHelper
 }
-
-
-class PlayersCreateView(BaseCreateRelatedObjectsView):
-    def get_formset_prefix(self):
-        return 'players'
-
-    def get_model_class(self, sport_name):
-        return SPORT_PLAYER_MODEL_MAPPINGS.get(sport_name)
-
-    def get_form_class(self, sport_name):
-        return SPORT_CREATE_PLAYER_FORM_MAPPINGS.get(sport_name)
-
-    def get_formset_class(self, sport_name):
-        return forms.PlayerModelFormSet
-
-    def get_formset_helper_class(self, sport_name):
-        return SPORT_PLAYER_FORMSET_HELPER_MAPPINGS.get(sport_name)
-
-    def get_template_name(self):
-        return 'players/players_create.html'
-
-    def get_role(self):
-        return 'Player'
 
 
 # NOTE: I am currently omitting checks for improperly configured sports because I don't

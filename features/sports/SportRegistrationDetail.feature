@@ -36,7 +36,6 @@ Feature: Sport registration detail
   Scenario: Informative text displayed to user
     Given I am on the absolute url page for "sports.SportRegistration" and "user__email=user@ayrabo.com, sport__name=Ice Hockey"
     Then I should see "Manage Your Ice Hockey Registration"
-    And I should see "Available Roles"
     And I should see "Coaches"
     And I should see "Players"
     And I should see "Referees"
@@ -45,33 +44,3 @@ Feature: Sport registration detail
     And "Green Machine IceCats" should show up 6 times
     And "Ice Hockey" should show up 4 times
     And I should see "Long Island Amateur Hockey League"
-    And I press "available-roles-nav-tab"
-    And "add_manager_role_link" should contain text "Register"
-
-  Scenario: Add another player
-    Given I am on the absolute url page for "sports.SportRegistration" and "user__email=user@ayrabo.com, sport__name=Ice Hockey"
-    And I press "player_tab"
-    And I press "create_player_btn"
-    Then I should be on the "sports.SportRegistration" "" "sportregistrations:players:create" page with url kwargs "pk=pk"
-
-  Scenario: Add another coach
-    Given I am on the absolute url page for "sports.SportRegistration" and "user__email=user@ayrabo.com, sport__name=Ice Hockey"
-    And I press "coach_tab"
-    And I press "create_coach_btn"
-    Then I should be on the "sports.SportRegistration" "" "sportregistrations:coaches:create" page with url kwargs "pk=pk"
-
-  Scenario: Add another referee
-    Given I am on the absolute url page for "sports.SportRegistration" and "user__email=user@ayrabo.com, sport__name=Ice Hockey"
-    And I press "referee_tab"
-    And I press "create_referee_btn"
-    Then I should be on the "sports.SportRegistration" "" "sportregistrations:referees:create" page with url kwargs "pk=pk"
-
-  Scenario: Add another manager
-    Given I add the "Manager" role to "user@ayrabo.com" for "Ice Hockey"
-    And The following manager object exists
-      | username_or_email | team                  |
-      | user@ayrabo.com   | Green Machine IceCats |
-    And I am on the absolute url page for "sports.SportRegistration" and "user__email=user@ayrabo.com, sport__name=Ice Hockey"
-    And I press "manager_tab"
-    And I press "create_manager_btn"
-    Then I should be on the "sports.SportRegistration" "" "sportregistrations:managers:create" page with url kwargs "pk=pk"

@@ -53,7 +53,7 @@ class CoachUpdateForm(forms.ModelForm):
         fields = ('position',)
 
 
-class CoachModelFormSet(BaseModelFormSet):
+class CoachModelFormSet(BaseModelFormSet):  # pragma: no cover
     def clean(self):
         teams_already_seen = []
         for form in self.forms:

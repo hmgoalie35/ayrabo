@@ -45,7 +45,7 @@ class RefereeForm(forms.ModelForm):
         fields = ['user', 'league']
 
 
-class RefereeModelFormSet(BaseModelFormSet):
+class RefereeModelFormSet(BaseModelFormSet):  # pragma: no cover
     def clean(self):
         leagues_already_seen = []
         for form in self.forms:

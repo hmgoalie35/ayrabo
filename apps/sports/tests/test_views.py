@@ -94,8 +94,7 @@ class SportRegistrationCreateViewTests(BaseTestCase):
         sr = SportRegistration.objects.filter(user=self.user, sport=self.ice_hockey)
         self.assertTrue(sr.exists())
         self.assertEqual(sr.first().roles, ['Player', 'Coach'])
-        url = 'sportregistrations:{role}:create'.format(role='players')
-        self.assertRedirects(response, reverse(url, kwargs={'pk': sr.first().id}))
+        self.assertRedirects(response, reverse('home'))
         self.assertHasMessage(response, 'You have been registered for Ice Hockey.')
 
     def test_valid_post_only_scorekeeper_role(self):
@@ -128,8 +127,7 @@ class SportRegistrationCreateViewTests(BaseTestCase):
         self.assertEqual(sr.count(), 2)
         self.assertEqual(sr[0].roles, ['Player', 'Coach', 'Scorekeeper'])
         self.assertEqual(sr[1].roles, ['Player', 'Referee'])
-        url = 'sportregistrations:{role}:create'.format(role='players')
-        self.assertRedirects(response, reverse(url, kwargs={'pk': sr.first().id}))
+        self.assertRedirects(response, reverse('home'))
         self.assertHasMessage(response, 'You have been registered for Ice Hockey, Basketball.')
 
     def test_valid_post_three_forms(self):
@@ -147,8 +145,7 @@ class SportRegistrationCreateViewTests(BaseTestCase):
         response = self.client.post(self.url, data=self.post_data, follow=True)
         sr = SportRegistration.objects.filter(user=self.user)
         self.assertEqual(sr.count(), 3)
-        url = 'sportregistrations:{role}:create'.format(role='players')
-        self.assertRedirects(response, reverse(url, kwargs={'pk': sr.first().id}))
+        self.assertRedirects(response, reverse('home'))
         self.assertHasMessage(response, 'You have been registered for Ice Hockey, Basketball, Baseball.')
 
     def test_post_two_forms_same_sport(self):
@@ -195,8 +192,7 @@ class SportRegistrationCreateViewTests(BaseTestCase):
         self.post_data.update(form_data)
         self.post_data['sportregistrations-TOTAL_FORMS'] = 2
         response = self.client.post(self.url, data=self.post_data, follow=True)
-        url = 'sportregistrations:{role}:create'.format(role='players')
-        self.assertRedirects(response, reverse(url, kwargs={'pk': SportRegistration.objects.first().pk}))
+        self.assertRedirects(response, reverse('home'))
 
 
 class SportRegistrationDetailViewTests(BaseTestCase):

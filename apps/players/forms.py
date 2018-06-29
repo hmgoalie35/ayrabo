@@ -103,7 +103,7 @@ class BasketballPlayerUpdateForm(forms.ModelForm):
         fields = ['jersey_number', 'position', 'shoots']
 
 
-class PlayerModelFormSet(BaseModelFormSet):
+class PlayerModelFormSet(BaseModelFormSet):  # pragma: no cover
     def clean(self):
         teams_already_seen = []
         for form in self.forms:
