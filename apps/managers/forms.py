@@ -47,7 +47,7 @@ class ManagerForm(forms.ModelForm):
         fields = ['user', 'team']
 
 
-class ManagerModelFormSet(BaseModelFormSet):
+class ManagerModelFormSet(BaseModelFormSet):  # pragma: no cover
     def clean(self):
         teams_already_seen = []
         for form in self.forms:

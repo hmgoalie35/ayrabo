@@ -11,7 +11,7 @@ class AbstractGameRosterSerializer(serializers.ModelSerializer):
 
     def __init__(self, instance, *args, **kwargs):
         super().__init__(instance, *args, **kwargs)
-        if self.player_model_cls is None:
+        if self.player_model_cls is None:  # pragma: no cover
             raise exceptions.ImproperlyConfigured('You need to specify player_model_cls.')
 
         home_team = instance.home_team
