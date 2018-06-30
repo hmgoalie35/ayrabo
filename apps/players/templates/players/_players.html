@@ -32,7 +32,7 @@
 
               <li class="dropdown-header">Manage</li>
               <li>
-                <a href="{% url 'sportregistrations:players:update' sport_registration.pk obj.pk %}"
+                <a href="{% url 'sports:players:update' sport_registration.sport.slug obj.pk %}"
                    id="update-{{ role|lower }}-link">
                   <span class="fa fa-pencil fa-primary"></span>
                   Edit

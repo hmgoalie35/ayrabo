@@ -1,6 +1,6 @@
 from behave import *
+from django.db.models import Q
 
-from users.tests import UserFactory
 from ayrabo.utils.testing import get_user
 from players.tests import HockeyPlayerFactory
 from sports.models import Sport
@@ -8,6 +8,7 @@ from sports.tests import SportFactory
 from teams.models import Team
 from teams.tests import TeamFactory
 from users.models import User
+from users.tests import UserFactory
 
 
 @step('The following player objects? exists?')
@@ -22,7 +23,8 @@ def step_impl(context):
             user = UserFactory(username=username_or_email, email=username_or_email)
 
         obj_id = data.get('id', None)
-        sport = data.get('sport', None)
+        sport_name = data.get('sport', None)
+        sport_slug = data.get('sport_slug', None)
         team = data.get('team', None)
         jersey_number = data.get('jersey_number', None)
 
@@ -32,11 +34,17 @@ def step_impl(context):
         else:
             team = TeamFactory(name=team)
 
-        sports = Sport.objects.filter(name=sport)
+        sport_kwargs = {}
+        if sport_name:
+            sport_kwargs['name'] = sport_name
+        if sport_slug:
+            sport_kwargs['slug'] = sport_slug
+
+        sports = Sport.objects.filter(Q(name=sport_name) | Q(slug=sport_slug))
         if sports.exists():
             sport_obj = sports.first()
         else:
-            sport_obj = SportFactory(name=sport)
+            sport_obj = SportFactory(**sport_kwargs)
 
         kwargs = {
             'user': user,
