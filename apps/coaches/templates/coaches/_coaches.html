@@ -29,7 +29,7 @@
 
               <li class="dropdown-header">Manage</li>
               <li>
-                <a href="{% url 'sportregistrations:coaches:update' sport_registration.pk obj.pk %}" id="update-{{ role|lower }}-link">
+                <a href="{% url 'sports:coaches:update' sport_registration.sport.slug obj.pk %}" id="update-{{ role|lower }}-link">
                   <span class="fa fa-pencil fa-primary"></span>
                   Edit
                 </a>

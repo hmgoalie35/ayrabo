@@ -17,9 +17,7 @@ urlpatterns = [
     url(r'^$', HomePageView.as_view(), name='home'),
     url(r'^about-us/$', AboutUsView.as_view(), name='about_us'),
     url(r'^contact-us/$', ContactUsView.as_view(), name='contact_us'),
-
-    # This allows me to override allauth views, and add in custom views under account/
-    url(r'^account/', include('accounts.urls')),
+    url(r'^account/', include('accounts.urls')),  # Use our custom allauth views
     url(r'^account/', include('allauth.urls')),
     url(r'^', include('sports.urls')),
     url(r'^teams/', include('teams.urls', namespace='teams')),
