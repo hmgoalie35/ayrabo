@@ -23,7 +23,6 @@ class AbstractPlayer(TimestampedModel):
 
     user = models.ForeignKey(User)
     sport = models.ForeignKey(Sport)
-    # TODO add in team/player history model to keep track of a player's teams throughout their career
     team = models.ForeignKey(Team)
     jersey_number = models.SmallIntegerField(verbose_name='Jersey Number',
                                              validators=[MinValueValidator(MIN_JERSEY_NUMBER),
