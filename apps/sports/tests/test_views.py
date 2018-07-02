@@ -20,7 +20,7 @@ class SportRegistrationCreateViewTests(BaseTestCase):
         cls.basketball = SportFactory(name='Basketball')
 
     def setUp(self):
-        self.url = reverse('sportregistrations:create')
+        self.url = reverse('sports:register')
         self.email = 'user@ayrabo.com'
         self.password = 'myweakpassword'
         self.post_data = {

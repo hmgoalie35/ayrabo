@@ -14,7 +14,7 @@ from .forms import UserProfileCreateForm, UserProfileUpdateForm
 class UserProfileCreateView(LoginRequiredMixin, generic.CreateView):
     model = UserProfile
     template_name = 'userprofiles/userprofile_create.html'
-    success_url = reverse_lazy('sportregistrations:create')
+    success_url = reverse_lazy('sports:register')
     form_class = UserProfileCreateForm
 
     def dispatch(self, request, *args, **kwargs):

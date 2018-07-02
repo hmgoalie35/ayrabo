@@ -23,7 +23,7 @@ Feature: List what sports I am currently registered for
     And The following sport exists "Basketball"
     When I press "my-sports-tab"
     And I press "register_for_sport_btn"
-    Then I should be on the "sportregistrations:create" page
+    Then I should be on the "sports:register" page
 
   Scenario: Navigate to new sport registration page when no more sports to register for exist
     Given I am on the "account_home" page
