@@ -57,7 +57,7 @@ class UserProfileCreateViewTests(BaseTestCase):
     # POST
     def test_post_valid_data(self):
         response = self.client.post(self.format_url(), data=self.post_data, follow=True)
-        self.assertRedirects(response, reverse('sportregistrations:create'))
+        self.assertRedirects(response, reverse('sports:register'))
         # Make sure `user` is set to request.user on the userprofile instance
         self.assertTrue(UserProfile.objects.filter(user=self.user).exists())
 
