@@ -54,8 +54,6 @@ class HockeyGameCreateViewTests(BaseTestCase):
         self.season_start = datetime.date(month=12, day=27, year=2017)
         self.season = SeasonFactory(id=1, league=self.liahl, start_date=self.season_start)
 
-        self.sport_registration_url = reverse('sportregistrations:detail', kwargs={'pk': self.sport_registration.id})
-
         self.start = datetime.datetime(month=12, day=27, year=2017, hour=19, minute=0)
         self.end = self.start + datetime.timedelta(hours=3)
         self.post_data = {
@@ -130,7 +128,7 @@ class HockeyGameCreateViewTests(BaseTestCase):
     def test_valid_post(self):
         self.login(email=self.email, password=self.password)
         response = self.client.post(self.format_url(team_pk=1), data=self.post_data, follow=True)
-        self.assertRedirects(response, self.sport_registration_url)
+        self.assertRedirects(response, reverse('home'))
         self.assertHasMessage(response, 'Your game has been created.')
         game = HockeyGame.objects.first()
         self.assertEqual(game.team, self.t1)

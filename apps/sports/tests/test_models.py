@@ -2,20 +2,19 @@ from unittest.mock import Mock
 
 from django.core.exceptions import ValidationError
 from django.db.utils import IntegrityError
-from django.urls import reverse
 from django.utils.text import slugify
 
-from users.tests import UserFactory
+from ayrabo.utils.testing import BaseTestCase
 from coaches.tests import CoachFactory
 from divisions.tests import DivisionFactory
-from ayrabo.utils.testing import BaseTestCase
 from leagues.tests import LeagueFactory
 from managers.tests import ManagerFactory
 from players.tests import HockeyPlayerFactory
 from referees.tests import RefereeFactory
-from sports.exceptions import RoleDoesNotExistException, InvalidNumberOfRolesException
+from sports.exceptions import InvalidNumberOfRolesException, RoleDoesNotExistException
 from sports.models import Sport, SportRegistration
 from teams.tests import TeamFactory
+from users.tests import UserFactory
 from .factories.SportFactory import SportFactory
 from .factories.SportRegistrationFactory import SportRegistrationFactory
 
@@ -65,11 +64,6 @@ class SportRegistrationModelTests(BaseTestCase):
     def test_to_string(self):
         sr = SportRegistrationFactory()
         self.assertEqual(str(sr), '{email} - {sport}'.format(email=sr.user.email, sport=sr.sport.name))
-
-    def test_absolute_url(self):
-        ice_hockey = SportRegistrationFactory(sport__name='Ice Hockey')
-        self.assertEqual(ice_hockey.get_absolute_url(),
-                         reverse('sportregistrations:detail', kwargs={'pk': ice_hockey.pk}))
 
     def test_current_available_roles(self):
         self.assertListEqual(SportRegistration.ROLES, ['Player', 'Coach', 'Referee', 'Manager', 'Scorekeeper'])
@@ -281,5 +275,5 @@ class SportRegistrationModelTests(BaseTestCase):
         sr.set_roles(['Player', 'Coach', 'Referee', 'Manager'])
         sr.save()
         sr.get_related_role_objects = Mock(
-                return_value={'Player': Mock(), 'Coach': Mock(), 'Referee': Mock(), 'Manager': Mock()})
+            return_value={'Player': Mock(), 'Coach': Mock(), 'Referee': Mock(), 'Manager': Mock()})
         self.assertIsNone(sr.get_next_namespace_for_registration())

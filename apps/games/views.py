@@ -1,14 +1,14 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
 from django.db.models import Q
-from django.shortcuts import get_object_or_404, reverse, redirect
+from django.shortcuts import get_object_or_404, redirect, reverse
 from django.urls import reverse_lazy
 from django.views import generic
 
-from common.views import CsvBulkUploadView
 from ayrabo.utils.exceptions import SportNotConfiguredException
-from ayrabo.utils.mixins import HasPermissionMixin, HandleSportNotConfiguredMixin
-from games.forms import HockeyGameCreateForm, DATETIME_INPUT_FORMAT
+from ayrabo.utils.mixins import HandleSportNotConfiguredMixin, HasPermissionMixin
+from common.views import CsvBulkUploadView
+from games.forms import DATETIME_INPUT_FORMAT, HockeyGameCreateForm
 from games.models import HockeyGame
 from managers.models import Manager
 from scorekeepers.models import Scorekeeper
@@ -24,10 +24,7 @@ class GameCreateView(LoginRequiredMixin,
                      generic.CreateView):
     template_name = 'games/game_create.html'
     success_message = 'Your game has been created.'
-
-    def _get_sport_registration_url(self):
-        sport_registration = self.request.user.sportregistration_set.get(sport_id=self.sport.id)
-        return reverse('sportregistrations:detail', kwargs={'pk': sport_registration.id})
+    success_url = reverse_lazy('home')
 
     def _get_team(self):
         if hasattr(self, 'team'):
@@ -43,9 +40,6 @@ class GameCreateView(LoginRequiredMixin,
         user = self.request.user
         team = self._get_team()
         return Manager.objects.active().filter(user=user, team=team).exists()
-
-    def get_success_url(self):
-        return self._get_sport_registration_url()
 
     def get_form_class(self):
         form_cls = mappings.SPORT_GAME_CREATE_FORM_MAPPINGS.get(self.sport.name)

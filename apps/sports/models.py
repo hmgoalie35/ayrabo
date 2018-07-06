@@ -1,5 +1,4 @@
 from django.db import models
-from django.urls import reverse
 from django.utils.text import slugify
 
 import coaches as coaches_app
@@ -54,9 +53,6 @@ class SportRegistration(TimestampedModel):
         unique_together = (
             ('user', 'sport'),
         )
-
-    def get_absolute_url(self):
-        return reverse('sportregistrations:detail', kwargs={'pk': self.pk})
 
     def set_roles(self, roles, append=False):
         """
