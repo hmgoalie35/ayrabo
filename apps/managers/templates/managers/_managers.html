@@ -1,5 +1,6 @@
 <div>
   <table class="table responsive-table table-thin-th-border">
+
     <thead>
     <tr>
       <th scope="col">Team</th>
@@ -7,53 +8,38 @@
       <th scope="col"></th>
     </tr>
     </thead>
+
     <tbody>
-    {% for obj in related_objs %}
+    {% for manager in managers %}
       <tr>
         <td data-title="Team">
-          {% include 'includes/team_logo.html' with team=obj.team %}
-          {{ obj.team.name }}
+          {% include 'includes/team_logo.html' with team=manager.team %}
+          {{ manager.team.name }}
         </td>
-        <td data-title="Division">{{ obj.team.division }}</td>
+        <td data-title="Division">{{ manager.team.division }}</td>
         <td data-title="">
           <div class="dropdown table-dropdown">
-            <a id="actions-dropdown-{{ role|lower }}-{{ obj.team.slug }}" data-target="#{{ role|lower }}-{{ obj.id }}"
-               data-toggle="dropdown"
-               aria-haspopup="true" aria-expanded="false" role="button">
-              Actions
+            <a
+              id="actions-dropdown-manager-{{ manager.team.slug }}"
+              data-target="#manager-{{ manager.id }}"
+              data-toggle="dropdown"
+              aria-haspopup="true"
+              aria-expanded="false"
+              role="button"
+            >Actions
               <i class="fa fa-caret-down"></i>
             </a>
-            <ul class="dropdown-menu table-dropdown-menu" aria-labelledby="{{ obj.id }}">
+            <ul class="dropdown-menu table-dropdown-menu" aria-labelledby="{{ manager.id }}">
               <li class="dropdown-header">Manage</li>
-              {% if sr_roles|length > 1 or related_objs|length > 1 %}
-                <li>
-                  <a id="deactivate-{{ role|lower }}-{{ obj.team.slug }}" data-toggle="modal"
-                     data-target="#{{ role|lower }}-{{ obj.id }}-modal" role="button">
-                    <i class="fa fa-times-circle fa-danger"></i>
-                    Deactivate
-                  </a>
-                </li>
-              {% else %}
-                <li class="disabled" data-toggle="tooltip" data-placement="top"
-                    title="You cannot deactivate this {{ role|lower }}. You must be registered for at least one role.">
-                  <a role="button">
-                    <i class="fa fa-times-circle fa-danger"></i>
-                    Deactivate
-                  </a>
-                </li>
-              {% endif %}
-
               {# Start Season Roster items #}
               <li class="dropdown-header">Season Rosters</li>
               <li>
-                <a id="create_season_roster_btn_{{ obj.team.slug }}"
-                   href="{% url 'teams:season_rosters:create' obj.team.pk %}" role="button">
+                <a id="create_season_roster_btn_{{ manager.team.slug }}" href="{% url 'teams:season_rosters:create' manager.team.pk %}" role="button">
                   <i class="fa fa-plus-circle fa-success"></i>&nbsp;Create
                 </a>
               </li>
               <li>
-                <a id="list_season_rosters_btn_{{ obj.team.slug }}"
-                   href="{% url 'teams:season_rosters:list' obj.team.pk %}" role="button">
+                <a id="list_season_rosters_btn_{{ manager.team.slug }}" href="{% url 'teams:season_rosters:list' manager.team.pk %}" role="button">
                   <i class="fa fa-list-alt fa-primary"></i>&nbsp;List
                 </a>
               </li>
@@ -62,30 +48,22 @@
               {# Start game items #}
               <li class="dropdown-header">Games</li>
               <li>
-                <a id="create_game_btn_{{ obj.team.slug }}"
-                   href="{% url 'teams:games:create' obj.team.pk %}" role="button">
+                <a id="create_game_btn_{{ manager.team.slug }}" href="{% url 'teams:games:create' manager.team.pk %}" role="button">
                   <i class="fa fa-plus-circle fa-success"></i>&nbsp;Create
                 </a>
               </li>
               <li>
-                <a id="list_games_manager_btn_{{ obj.team.slug }}"
-                   href="{% url 'teams:games:list' obj.team.pk %}" role="button">
+                <a id="list_games_manager_btn_{{ manager.team.slug }}" href="{% url 'teams:games:list' manager.team.pk %}" role="button">
                   <i class="fa fa-list-alt fa-primary"></i>&nbsp;List
                 </a>
               </li>
               {# End game items #}
-
             </ul>
-
           </div>
         </td>
       </tr>
-
-      {% if sr_roles|length > 1 or related_objs|length > 1 %}
-        {% include 'sports/deactivation_modal.html' %}
-      {% endif %}
-
     {% endfor %}
     </tbody>
+
   </table>
 </div>

@@ -1,5 +1,6 @@
 <div>
   <table class="table responsive-table table-thin-th-border">
+
     <thead>
     <tr>
       <th scope="col">Team</th>
@@ -8,56 +9,41 @@
       <th scope="col"></th>
     </tr>
     </thead>
+
     <tbody>
-    {% for obj in related_objs %}
+    {% for coach in coaches %}
       <tr>
         <td data-title="Team">
-          {% include 'includes/team_logo.html' with team=obj.team %}
-          {{ obj.team.name }}
+          {% include 'includes/team_logo.html' with team=coach.team %}
+          {{ coach.team.name }}
         </td>
-        <td data-title="Division">{{ obj.team.division.name }}</td>
-        <td data-title="Position">{{ obj.get_position_display }}</td>
+        <td data-title="Division">{{ coach.team.division.name }}</td>
+        <td data-title="Position">{{ coach.get_position_display }}</td>
         <td data-title="">
           <div class="dropdown table-dropdown">
-            <a id="actions-dropdown-{{ role|lower }}-{{ obj.team.slug }}" data-target="#{{ role|lower }}-{{ obj.id }}"
-               data-toggle="dropdown"
-               aria-haspopup="true" aria-expanded="false" role="button">
-              Actions
-              <span class="fa fa-caret-down"></span>
+            <a
+              id="actions-dropdown-coach-{{ coach.team.slug }}"
+              data-target="#coach-{{ coach.id }}"
+              data-toggle="dropdown"
+              aria-haspopup="true"
+              aria-expanded="false"
+              role="button"
+            >Actions
+              <i class="fa fa-caret-down"></i>
             </a>
-            <ul class="dropdown-menu table-dropdown-menu" aria-labelledby="{{ obj.id }}">
-
+            <ul class="dropdown-menu table-dropdown-menu" aria-labelledby="{{ coach.id }}">
               <li class="dropdown-header">Manage</li>
               <li>
-                <a href="{% url 'sports:coaches:update' sport_registration.sport.slug obj.pk %}" id="update-{{ role|lower }}-link">
-                  <span class="fa fa-pencil fa-primary"></span>
+                <a href="{% url 'sports:coaches:update' sport.slug coach.pk %}" id="update-coach-link">
+                  <i class="fa fa-pencil fa-primary"></i>
                   Edit
                 </a>
               </li>
-              {% if sr_roles|length > 1 or related_objs|length > 1 %}
-                <li>
-                  <a id="deactivate-{{ role|lower }}-{{ obj.team.slug }}" data-toggle="modal"
-                     data-target="#{{ role|lower }}-{{ obj.id }}-modal" role="button">
-                    <span class="fa fa-times-circle fa-danger"></span>
-                    Deactivate
-                  </a>
-                </li>
-              {% else %}
-                <li class="disabled" data-toggle="tooltip" data-placement="top"
-                    title="You cannot deactivate this {{ role|lower }}. You must be registered for at least one role.">
-                  <a role="button">
-                    <span class="fa fa-times-circle fa-danger"></span>
-                    Deactivate
-                  </a>
-                </li>
-              {% endif %}
-
               {# Game items #}
               <li class="dropdown-header">Games</li>
               <li>
-                <a id="list_games_coach_btn_{{ obj.team.slug }}"
-                   href="{% url 'teams:games:list' obj.team.pk %}" role="button">
-                  <span class="fa fa-list-alt fa-primary"></span>&nbsp;List
+                <a id="list_games_coach_btn_{{ coach.team.slug }}" href="{% url 'teams:games:list' coach.team.pk %}" role="button">
+                  <i class="fa fa-list-alt fa-primary"></i>&nbsp;List
                 </a>
               </li>
             {# End game items #}
@@ -65,12 +51,8 @@
           </div>
         </td>
       </tr>
-
-      {% if sr_roles|length > 1 or related_objs|length > 1 %}
-        {% include 'sports/deactivation_modal.html' %}
-      {% endif %}
-
     {% endfor %}
     </tbody>
+
   </table>
 </div>
