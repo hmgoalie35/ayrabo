@@ -17,13 +17,13 @@ Feature: Update coach information
       | 1  | user@ayrabo.com   | Green Machine IceCats | head_coach |
     And I login with "user@ayrabo.com" and "myweakpassword"
 
-  Scenario: Navigate to the coach update page
-    Given I am on the absolute url page for "sports.SportRegistration" and "user__email=user@ayrabo.com, sport__name=Ice Hockey"
-    When I press "id_coach"
-    And I press "actions-dropdown-coach-green-machine-icecats"
-    And I press "update-coach-link"
-    Then I should be on the "/sports/ice-hockey/coaches/1/update/" page
-    And I should see "Update Coach Information for Green Machine IceCats"
+#  Scenario: Navigate to the coach update page
+#    Given I am on the absolute url page for "sports.SportRegistration" and "user__email=user@ayrabo.com, sport__name=Ice Hockey"
+#    When I press "id_coach"
+#    And I press "actions-dropdown-coach-green-machine-icecats"
+#    And I press "update-coach-link"
+#    Then I should be on the "/sports/ice-hockey/coaches/1/update/" page
+#    And I should see "Update Coach Information for Green Machine IceCats"
 
   Scenario: Submit changed form
     Given I am on the "/sports/ice-hockey/coaches/1/update/" page
