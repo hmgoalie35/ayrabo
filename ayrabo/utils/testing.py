@@ -8,10 +8,6 @@ from rest_framework import status
 from rest_framework.reverse import reverse as drf_reverse
 from rest_framework.test import APITestCase
 
-from coaches.tests import CoachFactory
-from managers.tests import ManagerFactory
-from players.tests import HockeyPlayerFactory
-from referees.tests import RefereeFactory
 from users.models import User
 
 
@@ -47,25 +43,6 @@ class BaseTestCase(TestCase):
     # Helper methods
     def get_user(self, username_or_email):
         return get_user(username_or_email)
-
-    def create_related_objects(self, **kwargs):
-        player_args = kwargs.pop('player_args', {})
-        coach_args = kwargs.pop('coach_args', {})
-        referee_args = kwargs.pop('referee_args', {})
-        manager_args = kwargs.pop('manager_args', {})
-
-        player = coach = referee = manager = None
-
-        if player_args:
-            player = HockeyPlayerFactory(**player_args)
-        if coach_args:
-            coach = CoachFactory(**coach_args)
-        if referee_args:
-            referee = RefereeFactory(**referee_args)
-        if manager_args:
-            manager = ManagerFactory(**manager_args)
-
-        return player, coach, referee, manager
 
     def format_url(self, **kwargs):
         url = getattr(self, 'url', None)

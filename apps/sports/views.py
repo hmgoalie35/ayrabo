@@ -1,10 +1,7 @@
-from collections import OrderedDict
-
 from django import forms
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import Http404
-from django.shortcuts import get_object_or_404, redirect, render
+from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.views import generic
 from django.views.generic.base import ContextMixin
@@ -102,30 +99,4 @@ class SportRegistrationCreateView(LoginRequiredMixin, ContextMixin, generic.View
             messages.success(request, 'You have been registered for {}.'.format(', '.join(sport_names)))
             return redirect(reverse('home'))
 
-        return render(request, self.template_name, context)
-
-
-class SportRegistrationDetailView(LoginRequiredMixin, ContextMixin, generic.View):
-    template_name = 'sports/sport_registration_detail.html'
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        sr = get_object_or_404(SportRegistration.objects.select_related('sport'), pk=self.kwargs.get('pk', None))
-        if sr.user_id != self.request.user.id:
-            raise Http404
-
-        sport_name = sr.sport.name
-        sr_roles = sorted(sr.roles)
-        related_objects = OrderedDict(sorted(sr.get_related_role_objects().items(), key=lambda t: t[0]))
-        context['sport_registration'] = sr
-        context['sr_roles'] = sr_roles
-        context['related_objects'] = related_objects
-        context['sport_name'] = sport_name
-        tab = self.request.GET.get('tab', None)
-        roles = [role.lower() for role in sr_roles]
-        context['tab'] = tab if tab in roles else None
-        return context
-
-    def get(self, request, *args, **kwargs):
-        context = self.get_context_data(**kwargs)
         return render(request, self.template_name, context)

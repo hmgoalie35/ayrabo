@@ -1,12 +1,12 @@
 from django.urls import reverse
 
-from users.tests import UserFactory
-from divisions.tests import DivisionFactory
 from ayrabo.utils.testing import BaseTestCase
+from divisions.tests import DivisionFactory
 from leagues.tests import LeagueFactory
 from sports.models import SportRegistration
 from sports.tests import SportFactory, SportRegistrationFactory
 from teams.tests import TeamFactory
+from users.tests import UserFactory
 
 
 class SportRegistrationCreateViewTests(BaseTestCase):
@@ -193,66 +193,3 @@ class SportRegistrationCreateViewTests(BaseTestCase):
         self.post_data['sportregistrations-TOTAL_FORMS'] = 2
         response = self.client.post(self.url, data=self.post_data, follow=True)
         self.assertRedirects(response, reverse('home'))
-
-
-class SportRegistrationDetailViewTests(BaseTestCase):
-    @classmethod
-    def setUpTestData(cls):
-        cls.ice_hockey = SportFactory(name='Ice Hockey')
-        cls.baseball = SportFactory(name='Baseball')
-        cls.league = LeagueFactory(full_name='Long Island Amateur Hockey League', sport=cls.ice_hockey)
-        cls.division = DivisionFactory(name='Midget Minor AA', league=cls.league)
-        cls.team = TeamFactory(name='Green Machine Icecats', division=cls.division)
-
-    def setUp(self):
-        self.email = 'user@ayrabo.com'
-        self.password = 'myweakpassword'
-        self.user = UserFactory(email=self.email, password=self.password)
-        self.sr = SportRegistrationFactory(user=self.user, sport=self.ice_hockey, is_complete=True, roles_mask=15)
-        self.url = reverse('sportregistrations:detail', kwargs={'pk': self.sr.pk})
-
-        self.coach_data = {'user': self.user, 'team': self.team, 'position': 'head_coach'}
-        self.player_data = {'user': self.user, 'team': self.team, 'jersey_number': 23, 'handedness': 'Right',
-                            'position': 'G', 'sport': self.ice_hockey}
-        self.referee_data = {'user': self.user, 'league': self.league}
-        self.manager_data = {'user': self.user, 'team': self.team}
-
-        self.player, self.coach, self.referee, self.manager = self.create_related_objects(
-            player_args=self.player_data,
-            coach_args=self.coach_data,
-            referee_args=self.referee_data,
-            manager_args=self.manager_data)
-
-        self.client.login(email=self.email, password=self.password)
-
-    # GET
-    def test_anonymous_user(self):
-        self.client.logout()
-        response = self.client.get(self.url)
-        result_url = '%s?next=%s' % (reverse('account_login'), self.url)
-        self.assertRedirects(response, result_url)
-
-    def test_not_object_owner(self):
-        self.client.logout()
-        other_user = UserFactory(email='otheruser@ayrabo.com', password=self.password)
-        SportRegistrationFactory(user=other_user, sport=self.ice_hockey, is_complete=True)
-        self.client.login(email=other_user.email, password=self.password)
-        response = self.client.get(self.url)
-        self.assertEqual(response.status_code, 404)
-
-    def test_get_request(self):
-        response = self.client.get(self.url)
-        self.assertTemplateUsed(response, 'sports/sport_registration_detail.html')
-        self.assertEqual(response.status_code, 200)
-
-    def test_invalid_obj_id(self):
-        response = self.client.get(reverse('sportregistrations:detail', kwargs={'pk': 1000}))
-        self.assertEqual(response.status_code, 404)
-
-    def test_context_populated(self):
-        response = self.client.get(self.url)
-        context = response.context
-        self.assertIsNotNone(context['sport_registration'])
-        self.assertIsNotNone(context['sport_name'])
-        self.assertIsNotNone(context['sr_roles'])
-        self.assertIsNotNone(context['related_objects'])

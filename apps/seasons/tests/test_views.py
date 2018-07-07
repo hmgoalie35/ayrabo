@@ -92,7 +92,7 @@ class SeasonRosterCreateViewTests(BaseTestCase):
         roster = HockeySeasonRoster.objects.first()
 
         self.assertHasMessage(response, 'Your season roster has been created.')
-        self.assertRedirects(response, self.hockey_sr.get_absolute_url())
+        self.assertRedirects(response, reverse('home'))
         self.assertEqual(roster.created_by.id, self.user.id)
         self.assertEqual(roster.team.id, self.icecats.id)
 

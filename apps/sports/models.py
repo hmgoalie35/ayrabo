@@ -1,5 +1,4 @@
 from django.db import models
-from django.urls import reverse
 from django.utils.text import slugify
 
 import coaches as coaches_app
@@ -8,8 +7,7 @@ import players as players_app
 import referees as referees_app
 import scorekeepers as scorekeepers_app
 from common.models import TimestampedModel
-from users.models import User
-from .exceptions import RoleDoesNotExistException, InvalidNumberOfRolesException
+from .exceptions import InvalidNumberOfRolesException, RoleDoesNotExistException
 
 
 class Sport(TimestampedModel):
@@ -44,7 +42,7 @@ class SportRegistration(TimestampedModel):
 
     ROLES = ['Player', 'Coach', 'Referee', 'Manager', 'Scorekeeper']
 
-    user = models.ForeignKey(User)
+    user = models.ForeignKey('users.User')
     sport = models.ForeignKey(Sport)
     roles_mask = models.SmallIntegerField(default=0, verbose_name='Roles Mask')
     # Signifies if each Coach, Referee, Manager, HockeyPlayer, etc. object has been created for all roles of this model
@@ -55,9 +53,6 @@ class SportRegistration(TimestampedModel):
         unique_together = (
             ('user', 'sport'),
         )
-
-    def get_absolute_url(self):
-        return reverse('sportregistrations:detail', kwargs={'pk': self.pk})
 
     def set_roles(self, roles, append=False):
         """
