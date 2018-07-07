@@ -99,6 +99,7 @@ INSTALLED_APPS = [
     'localflavor',
     'rest_framework',
     'rest_framework.authtoken',
+    'waffle',
     'webpack_loader',
 
     # Custom apps
@@ -142,6 +143,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'ayrabo.middleware.TimezoneAndTranslationMiddleware',
     'accounts.middleware.UserProfileCompleteMiddleware',
+    'waffle.middleware.WaffleMiddleware',
 ]
 
 ROOT_URLCONF = 'ayrabo.urls'
@@ -434,6 +436,9 @@ THUMBNAIL_NAMER = 'easy_thumbnails.namers.hashed'
 THUMBNAIL_PRESERVE_EXTENSIONS = True
 THUMBNAIL_SUBDIR = 'thumbnails'
 THUMBNAIL_WIDGET_OPTIONS = THUMBNAIL_ALIASES.get('').get('sm')
+
+# Waffle
+WAFFLE_MAX_AGE = 1209600  # 2 weeks, same as SESSION_COOKIE_AGE
 
 try:
     # Running in testing mode
