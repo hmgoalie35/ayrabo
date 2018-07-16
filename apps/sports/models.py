@@ -2,6 +2,7 @@ from django.db import models
 from django.utils.text import slugify
 
 from common.models import TimestampedModel
+from sports.managers import SportRegistrationManager
 
 
 class Sport(TimestampedModel):
@@ -41,6 +42,8 @@ class SportRegistration(TimestampedModel):
     roles_mask = models.SmallIntegerField(default=0, verbose_name='Roles Mask')
     # Signifies if each Coach, Referee, Manager, HockeyPlayer, etc. object has been created for all roles of this model
     is_complete = models.BooleanField(default=False, db_index=True, verbose_name='Is Registration Complete')
+
+    objects = SportRegistrationManager()
 
     class Meta:
         ordering = ['user']
