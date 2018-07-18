@@ -1,11 +1,9 @@
 from django.core.exceptions import ValidationError
 from django.db.utils import IntegrityError
 
-from users.tests import UserFactory
 from ayrabo.utils.testing import BaseTestCase
-from sports.tests import SportRegistrationFactory
 from teams.tests import TeamFactory
-from .factories.PlayerFactory import HockeyPlayerFactory, BaseballPlayerFactory, BasketballPlayerFactory
+from .factories.PlayerFactory import BaseballPlayerFactory, BasketballPlayerFactory, HockeyPlayerFactory
 
 
 class PlayerModelTests(BaseTestCase):
@@ -42,16 +40,6 @@ class PlayerModelTests(BaseTestCase):
         with self.assertRaises(IntegrityError):
             HockeyPlayerFactory(user=self.player.user, team=self.player.team)
 
-    def test_create_player_user_missing_player_role(self):
-        user = UserFactory()
-        sport = self.player.team.division.league.sport
-        SportRegistrationFactory(user=user, sport=sport, role='referee')
-        player = HockeyPlayerFactory(user=user, sport=sport, team=self.player.team)
-        with self.assertRaisesMessage(ValidationError, '{user} - {sport} might not have a sportregistration object or '
-                                                       'the sportregistration object does not have the '
-                                                       'player role assigned'.format(user=user.email, sport=sport)):
-            player.clean()
-
     def test_fields(self):
         t = TeamFactory()
         player = HockeyPlayerFactory(team=t)
@@ -74,7 +62,7 @@ class HockeyPlayerModelTests(BaseTestCase):
 
     def test_duplicate_jersey_number(self):
         validation_msg = 'Please choose another number, {jersey_number} is currently unavailable for {team}'.format(
-                jersey_number=self.jersey_number, team=self.hockey_player.team)
+            jersey_number=self.jersey_number, team=self.hockey_player.team)
         with self.assertRaisesMessage(ValidationError, validation_msg):
             HockeyPlayerFactory(team=self.hockey_player.team, jersey_number=self.jersey_number).full_clean()
 
@@ -86,16 +74,6 @@ class HockeyPlayerModelTests(BaseTestCase):
         another_hockey_player = HockeyPlayerFactory(team=self.hockey_player.team, jersey_number=jersey_number)
         another_hockey_player.clean()
         self.assertEqual(another_hockey_player.jersey_number, jersey_number)
-
-    def test_create_player_user_missing_player_role(self):
-        user = UserFactory()
-        sport = self.hockey_player.team.division.league.sport
-        SportRegistrationFactory(user=user, sport=sport, role='referee')
-        player = HockeyPlayerFactory(user=user, sport=sport, team=self.hockey_player.team)
-        with self.assertRaisesMessage(ValidationError, '{user} - {sport} might not have a sportregistration object or '
-                                                       'the sportregistration object does not have the '
-                                                       'player role assigned'.format(user=user.email, sport=sport)):
-            player.clean()
 
     def test_fields(self):
         t = TeamFactory()
@@ -118,7 +96,7 @@ class BaseballPlayerModelTests(BaseTestCase):
 
     def test_duplicate_jersey_number(self):
         validation_msg = 'Please choose another number, {jersey_number} is currently unavailable for {team}'.format(
-                jersey_number=self.jersey_number, team=self.baseball_player.team)
+            jersey_number=self.jersey_number, team=self.baseball_player.team)
         with self.assertRaisesMessage(ValidationError, validation_msg):
             BaseballPlayerFactory(team=self.baseball_player.team, jersey_number=self.jersey_number).full_clean()
 
@@ -129,16 +107,6 @@ class BaseballPlayerModelTests(BaseTestCase):
         another_baseball_player = BaseballPlayerFactory(team=self.baseball_player.team, jersey_number=jersey_number)
         another_baseball_player.clean()
         self.assertEqual(another_baseball_player.jersey_number, jersey_number)
-
-    def test_create_player_user_missing_player_role(self):
-        user = UserFactory()
-        sport = self.baseball_player.team.division.league.sport
-        SportRegistrationFactory(user=user, sport=sport, role='referee')
-        player = BaseballPlayerFactory(user=user, sport=sport, team=self.baseball_player.team)
-        with self.assertRaisesMessage(ValidationError, '{user} - {sport} might not have a sportregistration object or '
-                                                       'the sportregistration object does not have the '
-                                                       'player role assigned'.format(user=user.email, sport=sport)):
-            player.clean()
 
     def test_fields(self):
         t = TeamFactory()
@@ -162,7 +130,7 @@ class BasketballPlayerModelTests(BaseTestCase):
 
     def test_duplicate_jersey_number(self):
         validation_msg = 'Please choose another number, {jersey_number} is currently unavailable for {team}'.format(
-                jersey_number=self.jersey_number, team=self.basketball_player.team)
+            jersey_number=self.jersey_number, team=self.basketball_player.team)
         with self.assertRaisesMessage(ValidationError, validation_msg):
             BasketballPlayerFactory(team=self.basketball_player.team, jersey_number=self.jersey_number).full_clean()
 
@@ -174,16 +142,6 @@ class BasketballPlayerModelTests(BaseTestCase):
                                                             jersey_number=jersey_number)
         another_basketball_player.clean()
         self.assertEqual(another_basketball_player.jersey_number, jersey_number)
-
-    def test_create_player_user_missing_player_role(self):
-        user = UserFactory()
-        sport = self.basketball_player.team.division.league.sport
-        SportRegistrationFactory(user=user, sport=sport, role='referee')
-        player = BasketballPlayerFactory(user=user, sport=sport, team=self.basketball_player.team)
-        with self.assertRaisesMessage(ValidationError, '{user} - {sport} might not have a sportregistration object or '
-                                                       'the sportregistration object does not have the '
-                                                       'player role assigned'.format(user=user.email, sport=sport)):
-            player.clean()
 
     def test_fields(self):
         t = TeamFactory()
