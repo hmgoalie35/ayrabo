@@ -1,6 +1,6 @@
 import datetime
 import random
-from itertools import permutations, cycle
+from itertools import cycle, permutations
 
 import pytz
 from allauth.account.models import EmailAddress
@@ -108,12 +108,8 @@ def create_users(count, birth_year):
 
 
 def create_sport_registrations(users, sport, roles):
-    sport_registrations = []
     for user in users:
-        sr = create_object(SportRegistration, user=user, sport=sport, is_complete=True)
-        sr.set_roles(roles)
-        sport_registrations.append(sr)
-    return sport_registrations
+        SportRegistration.objects.create_for_user_and_sport(user=user, sport=sport, roles=roles)
 
 
 def get_position(i):

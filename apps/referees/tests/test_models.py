@@ -23,8 +23,7 @@ class RefereeModelTests(BaseTestCase):
             RefereeFactory(user=self.user, league=self.league)
 
     def test_create_referee_user_missing_referee_role(self):
-        sr = SportRegistrationFactory(user=self.user, sport=self.league.sport)
-        sr.set_roles(['Player'])
+        SportRegistrationFactory(user=self.user, sport=self.league.sport, role='player')
         referee = RefereeFactory(user=self.user, league=self.league)
         with self.assertRaisesMessage(ValidationError,
                                       '{user} - {sport} might not have a sportregistration object or the '

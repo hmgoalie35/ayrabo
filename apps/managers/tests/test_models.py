@@ -23,8 +23,8 @@ class ManagerModelTests(BaseTestCase):
     def test_create_manager_user_missing_manager_role(self):
         user = UserFactory()
         team = TeamFactory(name='Green Machine IceCats')
-        sr = SportRegistrationFactory(user=user, sport=team.division.league.sport)
-        sr.set_roles(['Player', 'Referee'])
+        SportRegistrationFactory(user=user, sport=team.division.league.sport, role='player')
+        SportRegistrationFactory(user=user, sport=team.division.league.sport, role='referee')
         manager = ManagerFactory(user=user, team=team)
         with self.assertRaisesMessage(ValidationError, '{user} - {sport} might not have a sportregistration object or '
                                                        'the sportregistration object does not have the '

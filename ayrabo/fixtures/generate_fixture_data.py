@@ -159,8 +159,8 @@ def create_users():
                                             birthday=datetime.datetime.now(), height=generate_height(),
                                             weight=130)
 
-        sr, sr_created = SportRegistration.objects.get_or_create(user=user, sport=ice_hockey, is_complete=True)
-        sr.set_roles(['Player'])
+        sr, sr_created = SportRegistration.objects.get_or_create(user=user, sport=ice_hockey, is_complete=True,
+                                                                 role='player')
 
         if position_index <= 4:
             position = 'C'

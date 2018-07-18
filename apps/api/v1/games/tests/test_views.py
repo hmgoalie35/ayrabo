@@ -55,8 +55,7 @@ class GameRostersRetrieveUpdateAPIViewTests(BaseAPITestCase):
                                       timezone=timezone, season=self.season, status='scheduled')
 
         self.user = UserFactory()
-        sr = SportRegistrationFactory(user=self.user, sport=self.ice_hockey)
-        sr.set_roles(['Manager'])
+        SportRegistrationFactory(user=self.user, sport=self.ice_hockey, role='manager')
         self.manager = ManagerFactory(user=self.user, team=self.home_team)
 
     def test_login_required(self):
@@ -85,8 +84,7 @@ class GameRostersRetrieveUpdateAPIViewTests(BaseAPITestCase):
 
     def test_away_team_manager_allowed(self):
         user = UserFactory()
-        sr = SportRegistrationFactory(user=user, sport=self.ice_hockey)
-        sr.set_roles(['Manager'])
+        SportRegistrationFactory(user=user, sport=self.ice_hockey, role='manager')
         ManagerFactory(user=user, team=self.away_team)
         self.client.force_login(user)
 
@@ -103,8 +101,7 @@ class GameRostersRetrieveUpdateAPIViewTests(BaseAPITestCase):
 
     def test_scorekeeper_allowed(self):
         user = UserFactory()
-        sr = SportRegistrationFactory(user=user, sport=self.ice_hockey)
-        sr.set_roles(['Scorekeeper'])
+        SportRegistrationFactory(user=user, sport=self.ice_hockey, role='scorekeeper')
         ScorekeeperFactory(user=user, sport=self.ice_hockey)
         self.client.force_login(user)
 
@@ -113,8 +110,7 @@ class GameRostersRetrieveUpdateAPIViewTests(BaseAPITestCase):
 
     def test_inactive_scorekeeper_forbidden(self):
         user = UserFactory()
-        sr = SportRegistrationFactory(user=user, sport=self.ice_hockey)
-        sr.set_roles(['Scorekeeper'])
+        SportRegistrationFactory(user=user, sport=self.ice_hockey, role='scorekeeper')
         ScorekeeperFactory(user=user, sport=self.ice_hockey, is_active=False)
         self.client.force_login(user)
 
@@ -124,8 +120,7 @@ class GameRostersRetrieveUpdateAPIViewTests(BaseAPITestCase):
     def test_scorekeeper_for_sport(self):
         user = UserFactory()
         sport = SportFactory()
-        sr = SportRegistrationFactory(user=user, sport=sport)
-        sr.set_roles(['Scorekeeper'])
+        SportRegistrationFactory(user=user, sport=sport, role='scorekeeper')
         ScorekeeperFactory(user=user, sport=sport)
         self.client.force_login(user)
 

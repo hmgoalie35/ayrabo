@@ -45,8 +45,7 @@ class PlayerModelTests(BaseTestCase):
     def test_create_player_user_missing_player_role(self):
         user = UserFactory()
         sport = self.player.team.division.league.sport
-        sr = SportRegistrationFactory(user=user, sport=sport)
-        sr.set_roles(['Referee'])
+        SportRegistrationFactory(user=user, sport=sport, role='referee')
         player = HockeyPlayerFactory(user=user, sport=sport, team=self.player.team)
         with self.assertRaisesMessage(ValidationError, '{user} - {sport} might not have a sportregistration object or '
                                                        'the sportregistration object does not have the '
@@ -91,8 +90,7 @@ class HockeyPlayerModelTests(BaseTestCase):
     def test_create_player_user_missing_player_role(self):
         user = UserFactory()
         sport = self.hockey_player.team.division.league.sport
-        sr = SportRegistrationFactory(user=user, sport=sport)
-        sr.set_roles(['Referee'])
+        SportRegistrationFactory(user=user, sport=sport, role='referee')
         player = HockeyPlayerFactory(user=user, sport=sport, team=self.hockey_player.team)
         with self.assertRaisesMessage(ValidationError, '{user} - {sport} might not have a sportregistration object or '
                                                        'the sportregistration object does not have the '
@@ -135,8 +133,7 @@ class BaseballPlayerModelTests(BaseTestCase):
     def test_create_player_user_missing_player_role(self):
         user = UserFactory()
         sport = self.baseball_player.team.division.league.sport
-        sr = SportRegistrationFactory(user=user, sport=sport)
-        sr.set_roles(['Referee'])
+        SportRegistrationFactory(user=user, sport=sport, role='referee')
         player = BaseballPlayerFactory(user=user, sport=sport, team=self.baseball_player.team)
         with self.assertRaisesMessage(ValidationError, '{user} - {sport} might not have a sportregistration object or '
                                                        'the sportregistration object does not have the '
@@ -181,8 +178,7 @@ class BasketballPlayerModelTests(BaseTestCase):
     def test_create_player_user_missing_player_role(self):
         user = UserFactory()
         sport = self.basketball_player.team.division.league.sport
-        sr = SportRegistrationFactory(user=user, sport=sport)
-        sr.set_roles(['Referee'])
+        SportRegistrationFactory(user=user, sport=sport, role='referee')
         player = BasketballPlayerFactory(user=user, sport=sport, team=self.basketball_player.team)
         with self.assertRaisesMessage(ValidationError, '{user} - {sport} might not have a sportregistration object or '
                                                        'the sportregistration object does not have the '

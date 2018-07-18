@@ -131,16 +131,18 @@ class UserProfileUpdateViewTests(BaseTestCase):
         league = LeagueFactory(full_name='Long Island Amateur Hockey League', sport=self.sport)
         division = DivisionFactory(name='Midget Minor AA', league=league)
         team = TeamFactory(name='Green Machine Icecats', division=division)
-        sr = SportRegistrationFactory(user=user, sport=self.sport)
-        sr.set_roles(['Player', 'Coach', 'Manager', 'Referee'])
+        SportRegistrationFactory(user=user, sport=self.sport, role='player')
+        SportRegistrationFactory(user=user, sport=self.sport, role='coach')
+        SportRegistrationFactory(user=user, sport=self.sport, role='referee')
+        SportRegistrationFactory(user=user, sport=self.sport, role='manager')
         manager = [ManagerFactory(user=user, team=team)]
         player = [HockeyPlayerFactory(user=user, team=team, sport=self.sport)]
         coach = [CoachFactory(user=user, team=team)]
         referee = [RefereeFactory(user=user, league=league)]
         response = self.client.get(self.format_url())
 
-        data = response.context['data'].get(sr)
-        self.assertEqual(data.get('sport'), sr.sport)
+        data = response.context['data'].get('')
+        self.assertEqual(data.get('sport'), '')
         self.assertEqual(data.get('roles'), ['Player', 'Coach', 'Referee', 'Manager'])
         related_objects = data.get('related_objects')
         self.assertEqual(list(related_objects.get('Player')), player)

@@ -22,8 +22,7 @@ class ScorekeeperModelTests(BaseTestCase):
             ScorekeeperFactory(user=self.user, sport=self.sport)
 
     def test_user_missing_scorekeeper_role(self):
-        sr = SportRegistrationFactory(user=self.user, sport=self.sport)
-        sr.set_roles(['Player'])
+        SportRegistrationFactory(user=self.user, sport=self.sport, role='player')
         scorekeeper = ScorekeeperFactory(user=self.user, sport=self.sport)
         with self.assertRaisesMessage(ValidationError, 'h@p.com - Ice Hockey might not have a sportregistration object '
                                                        'or the sportregistration object does not have the scorekeeper '
