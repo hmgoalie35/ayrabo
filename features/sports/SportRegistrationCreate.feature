@@ -26,9 +26,8 @@ Feature: Register for a sport
   Scenario: Informative text displayed to user
     Given I am on the "sports:register" page
     Then I should see "Register for sports"
-    And I should see "You must register for at least one sport."
-    And I should see "Register for additional sports by pressing the"
-    And I should see "Add sport registration"
+    And I should see "Registering for sports help us streamline your registration process."
+    And I should see "Add form"
 
   Scenario: Submit one valid form
     Given I am on the "sports:register" page
