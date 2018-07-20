@@ -91,7 +91,6 @@ class SportRegistrationCreateView(LoginRequiredMixin, HasPermissionMixin, Contex
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['user_registered_for_all_sports'] = context.get('remaining_sport_count') == 0
         context['formset'] = self.get_formset(
             formset_kwargs={'max_num': self.remaining_sport_count},
             form_kwargs={'sports_already_registered_for': self.sports_already_registered_for}
