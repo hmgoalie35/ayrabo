@@ -12,12 +12,10 @@ CACHE_PATH = os.path.join('/tmp', '.phantomjs_cache')
 
 def before_all(context):
     context.driver = webdriver.PhantomJS(
-            executable_path=PHANTOMJS_BINARY,
-            service_args=['--disk-cache=true', '--disk-cache-path={}'.format(CACHE_PATH)]
+        executable_path=PHANTOMJS_BINARY,
+        service_args=['--disk-cache=true', '--disk-cache-path={}'.format(CACHE_PATH)]
     )
     context.driver.maximize_window()
-    context.url_kwargs = {}
-    # context.fixtures = ['dev_fixtures.json']
 
 
 def after_all(context):
