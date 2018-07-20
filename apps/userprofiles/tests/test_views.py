@@ -8,6 +8,7 @@ from leagues.tests import LeagueFactory
 from managers.tests import ManagerFactory
 from players.tests import HockeyPlayerFactory
 from referees.tests import RefereeFactory
+from scorekeepers.tests import ScorekeeperFactory
 from sports.tests import SportFactory, SportRegistrationFactory
 from teams.tests import TeamFactory
 from userprofiles.models import UserProfile
@@ -108,7 +109,6 @@ class UserProfileUpdateViewTests(BaseTestCase):
 
         self.user = UserFactory.create(email=self.email, password=self.password)
         self.sport = SportFactory(name='Ice Hockey')
-        SportRegistrationFactory(user=self.user, sport=self.sport, is_complete=True)
         self.login(email=self.email, password=self.password)
 
     # General
@@ -120,36 +120,57 @@ class UserProfileUpdateViewTests(BaseTestCase):
 
     # GET
     def test_get(self):
+        liahl = LeagueFactory(full_name='Long Island Amateur Hockey League', sport=self.sport)
+        mm_aa = DivisionFactory(name='Midget Minor AA', league=liahl)
+        green_machine_icecats = TeamFactory(name='Green Machine Icecats', division=mm_aa)
+        # Missing the scorekeeper role on purpose
+        SportRegistrationFactory(user=self.user, sport=self.sport, role='player')
+        SportRegistrationFactory(user=self.user, sport=self.sport, role='coach')
+        SportRegistrationFactory(user=self.user, sport=self.sport, role='referee')
+        SportRegistrationFactory(user=self.user, sport=self.sport, role='manager')
+        hockey_players = [HockeyPlayerFactory(user=self.user, team=green_machine_icecats, sport=self.sport)]
+        hockey_coaches = [CoachFactory(user=self.user, team=green_machine_icecats)]
+        hockey_referees = [RefereeFactory(user=self.user, league=liahl)]
+        hockey_managers = [ManagerFactory(user=self.user, team=green_machine_icecats)]
+
+        baseball = SportFactory(name='Baseball')
+        mlb = LeagueFactory(full_name='Major League Baseball', sport=baseball)
+        american_league_east = DivisionFactory(name='American League East', league=mlb)
+        toronto_blue_jays = TeamFactory(name='Toronto Blue Jays', division=american_league_east)
+        # Missing the player role on purpose
+        SportRegistrationFactory(user=self.user, sport=baseball, role='coach')
+        SportRegistrationFactory(user=self.user, sport=baseball, role='referee')
+        SportRegistrationFactory(user=self.user, sport=baseball, role='manager')
+        SportRegistrationFactory(user=self.user, sport=baseball, role='scorekeeper')
+        baseball_coaches = [CoachFactory(user=self.user, team=toronto_blue_jays)]
+        baseball_referees = [RefereeFactory(user=self.user, league=mlb)]
+        baseball_managers = [ManagerFactory(user=self.user, team=toronto_blue_jays)]
+        baseball_scorekeepers = [ScorekeeperFactory(user=self.user, sport=baseball)]
+
         response = self.client.get(self.format_url())
+        context = response.context
+        data = context['data']
+        baseball_data = data[baseball]
+        hockey_data = data[self.sport]
+
         self.assertTemplateUsed(response, 'userprofiles/userprofile_update.html')
         self.assert_200(response)
+        self.assertEqual(context['active_tab'], 'my_account')
+        # Roles are getting sorted
+        self.assertListEqual(baseball_data['roles'], ['Coach', 'Manager', 'Referee', 'Scorekeeper'])
+        self.assertListEqual(hockey_data['roles'], ['Coach', 'Manager', 'Player', 'Referee'])
 
-    def test_context_populated(self):
-        self.client.logout()
-        user = UserFactory(email='testing@ayrabo.com', password=self.password)
-        self.client.login(email='testing@ayrabo.com', password=self.password)
-        league = LeagueFactory(full_name='Long Island Amateur Hockey League', sport=self.sport)
-        division = DivisionFactory(name='Midget Minor AA', league=league)
-        team = TeamFactory(name='Green Machine Icecats', division=division)
-        SportRegistrationFactory(user=user, sport=self.sport, role='player')
-        SportRegistrationFactory(user=user, sport=self.sport, role='coach')
-        SportRegistrationFactory(user=user, sport=self.sport, role='referee')
-        SportRegistrationFactory(user=user, sport=self.sport, role='manager')
-        manager = [ManagerFactory(user=user, team=team)]
-        player = [HockeyPlayerFactory(user=user, team=team, sport=self.sport)]
-        coach = [CoachFactory(user=user, team=team)]
-        referee = [RefereeFactory(user=user, league=league)]
-        response = self.client.get(self.format_url())
+        self.assertListEqual(list(baseball_data['related_objects']['coach']), baseball_coaches)
+        self.assertListEqual(list(baseball_data['related_objects']['manager']), baseball_managers)
+        self.assertListEqual(list(baseball_data['related_objects']['player']), [])
+        self.assertListEqual(list(baseball_data['related_objects']['referee']), baseball_referees)
+        self.assertListEqual(list(baseball_data['related_objects']['scorekeeper']), baseball_scorekeepers)
 
-        data = response.context['data'].get('')
-        self.assertEqual(data.get('sport'), '')
-        self.assertEqual(data.get('roles'), ['Player', 'Coach', 'Referee', 'Manager'])
-        related_objects = data.get('related_objects')
-        self.assertEqual(list(related_objects.get('Player')), player)
-        self.assertEqual(list(related_objects.get('Coach')), coach)
-        self.assertEqual(list(related_objects.get('Referee')), referee)
-        self.assertEqual(list(related_objects.get('Manager')), manager)
-        self.assertEqual(response.context['active_tab'], 'my_account')
+        self.assertListEqual(list(hockey_data['related_objects']['coach']), hockey_coaches)
+        self.assertListEqual(list(hockey_data['related_objects']['manager']), hockey_managers)
+        self.assertListEqual(list(hockey_data['related_objects']['player']), hockey_players)
+        self.assertListEqual(list(hockey_data['related_objects']['referee']), hockey_referees)
+        self.assertListEqual(list(hockey_data['related_objects']['scorekeeper']), [])
 
     # POST
     # No need to test invalid values for height, weight, etc. That is done above (the forms are almost identical)
@@ -167,9 +188,3 @@ class UserProfileUpdateViewTests(BaseTestCase):
         success_msg = 'Your account has been updated.'
         self.assertHasMessage(response, success_msg)
         self.assertTemplateUsed('userprofiles/userprofile_update.html')
-
-    def test_userprofile_exists_in_context(self):
-        self.post_data.pop('gender')
-        self.post_data.pop('birthday')
-        response = self.client.post(self.format_url(), data=self.post_data, follow=True)
-        self.assertIn('userprofile', response.context)
