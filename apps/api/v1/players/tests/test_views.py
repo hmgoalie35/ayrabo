@@ -13,8 +13,7 @@ class PlayersListAPIViewTests(BaseAPITestCase):
         self.user = UserFactory()
         self.sport = SportFactory(name='Ice Hockey')
         team = TeamFactory(id=1, name='Green Machine IceCats', division__league__sport=self.sport)
-        sr = SportRegistrationFactory(user=self.user)
-        sr.set_roles(['Manager'])
+        SportRegistrationFactory(user=self.user, sport=self.sport, role='manager')
         ManagerFactory(user=self.user, team=team)
 
         HockeyPlayerFactory(id=1, team=team, is_active=True)

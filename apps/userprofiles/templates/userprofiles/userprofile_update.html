@@ -6,30 +6,33 @@
 
 {% block content %}
   <div class="container">
+
     <div class="row">
       <div class="col-sm-offset-3 col-sm-6">
-        <br><br>
-        <ul class="nav nav-tabs nav-justified" role="tablist">
+
+        <ul class="nav nav-tabs nav-justified mt20" role="tablist">
           <li role="presentation" class="{% if active_tab == 'my_account' %}active{% endif %}">
             <a href="#my_account" role="tab" data-toggle="tab" class="nav-tab" data-tab="my_account">
-              <i class="fa fa-fw fa-user"></i>
-              My Account
+              <i class="fa fa-fw fa-user"></i>&nbsp;My Account
             </a>
           </li>
           <li role="presentation" class="{% if active_tab == 'my_sports' %}active{% endif %}">
-            <a href="#my_sport_registrations" role="tab" data-toggle="tab" class="nav-tab" id="my-sports-tab" data-tab="my_sports">
-              <i class="fa fa-fw fa-list"></i>
-              My Sports
+            <a
+              href="#my_sport_registrations"
+              role="tab"
+              data-toggle="tab"
+              class="nav-tab"
+              id="my-sports-tab"
+              data-tab="my_sports"
+            >
+              <i class="fa fa-fw fa-list"></i>&nbsp;My Sports
             </a>
           </li>
         </ul>
 
-        <br>
-
         <div class="tab-content">
-
+          {# My account tab #}
           <div role="tabpanel" class="tab-pane {% if active_tab == 'my_account' %}active{% endif %}" id="my_account">
-            <br>
             <div class="panel panel-primary">
               <div class="panel-heading">
                 <div class="text-center">
@@ -41,37 +44,9 @@
                 <h4>Email: {{ user.email }}</h4>
                 <h4>Gender: {{ userprofile.get_gender_display }}</h4>
                 <h4>Birthday: {{ userprofile.birthday }}</h4>
-                <a id="change_password_link" href="{% url 'account_change_password' %}">Change Password</a>
-                {% if api_token %}
-                  <br><br>
-                  <a id="show_token_link" href="#" data-target="#token_modal" data-toggle="modal">
-                    <span class="fa fa-fw fa-eye"></span>API Token
-                  </a>
-                  <div class="modal fade" id="token_modal" tabindex="-1" role="dialog">
-                    <br><br><br><br><br><br>
-                    <div class="modal-dialog" role="document">
-                      <div class="modal-content">
-                        <div class="modal-header">
-                          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                          </button>
-                          <h4 class="modal-title">API Token</h4>
-                        </div>
-                        <div class="modal-body">
-                          <p class="text-danger">You must keep this token secret, otherwise anybody with the token can impersonate you.</p>
-                          <strong>{{ api_token }}</strong>
-                        </div>
-                        <div class="modal-footer">
-                          <form class="pull-left" id="revoke_token_form" action="{% url 'revoke_api_token' %}">
-                            <button id="revoke_api_token_btn" type="submit" class="btn btn-danger btn-sm">Revoke API Token</button>
-                            <span class="text-muted">&nbsp;&nbsp;You will have to manually obtain another token</span>
-                          </form>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                {% endif %}
-                <br><br>
+                <p>
+                  <a id="change_password_link" href="{% url 'account_change_password' %}">Change Password</a>
+                </p>
                 <form action="" method="post">
                   {% csrf_token %}
                   {{ form | crispy }}
@@ -84,9 +59,14 @@
               </div>
             </div>
           </div>
+          {# End my account tab #}
 
-          <div role="tabpanel" class="tab-pane {% if active_tab == 'my_sports' %}active{% endif %}" id="my_sport_registrations">
-            <br>
+          {# My sports tab #}
+          <div
+            role="tabpanel"
+            class="tab-pane {% if active_tab == 'my_sports' %}active{% endif %}"
+            id="my_sport_registrations"
+          >
             <div class="panel panel-primary">
               <div class="panel-heading">
                 <div class="text-center">
@@ -94,34 +74,40 @@
                 </div>
               </div>
               <div class="panel-body">
-                <a id="register_for_sport_btn" href="{% url 'sports:register' %}"
-                   class="btn btn-default btn-sm pull-right">Register for a sport</a>
+                <a
+                  id="register_for_sport_btn"
+                  href="{% url 'sports:register' %}"
+                  class="btn btn-default btn-sm pull-right"
+                >Register for a sport
+                </a>
                 <br><br>
                 {% if data %}
                   <ul class="list-group">
-                    {% for sport_registration, data_dict in data.items %}
-                      <li id="list-item-{{ data_dict.sport.slug }}"
-                          class="list-group-item list-group-item-hoverable js-list-item-sport"
-                          data-target="#{{ data_dict.sport.slug }}"
-                          data-toggle="collapse">
-                        {{ data_dict.sport.name }}{% if data_dict.roles %}:{% endif %}
+                    {% for sport, data_dict in data.items %}
+                      <li
+                        id="list-item-{{ sport.slug }}"
+                        class="list-group-item list-group-item-hoverable js-list-item-sport"
+                        data-target="#{{ sport.slug }}"
+                        data-toggle="collapse"
+                      >
+                        {{ sport.name }}{% if data_dict.roles %}:{% endif %}
                         {% for role in data_dict.roles %}
                           <span class="label label-info">{{ role }}</span>
                         {% endfor %}
-                        <span class="fa fa-fw fa-caret-down mt3 pull-right js-toggle-caret"></span>
+                        <i class="fa fa-caret-down mt3 pull-right js-toggle-caret"></i>
                       </li>
-                      <div class="collapse" id="{{ data_dict.sport.slug }}">
+                      <div class="collapse" id="{{ sport.slug }}">
                         <div class="list-group-item list-group-item-flush-bottom">
                           {% if data_dict.related_objects %}
                             <h4 class="text-center">At a glance</h4>
                             {% for role, objects in data_dict.related_objects.items %}
                               <div class="role-related-objects-section">
-                                <strong>{{ role }}:</strong>
+                                <strong>{{ role|title }}:</strong>
                                 {% for object in objects %}
                                   <div>
-                                    {% if role == 'Referee' %}
+                                    {% if role == 'referee' %}
                                       {{ object.league }}
-                                    {% elif role == 'Scorekeeper' %}
+                                    {% elif role == 'scorekeeper' %}
                                       {{ object.sport.name }}
                                     {% else %}
                                       {{ object.team }} - {{ object.team.division.name }}
@@ -137,15 +123,16 @@
                     {% endfor %}
                   </ul>
                 {% else %}
-                  <br>
-                  <div class="alert alert-warning" role="alert">You are not currently registered for any sports. Press
-                                                                the button above to register for a sport.
+                  <div class="alert alert-warning mt10" role="alert">
+                    <p class="text-center">
+                      You are not currently registered for any sports.
+                    </p>
                   </div>
                 {% endif %}
               </div>
             </div>
           </div>
-
+          {# End my sports tab #}
         </div>
       </div>
     </div>
@@ -153,5 +140,16 @@
 {% endblock %}
 
 {% block extra_js %}
-  <script src="{% static 'userprofiles/js/userprofile_update.js' %}"></script>
+  <script>
+    $(function () {
+      $('#id_language').enableBootstrapSelect({ header: 'Select a language' });
+      $('#id_timezone').enableBootstrapSelect({ header: 'Select a timezone' });
+
+      $('.js-list-item-sport').click(function () {
+        var $elem = $(this).find('.js-toggle-caret');
+        $elem.toggleClass('fa-caret-down fa-caret-up');
+      });
+    });
+
+  </script>
 {% endblock %}

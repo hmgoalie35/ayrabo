@@ -7,8 +7,8 @@ from ayrabo.utils.exceptions import SportNotConfiguredException
 class HasPermissionMixin(object):
     """
     Provides a function that should be overridden and return True or False. If the function returns True, the request
-    will continue as normal. If the function returns False, the specified `exception_cls` will be raised with the
-    optional `exception_msg`.
+    will continue as normal. If the function returns False, `on_has_permission_failure` will run, and by default raise
+    `exception_cls` with message `exception_msg`.
 
     This can be used to check if a user has a manager role/is a manager for the team in question. Ex:
     def has_permission_func(self):
@@ -20,11 +20,14 @@ class HasPermissionMixin(object):
     def has_permission_func(self):
         raise NotImplementedError('You need to specify has_permission_func')
 
+    def on_has_permission_failure(self):
+        raise self.exception_cls(self.exception_msg)
+
     def dispatch(self, request, *args, **kwargs):
         if self.has_permission_func():
             return super().dispatch(request, *args, **kwargs)
 
-        raise self.exception_cls(self.exception_msg)
+        return self.on_has_permission_failure()
 
 
 class HandleSportNotConfiguredMixin(object):

@@ -15,11 +15,9 @@ class SportRegistrationCreateFormTests(BaseTestCase):
 
         self.form_cls = SportRegistrationCreateForm
 
-    def test_sets_fields_disabled(self):
+    def test_sports_excluded(self):
         form = self.form_cls(sports_already_registered_for=[self.hockey.pk, self.soccer.pk])
 
         sport_field = form.fields['sport']
         qs = sport_field.queryset
-        self.assertIn(self.lax, qs)
-        self.assertNotIn(self.hockey, qs)
-        self.assertNotIn(self.soccer_reg, qs)
+        self.assertListEqual(list(qs), [self.lax])

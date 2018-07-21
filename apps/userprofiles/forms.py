@@ -1,7 +1,7 @@
 import datetime
 
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Layout, Field, Submit, Div, HTML
+from crispy_forms.layout import Div, Field, HTML, Layout, Submit
 from django import forms
 from django.forms import widgets
 from django.utils.translation import ugettext_lazy as _
@@ -17,18 +17,19 @@ class UserProfileCreateForm(forms.ModelForm):
         super(UserProfileCreateForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.layout = Layout(
-                Field('gender'),
-                # This makes the birthday select tags inline
-                Field('birthday', wrapper_class='form-inline'),
-                Field('height'),
-                Field('weight'),
-                Field('language'),
-                Field('timezone'),
-                HTML('<br>'),
-                Div(Submit('create_userprofile_btn', 'Continue',
-                           css_class='btn btn-success'),
-                    css_class='text-center'),
-                HTML('<br>'),
+            Field('gender'),
+            # This makes the birthday select tags inline
+            Field('birthday', wrapper_class='form-inline'),
+            Field('height'),
+            Field('weight'),
+            Field('language'),
+            Field('timezone'),
+            HTML('<br>'),
+            Div(
+                Submit('create_userprofile_btn', 'Continue', css_class='btn btn-success'),
+                css_class='text-center'
+            ),
+            HTML('<br>'),
         )
 
     current_year = datetime.datetime.today().year

@@ -211,13 +211,6 @@ def step_impl(context):
     WebDriverWait(context.driver, 15).until(check_for_refresh)
 
 
-@step('I press "(?P<prefix>[^"]*)" with kwargs "(?P<kwargs>[^"]*)"')
-def step_impl(context, prefix, kwargs):
-    element_selector = prefix + str(context.url_kwargs[kwargs])
-    element = find_element(context, element_selector)
-    element.click()
-
-
 @step('I should see "(?P<text>.*)"')
 def step_impl(context, text):
     context.test.assertIn(text, str(context.driver.page_source))

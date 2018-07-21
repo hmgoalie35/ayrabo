@@ -1,11 +1,17 @@
+from itertools import groupby
+
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
 from django.shortcuts import redirect
 from django.urls import reverse, reverse_lazy
 from django.views import generic
-from rest_framework.authtoken.models import Token
 
+from ayrabo.utils.mappings import SPORT_PLAYER_MODEL_MAPPINGS
 from ayrabo.utils.mixins import PreSelectedTabMixin
+from coaches.models import Coach
+from managers.models import Manager
+from referees.models import Referee
+from scorekeepers.models import Scorekeeper
 from sports.models import SportRegistration
 from userprofiles.models import UserProfile
 from .forms import UserProfileCreateForm, UserProfileUpdateForm
@@ -24,7 +30,7 @@ class UserProfileCreateView(LoginRequiredMixin, generic.CreateView):
 
     def form_valid(self, form):
         form.instance.user = self.request.user
-        return super(UserProfileCreateView, self).form_valid(form)
+        return super().form_valid(form)
 
 
 class UserProfileUpdateView(LoginRequiredMixin, SuccessMessageMixin, PreSelectedTabMixin, generic.UpdateView):
@@ -37,16 +43,37 @@ class UserProfileUpdateView(LoginRequiredMixin, SuccessMessageMixin, PreSelected
     valid_tabs = ['my_account', 'my_sports']
     default_tab = 'my_account'
 
+    def get_related_objects(self, sport):
+        user = self.request.user
+        player_model_cls = SPORT_PLAYER_MODEL_MAPPINGS.get(sport.name)
+        coaches = Coach.objects.filter(user=user, team__division__league__sport=sport).select_related(
+            'team__division__league__sport')
+        managers = Manager.objects.filter(user=user, team__division__league__sport=sport).select_related(
+            'team__division__league__sport')
+        referees = Referee.objects.filter(user=user, league__sport=sport).select_related('league__sport')
+        players = player_model_cls.objects.filter(user=user, sport=sport).select_related(
+            'team__division', 'sport') if player_model_cls else []
+        scorekeepers = Scorekeeper.objects.filter(user=user, sport=sport).select_related('sport')
+        return {
+            'coach': coaches,
+            'manager': managers,
+            'player': players,
+            'referee': referees,
+            'scorekeeper': scorekeepers,
+        }
+
     def get_context_data(self, **kwargs):
-        context = super(UserProfileUpdateView, self).get_context_data(**kwargs)
-        sport_registrations = SportRegistration.objects.filter(user=self.request.user).select_related('sport', 'user')
+        context = super().get_context_data(**kwargs)
+        sport_registrations = SportRegistration.objects.filter(user=self.request.user).exclude(role=None).order_by(
+            'sport').select_related('sport', 'user')
         data = {}
-        for sport_registration in sport_registrations:
-            data[sport_registration] = {'sport': sport_registration.sport, 'roles': sport_registration.roles,
-                                        'related_objects': sport_registration.get_related_role_objects()}
+        for sport, registrations in groupby(sport_registrations, key=lambda obj: obj.sport):
+            roles = sorted([sr.get_role_display() for sr in registrations])
+            data[sport] = {
+                'roles': roles,
+                'related_objects': self.get_related_objects(sport)
+            }
         context['data'] = data
-        api_tokens = Token.objects.filter(user=self.request.user)
-        context['api_token'] = api_tokens.first() if api_tokens.exists() else None
         return context
 
     def get_object(self, queryset=None):
@@ -54,6 +81,6 @@ class UserProfileUpdateView(LoginRequiredMixin, SuccessMessageMixin, PreSelected
 
     def form_valid(self, form):
         if form.has_changed():
-            return super(UserProfileUpdateView, self).form_valid(form)
+            return super().form_valid(form)
         else:
             return redirect(reverse('account_home'))
