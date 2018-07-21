@@ -67,7 +67,7 @@ Feature: Edit information associated with my account
     When I press "my-sports-tab"
     And I press "register_for_sport_btn"
     Then I should see "You have already registered for all available sports."
-    And I should be on the "home" page
+    And I should be on the "account_home" page
 
   Scenario: Expand sport list item
     Given I am on the "account_home" page

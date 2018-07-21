@@ -45,7 +45,8 @@ class SportRegistrationCreateView(LoginRequiredMixin, HasPermissionMixin, Contex
 
     def on_has_permission_failure(self):
         messages.info(self.request, 'You have already registered for all available sports.')
-        return redirect(reverse('home'))
+        redirect_url = self.request.META.get('HTTP_REFERER', reverse('home'))
+        return redirect(redirect_url)
 
     def get_form_class(self):
         return self.form_class
