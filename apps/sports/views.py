@@ -36,8 +36,11 @@ class SportRegistrationCreateView(LoginRequiredMixin, HasPermissionMixin, Contex
 
     def has_permission_func(self):
         user = self.request.user
-        self.sports_already_registered_for = user.sport_registrations.values_list('sport_id')
-        self.remaining_sport_count = Sport.objects.count() - self.sports_already_registered_for.count()
+        # .distinct('sport_id') doesn't work on sqlite. Use a set instead of list here because sets are unique.
+        self.sports_already_registered_for = {sr.sport.id for sr in
+                                              user.sport_registrations.all().select_related('sport')}
+        # This should never be negative
+        self.remaining_sport_count = Sport.objects.count() - len(self.sports_already_registered_for)
         return self.remaining_sport_count > 0
 
     def on_has_permission_failure(self):

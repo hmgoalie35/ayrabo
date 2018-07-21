@@ -43,8 +43,11 @@ class SportRegistrationCreateViewTests(BaseTestCase):
 
     def test_has_permission_false(self):
         SportRegistrationFactory(sport=self.ice_hockey, user=self.user, role='player')
+        SportRegistrationFactory(sport=self.ice_hockey, user=self.user, role='coach')
+        SportRegistrationFactory(sport=self.ice_hockey, user=self.user, role='referee')
         SportRegistrationFactory(sport=self.baseball, user=self.user, role='coach')
         SportRegistrationFactory(sport=self.basketball, user=self.user, role='manager')
+        SportRegistrationFactory(sport=self.basketball, user=self.user, role='scorekeeper')
         response = self.client.get(self.format_url(), follow=True)
         self.assertHasMessage(response, 'You have already registered for all available sports.')
         self.assertRedirects(response, reverse('home'))
