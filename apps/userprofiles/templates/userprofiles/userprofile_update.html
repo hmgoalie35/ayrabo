@@ -140,5 +140,16 @@
 {% endblock %}
 
 {% block extra_js %}
-  <script src="{% static 'userprofiles/js/userprofile_update.js' %}"></script>
+  <script>
+    $(function () {
+      $('#id_language').enableBootstrapSelect({ header: 'Select a language' });
+      $('#id_timezone').enableBootstrapSelect({ header: 'Select a timezone' });
+
+      $('.js-list-item-sport').click(function () {
+        var $elem = $(this).find('.js-toggle-caret');
+        $elem.toggleClass('fa-caret-down fa-caret-up');
+      });
+    });
+
+  </script>
 {% endblock %}
