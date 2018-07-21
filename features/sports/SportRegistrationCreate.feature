@@ -92,7 +92,7 @@ Feature: Register for a sport
     And "user@ayrabo.com" is completely registered for "Baseball" with roles "Player, Manager"
     And "user@ayrabo.com" is completely registered for "Basketball" with roles "Player, Referee"
     When I go to the "sports:register" page
-    Then I should see "You have already registered for all available sports. Check back later to see if any new sports have been added."
+    Then I should see "You have already registered for all available sports."
     And I should be on the "home" page
 
   Scenario: Selecting duplicate sports
@@ -104,7 +104,7 @@ Feature: Register for a sport
     And I select "Ice Hockey" from "id_sportregistrations-1-sport"
     And I press "id_sportregistrations-1-roles_2"
     And I press "sport_registration_next_step_btn"
-    Then I should see "Only one form can have Ice Hockey selected. Choose another sport, or remove this form."
+    Then I should see "Ice Hockey has already been selected. Choose another sport or remove this form."
     And I should be on the "sports:register" page
 
   Scenario: Already registered for ice hockey and baseball. They should not be options in select box
