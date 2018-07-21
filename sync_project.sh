@@ -29,7 +29,6 @@ docker-compose build --pull && docker-compose up -d
 print_step "Running migrations"
 python manage.py migrate
 
-# TODO convert old fixtures to seeds.
 print_step "Seeding initial data"
 python manage.py seed
 
