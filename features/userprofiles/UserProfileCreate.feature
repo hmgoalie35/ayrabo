@@ -11,6 +11,11 @@ Feature: User profiles
     And The following sport exists "Baseball"
     And I login with "user@ayrabo.com" and "myweakpassword"
 
+  Scenario: Useful information displayed to user
+    Given I am on the "account_home" page
+    Then I should see "Complete Your Account Registration"
+    And I should see "Players, coaches and managers will be granted team specific access by an organization admin."
+
 # Userprofile does not exist, create profile page
   Scenario: Prompted to fill out user profile after logging in for the first time
     Given I go to the "home" page
