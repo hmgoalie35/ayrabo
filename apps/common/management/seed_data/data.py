@@ -1,6 +1,7 @@
 # Sports
 ICE_HOCKEY = 'Ice Hockey'
 BASEBALL = 'Baseball'
+SPORTS = [ICE_HOCKEY, BASEBALL]
 
 # Leagues
 LIAHL = 'Long Island Amateur Hockey League'
@@ -57,4 +58,62 @@ DATA = {
                                    ]
         }
     }
+}
+
+GENERIC_CHOICES = {
+    ICE_HOCKEY: [
+        # Game types
+        {'short_value': 'exhibition', 'long_value': 'Exhibition', 'type': 'game_type'},
+        {'short_value': 'league', 'long_value': 'League', 'type': 'game_type'},
+        # Game point values
+        {'short_value': '0', 'long_value': '0', 'type': 'game_point_value'},
+        {'short_value': '1', 'long_value': '1', 'type': 'game_point_value'},
+        {'short_value': '2', 'long_value': '2', 'type': 'game_point_value'},
+    ]
+}
+
+# TODO Correctly generate these from LIAHL/NHL rulebooks. These are temporary for now.
+GENERIC_PENALTY_CHOICES = {
+    ICE_HOCKEY: [
+        {'name': 'Abuse of officials', 'description': ''},
+        {'name': 'Aggressor penalty', 'description': ''},
+        {'name': 'Attempt to injure', 'description': ''},
+        {'name': 'Biting', 'description': ''},
+        {'name': 'Boarding', 'description': ''},
+        {'name': 'Butt ending', 'description': ''},
+        {'name': 'Broken stick', 'description': ''},
+        {'name': 'Charging', 'description': ''},
+        {'name': 'Checking from behind', 'description': ''},
+        {'name': 'Clipping', 'description': ''},
+        {'name': 'Cross checking', 'description': ''},
+        {'name': 'Delay of game', 'description': ''},
+        {'name': 'Diving', 'description': ''},
+        {'name': 'Elbowing', 'description': ''},
+        {'name': 'Eye gouging', 'description': ''},
+        {'name': 'Fighting', 'description': ''},
+        {'name': 'Goaltender interference', 'description': ''},
+        {'name': 'Goaltender leaving the crease', 'description': ''},
+        {'name': 'Head butting', 'description': ''},
+        {'name': 'High sticking', 'description': ''},
+        {'name': 'Holding', 'description': ''},
+        {'name': 'Holding the stick', 'description': ''},
+        {'name': 'Hooking', 'description': ''},
+        {'name': 'Illegal check to the head', 'description': ''},
+        {'name': 'Illegal equipment', 'description': ''},
+        {'name': 'Instigator', 'description': ''},
+        {'name': 'Interference', 'description': ''},
+        {'name': 'Third man in', 'description': ''},
+        {'name': 'Kicking', 'description': ''},
+        {'name': 'Kneeing', 'description': ''},
+        {'name': 'Roughing', 'description': ''},
+        {'name': 'Slashing', 'description': ''},
+        {'name': 'Slew footing', 'description': ''},
+        {'name': 'Spearing', 'description': ''},
+        {'name': 'Starting the wrong lineup', 'description': ''},
+        {'name': 'Substitution infraction', 'description': ''},
+        {'name': 'Throwing the stick', 'description': ''},
+        {'name': 'Too many men', 'description': ''},
+        {'name': 'Tripping', 'description': ''},
+        {'name': 'Unsportsmanlike conduct', 'description': ''},
+    ]
 }

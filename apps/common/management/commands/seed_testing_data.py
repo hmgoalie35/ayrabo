@@ -9,7 +9,7 @@ from django.db.models import Q
 from django.utils.timezone import activate
 from faker import Faker
 
-from common.management.testing_data import liahl_divisions
+from common.management.seed_data.testing_data import liahl_divisions
 from common.models import GenericChoice
 from divisions.models import Division
 from games.tests import HockeyGameFactory
