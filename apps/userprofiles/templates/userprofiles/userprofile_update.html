@@ -1,5 +1,5 @@
 {% extends 'site_base.html' %}
-{% load crispy_forms_tags static %}
+{% load crispy_forms_tags static waffle_tags %}
 
 {% block title %}My Account{% endblock %}
 
@@ -74,12 +74,14 @@
                 </div>
               </div>
               <div class="panel-body">
-                <a
-                  id="register_for_sport_btn"
-                  href="{% url 'sports:register' %}"
-                  class="btn btn-default btn-sm pull-right"
-                >Register for a sport
-                </a>
+                {% switch 'sport_registrations' %}
+                  <a
+                    id="register_for_sport_btn"
+                    href="{% url 'sports:register' %}"
+                    class="btn btn-default btn-sm pull-right"
+                  >Register for a sport
+                  </a>
+                {% endswitch %}
                 <br><br>
                 {% if data %}
                   <ul class="list-group">
