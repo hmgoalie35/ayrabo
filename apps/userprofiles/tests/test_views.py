@@ -3,6 +3,7 @@ from django.urls import reverse
 
 from ayrabo.utils.testing import BaseTestCase
 from coaches.tests import CoachFactory
+from common.tests import WaffleSwitchFactory
 from divisions.tests import DivisionFactory
 from leagues.tests import LeagueFactory
 from managers.tests import ManagerFactory
@@ -20,6 +21,7 @@ class UserProfileCreateViewTests(BaseTestCase):
     url = 'account_complete_registration'
 
     def setUp(self):
+        self.sport_reg_switch = WaffleSwitchFactory(name='sport_registrations', active=False)
         self.email = 'user@ayrabo.com'
         self.password = 'myweakpassword'
         self.ice_hockey = SportFactory(name='Ice Hockey')
@@ -58,9 +60,15 @@ class UserProfileCreateViewTests(BaseTestCase):
     # POST
     def test_post_valid_data(self):
         response = self.client.post(self.format_url(), data=self.post_data, follow=True)
-        self.assertRedirects(response, reverse('sports:register'))
+        self.assertRedirects(response, reverse('home'))
         # Make sure `user` is set to request.user on the userprofile instance
         self.assertTrue(UserProfile.objects.filter(user=self.user).exists())
+
+    def test_post_sport_reg_switch_active(self):
+        self.sport_reg_switch.active = True
+        self.sport_reg_switch.save()
+        response = self.client.post(self.format_url(), data=self.post_data, follow=True)
+        self.assertRedirects(response, reverse('sports:register'))
 
     def test_post_invalid_data(self):
         self.post_data.pop('gender')
