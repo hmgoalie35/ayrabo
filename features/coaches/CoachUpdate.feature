@@ -15,6 +15,9 @@ Feature: Update coach information
     And The following coach object exists
       | id | username_or_email | team                  | position   |
       | 1  | user@ayrabo.com   | Green Machine IceCats | head_coach |
+    And The following waffle switch exists
+      | name         | active |
+      | coach_update | True   |
     And I login with "user@ayrabo.com" and "myweakpassword"
 
 #  Scenario: Navigate to the coach update page

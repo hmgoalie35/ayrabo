@@ -18,6 +18,9 @@ Feature: Update player information
     And The following player object exists
       | id | username_or_email | sport_slug | team                  | jersey_number | position | handedness |
       | 1  | user@ayrabo.com   | ice-hockey | Green Machine IceCats | 35            | G        | Left       |
+    And The following waffle switch exists
+      | name          | active |
+      | player_update | True   |
     And I login with "user@ayrabo.com" and "myweakpassword"
 
 #  Scenario: Navigate to the player update page
