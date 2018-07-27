@@ -1,4 +1,5 @@
 from django.http import Http404
+from waffle import flag_is_active, switch_is_active
 
 from ayrabo.utils import handle_sport_not_configured
 from ayrabo.utils.exceptions import SportNotConfiguredException
@@ -92,3 +93,36 @@ class PreSelectedTabMixin(object):
         tab = self.request.GET.get('tab', None)
         context['active_tab'] = tab if tab in self.get_valid_tabs() else self.get_default_tab()
         return context
+
+
+class AbstractWaffleMixin(object):
+    """
+    This mixin exists because there may be times where it doesn't even make sense to call the `HasPermissionMixin`, so
+    having this mixin run first makes more sense. It also allows us to keep things separate. This mixin should be
+    placed before `HasPermissionMixin`.
+    """
+    waffle_identifier = None  # Name of the flag, switch or sample
+    exception_cls = Http404
+    exception_msg = ''
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        assert self.waffle_identifier, 'You must specify `waffle_identifier`'
+
+    def dispatch(self, request, *args, **kwargs):
+        if self.check(request, *args, **kwargs):
+            return super().dispatch(request, *args, **kwargs)
+        raise self.exception_cls(self.exception_msg)
+
+    def check(self, request, *args, **kwargs):
+        raise NotImplementedError()
+
+
+class WaffleSwitchMixin(AbstractWaffleMixin):
+    def check(self, request, *args, **kwargs):
+        return switch_is_active(self.waffle_identifier)
+
+
+class WaffleFlagMixin(AbstractWaffleMixin):
+    def check(self, request, *args, **kwargs):
+        return flag_is_active(request, self.waffle_identifier)
