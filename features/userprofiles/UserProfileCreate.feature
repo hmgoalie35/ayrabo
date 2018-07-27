@@ -9,6 +9,9 @@ Feature: User profiles
       | John       | Doe       | user@ayrabo.com | myweakpassword | false              |
     And The following sport exists "Ice Hockey"
     And The following sport exists "Baseball"
+    And The following waffle switch exists
+      | name                | active |
+      | sport_registrations | True   |
     And I login with "user@ayrabo.com" and "myweakpassword"
 
   Scenario: Useful information displayed to user
@@ -21,8 +24,7 @@ Feature: User profiles
     Given I go to the "home" page
     Then I should be on the "account_complete_registration" page
     And I should see "Complete Your Account Registration"
-    And I should see "You will register for sports in the next step."
-    And I should not see "My Sports"
+    And I should see "Players, coaches and managers will be granted team specific access by an organization admin."
 
   Scenario: Redirected when trying to navigate to new sport registration page when userprofile not complete
     Given I go to the "sports:register" page

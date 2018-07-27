@@ -4,8 +4,22 @@ from waffle.models import Switch
 from common.management.commands.utils import create_object, get_object, print_status
 
 
+# TODO Handle updates to switches, however there are 2 issues. 1. If the switches are modified via the admin,
+# this will overwrite those changes. This file should be the ultimate authority. 2. After first run, the
+# switches will always be updated. Consider adding a command line flag (which probably isn't the best because
+# we need to remember to deploy with the flag enabled)
 class Command(BaseCommand):
     help = 'Seeds waffle flags, switches, samples'
+
+    def make_waffles(self, cls, waffles):
+        for waffle in waffles:
+            created = False
+            # We are going to use `name` as the unique identifier to make sure duplicates aren't created.
+            obj = get_object(cls, name=waffle.get('name'))
+            if obj is None:
+                obj = create_object(cls, **waffle)
+                created = True
+            print_status(self.stdout, obj, created)
 
     def handle(self, *args, **options):
         switches = [
@@ -13,18 +27,17 @@ class Command(BaseCommand):
                 'name': 'sport_registrations',
                 'active': False,
                 'note': 'Specifies if the user should be prompted to create sport registrations.'
+            },
+            {
+                'name': 'player_update',
+                'active': False,
+                'note': 'Specifies if the user can update the players associated with their account.'
+            },
+            {
+                'name': 'coach_update',
+                'active': False,
+                'note': 'Specifies if the user can update the coaches associated with their account.'
             }
         ]
 
-        # TODO Handle updates to switches, however there are 2 issues. 1. If the switches are modified via the admin,
-        # this will overwrite those changes. This file should be the ultimate authority. 2. After first run, the
-        # switches will always be updated. Consider adding a command line flag (which probably isn't the best because
-        # we need to remember to deploy with the flag enabled)
-        for switch in switches:
-            created = False
-            # We are going to use `name` as the unique identifier to make sure duplicates aren't created.
-            obj = get_object(Switch, name=switch.get('name'))
-            if obj is None:
-                obj = create_object(Switch, **switch)
-                created = True
-            print_status(self.stdout, obj, created)
+        self.make_waffles(Switch, switches)
