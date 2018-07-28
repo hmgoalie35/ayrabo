@@ -5,6 +5,7 @@ from django.contrib.messages.views import SuccessMessageMixin
 from django.shortcuts import redirect
 from django.urls import reverse, reverse_lazy
 from django.views import generic
+from waffle import switch_is_active
 
 from ayrabo.utils.mappings import SPORT_PLAYER_MODEL_MAPPINGS
 from ayrabo.utils.mixins import PreSelectedTabMixin
@@ -20,8 +21,12 @@ from .forms import UserProfileCreateForm, UserProfileUpdateForm
 class UserProfileCreateView(LoginRequiredMixin, generic.CreateView):
     model = UserProfile
     template_name = 'userprofiles/userprofile_create.html'
-    success_url = reverse_lazy('sports:register')
     form_class = UserProfileCreateForm
+
+    def get_success_url(self):
+        if switch_is_active('sport_registrations'):
+            return reverse('sports:register')
+        return reverse('home')
 
     def dispatch(self, request, *args, **kwargs):
         if hasattr(request.user, 'userprofile'):

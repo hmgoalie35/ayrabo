@@ -28,8 +28,7 @@ class UserProfileCreateForm(forms.ModelForm):
             Div(
                 Submit('create_userprofile_btn', 'Continue', css_class='btn btn-success'),
                 css_class='text-center'
-            ),
-            HTML('<br>'),
+            )
         )
 
     current_year = datetime.datetime.today().year

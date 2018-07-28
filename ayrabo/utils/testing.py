@@ -39,6 +39,13 @@ def clean_kwargs(kwargs):
     return {k: v for k, v in kwargs.items() if v}
 
 
+def to_bool(value):
+    if isinstance(value, str):
+        value = value.lower()
+
+    return value in [True, 'true']
+
+
 class BaseTestCase(TestCase):
     # Helper methods
     def get_user(self, username_or_email):

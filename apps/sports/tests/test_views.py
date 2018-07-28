@@ -1,6 +1,7 @@
 from django.urls import reverse
 
 from ayrabo.utils.testing import BaseTestCase
+from common.tests import WaffleSwitchFactory
 from divisions.tests import DivisionFactory
 from leagues.tests import LeagueFactory
 from sports.models import SportRegistration
@@ -22,6 +23,7 @@ class SportRegistrationCreateViewTests(BaseTestCase):
         TeamFactory(name='Green Machine IceCats', division=cls.division)
 
     def setUp(self):
+        self.sport_reg_switch = WaffleSwitchFactory(name='sport_registrations', active=True)
         self.email = 'user@ayrabo.com'
         self.password = 'myweakpassword'
         self.post_data = {
@@ -51,6 +53,12 @@ class SportRegistrationCreateViewTests(BaseTestCase):
         response = self.client.get(self.format_url(), follow=True)
         self.assertHasMessage(response, 'You have already registered for all available sports.')
         self.assertRedirects(response, reverse('home'))
+
+    def test_switch_inactive(self):
+        self.sport_reg_switch.active = False
+        self.sport_reg_switch.save()
+        response = self.client.get(self.format_url())
+        self.assert_404(response)
 
     # GET
     def test_get(self):

@@ -6,7 +6,7 @@ from django.views import generic
 
 from ayrabo.utils.exceptions import SportNotConfiguredException
 from ayrabo.utils.mappings import SPORT_PLAYER_MODEL_MAPPINGS
-from ayrabo.utils.mixins import HandleSportNotConfiguredMixin, HasPermissionMixin
+from ayrabo.utils.mixins import HandleSportNotConfiguredMixin, HasPermissionMixin, WaffleSwitchMixin
 from sports.models import Sport
 from . import forms
 
@@ -18,6 +18,7 @@ SPORT_UPDATE_PLAYER_FORM_MAPPINGS = {
 
 
 class PlayerUpdateView(LoginRequiredMixin,
+                       WaffleSwitchMixin,
                        HandleSportNotConfiguredMixin,
                        HasPermissionMixin,
                        SuccessMessageMixin,
@@ -27,6 +28,7 @@ class PlayerUpdateView(LoginRequiredMixin,
     context_object_name = 'player'
     success_message = 'Your player information has been updated.'
     success_url = reverse_lazy('home')
+    waffle_identifier = 'player_update'
 
     def _get_sport(self):
         if hasattr(self, 'sport'):

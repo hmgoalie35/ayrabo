@@ -15,6 +15,9 @@ Feature: Edit information associated with my account
       | username_or_email | sport      | roles                        | complete |
       | user@ayrabo.com   | Ice Hockey | Coach, Referee               | true     |
       | user@ayrabo.com   | Baseball   | Player, Manager, Scorekeeper | true     |
+    And The following waffle switch exists
+      | name                | active |
+      | sport_registrations | True   |
     And I login with "user@ayrabo.com" and "myweakpassword"
 
   # My Account tab tests

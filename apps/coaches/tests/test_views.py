@@ -2,6 +2,7 @@ from django.urls import reverse
 
 from ayrabo.utils.testing import BaseTestCase
 from coaches.tests import CoachFactory
+from common.tests import WaffleSwitchFactory
 from divisions.tests import DivisionFactory
 from leagues.tests import LeagueFactory
 from sports.tests import SportFactory
@@ -13,6 +14,7 @@ class CoachesUpdateViewTests(BaseTestCase):
     url = 'sports:coaches:update'
 
     def setUp(self):
+        self.coach_update_switch = WaffleSwitchFactory(name='coach_update', active=True)
         self.ice_hockey = SportFactory(name='Ice Hockey')
         self.email = 'user@ayrabo.com'
         self.password = 'myweakpassword'
@@ -47,6 +49,12 @@ class CoachesUpdateViewTests(BaseTestCase):
         self.client.logout()
         user = UserFactory(password=self.password)
         self.login(user=user)
+        response = self.client.get(self.coach_url)
+        self.assert_404(response)
+
+    def test_switch_inactive(self):
+        self.coach_update_switch.active = False
+        self.coach_update_switch.save()
         response = self.client.get(self.coach_url)
         self.assert_404(response)
 

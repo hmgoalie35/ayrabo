@@ -1,3 +1,5 @@
+{% load waffle_tags %}
+
 <div>
   <table class="table responsive-table table-thin-th-border">
 
@@ -32,13 +34,15 @@
               <i class="fa fa-caret-down"></i>
             </a>
             <ul class="dropdown-menu table-dropdown-menu" aria-labelledby="{{ coach.id }}">
-              <li class="dropdown-header">Manage</li>
-              <li>
-                <a href="{% url 'sports:coaches:update' sport.slug coach.pk %}" id="update-coach-link">
-                  <i class="fa fa-pencil fa-primary"></i>
-                  Edit
-                </a>
-              </li>
+              {% switch 'coach_update' %}
+                <li class="dropdown-header">Manage</li>
+                <li>
+                  <a href="{% url 'sports:coaches:update' sport.slug coach.pk %}" id="update-coach-link">
+                    <i class="fa fa-pencil fa-primary"></i>
+                    Edit
+                  </a>
+                </li>
+              {% endswitch %}
               {# Game items #}
               <li class="dropdown-header">Games</li>
               <li>

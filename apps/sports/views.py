@@ -6,7 +6,7 @@ from django.urls import reverse
 from django.views import generic
 from django.views.generic.base import ContextMixin
 
-from ayrabo.utils.mixins import HasPermissionMixin
+from ayrabo.utils.mixins import HasPermissionMixin, WaffleSwitchMixin
 from players import forms as player_forms
 from players.models import BaseballPlayer, BasketballPlayer, HockeyPlayer
 from scorekeepers.models import Scorekeeper
@@ -27,12 +27,17 @@ SPORT_PLAYER_MODEL_MAPPINGS = {
 }
 
 
-class SportRegistrationCreateView(LoginRequiredMixin, HasPermissionMixin, ContextMixin, generic.View):
+class SportRegistrationCreateView(LoginRequiredMixin,
+                                  WaffleSwitchMixin,
+                                  HasPermissionMixin,
+                                  ContextMixin,
+                                  generic.View):
     form_class = SportRegistrationCreateForm
     formset_class = SportRegistrationFormSet
     min_forms = 1
     extra = 0
     template_name = 'sports/sport_registration_create.html'
+    waffle_identifier = 'sport_registrations'
 
     def has_permission_func(self):
         user = self.request.user

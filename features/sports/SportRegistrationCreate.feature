@@ -13,6 +13,9 @@ Feature: Register for a sport
     And The following sport exists "Ice Hockey"
     And The following sport exists "Baseball"
     And The following sport exists "Basketball"
+    And The following waffle switch exists
+      | name                | active |
+      | sport_registrations | True   |
     And I login with "user@ayrabo.com" and "myweakpassword"
 
   Scenario: Redirected to new sport registration page after userprofile created
