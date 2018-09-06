@@ -1,3 +1,5 @@
+from django.contrib import messages
+from django.contrib.sites.shortcuts import get_current_site
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.utils.deprecation import MiddlewareMixin
@@ -38,6 +40,9 @@ class UserProfileCompleteMiddleware(MiddlewareMixin):
         request.session['is_registration_complete'] = False
         # Prevent redirect loop
         if redirect_url != request.path:
+            site = get_current_site(request)
+            msg = 'You must complete your account registration before browsing {}.'.format(site.domain)
+            messages.warning(request, msg)
             return redirect(redirect_url)
 
         return None
