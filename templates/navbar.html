@@ -33,24 +33,11 @@
               Account<span class="caret"></span>
             </a>
             <ul class="dropdown-menu">
-              {% if not request.session.is_registration_complete %}
-                <li
-                  data-toggle="tooltip"
-                  data-placement="bottom"
-                  title="Please complete your registration before managing your account."
-                  class="disabled"
-                >
-                  <a class="disabled" id="edit_account_link" href="#">
-                    <span class="fa fa-fw fa-user"></span>{{ user.email }}
-                  </a>
-                </li>
-              {% else %}
-                <li>
-                  <a id="edit_account_link" href="{% url 'account_home' %}">
-                    <span class="fa fa-fw fa-user"></span>{{ user.email }}
-                  </a>
-                </li>
-              {% endif %}
+              <li>
+                <a id="edit_account_link" href="{% url 'account_home' %}">
+                  <span class="fa fa-fw fa-user"></span>{{ user.email }}
+                </a>
+              </li>
 
               <li class="divider"></li>
 
