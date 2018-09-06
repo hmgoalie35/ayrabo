@@ -43,9 +43,10 @@ class UserProfileCompleteMiddlewareTests(BaseTestCase):
         A user without a userprofile should be prompted to create one.
         """
         self.login(user=self.user_without_profile)
-        response = self.client.get(reverse('home'))
+        response = self.client.get(reverse('home'), follow=True)
         self.assertRedirects(response, reverse('account_complete_registration'))
         self.assertFalse(self.get_session_value('is_registration_complete'))
+        self.assertHasMessage(response, 'You must complete your account registration before browsing example.com.')
 
     def test_no_redirect_loop_create_profile_url(self):
         """
