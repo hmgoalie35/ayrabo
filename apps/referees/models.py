@@ -3,7 +3,6 @@ from django.db import models
 from common import managers
 from common.models import TimestampedModel
 from leagues.models import League
-from users.models import User
 
 
 class Referee(TimestampedModel):
@@ -12,7 +11,7 @@ class Referee(TimestampedModel):
     object is for a different league.
     TLDR; A user can be a referee for multiple leagues and a new referee object is created for each league.
     """
-    user = models.ForeignKey(User, related_name='referees')
+    user = models.ForeignKey('users.User', related_name='referees')
     league = models.ForeignKey(League)
     is_active = models.BooleanField(default=True, verbose_name='Is Active')
 

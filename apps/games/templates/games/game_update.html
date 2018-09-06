@@ -1,5 +1,6 @@
 {% extends 'site_base.html' %}
-{% load crispy_forms_tags ayrabo_utils %}
+{% load crispy_forms_tags %}
+{% load booltojson from utils %}
 
 {% block title %}Update Game #{{ game.pk }} {{ game.home_team.name }} vs. {{ game.away_team.name }}{% endblock %}
 
