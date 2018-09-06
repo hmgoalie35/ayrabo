@@ -63,6 +63,7 @@
 {% block footer %}
   <footer>
     <ol class="breadcrumb text-center">
+      {# TODO Create a template tag (inclusion tag) we can offload this logic to #}
       {% url 'about_us' as about_us_url %}
       {% if request.path == about_us_url %}
         <li class='active'>About</li>
