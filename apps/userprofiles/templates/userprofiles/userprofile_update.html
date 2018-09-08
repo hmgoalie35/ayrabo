@@ -125,7 +125,7 @@
                     {% endfor %}
                   </ul>
                 {% else %}
-                  {% include 'includes/no_sport_registrations.html' %}
+                  {% include 'includes/_data_missing_message.html' with message='You have not been registered for any sports.' %}
                 {% endif %}
               </div>
             </div>
