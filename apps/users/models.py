@@ -4,7 +4,6 @@ from django.contrib.auth.models import AbstractUser
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
-from django.db.models import QuerySet
 
 from coaches.models import Coach
 from common.models import TimestampedModel
@@ -83,12 +82,21 @@ class User(AbstractUser):
             return self.get_scorekeepers(sport)
 
     def get_players(self, sport):
+        """
+        Fetches players for the user, if the sport has not been configured an empty list is returned.
+        NOTE: Be careful calling queryset functions on the return value of this function. If the sport has not been
+        configured, a list will be returned which does not support queryset functions.
+
+        :param sport: Sport to fetch players for
+        :return: Empty list if the sport has not been configured, otherwise a queryset of player objects for the user
+        and sport.
+        """
         # Prevents circular import error
         from ayrabo.utils.mappings import SPORT_PLAYER_MODEL_MAPPINGS
 
         player_model_cls = SPORT_PLAYER_MODEL_MAPPINGS.get(sport.name)
         if player_model_cls is None:
-            return QuerySet()
+            return []
         return player_model_cls.objects.active().filter(user=self, sport=sport).select_related('team__division',
                                                                                                'sport')
 
