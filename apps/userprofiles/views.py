@@ -48,37 +48,9 @@ class UserProfileUpdateView(LoginRequiredMixin, SuccessMessageMixin, PreSelected
     valid_tabs = ['my_account', 'my_sports']
     default_tab = 'my_account'
 
-    def get_related_objects(self, sport):
-        user = self.request.user
-        player_model_cls = SPORT_PLAYER_MODEL_MAPPINGS.get(sport.name)
-        coaches = Coach.objects.filter(user=user, team__division__league__sport=sport).select_related(
-            'team__division__league__sport')
-        managers = Manager.objects.filter(user=user, team__division__league__sport=sport).select_related(
-            'team__division__league__sport')
-        referees = Referee.objects.filter(user=user, league__sport=sport).select_related('league__sport')
-        players = player_model_cls.objects.filter(user=user, sport=sport).select_related(
-            'team__division', 'sport') if player_model_cls else []
-        scorekeepers = Scorekeeper.objects.filter(user=user, sport=sport).select_related('sport')
-        return {
-            'coach': coaches,
-            'manager': managers,
-            'player': players,
-            'referee': referees,
-            'scorekeeper': scorekeepers,
-        }
-
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        sport_registrations = SportRegistration.objects.filter(user=self.request.user).exclude(role=None).order_by(
-            'sport').select_related('sport', 'user')
-        data = {}
-        for sport, registrations in groupby(sport_registrations, key=lambda obj: obj.sport):
-            roles = sorted([sr.get_role_display() for sr in registrations])
-            data[sport] = {
-                'roles': roles,
-                'related_objects': self.get_related_objects(sport)
-            }
-        context['data'] = data
+        context['sport_registration_data_by_sport'] = self.request.user.sport_registration_data_by_sport()
         return context
 
     def get_object(self, queryset=None):

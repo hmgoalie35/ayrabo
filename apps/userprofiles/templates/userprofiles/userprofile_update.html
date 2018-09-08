@@ -10,7 +10,7 @@
     <div class="row">
       <div class="col-sm-offset-3 col-sm-6">
 
-        <ul class="nav nav-tabs nav-justified mt20" role="tablist">
+        <ul class="nav nav-tabs nav-justified mt20 mb20" role="tablist">
           <li role="presentation" class="{% get_tab_active_class 'my_account' %}">
             <a href="#my_account" role="tab" data-toggle="tab" class="nav-tab" data-tab="my_account">
               <i class="fa fa-fw fa-user"></i>&nbsp;My Account
@@ -83,36 +83,36 @@
                   </a>
                 {% endswitch %}
                 <br><br>
-                {% if data %}
+                {% if sport_registration_data_by_sport %}
                   <ul class="list-group">
-                    {% for sport, data_dict in data.items %}
+                    {% for sport, data in sport_registration_data_by_sport.items %}
                       <li
                         id="list-item-{{ sport.slug }}"
                         class="list-group-item list-group-item-hoverable js-list-item-sport"
                         data-target="#{{ sport.slug }}"
                         data-toggle="collapse"
                       >
-                        {{ sport.name }}{% if data_dict.roles %}:{% endif %}
-                        {% for role in data_dict.roles %}
-                          <span class="label label-info">{{ role }}</span>
+                        {{ sport.name }}{% if data.roles %}:{% endif %}
+                        {% for role in data.roles %}
+                          <span class="label label-info">{{ role|title }}</span>
                         {% endfor %}
-                        <i class="fa fa-caret-down mt3 pull-right js-toggle-caret"></i>
+                        <i class="fa fa-caret-down mt3 pull-right" data-toggle="caret"></i>
                       </li>
                       <div class="collapse" id="{{ sport.slug }}">
                         <div class="list-group-item list-group-item-flush-bottom">
-                          {% if data_dict.related_objects %}
+                          {% if data.roles %}
                             <h4 class="text-center">At a glance</h4>
-                            {% for role, objects in data_dict.related_objects.items %}
+                            {% for role, objects in data.roles.items %}
                               <div class="role-related-objects-section">
                                 <strong>{{ role|title }}:</strong>
                                 {% for object in objects %}
                                   <div>
                                     {% if role == 'referee' %}
-                                      {{ object.league }}
+                                      {{ object.league.full_name }}
                                     {% elif role == 'scorekeeper' %}
                                       {{ object.sport.name }}
                                     {% else %}
-                                      {{ object.team }} - {{ object.team.division.name }}
+                                      {{ object.team.name }} - {{ object.team.division.name }}
                                     {% endif %}
                                   </div>
                                 {% endfor %}
@@ -144,8 +144,7 @@
       $('#id_timezone').enableBootstrapSelect({ header: 'Select a timezone' });
 
       $('.js-list-item-sport').click(function () {
-        var $elem = $(this).find('.js-toggle-caret');
-        $elem.toggleClass('fa-caret-down fa-caret-up');
+        $(this).find('[data-toggle="caret"]').toggleClass('fa-caret-down fa-caret-up');
       });
     });
 
