@@ -1,13 +1,18 @@
 from django.db import IntegrityError
 
 from ayrabo.utils.testing import BaseTestCase
+from coaches.models import Coach
 from coaches.tests import CoachFactory
 from divisions.tests import DivisionFactory
 from leagues.tests import LeagueFactory
+from managers.models import Manager
 from managers.tests import ManagerFactory
 from organizations.tests import OrganizationFactory
+from players.models import HockeyPlayer
 from players.tests import HockeyPlayerFactory
+from referees.models import Referee
 from referees.tests import RefereeFactory
+from scorekeepers.models import Scorekeeper
 from scorekeepers.tests import ScorekeeperFactory
 from sports.tests import SportFactory, SportRegistrationFactory
 from teams.tests import TeamFactory
@@ -66,16 +71,34 @@ class UserModelTests(BaseTestCase):
         self.assertListEqual(registrations, [sr3, sr2, sr1])
 
     def test_sport_registration_data_by_sport(self):
-        pass
+        sr1 = SportRegistrationFactory(user=self.user, sport=self.ice_hockey, role='coach')
+        sr2 = SportRegistrationFactory(user=self.user, sport=self.ice_hockey, role='player')
+        sr3 = SportRegistrationFactory(user=self.user, sport=self.baseball, role='manager')
+
+        result = self.user.sport_registration_data_by_sport()
+        ice_hockey_data = result.get(self.ice_hockey)
+        baseball_data = result.get(self.baseball)
+
+        self.assertListEqual(list(result.keys()), [self.baseball, self.ice_hockey])
+        self.assertListEqual(ice_hockey_data.get('registrations'), [sr1, sr2])
+        self.assertListEqual(list(ice_hockey_data.get('roles').keys()), ['coach', 'player'])
+        self.assertListEqual(baseball_data.get('registrations'), [sr3])
+        self.assertListEqual(list(baseball_data.get('roles').keys()), ['manager'])
 
     def test_sport_registration_data_by_sport_no_registrations(self):
-        pass
+        result = self.user.sport_registration_data_by_sport()
+        self.assertDictEqual(result, {})
 
-    def test_sport_registration_data_by_sport_legacy_registrations(self):
-        pass
+    def test_sport_registration_data_by_sport_no_role_objects(self):
+        Coach.objects.all().delete()
+        sr1 = SportRegistrationFactory(user=self.user, sport=self.ice_hockey, role='coach')
 
-    def test_sport_registration_data_no_role_objects(self):
-        pass
+        result = self.user.sport_registration_data_by_sport()
+        ice_hockey_data = result.get(self.ice_hockey)
+
+        self.assertListEqual(list(result.keys()), [self.ice_hockey])
+        self.assertListEqual(ice_hockey_data.get('registrations'), [sr1])
+        self.assertListEqual(list(ice_hockey_data.get('roles').get('coach')), [])
 
     def test_get_roles(self):
         sr1 = SportRegistrationFactory(user=self.user, sport=self.ice_hockey, role='coach')
@@ -83,14 +106,14 @@ class UserModelTests(BaseTestCase):
         sr3 = SportRegistrationFactory(user=self.user, sport=self.ice_hockey, role='referee')
         sr4 = SportRegistrationFactory(user=self.user, sport=self.ice_hockey, role='manager')
         sr5 = SportRegistrationFactory(user=self.user, sport=self.ice_hockey, role='scorekeeper')
+
         result = self.user.get_roles(self.ice_hockey, [sr1, sr2, sr3, sr4, sr5])
-        self.assertDictEqual(result, {
-            'coach': [],
-            'player': [],
-            'referee': [],
-            'manager': [],
-            'scorekeeper': []
-        })
+
+        self.assertListEqual(list(result.get('coach')), list(Coach.objects.filter(user=self.user)))
+        self.assertListEqual(list(result.get('manager')), list(Manager.objects.filter(user=self.user)))
+        self.assertListEqual(list(result.get('player')), list(HockeyPlayer.objects.filter(user=self.user)))
+        self.assertListEqual(list(result.get('referee')), list(Referee.objects.filter(user=self.user)))
+        self.assertListEqual(list(result.get('scorekeeper')), list(Scorekeeper.objects.filter(user=self.user)))
 
     def test_get_players(self):
         HockeyPlayerFactory(sport=self.ice_hockey, team=self.team)

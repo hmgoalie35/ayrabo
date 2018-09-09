@@ -55,9 +55,10 @@ class User(AbstractUser):
         """
         result = {}
         for sport, registrations in groupby(self.get_sport_registrations(), key=lambda obj: obj.sport):
+            registrations_as_list = list(registrations)
             result[sport] = {
-                'registrations': registrations,
-                'roles': self.get_roles(sport, registrations)
+                'registrations': registrations_as_list,
+                'roles': self.get_roles(sport, registrations_as_list)
             }
         return result
 
