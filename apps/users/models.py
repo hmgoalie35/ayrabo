@@ -62,6 +62,13 @@ class User(AbstractUser):
         return result
 
     def get_roles(self, sport, sport_registrations):
+        """
+        Computes all roles for the current user (and sport) and the role objects for each role.
+
+        :param sport: The sport to get role objects for
+        :param sport_registrations: Sport registrations for the user.
+        :return: dict where the keys are the roles the user is registered for and the values are objects for that role
+        """
         result = {}
         roles = sorted(sr.role for sr in sport_registrations)
         for role in roles:
@@ -80,6 +87,7 @@ class User(AbstractUser):
             return self.get_managers(sport)
         if role == 'scorekeeper':
             return self.get_scorekeepers(sport)
+        return None
 
     def get_players(self, sport):
         """

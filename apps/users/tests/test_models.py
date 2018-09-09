@@ -36,6 +36,12 @@ class UserModelTests(BaseTestCase):
         self.liahl = LeagueFactory(full_name='Long Island Amateur Hockey League', sport=self.ice_hockey)
         self.mm_aa = DivisionFactory(name='Midget Minor AA', league=self.liahl)
         self.team = TeamFactory(name='Green Machine IceCats', division=self.mm_aa)
+
+        self.player = HockeyPlayerFactory(user=self.user, sport=self.ice_hockey, team=self.team)
+        self.coach = CoachFactory(user=self.user, team=self.team)
+        self.referee = RefereeFactory(user=self.user, league=self.liahl)
+        self.manager = ManagerFactory(user=self.user, team=self.team)
+        self.scorekeeper = ScorekeeperFactory(user=self.user, sport=self.ice_hockey)
         # Sport reg for another user (should be excluded)
         SportRegistrationFactory()
         self.organization = OrganizationFactory(name='Long Beach Sharks')
@@ -72,15 +78,26 @@ class UserModelTests(BaseTestCase):
         pass
 
     def test_get_roles(self):
-        pass
+        sr1 = SportRegistrationFactory(user=self.user, sport=self.ice_hockey, role='coach')
+        sr2 = SportRegistrationFactory(user=self.user, sport=self.ice_hockey, role='player')
+        sr3 = SportRegistrationFactory(user=self.user, sport=self.ice_hockey, role='referee')
+        sr4 = SportRegistrationFactory(user=self.user, sport=self.ice_hockey, role='manager')
+        sr5 = SportRegistrationFactory(user=self.user, sport=self.ice_hockey, role='scorekeeper')
+        result = self.user.get_roles(self.ice_hockey, [sr1, sr2, sr3, sr4, sr5])
+        self.assertDictEqual(result, {
+            'coach': [],
+            'player': [],
+            'referee': [],
+            'manager': [],
+            'scorekeeper': []
+        })
 
     def test_get_players(self):
         HockeyPlayerFactory(sport=self.ice_hockey, team=self.team)
         team = TeamFactory(division__league__sport=self.ice_hockey)
         HockeyPlayerFactory(user=self.user, sport=self.ice_hockey, team=team, is_active=False)
-        player = HockeyPlayerFactory(user=self.user, sport=self.ice_hockey, team=self.team)
         players = self.user.get_players(self.ice_hockey)
-        self.assertListEqual(list(players), [player])
+        self.assertListEqual(list(players), [self.player])
 
     def test_get_players_sport_not_configured(self):
         players = self.user.get_players(SportFactory(name='Invalid Sport'))
@@ -90,30 +107,26 @@ class UserModelTests(BaseTestCase):
         CoachFactory(team=self.team)
         CoachFactory(user=self.user, team=TeamFactory(division__league__sport=self.baseball))
         CoachFactory(user=self.user, team=TeamFactory(division__league__sport=self.ice_hockey), is_active=False)
-        coach = CoachFactory(user=self.user, team=self.team)
         coaches = self.user.get_coaches(self.ice_hockey)
-        self.assertListEqual(list(coaches), [coach])
+        self.assertListEqual(list(coaches), [self.coach])
 
     def test_get_referees(self):
         RefereeFactory(league=self.liahl)
         RefereeFactory(user=self.user, league=LeagueFactory(sport=self.baseball))
         RefereeFactory(user=self.user, league=LeagueFactory(sport=self.ice_hockey), is_active=False)
-        referee = RefereeFactory(user=self.user, league=self.liahl)
         referees = self.user.get_referees(self.ice_hockey)
-        self.assertListEqual(list(referees), [referee])
+        self.assertListEqual(list(referees), [self.referee])
 
     def test_get_managers(self):
         ManagerFactory(team=self.team)
         ManagerFactory(user=self.user, team=TeamFactory(division__league__sport=self.baseball))
         ManagerFactory(user=self.user, team=TeamFactory(division__league__sport=self.ice_hockey), is_active=False)
-        manager = ManagerFactory(user=self.user, team=self.team)
         managers = list(self.user.get_managers(self.ice_hockey))
-        self.assertListEqual(managers, [manager])
+        self.assertListEqual(managers, [self.manager])
 
     def test_get_scorekeepers(self):
         # Users can only be registered as a scorekeeper for one sport, so testing is active here doesn't make sense.
         ScorekeeperFactory()
-        scorekeeper = ScorekeeperFactory(user=self.user, sport=self.ice_hockey)
         ScorekeeperFactory(user=self.user, sport=self.baseball)
         scorekeepers = list(self.user.get_scorekeepers(self.ice_hockey))
-        self.assertListEqual(scorekeepers, [scorekeeper])
+        self.assertListEqual(scorekeepers, [self.scorekeeper])
