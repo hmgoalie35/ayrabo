@@ -1,5 +1,3 @@
-from itertools import groupby
-
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
 from django.shortcuts import redirect
@@ -7,13 +5,7 @@ from django.urls import reverse, reverse_lazy
 from django.views import generic
 from waffle import switch_is_active
 
-from ayrabo.utils.mappings import SPORT_PLAYER_MODEL_MAPPINGS
 from ayrabo.utils.mixins import PreSelectedTabMixin
-from coaches.models import Coach
-from managers.models import Manager
-from referees.models import Referee
-from scorekeepers.models import Scorekeeper
-from sports.models import SportRegistration
 from userprofiles.models import UserProfile
 from .forms import UserProfileCreateForm, UserProfileUpdateForm
 
