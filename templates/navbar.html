@@ -20,7 +20,7 @@
       <ul class="nav navbar-nav navbar-right">
         {% if user.is_authenticated %}
           <li>
-            <a href="{% url 'sports:dashboard' %}">Dashboard</a>
+            <a id="sport-dashboard-btn" href="{% url 'sports:dashboard' %}">Dashboard</a>
           </li>
           <!-- Account dropdown -->
           <li class="vertical-line-left">

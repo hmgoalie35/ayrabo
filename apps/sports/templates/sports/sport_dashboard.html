@@ -55,12 +55,12 @@
                       <li role="presentation" class="{% if forloop.first %}active{% endif %}">
                         <a
                           href="#{{ sport.slug }}-{{ role }}"
+                          id="{{ sport.slug }}-{{ role }}-tab"
                           class="nav-tab"
                           role="tab"
                           data-toggle="tab"
                           aria-controls="{{ sport.slug }}-{{ role }}"
-                        >
-                          {% pluralize_role role %}
+                        >{% pluralize_role role %}
                         </a>
                       </li>
                     {% endfor %}
