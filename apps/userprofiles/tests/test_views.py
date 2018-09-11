@@ -136,10 +136,10 @@ class UserProfileUpdateViewTests(BaseTestCase):
         SportRegistrationFactory(user=self.user, sport=self.sport, role='coach')
         SportRegistrationFactory(user=self.user, sport=self.sport, role='referee')
         SportRegistrationFactory(user=self.user, sport=self.sport, role='manager')
-        hockey_players = [HockeyPlayerFactory(user=self.user, team=green_machine_icecats, sport=self.sport)]
-        hockey_coaches = [CoachFactory(user=self.user, team=green_machine_icecats)]
-        hockey_referees = [RefereeFactory(user=self.user, league=liahl)]
-        hockey_managers = [ManagerFactory(user=self.user, team=green_machine_icecats)]
+        HockeyPlayerFactory(user=self.user, team=green_machine_icecats, sport=self.sport)
+        CoachFactory(user=self.user, team=green_machine_icecats)
+        RefereeFactory(user=self.user, league=liahl)
+        ManagerFactory(user=self.user, team=green_machine_icecats)
 
         baseball = SportFactory(name='Baseball')
         mlb = LeagueFactory(full_name='Major League Baseball', sport=baseball)
@@ -150,35 +150,19 @@ class UserProfileUpdateViewTests(BaseTestCase):
         SportRegistrationFactory(user=self.user, sport=baseball, role='referee')
         SportRegistrationFactory(user=self.user, sport=baseball, role='manager')
         SportRegistrationFactory(user=self.user, sport=baseball, role='scorekeeper')
-        baseball_coaches = [CoachFactory(user=self.user, team=toronto_blue_jays)]
-        baseball_referees = [RefereeFactory(user=self.user, league=mlb)]
-        baseball_managers = [ManagerFactory(user=self.user, team=toronto_blue_jays)]
-        baseball_scorekeepers = [ScorekeeperFactory(user=self.user, sport=baseball)]
+        CoachFactory(user=self.user, team=toronto_blue_jays)
+        RefereeFactory(user=self.user, league=mlb)
+        ManagerFactory(user=self.user, team=toronto_blue_jays)
+        ScorekeeperFactory(user=self.user, sport=baseball)
 
         response = self.client.get(self.format_url())
         context = response.context
-        data = context['data']
-        baseball_data = data[baseball]
-        hockey_data = data[self.sport]
+        sport_registration_data_by_sport = context['sport_registration_data_by_sport']
 
-        self.assertTemplateUsed(response, 'userprofiles/userprofile_update.html')
         self.assert_200(response)
-        self.assertEqual(context['active_tab'], 'my_account')
-        # Roles are getting sorted
-        self.assertListEqual(baseball_data['roles'], ['Coach', 'Manager', 'Referee', 'Scorekeeper'])
-        self.assertListEqual(hockey_data['roles'], ['Coach', 'Manager', 'Player', 'Referee'])
-
-        self.assertListEqual(list(baseball_data['related_objects']['coach']), baseball_coaches)
-        self.assertListEqual(list(baseball_data['related_objects']['manager']), baseball_managers)
-        self.assertListEqual(list(baseball_data['related_objects']['player']), [])
-        self.assertListEqual(list(baseball_data['related_objects']['referee']), baseball_referees)
-        self.assertListEqual(list(baseball_data['related_objects']['scorekeeper']), baseball_scorekeepers)
-
-        self.assertListEqual(list(hockey_data['related_objects']['coach']), hockey_coaches)
-        self.assertListEqual(list(hockey_data['related_objects']['manager']), hockey_managers)
-        self.assertListEqual(list(hockey_data['related_objects']['player']), hockey_players)
-        self.assertListEqual(list(hockey_data['related_objects']['referee']), hockey_referees)
-        self.assertListEqual(list(hockey_data['related_objects']['scorekeeper']), [])
+        self.assertTemplateUsed(response, 'userprofiles/userprofile_update.html')
+        self.assertListEqual(list(sport_registration_data_by_sport.keys()), [baseball, self.sport])
+        self.assertEqual(context.get('active_tab'), 'my_account')
 
     # POST
     # No need to test invalid values for height, weight, etc. That is done above (the forms are almost identical)

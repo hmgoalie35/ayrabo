@@ -183,7 +183,7 @@ class SportRegistrationCreateViewTests(BaseTestCase):
         self.assertRedirects(response, reverse('home'))
 
 
-class SportDashboardTests(BaseTestCase):
+class SportDashboardViewTests(BaseTestCase):
     url = 'sports:dashboard'
 
     def setUp(self):
