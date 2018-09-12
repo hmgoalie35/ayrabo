@@ -68,19 +68,19 @@ class PreSelectedTabMixin(object):
     javascript functionality, add `data-toggle=<value>` to the DOM element (which will likely be an anchor tag).
     `<value>` needs to be a value from `valid_tabs`. An `active_tab` variable will be available in the template.
     """
-    valid_tabs = None
+    valid_tabs = []
     default_tab = None
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-        valid_tabs = self.get_valid_tabs()
-        default_tab = self.get_default_tab()
-        # Validation of `valid_tabs` and `default_tab` class variables
-        assert isinstance(valid_tabs, list) and len(valid_tabs) > 0, 'valid_tabs must be a non-empty list'
-        assert isinstance(default_tab, str) and len(default_tab) > 0, 'default_tab must be a non-empty string'
-        assert default_tab in valid_tabs, '{} is not a valid choice, choose from {}'.format(default_tab,
-                                                                                            ', '.join(valid_tabs))
+    def validate(self, valid_tabs, default_tab):
+        """
+        This logic was previously in the constructor but self.request isn't available in the constructor so errors were
+        getting thrown. Resort to just calling this function when we know request has been set on self, etc.
+        """
+        assert isinstance(valid_tabs, list), 'valid_tabs must be a list'
+        if default_tab is not None:
+            assert isinstance(default_tab, str) and len(default_tab) > 0, 'default_tab must be a non-empty string'
+            assert default_tab in valid_tabs, '{} is not a valid choice, choose from {}'.format(default_tab,
+                                                                                                ', '.join(valid_tabs))
 
     def get_default_tab(self):
         return self.default_tab
@@ -90,8 +90,11 @@ class PreSelectedTabMixin(object):
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
+        valid_tabs = self.get_valid_tabs()
+        default_tab = self.get_default_tab()
+        self.validate(valid_tabs, default_tab)
         tab = self.request.GET.get('tab', None)
-        context['active_tab'] = tab if tab in self.get_valid_tabs() else self.get_default_tab()
+        context['active_tab'] = tab if tab in valid_tabs else default_tab
         return context
 
 

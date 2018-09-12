@@ -3,13 +3,21 @@ import datetime
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Div, Field, HTML, Layout, Submit
 from django import forms
-from django.forms import widgets
+from django.forms.widgets import SelectDateWidget
 from django.utils.translation import ugettext_lazy as _
 
 from .models import UserProfile
 
 YEAR_DIFFERENCE = 20
 MAX_AGE = 100
+
+
+def get_year_range():
+    """
+    :return: Years in descending order
+    """
+    current_year = datetime.datetime.today().year
+    return range(current_year, current_year - (MAX_AGE + 1), -1)
 
 
 class UserProfileCreateForm(forms.ModelForm):
@@ -31,11 +39,9 @@ class UserProfileCreateForm(forms.ModelForm):
             )
         )
 
-    current_year = datetime.datetime.today().year
-    year_range = range(current_year - MAX_AGE, current_year + 1)
     # This field is actually required and validation is done below. Setting required=False allows us to specify the
     # empty labels below and therefore prevent a date from being initially selected.
-    birthday = forms.DateField(widget=widgets.SelectDateWidget(years=year_range, empty_label=('Year', 'Month', 'Day')),
+    birthday = forms.DateField(widget=SelectDateWidget(years=get_year_range(), empty_label=('Year', 'Month', 'Day')),
                                required=False)
 
     weight = forms.IntegerField(label='Weight (in lbs)', min_value=UserProfile.MIN_WEIGHT,
@@ -64,11 +70,9 @@ class UserProfileUpdateForm(forms.ModelForm):
 
 
 class UserProfileAdminForm(forms.ModelForm):
-    current_year = datetime.datetime.today().year
-    year_range = range(current_year - MAX_AGE, current_year + 1)
     # This field is actually required and validation is done below. Setting required=False allows us to specify the
     # empty labels below and therefore prevent a date from being initially selected.
-    birthday = forms.DateField(widget=widgets.SelectDateWidget(years=year_range, empty_label=('Year', 'Month', 'Day')),
+    birthday = forms.DateField(widget=SelectDateWidget(years=get_year_range(), empty_label=('Year', 'Month', 'Day')),
                                required=False)
 
     def clean_birthday(self):

@@ -3,7 +3,6 @@ from django.db import models
 from common import managers
 from common.models import TimestampedModel
 from teams.models import Team
-from users.models import User
 
 
 class Coach(TimestampedModel):
@@ -20,7 +19,7 @@ class Coach(TimestampedModel):
         ('assistant_coach', ASSISTANT_COACH)
     )
 
-    user = models.ForeignKey(User, related_name='coaches')
+    user = models.ForeignKey('users.User', related_name='coaches')
     position = models.CharField(max_length=255, verbose_name='Position', choices=POSITIONS)
     team = models.ForeignKey(Team)
     is_active = models.BooleanField(default=True, verbose_name='Is Active')

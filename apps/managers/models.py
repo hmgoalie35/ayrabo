@@ -3,7 +3,6 @@ from django.db import models
 from common import managers
 from common.models import TimestampedModel
 from teams.models import Team
-from users.models import User
 
 
 class Manager(TimestampedModel):
@@ -12,7 +11,7 @@ class Manager(TimestampedModel):
     object is for a different team.
     TLDR; A user can be a manager for multiple teams and a new manager object is created for each team.
     """
-    user = models.ForeignKey(User, related_name='managers')
+    user = models.ForeignKey('users.User', related_name='managers')
     team = models.ForeignKey(Team)
     is_active = models.BooleanField(default=True, verbose_name='Is Active')
 

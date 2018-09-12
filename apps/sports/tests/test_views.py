@@ -4,6 +4,7 @@ from ayrabo.utils.testing import BaseTestCase
 from common.tests import WaffleSwitchFactory
 from divisions.tests import DivisionFactory
 from leagues.tests import LeagueFactory
+from players.tests import HockeyPlayerFactory
 from sports.models import SportRegistration
 from sports.tests import SportFactory, SportRegistrationFactory
 from teams.tests import TeamFactory
@@ -180,3 +181,37 @@ class SportRegistrationCreateViewTests(BaseTestCase):
         self.post_data['sportregistrations-TOTAL_FORMS'] = 2
         response = self.client.post(self.format_url(), data=self.post_data, follow=True)
         self.assertRedirects(response, reverse('home'))
+
+
+class SportDashboardViewTests(BaseTestCase):
+    url = 'sports:dashboard'
+
+    def setUp(self):
+        self.user = UserFactory(email='user@ayrabo.com', password='myweakpassword')
+        self.ice_hockey = SportFactory(name='Ice Hockey')
+        self.liahl = LeagueFactory(full_name='Long Island Amateur Hockey League', sport=self.ice_hockey)
+        self.mm_aa = DivisionFactory(name='Midget Minor AA', league=self.liahl)
+        self.icecats = TeamFactory(name='Green Machine IceCats', division=self.mm_aa)
+        self.baseball = SportFactory(name='Baseball')
+
+    # General
+    def test_login_required(self):
+        url = self.format_url()
+        response = self.client.get(url)
+        self.assertRedirects(response, self.get_login_required_url(url))
+
+    # GET
+    def test_get(self):
+        SportRegistrationFactory(user=self.user, sport=self.ice_hockey, role='player')
+        HockeyPlayerFactory(user=self.user, sport=self.ice_hockey, team=self.icecats)
+        SportRegistrationFactory(user=self.user, sport=self.baseball, role='coach')
+
+        self.login(user=self.user)
+
+        response = self.client.get(self.format_url())
+        self.assert_200(response)
+        self.assertTemplateUsed(response, 'sports/sport_dashboard.html')
+        context = response.context
+        sport_registration_data_by_sport = context.get('sport_registration_data_by_sport')
+        self.assertEqual(list(sport_registration_data_by_sport.keys()), [self.baseball, self.ice_hockey])
+        self.assertEqual(context.get('active_tab'), 'baseball')

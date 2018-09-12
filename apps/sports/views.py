@@ -6,25 +6,11 @@ from django.urls import reverse
 from django.views import generic
 from django.views.generic.base import ContextMixin
 
-from ayrabo.utils.mixins import HasPermissionMixin, WaffleSwitchMixin
-from players import forms as player_forms
-from players.models import BaseballPlayer, BasketballPlayer, HockeyPlayer
+from ayrabo.utils.mixins import HasPermissionMixin, PreSelectedTabMixin, WaffleSwitchMixin
 from scorekeepers.models import Scorekeeper
 from sports.forms import SportRegistrationCreateForm, SportRegistrationFormSet
 from sports.formset_helpers import SportRegistrationCreateFormSetHelper
 from sports.models import Sport, SportRegistration
-
-SPORT_PLAYER_FORM_MAPPINGS = {
-    'Ice Hockey': player_forms.HockeyPlayerForm,
-    'Baseball': player_forms.BaseballPlayerForm,
-    'Basketball': player_forms.BasketballPlayerForm
-}
-
-SPORT_PLAYER_MODEL_MAPPINGS = {
-    'Ice Hockey': HockeyPlayer,
-    'Basketball': BasketballPlayer,
-    'Baseball': BaseballPlayer
-}
 
 
 class SportRegistrationCreateView(LoginRequiredMixin,
@@ -134,3 +120,29 @@ class SportRegistrationCreateView(LoginRequiredMixin,
             return redirect(reverse('home'))
 
         return render(request, self.template_name, context)
+
+
+class SportDashboardView(LoginRequiredMixin, PreSelectedTabMixin, generic.TemplateView):
+    template_name = 'sports/sport_dashboard.html'
+
+    def get_valid_tabs(self):
+        return self.sport_slugs
+
+    def get_default_tab(self):
+        try:
+            return self.sport_slugs[0]
+        except IndexError:
+            return None
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user = self.request.user
+        sport_registration_data_by_sport = user.sport_registration_data_by_sport()
+        context.update({
+            'sport_registration_data_by_sport': sport_registration_data_by_sport
+        })
+        return context
+
+    def get(self, request, *args, **kwargs):
+        self.sport_slugs = [sport.slug for sport in self.request.user.sport_registration_data_by_sport().keys()]
+        return super().get(request, *args, **kwargs)
