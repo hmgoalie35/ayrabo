@@ -174,11 +174,6 @@ module.exports = function (env, argv) {
           context: 'node_modules'
         },
         {
-          from: 'animate.css/animate.min.css',
-          to: 'vendor',
-          context: 'node_modules'
-        },
-        {
           from: 'eonasdan-bootstrap-datetimepicker/build/js',
           to: 'vendor/bootstrap-datetimepicker/js',
           context: 'node_modules'
