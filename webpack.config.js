@@ -179,16 +179,6 @@ module.exports = function (env, argv) {
           context: 'node_modules'
         },
         {
-          from: 'font-awesome/css',
-          to: 'vendor/font-awesome/css',
-          context: 'node_modules'
-        },
-        {
-          from: 'font-awesome/fonts',
-          to: 'vendor/font-awesome/fonts',
-          context: 'node_modules'
-        },
-        {
           from: 'eonasdan-bootstrap-datetimepicker/build/js',
           to: 'vendor/bootstrap-datetimepicker/js',
           context: 'node_modules'
