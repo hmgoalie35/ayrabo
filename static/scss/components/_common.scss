@@ -7,70 +7,6 @@ body {
   margin-bottom: 60px;
 }
 
-footer {
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-  border: 1px solid $navbar-default-border;
-  .breadcrumb {
-    margin-bottom: 0;
-  }
-}
-
-.api-error {
-  position: absolute;
-  top: 0;
-  width: 100%;
-  z-index: 1001;
-
-  button i {
-    font-size: 16px;
-  }
-
-  .alert {
-    margin-bottom: 0;
-    padding-top: 15px;
-    padding-bottom: 15px;
-    border-radius: 0;
-  }
-}
-
-#noty_layout__top {
-  top: 54px !important;
-}
-
-#noty_layout__topRight {
-  top: 60px !important;
-  right: 5px !important;
-}
-
-.noty_layout {
-  .noty_bar {
-    &.noty_type__info {
-      color: $alert-info-text;
-      background-color: $alert-info-bg;
-      border-color: $alert-info-border;
-    }
-  }
-}
-
-// For non-field errors
-div.alert.alert-block.alert-danger > ul {
-  padding-left: 22px;
-
-  li {
-    list-style: none;
-  }
-}
-
-.asteriskField {
-  color: red;
-}
-
-#div_id_birthday > .controls {
-  margin-top: 5px;
-}
-
 .nav-tab {
   color: $dusty-gray;
   &:hover {
@@ -78,17 +14,17 @@ div.alert.alert-block.alert-danger > ul {
   }
 }
 
-.list-group-item-hoverable {
-  cursor: pointer;
-
-  &:hover {
-    background-color: $concrete;
+.list-group-item {
+  &__hoverable {
+    cursor: pointer;
+    &:hover {
+      background-color: $concrete;
+    }
   }
-}
-
-.list-group-item-flush-bottom {
-  &:last-child {
-    margin-bottom: -1px;
+  &__flush-bottom {
+    &:last-child {
+      margin-bottom: -1px;
+    }
   }
 }
 
@@ -104,13 +40,6 @@ div.alert.alert-block.alert-danger > ul {
 
 .password-guidelines {
   margin-right: 5px;
-}
-
-.role-related-objects-section {
-  margin-bottom: 10px;
-  &:last-child {
-    margin-bottom: 0;
-  }
 }
 
 .no-js {

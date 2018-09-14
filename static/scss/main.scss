@@ -6,14 +6,18 @@ $icon-font-path: "~bootstrap-sass/assets/fonts/bootstrap/";
 @import "~bootstrap-sass/assets/stylesheets/_bootstrap.scss";
 
 // Components
-@import "components/common";
+@import "components/alerts";
 @import "components/buttons";
+@import "components/common";
+@import "components/footer";
+@import "components/forms";
 @import "components/icons";
-@import "components/typography";
+@import "components/margins";
 @import "components/sidebar";
 @import "components/tables";
-@import "components/margins";
+@import "components/typography";
 
 // Page specific styles
 @import "pages/gameRosters";
 @import "pages/profiles";
+@import "pages/userprofiles";
