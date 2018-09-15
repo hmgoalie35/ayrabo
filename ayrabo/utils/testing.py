@@ -51,9 +51,15 @@ def to_bool(value):
 
 def handle_date(value):
     """
+    Util function that helps create dynamic dates in behave tests. Accepts `today` which returns today's date, a normal
+    date string that will be returned as is, or a string following this pattern:
+    * -1d -> yesterday
+    * 1d -> tomorrow
+    * 2y -> 2 years in the future
+    * -1y -> last year
 
     :param value: String adhering to the mini DSL this function expects.
-    :return:
+    :return: A string representing a date, or a date instance
     """
     today = datetime.date.today()
     if value in ['today', '', None]:
@@ -72,10 +78,17 @@ def handle_date(value):
 
 
 def handle_time(value):
+    """
+    Util function that helps create dynamic times in behave tests. Returns the current time or a time equivalent to the
+    time string passed in. Ex: 07:00 PM -> time instance for 19:00
+
+    :param value: A time in string format
+    :return: Time instance
+    """
     time_offset = datetime.datetime.strptime(value, '%I:%M %p').time()
     now = datetime.datetime.now().timetz()
     if time_offset is not None:
-        return now.replace(hour=time_offset.hour)
+        return now.replace(hour=time_offset.hour, minute=time_offset.minute)
     return now
 
 
