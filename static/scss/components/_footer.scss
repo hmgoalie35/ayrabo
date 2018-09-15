@@ -1,0 +1,9 @@
+footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  border: 1px solid $navbar-default-border;
+  .breadcrumb {
+    margin-bottom: 0;
+  }
+}

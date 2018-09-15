@@ -88,7 +88,7 @@
                     {% for sport, data in sport_registration_data_by_sport.items %}
                       <li
                         id="list-item-{{ sport.slug }}"
-                        class="list-group-item list-group-item-hoverable js-list-item-sport"
+                        class="list-group-item list-group-item__hoverable js-list-item-sport"
                         data-target="#{{ sport.slug }}"
                         data-toggle="collapse"
                       >
@@ -99,7 +99,7 @@
                         <i class="fa fa-caret-down mt3 pull-right" data-toggle="caret"></i>
                       </li>
                       <div class="collapse" id="{{ sport.slug }}">
-                        <div class="list-group-item list-group-item-flush-bottom">
+                        <div class="list-group-item list-group-item__flush-bottom">
                           {% if data.roles %}
                             <h4 class="text-center">At a glance</h4>
                             {% for role, objects in data.roles.items %}
