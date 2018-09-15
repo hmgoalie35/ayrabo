@@ -26,8 +26,8 @@ Feature: List games for a team
       | name    |
       | Iceland |
     And The following season object exists
-      | id | league                            | start_date | end_date   | teams                 |
-      | 1  | Long Island Amateur Hockey League | 2017-09-14 | 2018-09-14 | Green Machine IceCats |
+      | id | league                            | start_date | end_date | teams                 |
+      | 1  | Long Island Amateur Hockey League | today      | 1y       | Green Machine IceCats |
     And I login with "user@ayrabo.com" and "myweakpassword"
 
 #  Scenario: Navigate to hockey game list page as manager
@@ -86,7 +86,7 @@ Feature: List games for a team
     And I should see "Iceland"
     And I should see "10/23/2017 07:00 PM EDT"
     And I should see "10/23/2017 09:00 PM EDT"
-    And I should see "2017-2018 Season"
+    And I should see season "today" "1y"
     And I should not see "Aviator Gulls"
 
   Scenario: Not team manager

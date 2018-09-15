@@ -1,3 +1,4 @@
+import datetime
 import json
 import os
 import re
@@ -11,7 +12,7 @@ from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.select import Select
 from selenium.webdriver.support.ui import WebDriverWait
 
-from ayrabo.utils.testing import string_to_kwargs_dict, get_user
+from ayrabo.utils.testing import string_to_kwargs_dict, get_user, handle_date, handle_time
 from users.models import User
 
 
@@ -177,6 +178,17 @@ def step_impl(context, element, value):
     the_element.send_keys(value)
 
 
+@step('I fill in "(?P<element>.*)" with date "(?P<date>.*)" and time "(?P<time>.*)"')
+def step_impl(context, element, date, time):
+    the_element = find_element(context, element)
+    the_element.clear()
+    date = handle_date(date)
+    time = handle_time(time)
+    fmt = '%m/%d/%Y %I:%M %p'
+    date_time = datetime.datetime.combine(date, time)
+    the_element.send_keys(date_time.strftime(fmt))
+
+
 @step('I press "(?P<element>[^"]*)"')
 def step_impl(context, element):
     the_element = find_element(context, element)
@@ -214,6 +226,13 @@ def step_impl(context):
 @step('I should see "(?P<text>.*)"')
 def step_impl(context, text):
     context.test.assertIn(text, str(context.driver.page_source))
+
+
+@step('I should see season "(?P<start>.*)" "(?P<end>.*)"')
+def step_impl(context, start, end):
+    start = handle_date(start)
+    end = handle_date(end)
+    context.test.assertIn('{}-{} Season'.format(start.year, end.year), str(context.driver.page_source))
 
 
 @step('The page should contain "(?P<text>.*)"')
@@ -267,11 +286,7 @@ def step_impl(context, deselect, select_option, element):
         else:
             the_element.select_by_index(int(select_option))
         success = True
-    except TypeError:
-        pass
-    except ValueError:
-        pass
-    except NoSuchElementException:
+    except (ValueError, TypeError, NoSuchElementException):
         pass
 
     if not success:

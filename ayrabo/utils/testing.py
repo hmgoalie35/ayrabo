@@ -1,6 +1,9 @@
 """
 A module that contains useful methods for testing
 """
+import datetime
+import re
+
 from django.db.models import Q
 from django.test import TestCase
 from django.urls import reverse
@@ -44,6 +47,36 @@ def to_bool(value):
         value = value.lower()
 
     return value in [True, 'true']
+
+
+def handle_date(value):
+    """
+
+    :param value: String adhering to the mini DSL this function expects.
+    :return:
+    """
+    today = datetime.date.today()
+    if value in ['today', '', None]:
+        return today
+    re_match = re.fullmatch(r'^(?P<negate>-)?(?P<amount>\d+)(?P<amount_type>[dy])$', value, re.IGNORECASE)
+    if re_match is None:
+        return value
+    negate, amount, amount_type = re_match.groups()
+    amount = int(amount)
+    if negate is not None:
+        amount = -amount
+    if amount_type == 'y':
+        # Convert to days
+        amount *= 365
+    return today + datetime.timedelta(days=amount)
+
+
+def handle_time(value):
+    time_offset = datetime.datetime.strptime(value, '%I:%M %p').time()
+    now = datetime.datetime.now().timetz()
+    if time_offset is not None:
+        return now.replace(hour=time_offset.hour)
+    return now
 
 
 class BaseTestCase(TestCase):
