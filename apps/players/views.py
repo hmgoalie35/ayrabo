@@ -1,12 +1,13 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
 from django.shortcuts import get_object_or_404, redirect
-from django.urls import reverse_lazy
+from django.urls import reverse, reverse_lazy
 from django.views import generic
 
 from ayrabo.utils.exceptions import SportNotConfiguredException
 from ayrabo.utils.mappings import SPORT_PLAYER_MODEL_MAPPINGS
 from ayrabo.utils.mixins import HandleSportNotConfiguredMixin, HasPermissionMixin, WaffleSwitchMixin
+from ayrabo.utils.urls import url_with_query_string
 from sports.models import Sport
 from . import forms
 
@@ -27,8 +28,11 @@ class PlayerUpdateView(LoginRequiredMixin,
     pk_url_kwarg = 'player_pk'
     context_object_name = 'player'
     success_message = 'Your player information has been updated.'
-    success_url = reverse_lazy('home')
+    success_url = reverse_lazy('sports:dashboard')
     waffle_identifier = 'player_update'
+
+    def get_success_url(self):
+        return url_with_query_string(reverse('sports:dashboard'), tab=self.sport.slug)
 
     def _get_sport(self):
         if hasattr(self, 'sport'):
