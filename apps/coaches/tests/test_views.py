@@ -74,14 +74,16 @@ class CoachesUpdateViewTests(BaseTestCase):
         self.assertHasMessage(response, 'Your coach information has been updated.')
         self.coach.refresh_from_db()
         self.assertEqual(self.coach.position, 'assistant_coach')
-        self.assertRedirects(response, reverse('home'))
+        url = '{}?tab=ice-hockey'.format(reverse('sports:dashboard'))
+        self.assertRedirects(response, url)
 
     def test_post_nothing_changed(self):
         response = self.client.post(self.coach_url, data=self.post_data, follow=True)
         self.assertNoMessage(response, 'Your coach information has been updated.')
         self.coach.refresh_from_db()
         self.assertEqual(self.coach.position, 'head_coach')
-        self.assertRedirects(response, reverse('home'))
+        url = '{}?tab=ice-hockey'.format(reverse('sports:dashboard'))
+        self.assertRedirects(response, url)
 
     def test_post_invalid(self):
         self.post_data.update({'position': ''})

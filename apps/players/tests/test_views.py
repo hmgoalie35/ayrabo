@@ -93,7 +93,8 @@ class PlayerUpdateViewTests(BaseTestCase):
         self.assertHasMessage(response, 'Your player information has been updated.')
         self.player.refresh_from_db()
         self.assertEqual(self.player.jersey_number, 99)
-        self.assertRedirects(response, reverse('home'))
+        url = '{}?tab=ice-hockey'.format(reverse('sports:dashboard'))
+        self.assertRedirects(response, url)
 
     def test_post_nothing_changed(self):
         response = self.client.post(self.format_url(slug='ice-hockey', player_pk=self.player.pk), data=self.post_data,
@@ -101,7 +102,8 @@ class PlayerUpdateViewTests(BaseTestCase):
         self.assertNoMessage(response, 'Your player information has been updated.')
         self.player.refresh_from_db()
         self.assertEqual(self.player.jersey_number, 23)
-        self.assertRedirects(response, reverse('home'))
+        url = '{}?tab=ice-hockey'.format(reverse('sports:dashboard'))
+        self.assertRedirects(response, url)
 
     def test_post_invalid(self):
         self.post_data.update({'position': ''})

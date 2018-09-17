@@ -31,12 +31,12 @@ Feature: Create game
       | 1  | Long Island Amateur Hockey League | today      | 1y       | Green Machine IceCats |
     And I login with "user@ayrabo.com" and "myweakpassword"
 
-#  Scenario: Navigate to game create page
-#    Given I am on the absolute url page for "sports.SportRegistration" and "user__email=user@ayrabo.com, sport__name=Ice Hockey"
-#    And I press "manager_tab"
-#    And I press "actions-dropdown-manager-green-machine-icecats"
-#    And I press "create_game_btn_green-machine-icecats"
-#    Then I should be on the "/teams/1/games/create/" page
+  Scenario: Navigate to game create page
+    Given I am on the "sports:dashboard" page
+    And I press "ice-hockey-manager-tab"
+    And I press "actions-dropdown-manager-green-machine-icecats"
+    And I press "create_game_btn_green-machine-icecats"
+    Then I should be on the "/teams/1/games/create/" page
 
   Scenario: Informative text displayed to user
     Given I am on the "/teams/1/games/create/" page
@@ -56,7 +56,7 @@ Feature: Create game
     And I fill in "id_end" with date "today" and time "09:00 PM"
     And I select "1" from "id_season"
     And I press "create_game_btn"
-    Then I should be on the "home" page
+    Then I should be on the "sports:dashboard" page
     And I should see "Your game has been created."
 
   Scenario: Invalid form

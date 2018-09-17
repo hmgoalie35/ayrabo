@@ -23,23 +23,23 @@ Feature: Update player information
       | player_update | True   |
     And I login with "user@ayrabo.com" and "myweakpassword"
 
-#  Scenario: Navigate to the player update page
-#    Given I am on the absolute url page for "sports.SportRegistration" and "user__email=user@ayrabo.com, sport__name=Ice Hockey"
-#    When I press "id_player"
-#    And I press "actions-dropdown-player-green-machine-icecats"
-#    And I press "update-player-link"
-#    Then I should be on the "/sports/ice-hockey/players/1/update/" page
-#    And I should see "Update Player Information for Green Machine IceCats"
+  Scenario: Navigate to the player update page
+    Given I am on the "sports:dashboard" page
+    When I press "ice-hockey-player-tab"
+    And I press "actions-dropdown-player-green-machine-icecats"
+    And I press "update-player-link"
+    Then I should be on the "/sports/ice-hockey/players/1/update/" page
+    And I should see "Update Player Information for Green Machine IceCats"
 
   Scenario: Submit changed form
     Given I am on the "/sports/ice-hockey/players/1/update/" page
     And I fill in "id_jersey_number" with "23"
     And I press "update_player_btn"
     Then I should see "Your player information has been updated."
-    And I should be on the "home" page
+    And I should be on the "sports:dashboard" page
 
   Scenario: Submit unchanged form
     Given I am on the "/sports/ice-hockey/players/1/update/" page
     And I press "update_player_btn"
     Then I should not see "Your player information has been updated."
-    And I should be on the "home" page
+    And I should be on the "sports:dashboard" page

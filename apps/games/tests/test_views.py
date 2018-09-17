@@ -128,7 +128,8 @@ class HockeyGameCreateViewTests(BaseTestCase):
     def test_valid_post(self):
         self.login(email=self.email, password=self.password)
         response = self.client.post(self.format_url(team_pk=1), data=self.post_data, follow=True)
-        self.assertRedirects(response, reverse('home'))
+        url = '{}?tab=ice-hockey'.format(reverse('sports:dashboard'))
+        self.assertRedirects(response, url)
         self.assertHasMessage(response, 'Your game has been created.')
         game = HockeyGame.objects.first()
         self.assertEqual(game.team, self.t1)
