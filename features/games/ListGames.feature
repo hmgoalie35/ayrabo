@@ -12,7 +12,7 @@ Feature: List games for a team
       | 1  | Green Machine IceCats | Midget Minor AA | Long Island Amateur Hockey League | Ice Hockey |
       | 2  | Long Island Edge      | Midget Minor AA | Long Island Amateur Hockey League | Ice Hockey |
       | 3  | Aviator Gulls         | Midget Minor AA | Long Island Amateur Hockey League | Ice Hockey |
-    And "user@ayrabo.com" is completely registered for "Ice Hockey" with role "Manager"
+    And "user@ayrabo.com" is completely registered for "Ice Hockey" with role "Manager, Player, Coach"
     And "user1@ayrabo.com" is completely registered for "Ice Hockey" with role "Player"
     And The following manager objects exist
       | username_or_email | team                  |
@@ -30,34 +30,32 @@ Feature: List games for a team
       | 1  | Long Island Amateur Hockey League | today      | 1y       | Green Machine IceCats |
     And I login with "user@ayrabo.com" and "myweakpassword"
 
-#  Scenario: Navigate to hockey game list page as manager
-#    Given I am on the absolute url page for "sports.SportRegistration" and "user__email=user@ayrabo.com, sport__name=Ice Hockey"
-#    And I press "manager_tab"
-#    And I press "actions-dropdown-manager-green-machine-icecats"
-#    And I press "list_games_manager_btn_green-machine-icecats"
-#    Then I should be on the "teams:games:list" page with kwargs "team_pk=1"
-#
-#  Scenario: Navigate to hockey game list page as player
-#    Given I add the "Player" role to "user@ayrabo.com" for "Ice Hockey"
-#    And The following player object exists
-#      | username_or_email | sport      | team                  |
-#      | user@ayrabo.com   | Ice Hockey | Green Machine IceCats |
-#    And I am on the absolute url page for "sports.SportRegistration" and "user__email=user@ayrabo.com, sport__name=Ice Hockey"
-#    And I press "player_tab"
-#    And I press "actions-dropdown-player-green-machine-icecats"
-#    And I press "list_games_player_btn_green-machine-icecats"
-#    Then I should be on the "teams:games:list" page with kwargs "team_pk=1"
-#
-#  Scenario: Navigate to hockey game list page as coach
-#    Given I add the "Coach" role to "user@ayrabo.com" for "Ice Hockey"
-#    And The following coach object exists
-#      | username_or_email | team                  |
-#      | user@ayrabo.com   | Green Machine IceCats |
-#    And I am on the absolute url page for "sports.SportRegistration" and "user__email=user@ayrabo.com, sport__name=Ice Hockey"
-#    And I press "coach_tab"
-#    And I press "actions-dropdown-coach-green-machine-icecats"
-#    And I press "list_games_coach_btn_green-machine-icecats"
-#    Then I should be on the "teams:games:list" page with kwargs "team_pk=1"
+  Scenario: Navigate to hockey game list page as manager
+    Given I am on the "sports:dashboard" page
+    And I press "ice-hockey-manager-tab"
+    And I press "actions-dropdown-manager-green-machine-icecats"
+    And I press "list_games_manager_btn_green-machine-icecats"
+    Then I should be on the "teams:games:list" page with kwargs "team_pk=1"
+
+  Scenario: Navigate to hockey game list page as player
+    Given The following player object exists
+      | username_or_email | sport      | team                  |
+      | user@ayrabo.com   | Ice Hockey | Green Machine IceCats |
+    And I am on the "sports:dashboard" page
+    And I press "ice-hockey-player-tab"
+    And I press "actions-dropdown-player-green-machine-icecats"
+    And I press "list_games_player_btn_green-machine-icecats"
+    Then I should be on the "teams:games:list" page with kwargs "team_pk=1"
+
+  Scenario: Navigate to hockey game list page as coach
+    Given The following coach object exists
+      | username_or_email | team                  |
+      | user@ayrabo.com   | Green Machine IceCats |
+    And I am on the "sports:dashboard" page
+    And I press "ice-hockey-coach-tab"
+    And I press "actions-dropdown-coach-green-machine-icecats"
+    And I press "list_games_coach_btn_green-machine-icecats"
+    Then I should be on the "teams:games:list" page with kwargs "team_pk=1"
 
   Scenario: Helpful text displayed to user
     Given I am on the "teams:games:list" page with kwargs "team_pk=1"
