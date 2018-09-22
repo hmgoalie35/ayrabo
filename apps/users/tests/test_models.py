@@ -7,6 +7,7 @@ from divisions.tests import DivisionFactory
 from leagues.tests import LeagueFactory
 from managers.models import Manager
 from managers.tests import ManagerFactory
+from organizations.models import Organization
 from organizations.tests import OrganizationFactory
 from players.models import HockeyPlayer
 from players.tests import HockeyPlayerFactory
@@ -49,7 +50,7 @@ class UserModelTests(BaseTestCase):
         self.scorekeeper = ScorekeeperFactory(user=self.user, sport=self.ice_hockey)
         # Sport reg for another user (should be excluded)
         SportRegistrationFactory()
-        self.organization = OrganizationFactory(name='Long Beach Sharks')
+        self.organization = OrganizationFactory(name='Long Beach Sharks', sport=self.ice_hockey)
 
     def test_has_object_permission_true(self):
         PermissionFactory(user=self.user, name='admin', content_object=self.organization)
@@ -106,6 +107,7 @@ class UserModelTests(BaseTestCase):
         sr3 = SportRegistrationFactory(user=self.user, sport=self.ice_hockey, role='referee')
         sr4 = SportRegistrationFactory(user=self.user, sport=self.ice_hockey, role='manager')
         sr5 = SportRegistrationFactory(user=self.user, sport=self.ice_hockey, role='scorekeeper')
+        PermissionFactory(user=self.user, name='admin', content_object=self.organization)
 
         result = self.user.get_roles(self.ice_hockey, [sr1, sr2, sr3, sr4, sr5])
 
@@ -114,6 +116,8 @@ class UserModelTests(BaseTestCase):
         self.assertListEqual(list(result.get('player')), list(HockeyPlayer.objects.filter(user=self.user)))
         self.assertListEqual(list(result.get('referee')), list(Referee.objects.filter(user=self.user)))
         self.assertListEqual(list(result.get('scorekeeper')), list(Scorekeeper.objects.filter(user=self.user)))
+        self.assertListEqual(list(result.get('organization')),
+                             list(Organization.objects.filter(name='Long Beach Sharks')))
 
     def test_get_players(self):
         HockeyPlayerFactory(sport=self.ice_hockey, team=self.team)
