@@ -8,6 +8,7 @@ from django.db import models
 from coaches.models import Coach
 from common.models import TimestampedModel
 from managers.models import Manager
+from organizations.models import Organization
 from referees.models import Referee
 from scorekeepers.models import Scorekeeper
 from users.managers import PermissionManager
@@ -71,13 +72,20 @@ class User(AbstractUser):
         :return: dict where the keys are the roles the user is registered for and the values are objects for that role
         """
         result = {}
-        roles = sorted(sr.role for sr in sport_registrations)
-        for role in roles:
-            objects = self.get_objects_for_role(sport, role)
+        roles = [sr.role for sr in sport_registrations]
+        content_type = ContentType.objects.get_for_model(Organization)
+        permissions = self.permissions.filter(name='admin', content_type=content_type)
+        organizations = [perm.content_object for perm in permissions]
+        organizations_for_sport = [o for o in organizations if o.sport_id == sport.id]
+        if len(organizations_for_sport) > 0:
+            roles.append('organization')
+        sorted_roles = sorted(roles)
+        for role in sorted_roles:
+            objects = self.get_objects_for_role(sport, role, organizations_for_sport)
             result[role] = objects
         return result
 
-    def get_objects_for_role(self, sport, role):
+    def get_objects_for_role(self, sport, role, qs=None):
         if role == 'player':
             return self.get_players(sport)
         if role == 'coach':
@@ -88,6 +96,8 @@ class User(AbstractUser):
             return self.get_managers(sport)
         if role == 'scorekeeper':
             return self.get_scorekeepers(sport)
+        if role == 'organization':
+            return self.get_organizations(sport, qs)
         return None
 
     def get_players(self, sport):
@@ -122,6 +132,9 @@ class User(AbstractUser):
 
     def get_scorekeepers(self, sport):
         return Scorekeeper.objects.active().filter(user=self, sport=sport).select_related('sport')
+
+    def get_organizations(self, sport, qs):
+        return qs
 
 
 class Permission(TimestampedModel):

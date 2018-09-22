@@ -25,7 +25,7 @@ class BulkUploadTeamsViewTests(BaseTestCase):
         ice_hockey = SportFactory(name='Ice Hockey')
         liahl = LeagueFactory(full_name='Long Island Amateur Hockey League', sport=ice_hockey)
         DivisionFactory(name='10U Milner', league=liahl)
-        OrganizationFactory(name='Green Machine IceCats')
+        OrganizationFactory(name='Green Machine IceCats', sport=ice_hockey)
         self.client.login(email=self.email, password=self.password)
         with open(os.path.join(self.test_file_path, 'bulk_upload_teams_example.csv')) as f:
             response = self.client.post(self.url, {'file': f}, follow=True)

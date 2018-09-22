@@ -1,10 +1,12 @@
-from factory import django, Sequence, post_generation
+from factory import django, Sequence, post_generation, SubFactory
 
 from organizations.models import Organization
+from sports.tests import SportFactory
 
 
 class OrganizationFactory(django.DjangoModelFactory):
     name = Sequence(lambda x: 'Organization {}'.format(x))
+    sport = SubFactory(SportFactory)
 
     class Meta:
         model = Organization

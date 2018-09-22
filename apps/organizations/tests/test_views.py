@@ -14,7 +14,7 @@ class OrganizationDetailViewTests(BaseTestCase):
         self.sport = SportFactory(name='Ice Hockey')
         self.league = LeagueFactory(full_name='Long Island Amateur Hockey League', sport=self.sport)
         self.division = DivisionFactory(name='18U Milner', league=self.league)
-        self.organization = OrganizationFactory(name='Green Machine IceCats')
+        self.organization = OrganizationFactory(name='Green Machine IceCats', sport=self.sport)
         # Teams are in different divisions
         self.team1 = TeamFactory(division=self.division, organization=self.organization)
         self.team2 = TeamFactory(division__league=self.league, division__league__sport=self.sport,

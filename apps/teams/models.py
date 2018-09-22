@@ -1,3 +1,4 @@
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils.text import slugify
 from easy_thumbnails.fields import ThumbnailerImageField
@@ -35,6 +36,14 @@ class Team(TimestampedModel):
 
     def clean(self):
         self.slug = slugify(self.name)
+
+        division = getattr(self, 'division', None)
+        organization = getattr(self, 'organization', None)
+        if division is not None and organization is not None:
+            if division.league.sport_id != organization.sport_id:
+                msg = 'Sports do not match {} and {}'.format(
+                    division.league.sport.name, organization.sport.name)
+                raise ValidationError({'organization': msg})
 
     class Meta:
         ordering = ['name', 'division']

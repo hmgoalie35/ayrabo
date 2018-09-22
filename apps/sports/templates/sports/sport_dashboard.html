@@ -84,6 +84,8 @@
                             {% include 'managers/_managers.html' with managers=objects %}
                           {% elif role == 'scorekeeper' %}
                             {% include 'scorekeepers/_scorekeepers.html' with scorekeepers=objects %}
+                          {% elif role == 'organization' %}
+                            {% include 'organizations/_organizations.html' with organizations=objects %}
                           {% endif %}
                         {% else %}
                           {% pluralize_role role as pluralized_role %}

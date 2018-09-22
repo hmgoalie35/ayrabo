@@ -23,9 +23,13 @@ def pluralize_role(role):
         'manager': 'Managers',
         'player': 'Players',
         'referee': 'Referees',
-        'scorekeeper': 'Scorekeepers'
+        'scorekeeper': 'Scorekeepers',
+        'organization': 'Organizations'
     }
-    return mappings.get(role.lower())
+    pluralized = mappings.get(role.lower())
+    if pluralized is None:
+        raise ValueError('Pluralization mapping does not exist for {}.'.format(role))
+    return pluralized
 
 
 @register.simple_tag(takes_context=True)

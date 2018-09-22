@@ -7,10 +7,10 @@ Feature: Organization profile
     Given The following confirmed user account exists
       | first_name | last_name | email           | password       |
       | John       | Doe       | user@ayrabo.com | myweakpassword |
-    And The following organization object exists
-      | id | name                  |
-      | 1  | Green Machine IceCats |
     And "user@ayrabo.com" is completely registered for "Ice Hockey" with role "Manager"
+    And The following organization object exists
+      | id | name                  | sport      |
+      | 1  | Green Machine IceCats | Ice Hockey |
     And "user@ayrabo.com" has the "admin" permission for "organizations.Organization" with kwargs "name=Green Machine IceCats"
     And I login with "user@ayrabo.com" and "myweakpassword"
 
