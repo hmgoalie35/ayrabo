@@ -1,6 +1,9 @@
 """
 A module that contains useful methods for testing
 """
+import datetime
+import re
+
 from django.db.models import Q
 from django.test import TestCase
 from django.urls import reverse
@@ -8,10 +11,6 @@ from rest_framework import status
 from rest_framework.reverse import reverse as drf_reverse
 from rest_framework.test import APITestCase
 
-from coaches.tests import CoachFactory
-from managers.tests import ManagerFactory
-from players.tests import HockeyPlayerFactory
-from referees.tests import RefereeFactory
 from users.models import User
 
 
@@ -43,29 +42,60 @@ def clean_kwargs(kwargs):
     return {k: v for k, v in kwargs.items() if v}
 
 
+def to_bool(value):
+    if isinstance(value, str):
+        value = value.lower()
+
+    return value in [True, 'true']
+
+
+def handle_date(value):
+    """
+    Util function that helps create dynamic dates in behave tests. Accepts `today` which returns today's date, a normal
+    date string that will be returned as is, or a string following this pattern:
+    * -1d -> yesterday
+    * 1d -> tomorrow
+    * 2y -> 2 years in the future
+    * -1y -> last year
+
+    :param value: String adhering to the mini DSL this function expects.
+    :return: A string representing a date, or a date instance
+    """
+    today = datetime.date.today()
+    if value in ['today', '', None]:
+        return today
+    re_match = re.fullmatch(r'^(?P<negate>-)?(?P<amount>\d+)(?P<amount_type>[dy])$', value, re.IGNORECASE)
+    if re_match is None:
+        return value
+    negate, amount, amount_type = re_match.groups()
+    amount = int(amount)
+    if negate is not None:
+        amount = -amount
+    if amount_type == 'y':
+        # Convert to days
+        amount *= 365
+    return today + datetime.timedelta(days=amount)
+
+
+def handle_time(value):
+    """
+    Util function that helps create dynamic times in behave tests. Returns the current time or a time equivalent to the
+    time string passed in. Ex: 07:00 PM -> time instance for 19:00
+
+    :param value: A time in string format
+    :return: Time instance
+    """
+    time_offset = datetime.datetime.strptime(value, '%I:%M %p').time()
+    now = datetime.datetime.now().timetz()
+    if time_offset is not None:
+        return now.replace(hour=time_offset.hour, minute=time_offset.minute)
+    return now
+
+
 class BaseTestCase(TestCase):
     # Helper methods
     def get_user(self, username_or_email):
         return get_user(username_or_email)
-
-    def create_related_objects(self, **kwargs):
-        player_args = kwargs.pop('player_args', {})
-        coach_args = kwargs.pop('coach_args', {})
-        referee_args = kwargs.pop('referee_args', {})
-        manager_args = kwargs.pop('manager_args', {})
-
-        player = coach = referee = manager = None
-
-        if player_args:
-            player = HockeyPlayerFactory(**player_args)
-        if coach_args:
-            coach = CoachFactory(**coach_args)
-        if referee_args:
-            referee = RefereeFactory(**referee_args)
-        if manager_args:
-            manager = ManagerFactory(**manager_args)
-
-        return player, coach, referee, manager
 
     def format_url(self, **kwargs):
         url = getattr(self, 'url', None)
@@ -74,6 +104,9 @@ class BaseTestCase(TestCase):
 
     def get_login_required_url(self, url):
         return '{}?next={}'.format(reverse('account_login'), url)
+
+    def get_session_value(self, key):
+        return self.client.session.get(key)
 
     def login(self, user=None, email=None, password=None):
         if user:

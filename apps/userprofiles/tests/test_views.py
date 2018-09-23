@@ -3,11 +3,13 @@ from django.urls import reverse
 
 from ayrabo.utils.testing import BaseTestCase
 from coaches.tests import CoachFactory
+from common.tests import WaffleSwitchFactory
 from divisions.tests import DivisionFactory
 from leagues.tests import LeagueFactory
 from managers.tests import ManagerFactory
 from players.tests import HockeyPlayerFactory
 from referees.tests import RefereeFactory
+from scorekeepers.tests import ScorekeeperFactory
 from sports.tests import SportFactory, SportRegistrationFactory
 from teams.tests import TeamFactory
 from userprofiles.models import UserProfile
@@ -19,6 +21,7 @@ class UserProfileCreateViewTests(BaseTestCase):
     url = 'account_complete_registration'
 
     def setUp(self):
+        self.sport_reg_switch = WaffleSwitchFactory(name='sport_registrations', active=False)
         self.email = 'user@ayrabo.com'
         self.password = 'myweakpassword'
         self.ice_hockey = SportFactory(name='Ice Hockey')
@@ -46,7 +49,7 @@ class UserProfileCreateViewTests(BaseTestCase):
         user_with_profile = UserFactory.create(password=self.password)
         self.client.login(email=user_with_profile.email, password=self.password)
         response = self.client.get(self.format_url())
-        self.assertRedirects(response, reverse('sportregistrations:create'))
+        self.assertRedirects(response, reverse('home'))
 
     # GET
     def test_get(self):
@@ -57,9 +60,15 @@ class UserProfileCreateViewTests(BaseTestCase):
     # POST
     def test_post_valid_data(self):
         response = self.client.post(self.format_url(), data=self.post_data, follow=True)
-        self.assertRedirects(response, reverse('sportregistrations:create'))
+        self.assertRedirects(response, reverse('home'))
         # Make sure `user` is set to request.user on the userprofile instance
         self.assertTrue(UserProfile.objects.filter(user=self.user).exists())
+
+    def test_post_sport_reg_switch_active(self):
+        self.sport_reg_switch.active = True
+        self.sport_reg_switch.save()
+        response = self.client.post(self.format_url(), data=self.post_data, follow=True)
+        self.assertRedirects(response, reverse('sports:register'))
 
     def test_post_invalid_data(self):
         self.post_data.pop('gender')
@@ -108,7 +117,6 @@ class UserProfileUpdateViewTests(BaseTestCase):
 
         self.user = UserFactory.create(email=self.email, password=self.password)
         self.sport = SportFactory(name='Ice Hockey')
-        SportRegistrationFactory(user=self.user, sport=self.sport, is_complete=True)
         self.login(email=self.email, password=self.password)
 
     # General
@@ -120,34 +128,41 @@ class UserProfileUpdateViewTests(BaseTestCase):
 
     # GET
     def test_get(self):
+        liahl = LeagueFactory(full_name='Long Island Amateur Hockey League', sport=self.sport)
+        mm_aa = DivisionFactory(name='Midget Minor AA', league=liahl)
+        green_machine_icecats = TeamFactory(name='Green Machine Icecats', division=mm_aa)
+        # Missing the scorekeeper role on purpose
+        SportRegistrationFactory(user=self.user, sport=self.sport, role='player')
+        SportRegistrationFactory(user=self.user, sport=self.sport, role='coach')
+        SportRegistrationFactory(user=self.user, sport=self.sport, role='referee')
+        SportRegistrationFactory(user=self.user, sport=self.sport, role='manager')
+        HockeyPlayerFactory(user=self.user, team=green_machine_icecats, sport=self.sport)
+        CoachFactory(user=self.user, team=green_machine_icecats)
+        RefereeFactory(user=self.user, league=liahl)
+        ManagerFactory(user=self.user, team=green_machine_icecats)
+
+        baseball = SportFactory(name='Baseball')
+        mlb = LeagueFactory(full_name='Major League Baseball', sport=baseball)
+        american_league_east = DivisionFactory(name='American League East', league=mlb)
+        toronto_blue_jays = TeamFactory(name='Toronto Blue Jays', division=american_league_east)
+        # Missing the player role on purpose
+        SportRegistrationFactory(user=self.user, sport=baseball, role='coach')
+        SportRegistrationFactory(user=self.user, sport=baseball, role='referee')
+        SportRegistrationFactory(user=self.user, sport=baseball, role='manager')
+        SportRegistrationFactory(user=self.user, sport=baseball, role='scorekeeper')
+        CoachFactory(user=self.user, team=toronto_blue_jays)
+        RefereeFactory(user=self.user, league=mlb)
+        ManagerFactory(user=self.user, team=toronto_blue_jays)
+        ScorekeeperFactory(user=self.user, sport=baseball)
+
         response = self.client.get(self.format_url())
-        self.assertTemplateUsed(response, 'userprofiles/userprofile_update.html')
+        context = response.context
+        sport_registration_data_by_sport = context['sport_registration_data_by_sport']
+
         self.assert_200(response)
-
-    def test_context_populated(self):
-        self.client.logout()
-        user = UserFactory(email='testing@ayrabo.com', password=self.password)
-        self.client.login(email='testing@ayrabo.com', password=self.password)
-        league = LeagueFactory(full_name='Long Island Amateur Hockey League', sport=self.sport)
-        division = DivisionFactory(name='Midget Minor AA', league=league)
-        team = TeamFactory(name='Green Machine Icecats', division=division)
-        sr = SportRegistrationFactory(user=user, sport=self.sport)
-        sr.set_roles(['Player', 'Coach', 'Manager', 'Referee'])
-        manager = [ManagerFactory(user=user, team=team)]
-        player = [HockeyPlayerFactory(user=user, team=team, sport=self.sport)]
-        coach = [CoachFactory(user=user, team=team)]
-        referee = [RefereeFactory(user=user, league=league)]
-        response = self.client.get(self.format_url())
-
-        data = response.context['data'].get(sr)
-        self.assertEqual(data.get('sport'), sr.sport)
-        self.assertEqual(data.get('roles'), ['Player', 'Coach', 'Referee', 'Manager'])
-        related_objects = data.get('related_objects')
-        self.assertEqual(list(related_objects.get('Player')), player)
-        self.assertEqual(list(related_objects.get('Coach')), coach)
-        self.assertEqual(list(related_objects.get('Referee')), referee)
-        self.assertEqual(list(related_objects.get('Manager')), manager)
-        self.assertEqual(response.context['active_tab'], 'my_account')
+        self.assertTemplateUsed(response, 'userprofiles/userprofile_update.html')
+        self.assertListEqual(list(sport_registration_data_by_sport.keys()), [baseball, self.sport])
+        self.assertEqual(context.get('active_tab'), 'my_account')
 
     # POST
     # No need to test invalid values for height, weight, etc. That is done above (the forms are almost identical)
@@ -165,9 +180,3 @@ class UserProfileUpdateViewTests(BaseTestCase):
         success_msg = 'Your account has been updated.'
         self.assertHasMessage(response, success_msg)
         self.assertTemplateUsed('userprofiles/userprofile_update.html')
-
-    def test_userprofile_exists_in_context(self):
-        self.post_data.pop('gender')
-        self.post_data.pop('birthday')
-        response = self.client.post(self.format_url(), data=self.post_data, follow=True)
-        self.assertIn('userprofile', response.context)

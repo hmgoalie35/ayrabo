@@ -22,8 +22,7 @@ Feature: Register for an account
       | first_name | last_name | email           | password       |
       | John       | Doe       | user@ayrabo.com | myweakpassword |
     When I confirm "user@ayrabo.com" via "email_link"
-    Then I should see "Confirming"
-    Then I wait for a page refresh
+    And I wait for a page refresh
     Then I should be on the "account_login" page
     And I should see "You have confirmed user@ayrabo.com"
 

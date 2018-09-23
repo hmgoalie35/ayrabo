@@ -1,15 +1,16 @@
-from factory import django, SubFactory
+from factory import Faker, SubFactory, django
 
-from users.tests import UserFactory
 from sports.models import SportRegistration
 from sports.tests import SportFactory
+from users.tests import UserFactory
 
 
 class SportRegistrationFactory(django.DjangoModelFactory):
     user = SubFactory(UserFactory)
     sport = SubFactory(SportFactory)
-    # 1 signifies only the player role
-    roles_mask = 1
+    role = Faker('random_element', elements=[role[0] for role in SportRegistration.ROLE_CHOICES])
+
+    roles_mask = 0
     is_complete = True
 
     class Meta:

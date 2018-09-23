@@ -1,10 +1,8 @@
-from django.core.validators import ValidationError
 from django.db import IntegrityError
 
-from users.tests import UserFactory
 from ayrabo.utils.testing import BaseTestCase
-from sports.tests import SportRegistrationFactory
 from teams.tests import TeamFactory
+from users.tests import UserFactory
 from .factories.ManagerFactory import ManagerFactory
 
 
@@ -19,15 +17,3 @@ class ManagerModelTests(BaseTestCase):
         ManagerFactory(user=user, team=team)
         with self.assertRaises(IntegrityError):
             ManagerFactory(user=user, team=team)
-
-    def test_create_manager_user_missing_manager_role(self):
-        user = UserFactory()
-        team = TeamFactory(name='Green Machine IceCats')
-        sr = SportRegistrationFactory(user=user, sport=team.division.league.sport)
-        sr.set_roles(['Player', 'Referee'])
-        manager = ManagerFactory(user=user, team=team)
-        with self.assertRaisesMessage(ValidationError, '{user} - {sport} might not have a sportregistration object or '
-                                                       'the sportregistration object does not have the '
-                                                       'manager role assigned'.format(
-                user=user.email, sport=team.division.league.sport.name)):
-            manager.clean()

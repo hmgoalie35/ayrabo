@@ -6,12 +6,6 @@ print_step () {
     printf "\n\n>>> $1\n\n"
 }
 
-print_status () {
-    # $2 is the color value from https://stackoverflow.com/questions/5947742/how-to-change-the-output-color-of-echo-in-linux
-    # $3 is the unicode value
-    echo -e "\033[0;$2m$1 \u$3\033[0m\n"
-}
-
 COVERAGE_MIN=94
 # Default to running all tests
 TESTS='all'
@@ -26,10 +20,7 @@ fi
 
 print_step "Running flake8"
 flake8
-if [ "$?" == "0" ]; then
-    print_status "Success" "32" "2713"
-else
-    print_status "Failed" "31" "2717"
+if [ "$?" != "0" ]; then
     exit 1
 fi
 
@@ -48,7 +39,7 @@ fi
 if [ ${TESTS} == 'all' ] || [ ${TESTS} == 'accept' ]; then
 
     if [ ! -d "static/dist" ]; then
-        printf "\n\nYou need to run 'npm run dev' or 'npm run build' before running acceptance tests"
+        printf "\n\nYou need to run 'npm run dev' or 'npm run build' before running acceptance tests\n"
         exit 1
     fi
 

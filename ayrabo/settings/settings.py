@@ -142,7 +142,7 @@ MIDDLEWARE = [
     'django.contrib.sites.middleware.CurrentSiteMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'ayrabo.middleware.TimezoneAndTranslationMiddleware',
-    'accounts.middleware.AccountAndSportRegistrationCompleteMiddleware',
+    'accounts.middleware.UserProfileCompleteMiddleware',
     'waffle.middleware.WaffleMiddleware',
 ]
 

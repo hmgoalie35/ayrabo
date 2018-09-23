@@ -1,0 +1,17 @@
+.asteriskField {
+  color: $red;
+  margin-left: 1px;
+}
+
+#div_id_birthday > .controls {
+  margin-top: 5px;
+}
+
+// For non-field errors
+div.alert.alert-block.alert-danger > ul {
+  padding-left: 22px;
+
+  li {
+    list-style: none;
+  }
+}

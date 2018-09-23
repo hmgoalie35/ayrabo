@@ -1,4 +1,5 @@
 from django.http import Http404
+from waffle import flag_is_active, switch_is_active
 
 from ayrabo.utils import handle_sport_not_configured
 from ayrabo.utils.exceptions import SportNotConfiguredException
@@ -7,8 +8,8 @@ from ayrabo.utils.exceptions import SportNotConfiguredException
 class HasPermissionMixin(object):
     """
     Provides a function that should be overridden and return True or False. If the function returns True, the request
-    will continue as normal. If the function returns False, the specified `exception_cls` will be raised with the
-    optional `exception_msg`.
+    will continue as normal. If the function returns False, `on_has_permission_failure` will run, and by default raise
+    `exception_cls` with message `exception_msg`.
 
     This can be used to check if a user has a manager role/is a manager for the team in question. Ex:
     def has_permission_func(self):
@@ -20,11 +21,14 @@ class HasPermissionMixin(object):
     def has_permission_func(self):
         raise NotImplementedError('You need to specify has_permission_func')
 
+    def on_has_permission_failure(self):
+        raise self.exception_cls(self.exception_msg)
+
     def dispatch(self, request, *args, **kwargs):
         if self.has_permission_func():
             return super().dispatch(request, *args, **kwargs)
 
-        raise self.exception_cls(self.exception_msg)
+        return self.on_has_permission_failure()
 
 
 class HandleSportNotConfiguredMixin(object):
@@ -64,19 +68,19 @@ class PreSelectedTabMixin(object):
     javascript functionality, add `data-toggle=<value>` to the DOM element (which will likely be an anchor tag).
     `<value>` needs to be a value from `valid_tabs`. An `active_tab` variable will be available in the template.
     """
-    valid_tabs = None
+    valid_tabs = []
     default_tab = None
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-        valid_tabs = self.get_valid_tabs()
-        default_tab = self.get_default_tab()
-        # Validation of `valid_tabs` and `default_tab` class variables
-        assert isinstance(valid_tabs, list) and len(valid_tabs) > 0, 'valid_tabs must be a non-empty list'
-        assert isinstance(default_tab, str) and len(default_tab) > 0, 'default_tab must be a non-empty string'
-        assert default_tab in valid_tabs, '{} is not a valid choice, choose from {}'.format(default_tab,
-                                                                                            ', '.join(valid_tabs))
+    def validate(self, valid_tabs, default_tab):
+        """
+        This logic was previously in the constructor but self.request isn't available in the constructor so errors were
+        getting thrown. Resort to just calling this function when we know request has been set on self, etc.
+        """
+        assert isinstance(valid_tabs, list), 'valid_tabs must be a list'
+        if default_tab is not None:
+            assert isinstance(default_tab, str) and len(default_tab) > 0, 'default_tab must be a non-empty string'
+            assert default_tab in valid_tabs, '{} is not a valid choice, choose from {}'.format(default_tab,
+                                                                                                ', '.join(valid_tabs))
 
     def get_default_tab(self):
         return self.default_tab
@@ -86,6 +90,42 @@ class PreSelectedTabMixin(object):
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
+        valid_tabs = self.get_valid_tabs()
+        default_tab = self.get_default_tab()
+        self.validate(valid_tabs, default_tab)
         tab = self.request.GET.get('tab', None)
-        context['active_tab'] = tab if tab in self.get_valid_tabs() else self.get_default_tab()
+        context['active_tab'] = tab if tab in valid_tabs else default_tab
         return context
+
+
+class AbstractWaffleMixin(object):
+    """
+    This mixin exists because there may be times where it doesn't even make sense to call the `HasPermissionMixin`, so
+    having this mixin run first makes more sense. It also allows us to keep things separate. This mixin should be
+    placed before `HasPermissionMixin`.
+    """
+    waffle_identifier = None  # Name of the flag, switch or sample
+    exception_cls = Http404
+    exception_msg = ''
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        assert self.waffle_identifier, 'You must specify `waffle_identifier`'
+
+    def dispatch(self, request, *args, **kwargs):
+        if self.check(request, *args, **kwargs):
+            return super().dispatch(request, *args, **kwargs)
+        raise self.exception_cls(self.exception_msg)
+
+    def check(self, request, *args, **kwargs):
+        raise NotImplementedError()
+
+
+class WaffleSwitchMixin(AbstractWaffleMixin):
+    def check(self, request, *args, **kwargs):
+        return switch_is_active(self.waffle_identifier)
+
+
+class WaffleFlagMixin(AbstractWaffleMixin):
+    def check(self, request, *args, **kwargs):
+        return flag_is_active(request, self.waffle_identifier)

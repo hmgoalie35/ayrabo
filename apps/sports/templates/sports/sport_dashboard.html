@@ -1,0 +1,115 @@
+{% extends 'site_base.html' %}
+{% load pluralize_role get_tab_active_class from utils %}
+
+{% block title %}Sports Dashboard{% endblock %}
+
+{% block content %}
+  <div class="container container--profile">
+
+    <div class="row mb35">
+      <div class="col-md-12">
+        <div class="text-center">
+          <h3>Sports Dashboard</h3>
+        </div>
+      </div>
+    </div>
+
+    {% if sport_registration_data_by_sport %}
+      <div class="row ">
+        <div class="col-md-3">
+          <div class="panel panel-default">
+            <div class="panel-body panel-body--profile">
+              <ul class="nav nav-pills nav-stacked" role="tablist">
+                {% for sport, _ in sport_registration_data_by_sport.items %}
+                  <li role="presentation" class="{% get_tab_active_class sport.slug %}">
+                    <a
+                      id="sidebar-item-{{ sport.slug }}"
+                      class="sidebar-link"
+                      href="#{{ sport.slug }}"
+                      aria-controls="{{ sport.slug }}"
+                      role="tab"
+                      data-toggle="tab"
+                      data-tab="{{ sport.slug }}"
+                    >{{ sport.name }}
+                    </a>
+                  </li>
+                {% endfor %}
+              </ul>
+            </div>
+          </div>
+          <p class="text-center text-muted">
+            <small>
+              <i class="fa fa-lg fa-color-warning fa-lightbulb-o"></i>
+              Any additional sports you are registered for will be displayed here.
+            </small>
+          </p>
+        </div>
+
+        <div class="col-md-9">
+          <div class="tab-content">
+            {% for sport, data in sport_registration_data_by_sport.items %}
+              <div role="tabpanel" class="tab-pane {% get_tab_active_class sport.slug %}" id="{{ sport.slug }}">
+                <div>
+                  <ul class="nav nav-tabs nav-justified" role="tablist">
+                    {% for role, _ in data.roles.items %}
+                      <li role="presentation" class="{% if forloop.first %}active{% endif %}">
+                        <a
+                          href="#{{ sport.slug }}-{{ role }}"
+                          id="{{ sport.slug }}-{{ role }}-tab"
+                          class="nav-tab"
+                          role="tab"
+                          data-toggle="tab"
+                          aria-controls="{{ sport.slug }}-{{ role }}"
+                        >{% pluralize_role role %}
+                        </a>
+                      </li>
+                    {% endfor %}
+                  </ul>
+
+                  <div class="tab-content mt20">
+                    {% for role, objects in data.roles.items %}
+                      <div
+                        role="tabpanel"
+                        class="tab-pane {% if forloop.first %}active{% endif %}"
+                        id="{{ sport.slug }}-{{ role }}"
+                      >
+                        {% if objects %}
+                          {% if role == 'player' %}
+                            {% include 'players/_players.html' with players=objects %}
+                          {% elif role == 'coach' %}
+                            {% include 'coaches/_coaches.html' with coaches=objects %}
+                          {% elif role == 'referee' %}
+                            {% include 'referees/_referees.html' with referees=objects %}
+                          {% elif role == 'manager' %}
+                            {% include 'managers/_managers.html' with managers=objects %}
+                          {% elif role == 'scorekeeper' %}
+                            {% include 'scorekeepers/_scorekeepers.html' with scorekeepers=objects %}
+                          {% elif role == 'organization' %}
+                            {% include 'organizations/_organizations.html' with organizations=objects %}
+                          {% endif %}
+                        {% else %}
+                          {% pluralize_role role as pluralized_role %}
+                          {% with pluralized_role_lower=pluralized_role|lower %}
+                            <div class="col-md-offset-2 col-md-8">
+                              {% include 'includes/_data_missing_message.html' with message='There are currently no '|add:pluralized_role_lower|add:' associated with your account.' %}
+                            </div>
+                          {% endwith %}
+                        {% endif %}
+                      </div>
+                    {% endfor %}
+                  </div>
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    {% else %}
+      <div class="row">
+        <div class="col-md-offset-3 col-md-6">
+          {% include 'includes/_data_missing_message.html' with message='You have not been registered for any sports.' %}
+        </div>
+      </div>
+    {% endif %}
+  </div>
+{% endblock %}

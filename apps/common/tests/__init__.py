@@ -1,1 +1,1 @@
-from .factories.GenericChoiceFactory import GenericChoiceFactory
+from .factories import GenericChoiceFactory, WaffleSwitchFactory

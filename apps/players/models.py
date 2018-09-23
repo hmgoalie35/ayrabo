@@ -1,12 +1,12 @@
 from collections import OrderedDict
 
-from django.core.validators import MinValueValidator, MaxValueValidator, ValidationError
+from django.core.validators import MaxValueValidator, MinValueValidator, ValidationError
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
 from common import managers
 from common.models import TimestampedModel
-from sports.models import Sport, SportRegistration
+from sports.models import Sport
 from teams.models import Team
 from users.models import User
 
@@ -23,7 +23,6 @@ class AbstractPlayer(TimestampedModel):
 
     user = models.ForeignKey(User)
     sport = models.ForeignKey(Sport)
-    # TODO add in team/player history model to keep track of a player's teams throughout their career
     team = models.ForeignKey(Team)
     jersey_number = models.SmallIntegerField(verbose_name='Jersey Number',
                                              validators=[MinValueValidator(MIN_JERSEY_NUMBER),
@@ -56,17 +55,6 @@ class AbstractPlayer(TimestampedModel):
         fields['Division'] = self.division
         fields['Jersey Number'] = self.jersey_number
         return fields
-
-    def clean(self):
-        # hasattr is needed for when the admin panel is used, where an object w/o a user or team may be created by
-        # accident
-        if hasattr(self, 'user') and hasattr(self, 'sport'):
-            qs = SportRegistration.objects.filter(user=self.user, sport=self.sport)
-            if qs.exists() and not qs.first().has_role('Player'):
-                raise ValidationError(
-                    '{user} - {sport} might not have a sportregistration object or the '
-                    'sportregistration object does not have the player role assigned'.format(
-                        user=self.user.email, sport=self.sport.name))
 
     class Meta:
         abstract = True

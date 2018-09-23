@@ -1,0 +1,36 @@
+.api-error {
+  position: absolute;
+  top: 0;
+  width: 100%;
+  z-index: 1001;
+
+  button i {
+    font-size: 16px;
+  }
+
+  .alert {
+    margin-bottom: 0;
+    padding-top: 15px;
+    padding-bottom: 15px;
+    border-radius: 0;
+  }
+}
+
+#noty_layout__top {
+  top: 54px !important;
+}
+
+#noty_layout__topRight {
+  top: 60px !important;
+  right: 5px !important;
+}
+
+.noty_layout {
+  .noty_bar {
+    &.noty_type__info {
+      color: $alert-info-text;
+      background-color: $alert-info-bg;
+      border-color: $alert-info-border;
+    }
+  }
+}

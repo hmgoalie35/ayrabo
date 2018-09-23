@@ -5,11 +5,12 @@
 
 {% block content %}
   <div class="container">
+
     <div class="row">
       <div class="col-sm-12">
         <div class="text-center">
-          <h1>Register for sports</h1>
-          <p>You must register for at least one sport.<br>Register for additional sports by pressing the <strong>Add sport registration</strong> button below.</p>
+          <h3>Register for sports</h3>
+          <p class="text-muted">Registering for sports help us streamline your registration process.</p>
         </div>
       </div>
     </div>
@@ -17,7 +18,7 @@
     <br>
 
     <div class="row">
-      <div class="col-sm-offset-4 col-sm-4 col-sm-offset-4">
+      <div class="col-sm-offset-4 col-sm-4">
         <div class="hidden" id="prefix" data-prefix="{{ formset.prefix }}"></div>
 
         <form action="" method="post">
@@ -33,11 +34,10 @@
           <br>
 
           <div class="text-center">
-            <button id="add_another_form_btn" class="btn btn-info" type="button" role="button"><span
-                    class="fa fa-fw fa-plus"></span>Add sport registration
+            <button id="add_another_form_btn" class="btn btn-info" type="button" role="button">
+              <i class="fa fa-fw fa-plus-circle"></i>Add form
             </button>
-            <input id="sport_registration_next_step_btn" type="submit" class="btn btn-success" value="Register and continue">
-            <br>
+            <button id="sport_registration_next_step_btn" type="submit" class="btn btn-success">Register</button>
           </div>
         </form>
       </div>
@@ -45,7 +45,6 @@
 
   </div>
 {% endblock %}
-
 
 {% block extra_js %}
   <script src="{% static 'js/manage_formset_forms.js' %}"></script>

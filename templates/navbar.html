@@ -1,64 +1,46 @@
 <nav class="navbar navbar-default navbar-static-top">
   <div class="container-fluid">
     <div class="navbar-header">
-      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
-              data-target="#navbar"
-              aria-expanded="false" aria-controls="navbar">
+      <button
+        type="button"
+        class="navbar-toggle collapsed"
+        data-toggle="collapse"
+        data-target="#navbar"
+        aria-expanded="false"
+        aria-controls="navbar"
+      >
         <span class="sr-only">Toggle navigation</span>
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="{% url 'home' %}">ayrabo</a>
+      <a class="navbar-brand" href="{% url 'home' %}">{{ request.site.name }}</a>
     </div>
     <div id="navbar" class="navbar-collapse collapse" aria-expanded="false">
       <ul class="nav navbar-nav navbar-right">
         {% if user.is_authenticated %}
-
-          {% if request.session.my_sports %}
-            <li>
-              <a id="my-sports-dropdown" href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
-                 aria-haspopup="true" aria-expanded="false">
-                My Sports
-                <span class="caret"></span>
-              </a>
-              <ul class="dropdown-menu">
-                {% for sport_reg_id, sport_name in request.session.my_sports.items %}
-                  <li>
-                    <a href="{% url 'sportregistrations:detail' sport_reg_id %}">{{ sport_name }}</a>
-                  </li>
-                {% endfor %}
-                <li role="separator" class="divider"></li>
-                <li>
-                  <a href="{% url 'sportregistrations:create' %}">
-                    Register for a sport
-                  </a>
-                </li>
-              </ul>
-            </li>
-          {% endif %}
-
-
+          <li>
+            <a id="sport-dashboard-btn" href="{% url 'sports:dashboard' %}">Dashboard</a>
+          </li>
           <!-- Account dropdown -->
           <li class="vertical-line-left">
-            <a id="account_menu" href="#" class="dropdown-toggle" data-toggle="dropdown"
-               role="button"
-               aria-haspopup="true" aria-expanded="false">Account<span
-                    class="caret"></span></a>
+            <a
+              id="account_menu"
+              href="#"
+              class="dropdown-toggle"
+              data-toggle="dropdown"
+              role="button"
+              aria-haspopup="true"
+              aria-expanded="false"
+            >
+              Account<span class="caret"></span>
+            </a>
             <ul class="dropdown-menu">
-              {% if request.session.is_user_currently_registering %}
-                <li data-toggle="tooltip" data-placement="left"
-                    title="You must complete any ongoing registrations before managing your account." class="disabled">
-                  <a class="disabled" id="edit_account_link" href="#">
-                    <span class="fa fa-fw fa-user"></span>{{ user.email }}
-                  </a>
-                </li>
-              {% else %}
-                <li>
-                  <a id="edit_account_link" href="{% url 'account_home' %}"><span
-                          class="fa fa-fw fa-user"></span>{{ user.email }}</a>
-                </li>
-              {% endif %}
+              <li>
+                <a id="edit_account_link" href="{% url 'account_home' %}">
+                  <span class="fa fa-fw fa-user"></span>{{ user.email }}
+                </a>
+              </li>
 
               <li class="divider"></li>
 
@@ -66,8 +48,9 @@
                 <form id="logout_form" action="{% url 'account_logout' %}" method="post">
                   {% csrf_token %}
                 </form>
-                <a id="logout_btn_acct_menu" href="{% url 'account_logout' %}"><span
-                        class="fa fa-fw fa-power-off"></span>Logout</a>
+                <a id="logout_btn_acct_menu" href="{% url 'account_logout' %}">
+                  <span class="fa fa-fw fa-power-off"></span>Logout
+                </a>
               </li>
 
             </ul>
@@ -76,29 +59,39 @@
           <div class="hidden-xs">
             <form action="{% url 'account_login' %}" method="post" class="navbar-form">
               {% csrf_token %}
+
               <div class="form-group">
                 <div class="input-group">
                   <div class="input-group-addon">
                     <span class="fa fa-envelope"></span>
                   </div>
-                  <input id="id_login_navbar" name="login" type="text"
-                         class="form-control input-sm" placeholder="E-mail"
-                         required>
+                  <input
+                    id="id_login_navbar"
+                    name="login"
+                    type="text"
+                    class="form-control input-sm"
+                    placeholder="E-mail"
+                    required
+                  >
                 </div>
               </div>
+
               <div class="form-group">
                 <div class="input-group">
                   <div class="input-group-addon">
                     <span class="fa fa-lock"></span>
                   </div>
-                  <input id="id_password_navbar" name="password" type="password"
-                         class="form-control input-sm" placeholder="Password"
-                         required>
+                  <input
+                    id="id_password_navbar"
+                    name="password"
+                    type="password"
+                    class="form-control input-sm"
+                    placeholder="Password"
+                    required
+                  >
                 </div>
               </div>
-              <button id="login_navbar" role="button" type="submit"
-                      class="btn btn-default btn-sm">Login
-              </button>
+              <button id="login_navbar" role="button" type="submit" class="btn btn-default btn-sm">Login</button>
             </form>
           </div>
 

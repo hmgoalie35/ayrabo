@@ -4,7 +4,6 @@ Feature: Sport: used to create structure for the whole website
   So that I can organize teams, games, players for a specific sport and allow for more sports to be added
   I want to be able to create a sport that is a wrapper for everything on the website
 
-
   Background: Staff user exists and is logged into admin panel
     Given The following confirmed user account exists
       | first_name | last_name | email           | password       |

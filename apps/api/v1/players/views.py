@@ -3,20 +3,8 @@ from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
 
 from api.exceptions import SportNotConfiguredAPIException
-from api.v1.common.views import BaseDeactivateApiView
 from ayrabo.utils.mappings import SPORT_PLAYER_MODEL_MAPPINGS, SPORT_PLAYER_SERIALIZER_MAPPINGS
 from teams.models import Team
-
-
-class DeactivatePlayerApiView(BaseDeactivateApiView):
-    def get_role(self):
-        return 'player'
-
-    def get_model(self, sport_name):
-        return SPORT_PLAYER_MODEL_MAPPINGS.get(sport_name, None)
-
-    def get_url_lookup_kwarg(self):
-        return 'player_pk'
 
 
 class PlayersListAPIView(generics.ListAPIView):
@@ -24,7 +12,7 @@ class PlayersListAPIView(generics.ListAPIView):
     filter_fields = ('is_active',)
 
     def _get_team(self):
-        if hasattr(self, 'team'):
+        if hasattr(self, 'team'):  # pragma: no cover
             return self.team
         self.team = get_object_or_404(
             Team.objects.select_related('division', 'division__league', 'division__league__sport'),

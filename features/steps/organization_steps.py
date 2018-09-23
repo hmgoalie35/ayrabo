@@ -1,6 +1,7 @@
 from behave import *
 
 from organizations.tests import OrganizationFactory
+from sports.models import Sport
 
 
 @step('The following organization objects? exists?')
@@ -11,6 +12,10 @@ def step_impl(context):
         kwargs = {
             'name': data.get('name')
         }
+
+        sports = Sport.objects.filter(name=data.get('sport'))
+        if sports.exists():
+            kwargs['sport'] = sports.first()
 
         obj_id = data.get('id')
         if obj_id:

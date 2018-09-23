@@ -1,3 +1,4 @@
+from django.core.exceptions import ValidationError
 from django.db.utils import IntegrityError
 
 from ayrabo.utils.testing import BaseTestCase
@@ -39,7 +40,7 @@ class TeamModelTests(BaseTestCase):
         """
         team_name = 'Green Machine IceCats'
         midgets = DivisionFactory(name='Midget Minor AAA', league=self.liahl)
-        organization = OrganizationFactory(name=team_name)
+        organization = OrganizationFactory(name=team_name, sport=self.ice_hockey)
 
         # Teams with same name are created but for different divisions, so this is ok
         TeamFactory(name=team_name, division=self.pee_wee_division, organization=organization)
@@ -58,3 +59,9 @@ class TeamModelTests(BaseTestCase):
         with self.assertRaises(IntegrityError):
             # make sure the team name is not the same as above, or it will fail the uniqueness constraint for name
             TeamFactory(name='green machine iceCats', division=self.pee_wee_division)
+
+    def test_team_sport_and_organization_sport_are_the_same(self):
+        organization = OrganizationFactory(sport=SportFactory(name="Baseball"))
+        msg = "{'organization': ['Sports do not match Ice Hockey and Baseball']}"
+        with self.assertRaisesMessage(ValidationError, msg):
+            TeamFactory(division=self.pee_wee_division, organization=organization)

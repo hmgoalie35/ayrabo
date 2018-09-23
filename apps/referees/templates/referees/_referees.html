@@ -1,59 +1,19 @@
 <div>
-  <a id="create_{{ role|lower }}_btn" class="btn btn-sm btn-default pull-right"
-     href="{% url 'sportregistrations:referees:create' sport_registration.pk %}">
-    <span class="fa fa-plus-circle fa-success"></span>
-    {{ role }}
-  </a>
-  <div class="visible-xs-block"><br><br></div>
-
   <table class="table responsive-table table-thin-th-border">
+
     <thead>
     <tr>
       <th scope="col">League</th>
-      <th scope="col"></th>
     </tr>
     </thead>
+
     <tbody>
-    {% for obj in related_objs %}
+    {% for referee in referees %}
       <tr>
-        <td data-title="League">{{ obj.league }}</td>
-        <td data-title="">
-          <div class="dropdown table-dropdown">
-            <a id="actions-dropdown-{{ role|lower }}-{{ obj.league.slug }}" data-target="#{{ role|lower }}-{{ obj.id }}"
-               data-toggle="dropdown"
-               aria-haspopup="true" aria-expanded="false" role="button">
-              Actions
-              <span class="fa fa-caret-down"></span>
-            </a>
-            <ul class="dropdown-menu table-dropdown-menu" aria-labelledby="{{ obj.id }}">
-              <li class="dropdown-header">Manage</li>
-              {% if sr_roles|length > 1 or related_objs|length > 1 %}
-                <li>
-                  <a id="deactivate-{{ role|lower }}-{{ obj.league.slug }}" data-toggle="modal"
-                     data-target="#{{ role|lower }}-{{ obj.id }}-modal" role="button">
-                    <span class="fa fa-times-circle fa-danger"></span>
-                    Deactivate
-                  </a>
-                </li>
-              {% else %}
-                <li class="disabled" data-toggle="tooltip" data-placement="top"
-                    title="You cannot deactivate this {{ role|lower }}. You must be registered for at least one role.">
-                  <a role="button">
-                    <span class="fa fa-times-circle fa-danger"></span>
-                    Deactivate
-                  </a>
-                </li>
-              {% endif %}
-            </ul>
-          </div>
-        </td>
+        <td data-title="League">{{ referee.league }}</td>
       </tr>
-
-      {% if sr_roles|length > 1 or related_objs|length > 1 %}
-        {% include 'sports/deactivation_modal.html' %}
-      {% endif %}
-
     {% endfor %}
     </tbody>
+
   </table>
 </div>

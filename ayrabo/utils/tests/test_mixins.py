@@ -21,14 +21,7 @@ class PreSelectedTabMixinTests(BaseTestCase):
         request = self.factory.get('/')
         view = DummyView
         view.valid_tabs = 'string'
-        with self.assertRaisesMessage(AssertionError, 'valid_tabs must be a non-empty list'):
-            self._run_view(view, request)
-
-    def test_valid_tabs_non_empty_list(self):
-        request = self.factory.get('/')
-        view = DummyView
-        view.valid_tabs = []
-        with self.assertRaisesMessage(AssertionError, 'valid_tabs must be a non-empty list'):
+        with self.assertRaisesMessage(AssertionError, 'valid_tabs must be a list'):
             self._run_view(view, request)
 
     def test_default_tab_is_string(self):
@@ -54,6 +47,13 @@ class PreSelectedTabMixinTests(BaseTestCase):
         view.default_tab = 'tab-3'
         with self.assertRaisesMessage(AssertionError, 'tab-3 is not a valid choice, choose from tab-1, tab-2'):
             self._run_view(view, request)
+
+    def test_class_variable_defaults(self):
+        # Everything should work normally and no validation errors due to default tab not being a string should be
+        # raised.
+        request = self.factory.get('/')
+        view = DummyView
+        self._run_view(view, request)
 
     def test_tab_from_query_param_selected(self):
         request = self.factory.get('/', {'tab': 'tab-3'})
