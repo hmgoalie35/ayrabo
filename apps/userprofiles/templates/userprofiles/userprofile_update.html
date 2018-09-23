@@ -115,6 +115,8 @@
                                       {{ object.team.name }} - {{ object.team.division.name }}
                                     {% endif %}
                                   </div>
+                                {% empty %}
+                                  <div>N/A</div>
                                 {% endfor %}
                               </div>
                             {% endfor %}
