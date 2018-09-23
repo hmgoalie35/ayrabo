@@ -4,7 +4,6 @@
     <thead>
     <tr>
       <th scope="col">Sport</th>
-      <th scope="col"></th>
     </tr>
     </thead>
 
@@ -12,24 +11,6 @@
     {% for scorekeeper in scorekeepers %}
       <tr>
         <td data-title="Sport">{{ scorekeeper.sport.name }}</td>
-        <td data-title="">
-          <div class="dropdown table-dropdown">
-            <a
-              id="actions-dropdown-scorekeeper-{{ scorekeeper.sport.slug }}"
-              data-target="#scorekeeper-{{ scorekeeper.id }}"
-              data-toggle="dropdown"
-              aria-haspopup="true"
-              aria-expanded="false"
-              role="button"
-            >Actions
-              <i class="fa fa-caret-down"></i>
-            </a>
-            <ul class="dropdown-menu table-dropdown-menu" aria-labelledby="{{ scorekeeper.id }}">
-              <li class="dropdown-header">Manage</li>
-              {# TODO Add dropdown links #}
-            </ul>
-          </div>
-        </td>
       </tr>
     {% endfor %}
     </tbody>

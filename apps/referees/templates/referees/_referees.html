@@ -4,7 +4,6 @@
     <thead>
     <tr>
       <th scope="col">League</th>
-      <th scope="col"></th>
     </tr>
     </thead>
 
@@ -12,24 +11,6 @@
     {% for referee in referees %}
       <tr>
         <td data-title="League">{{ referee.league }}</td>
-        <td data-title="">
-          <div class="dropdown table-dropdown">
-            <a
-              id="actions-dropdown-referee-{{ referee.league.slug }}"
-              data-target="#referee-{{ referee.id }}"
-              data-toggle="dropdown"
-              aria-haspopup="true"
-              aria-expanded="false"
-              role="button"
-            >Actions
-              <i class="fa fa-caret-down"></i>
-            </a>
-            <ul class="dropdown-menu table-dropdown-menu" aria-labelledby="{{ referee.id }}">
-              <li class="dropdown-header">Manage</li>
-              {# TODO Add dropdown items #}
-            </ul>
-          </div>
-        </td>
       </tr>
     {% endfor %}
     </tbody>
