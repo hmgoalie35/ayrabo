@@ -21,12 +21,10 @@ class User(AbstractUser):
 
     def get_sport_registrations(self):
         """
-        Fetches sport registrations for the user, making sure to omit any legacy sport registrations.
-        NOTE: Legacy sport registrations used roles_mask so role will be None
-
+        Fetches sport registrations for the user.
         :return: Sport registrations for the user
         """
-        return self.sport_registrations.exclude(role=None).order_by('sport', 'role').select_related('sport')
+        return self.sport_registrations.order_by('sport', 'role').select_related('sport')
 
     def sport_registration_data_by_sport(self):
         """
