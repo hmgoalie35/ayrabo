@@ -12,7 +12,6 @@ class SportAdmin(admin.ModelAdmin):
 
 @admin.register(SportRegistration)
 class SportRegistrationAdmin(admin.ModelAdmin):
-    list_display = ('id', 'user', 'sport', 'role', 'roles_mask', 'is_complete', 'created')
+    list_display = ('id', 'user', 'sport', 'role', 'is_complete', 'created')
     search_fields = ('user__email', 'user__first_name', 'user__last_name', 'sport__name')
-    exclude = ('roles_mask',)
     raw_id_fields = ('user',)

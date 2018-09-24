@@ -37,9 +37,7 @@ class SportRegistration(TimestampedModel):
     user = models.ForeignKey('users.User', verbose_name='User', on_delete=models.PROTECT,
                              related_name='sport_registrations')
     sport = models.ForeignKey(Sport, verbose_name='Sport', on_delete=models.PROTECT, related_name='sport_registrations')
-    role = models.CharField(verbose_name='Role', max_length=64, choices=ROLE_CHOICES, db_index=True, null=True)
-
-    roles_mask = models.SmallIntegerField(default=0, verbose_name='Roles Mask')
+    role = models.CharField(verbose_name='Role', max_length=64, choices=ROLE_CHOICES, db_index=True)
     # Signifies if each Coach, Referee, Manager, HockeyPlayer, etc. object has been created for all roles of this model
     is_complete = models.BooleanField(default=False, db_index=True, verbose_name='Is Registration Complete')
 

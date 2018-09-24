@@ -60,9 +60,6 @@ class UserModelTests(BaseTestCase):
         self.assertFalse(self.user.has_object_permission('admin', self.organization))
 
     def test_get_sport_registrations(self):
-        # Legacy sport registrations (should be excluded)
-        SportRegistrationFactory(user=self.user, sport=self.ice_hockey, role=None, roles_mask=1)
-        SportRegistrationFactory(user=self.user, sport=self.baseball, role=None, roles_mask=1)
         # New type of sport registrations
         sr1 = SportRegistrationFactory(user=self.user, sport=self.ice_hockey, role='player')
         sr2 = SportRegistrationFactory(user=self.user, sport=self.ice_hockey, role='coach')
