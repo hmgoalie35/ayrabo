@@ -9,8 +9,6 @@ class SportRegistrationFactory(django.DjangoModelFactory):
     user = SubFactory(UserFactory)
     sport = SubFactory(SportFactory)
     role = Faker('random_element', elements=[role[0] for role in SportRegistration.ROLE_CHOICES])
-
-    roles_mask = 0
     is_complete = True
 
     class Meta:
