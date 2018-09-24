@@ -167,3 +167,6 @@ class BaseAPITestCase(APITestCase):
 
     def assert_200(self, response):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def assert_204(self, response):
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)

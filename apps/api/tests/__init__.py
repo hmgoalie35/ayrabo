@@ -1,1 +1,1 @@
-from .factories.TokenFactory import TokenFactory
+from .factories import TokenFactory
