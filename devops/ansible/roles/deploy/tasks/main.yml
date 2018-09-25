@@ -3,7 +3,6 @@
     update_cache: yes
 
 - block:
-    # TODO setup github keys https://docs.ansible.com/ansible/github_key_module.html
     - name: "git Starting deployment for {{ deployment_version }}: {{ ongoing_deployment|basename }}"
       git:
         accept_hostkey: yes

@@ -251,7 +251,6 @@ USE_L10N = True
 
 USE_TZ = True
 
-# TODO Make this a directory shared b/w deployments
 DJANGO_LOGS_DIR = os.path.join(BASE_DIR, 'logs')
 if not os.path.exists(DJANGO_LOGS_DIR):
     os.mkdir(DJANGO_LOGS_DIR)
@@ -340,12 +339,10 @@ LOGGING = {
 }
 
 # Email address admins/managers receive mail from
-# TODO update both of these
 SERVER_EMAIL = 'no.reply@ayrabo.com'
 # Email address regular users receive mail from
 DEFAULT_FROM_EMAIL = 'no.reply@ayrabo.com'
 
-# TODO configure this for prod
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = ENV_SETTINGS.get('EMAIL_HOST')
 EMAIL_HOST_USER = ENV_SETTINGS.get('EMAIL_HOST_USER')

@@ -11,7 +11,6 @@ export default class ErrorHandler extends React.Component {
   }
 
   componentDidCatch(error) {
-    // TODO Log to external service
     this.setState({ error });
   }
 

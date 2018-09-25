@@ -27,7 +27,3 @@
     - name: Restoring db from {{ db_restore_file }}
       command: pg_restore -w -d {{ db_name }} --clean --if-exists -n public {{ db_backup_dir }}/{{ db_restore_file }}
       when: db_restore_file is defined and db_restore_file
-
-    # TODO Run ANALYZE or VACUUM ANALYZE (which is strongly recommended) or just let autovacuum daemon handle it.
-    # More info https://www.postgresql.org/docs/9.6/static/backup-dump.html and https://www.postgresql.org/docs/9.6/static/populate.html
-    # Also see this command https://www.postgresql.org/docs/9.6/static/app-vacuumdb.html

@@ -97,5 +97,3 @@ Feature: Create season rosters
     And I press "create_season_roster_btn"
     Then I should see "A default season roster for this team and season already exists."
     And I should be on the "teams.Team" "" "teams:season_rosters:create" page with url kwargs "team_pk=pk"
-
-      # TODO add in tests for BaseballSeasonRoster, etc.

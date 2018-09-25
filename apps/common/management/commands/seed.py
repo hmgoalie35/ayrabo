@@ -31,7 +31,6 @@ class Command(BaseCommand):
             pass
         self.stdout.write('\n')
 
-        # TODO Create leagues/teams, seasons... Cron job for seasons?
         self.stdout.write('Seeding sports...')
         sports = []
         for sport in SPORTS:
@@ -41,8 +40,6 @@ class Command(BaseCommand):
         self.stdout.write('\n')
 
         self.stdout.write('Seeding generic sport choices...')
-        # TODO Can probably iterate over keys for `GENERIC_CHOICES` and do a lookup in a hash table to get the actual
-        # sport object.
         for sport in sports:
             choices = GENERIC_CHOICES.get(sport.name, [])
             for choice in choices:
@@ -57,7 +54,6 @@ class Command(BaseCommand):
         self.stdout.write('\n')
 
         self.stdout.write('Seeding generic penalty choices...')
-        # See TODO above
         for sport in sports:
             choices = GENERIC_PENALTY_CHOICES.get(sport.name, [])
             for choice in choices:

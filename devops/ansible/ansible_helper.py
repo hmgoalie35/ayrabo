@@ -37,7 +37,6 @@ def create_role(role_path):
             create_file(os.path.join(dir_path, 'main.yml'))
 
 
-# TODO add in default files in group_vars for each new role (end in .yml)
 def main():
     parser = argparse.ArgumentParser(description="Autogenerate directory structure for ansible")
     parser.add_argument('mode', choices=['startproject', 'startrole'],
