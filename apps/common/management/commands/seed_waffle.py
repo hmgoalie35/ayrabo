@@ -4,10 +4,6 @@ from waffle.models import Switch
 from common.management.commands.utils import create_object, get_object, print_status
 
 
-# TODO Handle updates to switches, however there are 2 issues. 1. If the switches are modified via the admin,
-# this will overwrite those changes. This file should be the ultimate authority. 2. After first run, the
-# switches will always be updated. Consider adding a command line flag (which probably isn't the best because
-# we need to remember to deploy with the flag enabled)
 class Command(BaseCommand):
     help = 'Seeds waffle flags, switches, samples'
 

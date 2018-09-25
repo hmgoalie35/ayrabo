@@ -65,11 +65,12 @@ class SportRegistrationCreateViewTests(BaseTestCase):
     def test_get(self):
         response = self.client.get(self.format_url())
         context = response.context
+        formset = context['formset']
 
         self.assertTemplateUsed(response, 'sports/sport_registration_create.html')
         self.assert_200(response)
-        # TODO Make sure correct form, formset, etc were used
-        self.assertIsNotNone(context['formset'])
+        self.assertIsNotNone(formset.form)
+        self.assertIsNotNone(formset)
 
     # POST
     def test_valid_post_one_form(self):

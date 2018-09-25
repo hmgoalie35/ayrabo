@@ -137,7 +137,6 @@ class BaseballPlayer(AbstractPlayer):
         ('Right', 'Right'),
     )
 
-    # TODO definitely need to add more fields, im definitely missing stuff
     position = models.CharField(max_length=255, choices=POSITIONS, verbose_name='Position')
     catches = models.CharField(max_length=255, choices=CATCHES, verbose_name='Catches')
     bats = models.CharField(max_length=255, choices=BATS, verbose_name='Bats')

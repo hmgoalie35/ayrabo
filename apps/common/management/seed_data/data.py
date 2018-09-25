@@ -72,7 +72,6 @@ GENERIC_CHOICES = {
     ]
 }
 
-# TODO Correctly generate these from LIAHL/NHL rulebooks. These are temporary for now.
 GENERIC_PENALTY_CHOICES = {
     ICE_HOCKEY: [
         {'name': 'Abuse of officials', 'description': ''},
