@@ -128,12 +128,6 @@ $(function () {
     },
   });
 
-  $('#edit_account_link.disabled').click(function (e) {
-    e.preventDefault();
-    e.stopPropagation();
-    return false;
-  });
-
   $('#logout_btn_acct_menu').click(function (e) {
     e.preventDefault();
     e.stopPropagation();
@@ -158,26 +152,33 @@ $(function () {
   });
 
   // Turns a dropdown into a dropup if there is not enough space under the dropdown
-  $(function () {
-    $(document).on('shown.bs.dropdown', '.dropdown', function () {
-      // calculate the required sizes, spaces
-      var $ul = $(this).children('.dropdown-menu');
-      var $button = $(this).children('.dropdown-toggle');
-      var ulOffset = $ul.offset();
-      // how much space would be left on the top if the dropdown opened that direction
-      var spaceUp = (ulOffset.top - $button.height() - $ul.height()) - $(window).scrollTop();
-      // how much space is left at the bottom
-      var spaceDown = $(window).scrollTop() + $(window).height() - (ulOffset.top + $ul.height());
-      // switch to dropup only if there is no space at the bottom AND there is space at the top, or there isn't either but it would be still better fit
-      if (spaceDown < 0 && (spaceUp >= 0 || spaceUp > spaceDown)) {
-        $(this).addClass('dropup');
-      }
-    });
-
-    $(document).on('hidden.bs.dropdown', '.dropdown', function () {
-      // always reset after close
-      $(this).removeClass('dropup');
-    });
+  $(document).on('shown.bs.dropdown', '.dropdown', function () {
+    // calculate the required sizes, spaces
+    var $ul = $(this).children('.dropdown-menu');
+    var $button = $(this).children('.dropdown-toggle');
+    var ulOffset = $ul.offset();
+    // how much space would be left on the top if the dropdown opened that direction
+    var spaceUp = (ulOffset.top - $button.height() - $ul.height()) - $(window).scrollTop();
+    // how much space is left at the bottom
+    var spaceDown = $(window).scrollTop() + $(window).height() - (ulOffset.top + $ul.height());
+    // switch to dropup only if there is no space at the bottom AND there is space at the top, or there isn't either but it would be still better fit
+    if (spaceDown < 0 && (spaceUp >= 0 || spaceUp > spaceDown)) {
+      $(this).addClass('dropup');
+    }
   });
 
+  $(document).on('hidden.bs.dropdown', '.dropdown', function () {
+    // always reset after close
+    $(this).removeClass('dropup');
+  });
+
+  $('.js-api-error-button').click(function (e) {
+    e.preventDefault();
+    e.stopPropagation();
+    var $errorContainer = $('.js-api-error');
+    $errorContainer.animateCss('fadeOut', function () {
+      $errorContainer.addClass('hidden');
+    });
+    return false;
+  });
 });
