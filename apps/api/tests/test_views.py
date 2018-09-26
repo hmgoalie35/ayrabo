@@ -27,6 +27,11 @@ class RevokeAuthTokenTests(BaseAPITestCase):
         self.user = UserFactory(email=self.email, password=self.password)
         self.client.login(username=self.email, password=self.password)
 
+    def test_login_required(self):
+        self.client.logout()
+        response = self.client.delete(self.format_url())
+        self.assertAPIError(response, 'unauthenticated')
+
     def test_token_exists(self):
         TokenFactory(user=self.user)
         response = self.client.delete(self.format_url())
