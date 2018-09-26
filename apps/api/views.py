@@ -16,5 +16,7 @@ class RevokeAuthTokenView(generics.DestroyAPIView):
     def get_object(self):
         qs = self.get_queryset()
         token = get_object_or_404(qs, user=self.request.user)
+        # This view doesn't have any permission classes checking object permissions, but for consistency let's have this
+        # check.
         self.check_object_permissions(self.request, token)
         return token
