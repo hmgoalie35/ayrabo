@@ -92,14 +92,14 @@ export default class GameRosterComponent extends React.Component {
     } else {
       element = (
         <React.Fragment>
-          {selectedPlayers.map(player =>
+          {selectedPlayers.map(player => (
             <PlayerComponent
               key={player.id}
               player={player}
               canUpdate={canUpdate}
               handleRemovePlayer={handleRemovePlayer}
             />)
-          }
+          )}
           <div className="text-center mt5">
             {`${selectedPlayers.length} ${pluralize('player', selectedPlayers.length)}`}
           </div>

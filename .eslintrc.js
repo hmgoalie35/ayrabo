@@ -18,8 +18,10 @@ module.exports = {
       exports: 'always-multiline',
       functions: 'only-multiline',
     }],
+    'operator-linebreak': 'off',
     // React
     'react/jsx-wrap-multilines': 'off',
+    'react/jsx-one-expression-per-line': 'off',
     // Import
     'import/no-extraneous-dependencies': 'off',
   },

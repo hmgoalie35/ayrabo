@@ -21,16 +21,16 @@ const SeasonRosterDropdownComponent = (props) => {
       <li><a tabIndex="0" role="button" onClick={noop}>There are no season rosters.</a></li>
     );
   } else {
-    listItems = seasonRosters.map(roster =>
+    listItems = seasonRosters.map(roster => (
       <li key={roster.id}>
         <a data-toggle="modal" data-target={`#modal-${roster.id}`} role="button">{roster.name}</a>
       </li>
-    );
-    seasonRosterModals = seasonRosters.map(roster =>
+    ));
+    seasonRosterModals = seasonRosters.map(roster => (
       <div className="text-left" key={roster.id}>
         <SeasonRosterModalComponent roster={roster} handleAddPlayers={handleAddPlayers} />
       </div>
-    );
+    ));
   }
 
   return (
