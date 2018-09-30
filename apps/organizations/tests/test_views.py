@@ -48,9 +48,7 @@ class OrganizationDetailViewTests(BaseTestCase):
         active_tab = context.get('active_tab')
         teams = context.get('teams')
         organization_admins = context.get('organization_admins')
-        support_email = context.get('support_email')
 
         self.assertEqual(active_tab, 'teams')
         self.assertListEqual(list(teams), [self.team1, self.team2])
         self.assertListEqual(list(organization_admins), [self.user, user2])
-        self.assertEqual(support_email, 'harris@pittinsky.com')

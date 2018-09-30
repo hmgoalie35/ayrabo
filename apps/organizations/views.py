@@ -1,4 +1,3 @@
-from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views import generic
 
@@ -28,5 +27,4 @@ class OrganizationDetailView(LoginRequiredMixin, HasPermissionMixin, PreSelected
         context['organization_admins'] = [
             perm.user for perm in Permission.objects.get_permissions_for_object(name='admin', obj=self.object)
         ]
-        context['support_email'] = settings.SUPPORT_EMAIL
         return context
