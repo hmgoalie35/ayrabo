@@ -50,7 +50,10 @@ sys.path.append(os.path.join(BASE_DIR, 'apps'))
 
 ADMINS = [('Harris Pittinsky', 'harris@pittinsky.com'), ]
 MANAGERS = ADMINS
-SUPPORT_EMAIL = 'harris@pittinsky.com'
+SUPPORT_CONTACT = {
+    'email': 'harris@pittinsky.com',
+    'name': 'Harris Pittinsky'
+}
 
 IGNORABLE_404_URLS = [
     re.compile(r'^/apple-touch-icon.*\.png$'),
@@ -175,6 +178,7 @@ TEMPLATES = [
                 'django.template.context_processors.static',
                 'django.template.context_processors.media',
                 'django.template.context_processors.i18n',
+                'common.context_processors.support_contact'
             ],
         },
     },
