@@ -1,6 +1,8 @@
 {% extends 'site_base.html' %}
 
-{% block title %}{% endblock %}
+{% block title_section %}
+  <title>{% block title_text %}{% endblock %} | ayrabo</title>
+{% endblock %}
 
 {% block content %}
   <div class="container">
@@ -11,7 +13,7 @@
           <h4>{% block error %}{% endblock %}</h4>
           <p class="text-muted">
             {# When there's an internal server error, url routing doesn't work so navigating to the contact page won't work #}
-            Please <a href="mailto:{{ support_contact.email }}">contact us</a> if the problem persists or if you have any questions.
+            Please <a href="mailto:harris@pittinsky.com">contact us</a> if the problem persists or if you have any questions.
           </p>
         </div>
       </div>
