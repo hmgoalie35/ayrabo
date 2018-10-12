@@ -1,6 +1,7 @@
 /*
   ****************************** NOTE: ******************************
-  Do not include any js libraries here, this file should only be used as a way for
-  webpack to handle vendor scss/css. The vendor.js bundle will never be used.
+  The only js libraries that should be included here are those that need to be available
+  globally e.g. Noty, jQuery, DataTables, etc.
 */
+import 'noty';
 import '../scss/vendor.scss';

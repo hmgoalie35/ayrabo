@@ -29,7 +29,6 @@
 
   {% render_bundle 'main' 'css' %}
   {% render_bundle 'vendor' 'css' %}
-  <link rel="stylesheet" href="{% webpack_static 'vendor/noty.css' %}">
   <link rel="stylesheet" href="{% webpack_static 'vendor/bootstrap-select/css/bootstrap-select.min.css' %}">
   <link rel="stylesheet" href="{% webpack_static 'vendor/bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css' %}">
   <link rel="stylesheet" href="{% webpack_static 'vendor/datatables/dataTables.bootstrap.css' %}">
@@ -83,7 +82,6 @@
 
 <script src="{% webpack_static 'vendor/jquery.min.js' %}"></script>
 <script src="{% webpack_static 'vendor/bootstrap.min.js' %}"></script>
-<script src="{% webpack_static 'vendor/noty.min.js' %}"></script>
 <script src="{% webpack_static 'vendor/moment.min.js' %}"></script>
 <script src="{% webpack_static 'vendor/locales.min.js' %}"></script>
 <script src="{% webpack_static 'vendor/moment-timezone.min.js' %}"></script>
@@ -92,6 +90,8 @@
 <script src="{% webpack_static 'vendor/datatables/jquery.dataTables.js' %}"></script>
 <script src="{% webpack_static 'vendor/datatables/dataTables.bootstrap.js' %}"></script>
 {% render_bundle 'jqueryMain' 'js' %}
+{% render_bundle 'vendor' 'js' %}
+{% render_bundle 'globals' 'js' %}
 
 {% block extra_js %}{% endblock %}
 
