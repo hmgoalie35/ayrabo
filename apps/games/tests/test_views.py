@@ -34,7 +34,7 @@ class HockeyGameCreateViewTests(BaseTestCase):
         self.password = 'myweakpassword'
 
         self.ice_hockey = SportFactory(name='Ice Hockey')
-        self.liahl = LeagueFactory(full_name='Long Island Amateur Hockey League', sport=self.ice_hockey)
+        self.liahl = LeagueFactory(name='Long Island Amateur Hockey League', sport=self.ice_hockey)
         self.mm_aa = DivisionFactory(name='Midget Minor AA', league=self.liahl)
         self.t1 = TeamFactory(id=1, name='Green Machine IceCats', division=self.mm_aa)
         self.t2 = TeamFactory(id=2, division=self.mm_aa)
@@ -222,7 +222,7 @@ class HockeyGameListViewTests(BaseTestCase):
 
     def setUp(self):
         self.ice_hockey = SportFactory(name='Ice Hockey')
-        self.liahl = LeagueFactory(full_name='Long Island Amateur Hockey League', sport=self.ice_hockey)
+        self.liahl = LeagueFactory(name='Long Island Amateur Hockey League', sport=self.ice_hockey)
         self.mm_aa = DivisionFactory(name='Midget Minor AA', league=self.liahl)
         self.icecats = TeamFactory(id=1, name='Green Machine IceCats', division=self.mm_aa)
 
@@ -334,7 +334,7 @@ class HockeyGameUpdateViewTests(BaseTestCase):
         self.password = 'myweakpassword'
 
         self.ice_hockey = SportFactory(name='Ice Hockey')
-        self.liahl = LeagueFactory(full_name='Long Island Amateur Hockey League', sport=self.ice_hockey)
+        self.liahl = LeagueFactory(name='Long Island Amateur Hockey League', sport=self.ice_hockey)
         self.mm_aa = DivisionFactory(name='Midget Minor AA', league=self.liahl)
         self.t1 = TeamFactory(id=1, name='Green Machine IceCats', division=self.mm_aa)
         self.t2 = TeamFactory(id=2, division=self.mm_aa)
@@ -525,7 +525,7 @@ class GameRostersUpdateViewTests(BaseTestCase):
         self.password = 'myweakpassword'
 
         self.ice_hockey = SportFactory(name='Ice Hockey')
-        self.liahl = LeagueFactory(full_name='Long Island Amateur Hockey League', sport=self.ice_hockey)
+        self.liahl = LeagueFactory(name='Long Island Amateur Hockey League', sport=self.ice_hockey)
         self.mm_aa = DivisionFactory(name='Midget Minor AA', league=self.liahl)
         self.t1 = TeamFactory(id=1, name='Green Machine IceCats', division=self.mm_aa)
         self.t2 = TeamFactory(id=2, name='Aviator Gulls', division=self.mm_aa)
@@ -656,7 +656,7 @@ class BulkUploadHockeyGamesViewTests(BaseTestCase):
         self.test_file_path = os.path.join(settings.BASE_DIR, 'static', 'csv_examples')
         self.user = UserFactory(email=self.email, password=self.password, is_staff=True)
         sport = SportFactory(name='Ice Hockey')
-        league = LeagueFactory(sport=sport, full_name='Long Island Amateur Hockey League')
+        league = LeagueFactory(sport=sport, name='Long Island Amateur Hockey League')
         division = DivisionFactory(league=league, name='Midget Minor AA')
         TeamFactory(id=35, division=division)
         TeamFactory(id=31, division=division)

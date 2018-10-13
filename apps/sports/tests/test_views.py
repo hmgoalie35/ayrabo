@@ -19,7 +19,7 @@ class SportRegistrationCreateViewTests(BaseTestCase):
         cls.ice_hockey = SportFactory(name='Ice Hockey')
         cls.baseball = SportFactory(name='Baseball')
         cls.basketball = SportFactory(name='Basketball')
-        cls.league = LeagueFactory(full_name='Long Island Amateur Hockey League', sport=cls.ice_hockey)
+        cls.league = LeagueFactory(name='Long Island Amateur Hockey League', sport=cls.ice_hockey)
         cls.division = DivisionFactory(name='Midget Minor AA', league=cls.league)
         TeamFactory(name='Green Machine IceCats', division=cls.division)
 
@@ -190,7 +190,7 @@ class SportDashboardViewTests(BaseTestCase):
     def setUp(self):
         self.user = UserFactory(email='user@ayrabo.com', password='myweakpassword')
         self.ice_hockey = SportFactory(name='Ice Hockey')
-        self.liahl = LeagueFactory(full_name='Long Island Amateur Hockey League', sport=self.ice_hockey)
+        self.liahl = LeagueFactory(name='Long Island Amateur Hockey League', sport=self.ice_hockey)
         self.mm_aa = DivisionFactory(name='Midget Minor AA', league=self.liahl)
         self.icecats = TeamFactory(name='Green Machine IceCats', division=self.mm_aa)
         self.baseball = SportFactory(name='Baseball')

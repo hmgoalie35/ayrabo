@@ -28,12 +28,12 @@ class PlayerUpdateViewTests(BaseTestCase):
         self.ice_hockey = SportFactory(name='Ice Hockey')
         self.baseball = SportFactory(name='Baseball')
 
-        self.league = LeagueFactory(full_name='Long Island Amateur Hockey League', sport=self.ice_hockey)
+        self.league = LeagueFactory(name='Long Island Amateur Hockey League', sport=self.ice_hockey)
         self.division = DivisionFactory(name='Midget Minor AA', league=self.league)
         self.team = TeamFactory(name='Green Machine IceCats', division=self.division)
         self.player = HockeyPlayerFactory(user=self.user, sport=self.ice_hockey, team=self.team, **self.post_data)
 
-        self.baseball_league = LeagueFactory(full_name='Major League Baseball', sport=self.baseball)
+        self.baseball_league = LeagueFactory(name='Major League Baseball', sport=self.baseball)
         self.baseball_division = DivisionFactory(name='American League East', league=self.baseball_league)
         self.baseball_team = TeamFactory(name='New York Yankees', division=self.baseball_division)
         self.baseball_player = BaseballPlayerFactory(user=self.user, sport=self.baseball, team=self.baseball_team,

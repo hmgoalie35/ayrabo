@@ -23,7 +23,7 @@ class BulkUploadTeamsViewTests(BaseTestCase):
 
     def test_post_valid_csv(self):
         ice_hockey = SportFactory(name='Ice Hockey')
-        liahl = LeagueFactory(full_name='Long Island Amateur Hockey League', sport=ice_hockey)
+        liahl = LeagueFactory(name='Long Island Amateur Hockey League', sport=ice_hockey)
         DivisionFactory(name='10U Milner', league=liahl)
         OrganizationFactory(name='Green Machine IceCats', sport=ice_hockey)
         self.client.login(email=self.email, password=self.password)

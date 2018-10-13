@@ -53,7 +53,7 @@ def get_user_input(prompt):
 def get_league(self):
     league_name = get_user_input('What league (case insensitive)').lower()
     try:
-        league = League.objects.get(Q(full_name__iexact=league_name) | Q(abbreviated_name__iexact=league_name))
+        league = League.objects.get(Q(name__iexact=league_name) | Q(abbreviated_name__iexact=league_name))
     except League.DoesNotExist:
         league = None
 

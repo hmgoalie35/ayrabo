@@ -39,7 +39,7 @@ class UserModelTests(BaseTestCase):
         self.user = UserFactory()
         self.ice_hockey = SportFactory(name='Ice Hockey')
         self.baseball = SportFactory(name='Baseball')
-        self.liahl = LeagueFactory(full_name='Long Island Amateur Hockey League', sport=self.ice_hockey)
+        self.liahl = LeagueFactory(name='Long Island Amateur Hockey League', sport=self.ice_hockey)
         self.mm_aa = DivisionFactory(name='Midget Minor AA', league=self.liahl)
         self.team = TeamFactory(name='Green Machine IceCats', division=self.mm_aa)
 

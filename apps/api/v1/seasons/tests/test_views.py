@@ -16,7 +16,7 @@ class SeasonRostersListAPIViewTests(BaseAPITestCase):
 
     def setUp(self):
         self.sport = SportFactory(id=1, name='Ice Hockey')
-        self.league = LeagueFactory(sport=self.sport, full_name='Long Island Amateur Hockey League')
+        self.league = LeagueFactory(sport=self.sport, name='Long Island Amateur Hockey League')
         self.division = DivisionFactory(name='Midget Minor AA', league=self.league)
         self.team = TeamFactory(id=1, name='Green Machine Icecats', division=self.division)
         self.season = SeasonFactory(id=1, league=self.league)

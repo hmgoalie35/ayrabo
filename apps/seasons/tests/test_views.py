@@ -19,7 +19,7 @@ class SeasonRosterCreateViewTests(BaseTestCase):
     @classmethod
     def setUpTestData(cls):
         cls.ice_hockey = SportFactory(name='Ice Hockey')
-        cls.liahl = LeagueFactory(full_name='Long Island Amateur Hockey League', sport=cls.ice_hockey)
+        cls.liahl = LeagueFactory(name='Long Island Amateur Hockey League', sport=cls.ice_hockey)
         cls.mm_aa = DivisionFactory(name='Midget Minor AA', league=cls.liahl)
         cls.icecats = TeamFactory(name='Green Machine Icecats', division=cls.mm_aa)
         cls.liahl_season = SeasonFactory(league=cls.liahl)
@@ -125,7 +125,7 @@ class SeasonRosterListViewTests(BaseTestCase):
     @classmethod
     def setUpTestData(cls):
         cls.ice_hockey = SportFactory(name='Ice Hockey')
-        cls.liahl = LeagueFactory(full_name='Long Island Amateur Hockey League', sport=cls.ice_hockey)
+        cls.liahl = LeagueFactory(name='Long Island Amateur Hockey League', sport=cls.ice_hockey)
         cls.mm_aa = DivisionFactory(name='Midget Minor AA', league=cls.liahl)
         cls.icecats = TeamFactory(name='Green Machine Icecats', division=cls.mm_aa)
         cls.liahl_season = SeasonFactory(league=cls.liahl)
@@ -194,7 +194,7 @@ class SeasonRosterUpdateViewTests(BaseTestCase):
     @classmethod
     def setUpTestData(cls):
         cls.ice_hockey = SportFactory(name='Ice Hockey')
-        cls.liahl = LeagueFactory(full_name='Long Island Amateur Hockey League', sport=cls.ice_hockey)
+        cls.liahl = LeagueFactory(name='Long Island Amateur Hockey League', sport=cls.ice_hockey)
         cls.mm_aa = DivisionFactory(name='Midget Minor AA', league=cls.liahl)
         cls.icecats = TeamFactory(name='Green Machine Icecats', division=cls.mm_aa)
         cls.liahl_season = SeasonFactory(league=cls.liahl)

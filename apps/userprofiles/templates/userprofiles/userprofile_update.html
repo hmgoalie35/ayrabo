@@ -108,7 +108,7 @@
                                 {% for object in objects %}
                                   <div>
                                     {% if role == 'referee' %}
-                                      {{ object.league.full_name }}
+                                      {{ object.league.name }}
                                     {% elif role == 'scorekeeper' %}
                                       {{ object.sport.name }}
                                     {% else %}

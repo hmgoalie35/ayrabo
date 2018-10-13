@@ -19,7 +19,7 @@ class CoachesUpdateViewTests(BaseTestCase):
         self.email = 'user@ayrabo.com'
         self.password = 'myweakpassword'
         self.user = UserFactory(email=self.email, password=self.password)
-        self.league = LeagueFactory(full_name='Long Island Amateur Hockey League', sport=self.ice_hockey)
+        self.league = LeagueFactory(name='Long Island Amateur Hockey League', sport=self.ice_hockey)
         self.division = DivisionFactory(name='Midget Minor AA', league=self.league)
         self.team = TeamFactory(name='Green Machine IceCats', division=self.division)
 

@@ -12,7 +12,7 @@ def step_impl(context):
     for row in context.table:
         data = row.as_dict()
         league_name = data.get('league')
-        league = League.objects.get(Q(full_name=league_name) | Q(abbreviated_name=league_name))
+        league = League.objects.get(Q(name=league_name) | Q(abbreviated_name=league_name))
 
         start_date = data.get('start_date')
         # If start_date or end_date aren't specified, default to today.

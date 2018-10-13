@@ -38,7 +38,7 @@ class TeamAdmin(admin.ModelAdmin):
 
     def league(self, obj):
         league = obj.division.league
-        return '{full_name} - {abbr_name}'.format(full_name=league.full_name, abbr_name=league.abbreviated_name)
+        return '{} - {}'.format(league.name, league.abbreviated_name)
 
     league.short_description = 'League'
 

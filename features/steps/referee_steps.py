@@ -15,12 +15,12 @@ def step_impl(context):
         league = data.get('league', None)
         obj_id = data.get('id', None)
 
-        leagues = League.objects.filter(full_name=league)
+        leagues = League.objects.filter(name=league)
 
         if leagues.exists():
             league = leagues.first()
         else:
-            league = LeagueFactory(full_name=league)
+            league = LeagueFactory(name=league)
 
         kwargs = {'user': user, 'league': league}
         if obj_id is not None:

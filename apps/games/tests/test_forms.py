@@ -23,7 +23,7 @@ class AbstractGameCreateFormTests(BaseTestCase):
         self.form_cls = HockeyGameCreateForm
 
         self.ice_hockey = SportFactory(name='Ice Hockey')
-        self.liahl = LeagueFactory(full_name='Long Island Amateur Hockey League', sport=self.ice_hockey)
+        self.liahl = LeagueFactory(name='Long Island Amateur Hockey League', sport=self.ice_hockey)
         self.mm_aa = DivisionFactory(name='Midget Minor AA', league=self.liahl)
         self.t1 = TeamFactory(id=1, division=self.mm_aa)
         self.t2 = TeamFactory(id=2, division=self.mm_aa)

@@ -85,11 +85,11 @@ def validate_leagues(action, instance, pk_set, reverse, **kwargs):
                     pk_set.remove(pk)
                     errors.append(
                         error_msg.format(cls.__name__.lower(), str(obj), obj.pk,
-                                         instance.division.league.full_name))
+                                         instance.division.league.name))
                 elif not reverse and obj.division.league_id != instance.league_id:
                     # Remove the pk from the set so it is not added
                     pk_set.remove(pk)
-                    errors.append(error_msg.format(cls.__name__.lower(), str(obj), obj.pk, instance.league.full_name))
+                    errors.append(error_msg.format(cls.__name__.lower(), str(obj), obj.pk, instance.league.name))
             else:
                 logger.error('{cls} with pk {pk} does not exist'.format(cls=cls.__name__, pk=pk))
         if errors:

@@ -11,7 +11,7 @@ from managers.tests import ManagerFactory
 class ManagerFormTests(BaseTestCase):
     def setUp(self):
         self.sport = SportFactory(name='Ice Hockey')
-        self.league = LeagueFactory(sport=self.sport, full_name='Long Island Amateur Hockey League')
+        self.league = LeagueFactory(sport=self.sport, name='Long Island Amateur Hockey League')
         self.division = DivisionFactory(league=self.league, name='Midget Minor AA')
         self.form_cls = ManagerForm
 
