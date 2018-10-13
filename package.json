@@ -54,6 +54,7 @@
     "sass-loader": "7.1.0",
     "style-loader": "0.23.1",
     "webpack": "4.20.2",
+    "webpack-bundle-analyzer": "3.0.2",
     "webpack-bundle-tracker": "0.3.0",
     "webpack-cli": "3.1.2"
   },
@@ -63,8 +64,7 @@
     "enzyme-adapter-react-16": "1.6.0",
     "jest": "23.6.0",
     "phantomjs-prebuilt": "2.1.16",
-    "react-test-renderer": "16.5.2",
-    "webpack-bundle-analyzer": "3.0.2"
+    "react-test-renderer": "16.5.2"
   },
   "scripts": {
     "dev": "webpack --debug --watch --progress --display-error-details --mode=development",
