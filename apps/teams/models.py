@@ -23,17 +23,6 @@ class Team(TimestampedModel):
     organization = models.ForeignKey('organizations.Organization', verbose_name='Organization',
                                      on_delete=models.PROTECT, related_name='teams')
 
-    """
-    The fields below are not really necessary to store in this model for the MVP, a link to the team's website would
-    provide all of this info and more. However, in the future it might be useful to add fields like below to this model
-    or even create a TeamInfo model
-
-    president - CharField
-    governor - CharField, should be optional?
-    office_address - CharField
-    office_phone - CharField
-    """
-
     def clean(self):
         self.slug = slugify(self.name)
 

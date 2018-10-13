@@ -6,6 +6,8 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const BundleTracker = require('webpack-bundle-tracker');
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+
 
 // Paths
 const projectRoot = path.resolve(__dirname);
@@ -72,10 +74,11 @@ module.exports = function (env, argv) {
     optimization: {
       splitChunks: {
         cacheGroups: {
-          commons: {
-            name: 'commons',
+          globals: {
+            name: 'globals',
             chunks: 'all',
-            minChunks: 2,
+            test: /(noty\.js)/,
+            minChunks: 1
           }
         }
       },
@@ -137,11 +140,21 @@ module.exports = function (env, argv) {
           options: {
             outputPath: 'fonts/'
           }
+        },
+        {
+          test: require.resolve('noty'),
+          use: [
+            {
+              loader: 'expose-loader',
+              options: 'Noty'
+            }
+          ]
         }
       ],
     },
     devtool: productionBuild ? '' : 'cheap-module-source-map',
     plugins: [
+      // new BundleAnalyzerPlugin(),
       new CleanWebpackPlugin([PATHS.dist]),
       new MiniCssExtractPlugin({
         filename: `css/${cssFileName}.css`
@@ -162,16 +175,6 @@ module.exports = function (env, argv) {
         {
           from: 'bootstrap-select/dist',
           to: 'vendor/bootstrap-select',
-          context: 'node_modules'
-        },
-        {
-          from: 'noty/lib/noty.min.js',
-          to: 'vendor',
-          context: 'node_modules'
-        },
-        {
-          from: 'noty/lib/noty.css',
-          to: 'vendor',
           context: 'node_modules'
         },
         {
