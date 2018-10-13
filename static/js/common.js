@@ -1,6 +1,21 @@
 $(function () {
   $('[data-toggle="tooltip"]').tooltip();
 
+  function updateTooltipTitle($element, title) {
+    return $element.attr('title', title).tooltip('fixTitle').tooltip('show');
+  }
+
+  var clipboard = new ClipboardJS('.js-clipboard-btn');
+  clipboard.on('success', function (e) {
+    var $element = $(e.trigger);
+    updateTooltipTitle($element, 'Copied!');
+    setTimeout(function () {
+      updateTooltipTitle($element, 'Copy');
+      $element.blur();
+    }, 2000);
+    e.clearSelection();
+  });
+
   function getCookie(name) {
     var cookieValue = null;
     if (document.cookie && document.cookie !== '') {

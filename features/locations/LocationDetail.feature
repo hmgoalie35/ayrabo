@@ -45,3 +45,4 @@ Feature: Location details
     And I should see "(516) 746-1100"
     And I should see "Website:"
     And I should see "https://www.icelandlongisland.com/"
+    And "Copy" should show up 3 times
