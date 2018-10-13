@@ -4,4 +4,5 @@
   globally e.g. Noty, jQuery, DataTables, etc.
 */
 import 'noty';
+import 'clipboard';
 import '../scss/vendor.scss';
