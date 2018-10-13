@@ -40,3 +40,8 @@ def get_tab_active_class(context, comparator):
     if is_first_iteration and active_tab is None or active_tab == comparator:
         return 'active'
     return ''
+
+
+@register.inclusion_tag('includes/copy_to_clipboard_btn.html')
+def copy_to_clipboard_btn(text, title='Copy'):
+    return {'text': text, 'title': title}

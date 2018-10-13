@@ -1,4 +1,5 @@
 {% extends 'site_base.html' %}
+{% load copy_to_clipboard_btn from utils %}
 
 {% block title %}{{ location.name }}{% endblock %}
 
@@ -10,14 +11,20 @@
         <div class="text-center">
           <h3>{{ location.name }}</h3>
           <address>
-            <strong>Address:</strong><br>
+            <strong>Address:</strong>
+            {% copy_to_clipboard_btn text=address %}<br>
             {{ location.street_number }} {{ location.street }},<br>
             {{ location.city }}, {{ location.state }} {{ location.zip_code }}<br><br>
 
-            <strong>Phone:</strong><br>
+            <strong>Phone:</strong>
+            {% copy_to_clipboard_btn text=location.phone_number %}<br>
             <a href="tel:{{ location.phone_number }}">{{ location.phone_number }}</a><br><br>
 
-            <strong>Website:</strong><br>
+            <strong>Website:</strong>
+            {% if location.website %}
+              {% copy_to_clipboard_btn text=location.website %}
+            {% endif %}
+            <br>
             {% if location.website %}
               <a href="{{ location.website }}" target="_blank" rel="noopener noreferrer">
                 View
@@ -67,9 +74,9 @@
     <script>
       $(function () {
         var onError = function () {
-          $("#iframe-container").remove();
+          $('#iframe-container').remove();
           hideLoading();
-          $("#iframeError").removeClass("hidden");
+          $('#iframeError').removeClass('hidden');
         };
 
         // If the iframe successfully loads, the timeout gets cleared. Otherwise after a set amount of time we assume
@@ -77,10 +84,10 @@
         var iframeError = setTimeout(onError, 2000);
 
         var hideLoading = function () {
-          $(".js-loading").addClass("hidden");
+          $('.js-loading').addClass('hidden');
         };
 
-        $("iframe").load(function () {
+        $('iframe').load(function () {
           clearTimeout(iframeError);
           hideLoading();
         });

@@ -77,7 +77,7 @@ module.exports = function (env, argv) {
           globals: {
             name: 'globals',
             chunks: 'all',
-            test: /(noty\.js)/,
+            test: /(noty\.js|clipboard)/,
             minChunks: 1
           }
         }
@@ -147,6 +147,15 @@ module.exports = function (env, argv) {
             {
               loader: 'expose-loader',
               options: 'Noty'
+            }
+          ]
+        },
+        {
+          test: require.resolve('clipboard'),
+          use: [
+            {
+              loader: 'expose-loader',
+              options: 'ClipboardJS'
             }
           ]
         }
