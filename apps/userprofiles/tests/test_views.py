@@ -128,7 +128,7 @@ class UserProfileUpdateViewTests(BaseTestCase):
 
     # GET
     def test_get(self):
-        liahl = LeagueFactory(full_name='Long Island Amateur Hockey League', sport=self.sport)
+        liahl = LeagueFactory(name='Long Island Amateur Hockey League', sport=self.sport)
         mm_aa = DivisionFactory(name='Midget Minor AA', league=liahl)
         green_machine_icecats = TeamFactory(name='Green Machine Icecats', division=mm_aa)
         # Missing the scorekeeper role on purpose
@@ -142,7 +142,7 @@ class UserProfileUpdateViewTests(BaseTestCase):
         ManagerFactory(user=self.user, team=green_machine_icecats)
 
         baseball = SportFactory(name='Baseball')
-        mlb = LeagueFactory(full_name='Major League Baseball', sport=baseball)
+        mlb = LeagueFactory(name='Major League Baseball', sport=baseball)
         american_league_east = DivisionFactory(name='American League East', league=mlb)
         toronto_blue_jays = TeamFactory(name='Toronto Blue Jays', division=american_league_east)
         # Missing the player role on purpose

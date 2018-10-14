@@ -33,14 +33,14 @@ class SeasonModelTests(BaseTestCase):
             SeasonFactory(start_date=start_date, end_date=end_date).full_clean()
 
     def test_unique_together_start_date_league(self):
-        league = LeagueFactory(full_name='Long Island Amateur Hockey League')
+        league = LeagueFactory(name='Long Island Amateur Hockey League')
         start_date = datetime.date(2016, 8, 15)
         SeasonFactory(start_date=start_date, end_date=start_date + datetime.timedelta(days=365), league=league)
         with self.assertRaises(IntegrityError):
             SeasonFactory(start_date=start_date, end_date=start_date + datetime.timedelta(days=360), league=league)
 
     def test_unique_together_end_date_league(self):
-        league = LeagueFactory(full_name='Long Island Amateur Hockey League')
+        league = LeagueFactory(name='Long Island Amateur Hockey League')
         end_date = datetime.date(2016, 8, 15)
         SeasonFactory(start_date=datetime.date(2016, 8, 15), end_date=end_date, league=league)
         with self.assertRaises(IntegrityError):
@@ -48,7 +48,7 @@ class SeasonModelTests(BaseTestCase):
 
     def test_unique_for_year(self):
         start_date = datetime.date(2016, 8, 15)
-        league = LeagueFactory(full_name='Long Island Amateur Hockey League')
+        league = LeagueFactory(name='Long Island Amateur Hockey League')
         SeasonFactory(start_date=start_date, league=league)
         with self.assertRaisesMessage(ValidationError,
                                       "{'league': ['League must be unique for Start Date year.']}"):
@@ -57,7 +57,7 @@ class SeasonModelTests(BaseTestCase):
     def test_default_ordering(self):
         start_date = datetime.date(2014, 8, 15)
         end_date = datetime.date(2015, 8, 15)
-        league = LeagueFactory(full_name='Long Island Amateur Hockey League')
+        league = LeagueFactory(name='Long Island Amateur Hockey League')
         seasons = []
         for i in range(3):
             start = start_date + datetime.timedelta(days=i * 365)
@@ -81,8 +81,8 @@ class SeasonModelTests(BaseTestCase):
 
 class SeasonTeamM2MSignalTests(BaseTestCase):
     def setUp(self):
-        self.liahl = LeagueFactory(full_name='Long Island Amateur Hockey League')
-        self.nhl = LeagueFactory(full_name='National Hockey League')
+        self.liahl = LeagueFactory(name='Long Island Amateur Hockey League')
+        self.nhl = LeagueFactory(name='National Hockey League')
         self.mites = DivisionFactory(name='Mites', league=self.liahl)
         self.midget_minor_aa = DivisionFactory(name='Midget Minor AA', league=self.liahl)
         self.pacific = DivisionFactory(name='Pacific Division', league=self.nhl)

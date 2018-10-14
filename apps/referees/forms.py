@@ -54,7 +54,7 @@ class RefereeModelFormSet(BaseModelFormSet):  # pragma: no cover
                 if league.id in leagues_already_seen:
                     form.add_error('league',
                                    '{} has already been selected. '
-                                   'Please choose another league or remove this form.'.format(league.full_name))
+                                   'Please choose another league or remove this form.'.format(league.name))
                 else:
                     leagues_already_seen.append(league.id)
         super().clean()

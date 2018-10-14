@@ -19,7 +19,7 @@ class HockeySeasonRosterCreateUpdateFormTests(BaseTestCase):
 
     def setUp(self):
         self.sport = SportFactory(name='Ice Hockey')
-        self.league = LeagueFactory(sport=self.sport, full_name='Long Island Amateur Hockey League')
+        self.league = LeagueFactory(sport=self.sport, name='Long Island Amateur Hockey League')
         self.division = DivisionFactory(league=self.league, name='Midget Minor AA')
         self.teams = TeamFactory.create_batch(5, division=self.division)
         self.team = self.teams[0]

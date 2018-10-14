@@ -13,7 +13,7 @@ from .factories.TeamFactory import TeamFactory
 class TeamModelTests(BaseTestCase):
     def setUp(self):
         self.ice_hockey = SportFactory(name='Ice Hockey')
-        self.liahl = LeagueFactory(full_name='Long Island Amateur Hockey League', sport=self.ice_hockey)
+        self.liahl = LeagueFactory(name='Long Island Amateur Hockey League', sport=self.ice_hockey)
         self.pee_wee_division = DivisionFactory(name='Pee Wee AA', league=self.liahl)
 
     def test_default_ordering(self):

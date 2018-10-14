@@ -9,7 +9,7 @@ from .factories.RefereeFactory import RefereeFactory
 class RefereeModelTests(BaseTestCase):
     def setUp(self):
         self.user = UserFactory()
-        self.league = LeagueFactory(full_name='Long Island Amateur Hockey League')
+        self.league = LeagueFactory(name='Long Island Amateur Hockey League')
 
     def test_to_string(self):
         referee = RefereeFactory()
