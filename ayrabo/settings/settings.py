@@ -48,10 +48,10 @@ if os.path.exists(dot_env_path):
 # Custom django apps are in apps/ directory, so add it to path
 sys.path.append(os.path.join(BASE_DIR, 'apps'))
 
-ADMINS = [('Harris Pittinsky', 'harris@pittinsky.com'), ]
+ADMINS = [('Harris Pittinsky', 'support@ayrabo.com'), ]
 MANAGERS = ADMINS
 SUPPORT_CONTACT = {
-    'email': 'harris@pittinsky.com',
+    'email': 'support@ayrabo.com',
     'name': 'Harris Pittinsky'
 }
 
