@@ -178,7 +178,8 @@ TEMPLATES = [
                 'django.template.context_processors.static',
                 'django.template.context_processors.media',
                 'django.template.context_processors.i18n',
-                'common.context_processors.support_contact'
+                'common.context_processors.support_contact',
+                'common.context_processors.sports_for_user',
             ],
         },
     },

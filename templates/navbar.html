@@ -19,10 +19,29 @@
     <div id="navbar" class="navbar-collapse collapse" aria-expanded="false">
       <ul class="nav navbar-nav navbar-right">
         {% if user.is_authenticated %}
-          <li>
-            <a id="sport-dashboard-btn" href="{% url 'sports:dashboard' %}">Dashboard</a>
-          </li>
-          <!-- Account dropdown -->
+          {# Sports dashboard dropdown #}
+          {% if sports_for_user %}
+            <li>
+              <a
+                id="sport-dashboards-dropdown"
+                href="#"
+                class="dropdown-toggle"
+                data-toggle="dropdown"
+                role="button"
+                aria-haspopup="true"
+                aria-expanded="false"
+              >Dashboards<span class="caret"></span>
+              </a>
+              <ul class="dropdown-menu">
+                {% for sport in sports_for_user %}
+                  <li>
+                    <a id="{{ sport.slug }}-dashboard-link" href="{% url 'sports:dashboard' slug=sport.slug %}">{{ sport.name }}</a>
+                  </li>
+                {% endfor %}
+              </ul>
+            </li>
+          {% endif %}
+          {# Account dropdown #}
           <li class="vertical-line-left">
             <a
               id="account_menu"
@@ -32,8 +51,7 @@
               role="button"
               aria-haspopup="true"
               aria-expanded="false"
-            >
-              Account<span class="caret"></span>
+            >Account<span class="caret"></span>
             </a>
             <ul class="dropdown-menu">
               <li>
