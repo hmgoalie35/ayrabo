@@ -1,6 +1,7 @@
 from django.urls import reverse
 
 from ayrabo.utils.testing import BaseTestCase
+from coaches.tests import CoachFactory
 from common.tests import WaffleSwitchFactory
 from divisions.tests import DivisionFactory
 from leagues.tests import LeagueFactory
@@ -197,22 +198,38 @@ class SportDashboardViewTests(BaseTestCase):
 
     # General
     def test_login_required(self):
-        url = self.format_url()
+        url = self.format_url(slug='ice-hockey')
         response = self.client.get(url)
         self.assertRedirects(response, self.get_login_required_url(url))
 
+    def test_sport_dne(self):
+        self.login(user=self.user)
+        response = self.client.get(self.format_url(slug='non-existent-sport'))
+        self.assert_404(response)
+
+    def test_no_sport_registrations_for_sport(self):
+        self.login(user=self.user)
+        response = self.client.get(self.format_url(slug='ice-hockey'))
+        self.assert_404(response)
+
     # GET
     def test_get(self):
-        SportRegistrationFactory(user=self.user, sport=self.ice_hockey, role='player')
+        sr_1 = SportRegistrationFactory(user=self.user, sport=self.ice_hockey, role='player')
+        sr_2 = SportRegistrationFactory(user=self.user, sport=self.ice_hockey, role='coach')
         HockeyPlayerFactory(user=self.user, sport=self.ice_hockey, team=self.icecats)
+        CoachFactory(user=self.user, team=self.icecats)
         SportRegistrationFactory(user=self.user, sport=self.baseball, role='coach')
 
         self.login(user=self.user)
 
-        response = self.client.get(self.format_url())
+        response = self.client.get(self.format_url(slug='ice-hockey'))
         self.assert_200(response)
         self.assertTemplateUsed(response, 'sports/sport_dashboard.html')
         context = response.context
-        sport_registration_data_by_sport = context.get('sport_registration_data_by_sport')
-        self.assertEqual(list(sport_registration_data_by_sport.keys()), [self.baseball, self.ice_hockey])
-        self.assertEqual(context.get('active_tab'), 'baseball')
+        sport_data = context.get('sport_data')
+        sport_registrations = sport_data.get('registrations')
+        roles = sport_data.get('roles')
+        self.assertEqual(context.get('sport'), self.ice_hockey)
+        self.assertEqual(sport_registrations, [sr_2, sr_1])
+        self.assertEqual(list(roles.keys()), ['coach', 'player'])
+        self.assertEqual(context.get('active_tab'), 'coach')

@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.shortcuts import redirect, render
+from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.views import generic
 from django.views.generic.base import ContextMixin
@@ -122,27 +122,41 @@ class SportRegistrationCreateView(LoginRequiredMixin,
         return render(request, self.template_name, context)
 
 
-class SportDashboardView(LoginRequiredMixin, PreSelectedTabMixin, generic.TemplateView):
+class SportDashboardView(LoginRequiredMixin, HasPermissionMixin, PreSelectedTabMixin, generic.TemplateView):
     template_name = 'sports/sport_dashboard.html'
+    roles = []
+    sport_data = {}
+
+    def _get_sport(self):
+        if hasattr(self, 'sport'):
+            return self.sport
+        self.sport = get_object_or_404(Sport, slug=self.kwargs.get('slug'))
+        return self.sport
+
+    def _get_sport_data(self):
+        self.sport_data = self.request.user.sport_registration_data_by_sport(sports=[self.sport]).get(self.sport)
+        # Handle the case where a user knows the url, but the don't have any sport registrations for the sport.
+        if self.sport_data is not None:
+            self.roles = list(self.sport_data.get('roles').keys())
+
+    def has_permission_func(self):
+        self._get_sport()
+        self._get_sport_data()
+        return self.sport_data is not None
 
     def get_valid_tabs(self):
-        return self.sport_slugs
+        return self.roles
 
     def get_default_tab(self):
         try:
-            return self.sport_slugs[0]
+            return self.roles[0]
         except IndexError:
             return None
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        user = self.request.user
-        sport_registration_data_by_sport = user.sport_registration_data_by_sport()
         context.update({
-            'sport_registration_data_by_sport': sport_registration_data_by_sport
+            'sport': self.sport,
+            'sport_data': self.sport_data
         })
         return context
-
-    def get(self, request, *args, **kwargs):
-        self.sport_slugs = [sport.slug for sport in self.request.user.sport_registration_data_by_sport().keys()]
-        return super().get(request, *args, **kwargs)
