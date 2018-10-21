@@ -7,7 +7,6 @@ from django.views import generic
 
 from ayrabo.utils.exceptions import SportNotConfiguredException
 from ayrabo.utils.mixins import HandleSportNotConfiguredMixin, HasPermissionMixin
-from ayrabo.utils.urls import url_with_query_string
 from common.views import CsvBulkUploadView
 from games.forms import DATETIME_INPUT_FORMAT, HockeyGameCreateForm
 from games.models import HockeyGame
@@ -27,7 +26,7 @@ class GameCreateView(LoginRequiredMixin,
     success_message = 'Your game has been created.'
 
     def get_success_url(self):
-        return url_with_query_string(reverse('sports:dashboard'), tab=self.sport.slug)
+        return reverse('sports:dashboard', kwargs={'slug': self.sport.slug})
 
     def _get_team(self):
         if hasattr(self, 'team'):

@@ -24,8 +24,8 @@ Feature: Update player information
     And I login with "user@ayrabo.com" and "myweakpassword"
 
   Scenario: Navigate to the player update page
-    Given I am on the "sports:dashboard" page
-    When I press "ice-hockey-player-tab"
+    Given I am on the "sports:dashboard" page with kwargs "slug=ice-hockey"
+    When I press "player-tab"
     And I press "actions-dropdown-player-green-machine-icecats"
     And I press "update-player-link"
     Then I should be on the "/sports/ice-hockey/players/1/update/" page
@@ -36,10 +36,10 @@ Feature: Update player information
     And I fill in "id_jersey_number" with "23"
     And I press "update_player_btn"
     Then I should see "Your player information has been updated."
-    And I should be on the "sports:dashboard" page
+    And I should be on the "sports:dashboard" page with kwargs "slug=ice-hockey"
 
   Scenario: Submit unchanged form
     Given I am on the "/sports/ice-hockey/players/1/update/" page
     And I press "update_player_btn"
     Then I should not see "Your player information has been updated."
-    And I should be on the "sports:dashboard" page
+    And I should be on the "sports:dashboard" page with kwargs "slug=ice-hockey"
