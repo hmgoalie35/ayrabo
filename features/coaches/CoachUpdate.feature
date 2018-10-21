@@ -21,8 +21,8 @@ Feature: Update coach information
     And I login with "user@ayrabo.com" and "myweakpassword"
 
   Scenario: Navigate to the coach update page
-    Given I am on the "sports:dashboard" page
-    When I press "ice-hockey-coach-tab"
+    Given I am on the "sports:dashboard" page with kwargs "slug=ice-hockey"
+    When I press "coach-tab"
     And I press "actions-dropdown-coach-green-machine-icecats"
     And I press "update-coach-link"
     Then I should be on the "/sports/ice-hockey/coaches/1/update/" page
@@ -33,10 +33,10 @@ Feature: Update coach information
     And I select "assistant_coach" from "id_position"
     And I press "update_coach_btn"
     Then I should see "Your coach information has been updated."
-    And I should be on the "sports:dashboard" page
+    And I should be on the "sports:dashboard" page with kwargs "slug=ice-hockey"
 
   Scenario: Submit unchanged form
     Given I am on the "/sports/ice-hockey/coaches/1/update/" page
     And I press "update_coach_btn"
     Then I should not see "Your coach information has been updated."
-    And I should be on the "sports:dashboard" page
+    And I should be on the "sports:dashboard" page with kwargs "slug=ice-hockey"

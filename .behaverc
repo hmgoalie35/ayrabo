@@ -1,6 +1,0 @@
-[behave]
-stdout_capture=true
-stderr_capture=true
-show_skipped=false
-logging_level=CRITICAL
-stop=true

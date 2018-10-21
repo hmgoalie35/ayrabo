@@ -6,7 +6,6 @@ from django.views import generic
 
 from ayrabo.utils.exceptions import SportNotConfiguredException
 from ayrabo.utils.mixins import HandleSportNotConfiguredMixin, HasPermissionMixin
-from ayrabo.utils.urls import url_with_query_string
 from managers.models import Manager
 from teams.models import Team
 from .forms import HockeySeasonRosterCreateUpdateForm
@@ -64,7 +63,7 @@ class SeasonRosterCreateView(LoginRequiredMixin,
         return context
 
     def get_success_url(self):
-        return url_with_query_string(reverse('sports:dashboard'), tab=self.sport.slug)
+        return reverse('sports:dashboard', kwargs={'slug': self.sport.slug})
 
     def get(self, request, *args, **kwargs):
         self._get_team()

@@ -1,11 +1,12 @@
 from django.urls import reverse
 
 from ayrabo.utils.testing import BaseTestCase
+from ayrabo.utils.urls import url_with_query_string
 from common.tests import WaffleSwitchFactory
 from divisions.tests import DivisionFactory
 from leagues.tests import LeagueFactory
 from players.tests import BaseballPlayerFactory, HockeyPlayerFactory
-from sports.tests import SportFactory
+from sports.tests import SportFactory, SportRegistrationFactory
 from teams.tests import TeamFactory
 from users.tests import UserFactory
 
@@ -32,6 +33,7 @@ class PlayerUpdateViewTests(BaseTestCase):
         self.division = DivisionFactory(name='Midget Minor AA', league=self.league)
         self.team = TeamFactory(name='Green Machine IceCats', division=self.division)
         self.player = HockeyPlayerFactory(user=self.user, sport=self.ice_hockey, team=self.team, **self.post_data)
+        SportRegistrationFactory(user=self.user, sport=self.ice_hockey, role='player')
 
         self.baseball_league = LeagueFactory(name='Major League Baseball', sport=self.baseball)
         self.baseball_division = DivisionFactory(name='American League East', league=self.baseball_league)
@@ -93,7 +95,7 @@ class PlayerUpdateViewTests(BaseTestCase):
         self.assertHasMessage(response, 'Your player information has been updated.')
         self.player.refresh_from_db()
         self.assertEqual(self.player.jersey_number, 99)
-        url = '{}?tab=ice-hockey'.format(reverse('sports:dashboard'))
+        url = url_with_query_string(reverse('sports:dashboard', kwargs={'slug': self.ice_hockey.slug}), tab='player')
         self.assertRedirects(response, url)
 
     def test_post_nothing_changed(self):
@@ -102,7 +104,7 @@ class PlayerUpdateViewTests(BaseTestCase):
         self.assertNoMessage(response, 'Your player information has been updated.')
         self.player.refresh_from_db()
         self.assertEqual(self.player.jersey_number, 23)
-        url = '{}?tab=ice-hockey'.format(reverse('sports:dashboard'))
+        url = url_with_query_string(reverse('sports:dashboard', kwargs={'slug': self.ice_hockey.slug}), tab='player')
         self.assertRedirects(response, url)
 
     def test_post_invalid(self):

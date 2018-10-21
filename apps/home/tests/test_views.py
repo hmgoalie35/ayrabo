@@ -45,5 +45,5 @@ class ContactUsViewTests(BaseTestCase):
 
         self.assertDictEqual(context.get('support_contact'), {
             'name': 'Harris Pittinsky',
-            'email': 'harris@pittinsky.com'
+            'email': 'support@ayrabo.com'
         })

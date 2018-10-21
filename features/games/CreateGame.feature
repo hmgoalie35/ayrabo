@@ -32,8 +32,8 @@ Feature: Create game
     And I login with "user@ayrabo.com" and "myweakpassword"
 
   Scenario: Navigate to game create page
-    Given I am on the "sports:dashboard" page
-    And I press "ice-hockey-manager-tab"
+    Given I am on the "sports:dashboard" page with kwargs "slug=ice-hockey"
+    And I press "manager-tab"
     And I press "actions-dropdown-manager-green-machine-icecats"
     And I press "create_game_btn_green-machine-icecats"
     Then I should be on the "/teams/1/games/create/" page
@@ -56,7 +56,7 @@ Feature: Create game
     And I fill in "id_end" with date "today" and time "09:00 PM"
     And I select "1" from "id_season"
     And I press "create_game_btn"
-    Then I should be on the "sports:dashboard" page
+    Then I should be on the "sports:dashboard" page with kwargs "slug=ice-hockey"
     And I should see "Your game has been created."
 
   Scenario: Invalid form

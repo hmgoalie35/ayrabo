@@ -105,7 +105,10 @@ def step_impl(context, url):
 @step('I should be on the "(?P<url>.*)" page with kwargs "(?P<url_kwargs>[^"]*)"')
 def step_impl(context, url, url_kwargs):
     kwargs = string_to_kwargs_dict(url_kwargs)
-    context.test.assertEqual(context.driver.current_url, context.get_url(url, **kwargs))
+    current_url = context.driver.current_url
+    if '?' in current_url:
+        current_url = current_url.split('?')[0]
+    context.test.assertEqual(current_url, context.get_url(url, **kwargs))
 
 
 @step('I am on the absolute url page for "(?P<model_class>.*)" and "(?P<kwarg_data>.*)"')

@@ -26,12 +26,18 @@ class Sport(TimestampedModel):
 
 
 class SportRegistration(TimestampedModel):
+    PLAYER = 'player'
+    COACH = 'coach'
+    REFEREE = 'referee'
+    MANAGER = 'manager'
+    SCOREKEEPER = 'scorekeeper'
+
     ROLE_CHOICES = (
-        ('player', 'Player'),
-        ('coach', 'Coach'),
-        ('referee', 'Referee'),
-        ('manager', 'Manager'),
-        ('scorekeeper', 'Scorekeeper'),
+        (PLAYER, 'Player'),
+        (COACH, 'Coach'),
+        (REFEREE, 'Referee'),
+        (MANAGER, 'Manager'),
+        (SCOREKEEPER, 'Scorekeeper'),
     )
 
     user = models.ForeignKey('users.User', verbose_name='User', on_delete=models.PROTECT,

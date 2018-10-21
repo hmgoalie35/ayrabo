@@ -8,7 +8,7 @@ from ayrabo.utils.exceptions import SportNotConfiguredException
 from ayrabo.utils.mappings import SPORT_PLAYER_MODEL_MAPPINGS
 from ayrabo.utils.mixins import HandleSportNotConfiguredMixin, HasPermissionMixin, WaffleSwitchMixin
 from ayrabo.utils.urls import url_with_query_string
-from sports.models import Sport
+from sports.models import Sport, SportRegistration
 from . import forms
 
 SPORT_UPDATE_PLAYER_FORM_MAPPINGS = {
@@ -31,7 +31,8 @@ class PlayerUpdateView(LoginRequiredMixin,
     waffle_identifier = 'player_update'
 
     def get_success_url(self):
-        return url_with_query_string(reverse('sports:dashboard'), tab=self.sport.slug)
+        return url_with_query_string(reverse('sports:dashboard', kwargs={'slug': self.sport.slug}),
+                                     tab=SportRegistration.PLAYER)
 
     def _get_sport(self):
         if hasattr(self, 'sport'):
