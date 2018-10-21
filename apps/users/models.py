@@ -19,14 +19,19 @@ class User(AbstractUser):
         content_type = ContentType.objects.get_for_model(obj)
         return self.permissions.filter(name=name, content_type=content_type, object_id=obj.id).exists()
 
-    def get_sport_registrations(self):
+    def get_sport_registrations(self, sports=None):
         """
         Fetches sport registrations for the user.
+
+        :param sports: list of sports that should only be included
         :return: Sport registrations for the user
         """
-        return self.sport_registrations.order_by('sport', 'role').select_related('sport')
+        qs = self.sport_registrations.order_by('sport', 'role').select_related('sport')
+        if sports is not None:
+            qs = qs.filter(sport__in=sports)
+        return qs
 
-    def sport_registration_data_by_sport(self):
+    def sport_registration_data_by_sport(self, sports=None):
         """
         Groups sport registrations by sport, additionally computing extra meta data for the sport and sport
         registrations. The registrations and role objects are computed for each sport.
@@ -49,11 +54,12 @@ class User(AbstractUser):
             }
         }
 
+        :param sports: list of sports that should only be included
         :return: Dict where keys are sports the user is registered for and values are additional meta data regarding
-        the user's registration for that sport.
+            the user's registration for that sport.
         """
         result = {}
-        for sport, registrations in groupby(self.get_sport_registrations(), key=lambda obj: obj.sport):
+        for sport, registrations in groupby(self.get_sport_registrations(sports), key=lambda obj: obj.sport):
             registrations_as_list = list(registrations)
             result[sport] = {
                 'registrations': registrations_as_list,

@@ -68,6 +68,13 @@ class UserModelTests(BaseTestCase):
         # Sport registrations should be sorted by sport and then role
         self.assertListEqual(registrations, [sr3, sr2, sr1])
 
+    def test_get_sport_registrations_filter_by_sport(self):
+        sr1 = SportRegistrationFactory(user=self.user, sport=self.ice_hockey, role='player')
+        sr2 = SportRegistrationFactory(user=self.user, sport=self.ice_hockey, role='coach')
+        SportRegistrationFactory(user=self.user, sport=self.baseball, role='referee')
+        registrations = list(self.user.get_sport_registrations(sports=[self.ice_hockey]))
+        self.assertListEqual(registrations, [sr2, sr1])
+
     def test_sport_registration_data_by_sport(self):
         sr1 = SportRegistrationFactory(user=self.user, sport=self.ice_hockey, role='coach')
         sr2 = SportRegistrationFactory(user=self.user, sport=self.ice_hockey, role='player')
