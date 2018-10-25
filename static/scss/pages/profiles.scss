@@ -1,6 +1,24 @@
 .profile {
+  $profile-nav-pills-border: 1px solid $alto;
   .nav-bordered {
-    border: 1px solid $alto;
+    li {
+      margin-left: 0;
+      // Define rules for xs devices
+      border-top: $profile-nav-pills-border;
+      border-left: $profile-nav-pills-border;
+      border-right: $profile-nav-pills-border;
+      &:last-of-type {
+        border-bottom: $profile-nav-pills-border;
+      }
+      // Define rules for sm and up devices
+      @media (min-width: $screen-sm-min) {
+        border-right: none;
+        border-bottom: $profile-nav-pills-border;
+        &:last-of-type {
+          border-right: $profile-nav-pills-border;
+        }
+      }
+    }
   }
   .tab-link {
     border-radius: 0;
