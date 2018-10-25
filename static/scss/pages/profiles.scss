@@ -1,10 +1,9 @@
-.container--profile {
-
-  .panel-body--profile {
-    padding: 0;
+.profile {
+  .nav-bordered {
+    border: 1px solid $alto;
   }
-
-  .sidebar-link {
+  .tab-link {
     border-radius: 0;
+    margin-bottom: 0;
   }
 }

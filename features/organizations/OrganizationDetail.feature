@@ -17,8 +17,8 @@ Feature: Organization profile
   Scenario: Basic info displayed
     Given I am on the "organizations:detail" page with kwargs "pk=1"
     Then I should see "Green Machine IceCats Organization"
-    And "sidebar-item-organization-admins" should be visible
-    And "sidebar-item-teams" should be visible
+    And "tab-item-organization-admins" should be visible
+    And "tab-item-teams" should be visible
 
   Scenario: Teams tab
     Given The following team objects exist
@@ -38,7 +38,7 @@ Feature: Organization profile
 
   Scenario: Organization admins tab
     Given I am on the "organizations:detail" page with kwargs "pk=1"
-    And I press "sidebar-item-organization-admins"
+    And I press "tab-item-organization-admins"
     Then "organization_admins" should be visible
     And "list-group" should contain text "John Doe"
     And "list-group" should contain text "user@ayrabo.com"
