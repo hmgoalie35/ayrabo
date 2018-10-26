@@ -1,54 +1,51 @@
 {% extends 'site_base.html' %}
+{% load get_tab_active_class from utils %}
 
-{% block title %}{{ organization.name }} Organization Profile{% endblock %}
+{% block title %}{{ organization.name }} Organization{% endblock %}
 
 {% block content %}
-  <div class="container container--profile">
+  <div class="container profile">
 
     <div class="row">
-      <div class="col-md-3">
-        <div class="panel panel-default">
-          <div class="panel-body">
-            <h4 class="fs16">{{ organization.name }} Organization</h4>
-          </div>
-        </div>
-
-        <div class="panel panel-default">
-          <div class="panel-body panel-body--profile">
-            <ul class="nav nav-pills nav-stacked" role="tablist">
-              <li role="presentation" class="{% if active_tab == 'teams' %}active{% endif %}">
-                <a
-                  id="sidebar-item-teams"
-                  class="sidebar-link"
-                  href="#teams"
-                  aria-controls="teams"
-                  role="tab"
-                  data-toggle="tab"
-                  data-tab="teams"
-                >Teams
-                </a>
-              </li>
-              <li role="presentation" class="{% if active_tab == 'organization_admins' %}active{% endif %}">
-                <a
-                  id="sidebar-item-organization-admins"
-                  class="sidebar-link"
-                  href="#organization_admins"
-                  aria-controls="organization_admins"
-                  role="tab"
-                  data-toggle="tab"
-                  data-tab="organization_admins"
-                >Organization Admins
-                </a>
-              </li>
-            </ul>
-          </div>
-        </div>
+      <div class="col-md-12">
+        <h3 class="text-center mb20">{{ organization.name }} Organization</h3>
       </div>
+    </div>
 
-      <div class="col-md-9">
-        <div class="tab-content">
+    <div class="row">
+      <div class="col-md-12">
 
-          <div role="tabpanel" class="tab-pane {% if active_tab == 'teams' %}active{% endif %}" id="teams">
+        <div role="navigation">
+          <ul class="nav nav-pills nav-justified nav-bordered" role="tablist">
+            <li role="presentation" class="{% get_tab_active_class 'teams' %}">
+              <a
+                id="tab-item-teams"
+                class="tab-link"
+                href="#teams"
+                aria-controls="teams"
+                role="tab"
+                data-toggle="pill"
+                data-tab="teams"
+              >Teams
+              </a>
+            </li>
+            <li role="presentation" class="{% get_tab_active_class 'organization_admins' %}">
+              <a
+                id="tab-item-organization-admins"
+                class="tab-link"
+                href="#organization_admins"
+                aria-controls="organization_admins"
+                role="tab"
+                data-toggle="pill"
+                data-tab="organization_admins"
+              >Organization Admins
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <div class="tab-content mt30">
+          <div role="tabpanel" class="tab-pane {% get_tab_active_class 'teams' %}" id="teams">
             <h3 class="text-center">Teams</h3>
 
             {% if teams %}
@@ -76,27 +73,25 @@
                 </tbody>
               </table>
             {% else %}
-              <br>
-              <p class="text-center">This organization does not have any teams.</p>
+              <p class="text-center mt30">This organization does not have any teams.</p>
             {% endif %}
           </div>
 
           <div
             role="tabpanel"
-            class="tab-pane {% if active_tab == 'organization_admins' %}active{% endif %}"
+            class="tab-pane {% get_tab_active_class 'organization_admins' %}"
             id="organization_admins"
           >
-            <h3 class="text-center">Organization Admins</h3>
-            <br>
+            <h3 class="text-center mb30">Organization Admins</h3>
+
             <div class="row">
               <div class="col-md-offset-4 col-md-4">
                 {% if organization_admins %}
                   <ul class="list-group">
                     {% for admin in organization_admins %}
                       <li class="list-group-item">
-                        {{ admin.get_full_name }}
-                        <br>
-                        <small class="text-muted">{{ admin.email }}</small>
+                        <div>{{ admin.get_full_name }}</div>
+                        <div><small class="text-muted">{{ admin.email }}</small></div>
                       </li>
                     {% endfor %}
                   </ul>
