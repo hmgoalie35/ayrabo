@@ -44,7 +44,7 @@
           </ul>
         </div>
 
-        <div class="tab-content">
+        <div class="tab-content mt30">
           <div role="tabpanel" class="tab-pane {% get_tab_active_class 'teams' %}" id="teams">
             <h3 class="text-center">Teams</h3>
 
@@ -73,8 +73,7 @@
                 </tbody>
               </table>
             {% else %}
-              <br>
-              <p class="text-center">This organization does not have any teams.</p>
+              <p class="text-center mt30">This organization does not have any teams.</p>
             {% endif %}
           </div>
 
@@ -83,17 +82,16 @@
             class="tab-pane {% get_tab_active_class 'organization_admins' %}"
             id="organization_admins"
           >
-            <h3 class="text-center">Organization Admins</h3>
-            <br>
+            <h3 class="text-center mb30">Organization Admins</h3>
+
             <div class="row">
               <div class="col-md-offset-4 col-md-4">
                 {% if organization_admins %}
                   <ul class="list-group">
                     {% for admin in organization_admins %}
                       <li class="list-group-item">
-                        {{ admin.get_full_name }}
-                        <br>
-                        <small class="text-muted">{{ admin.email }}</small>
+                        <div>{{ admin.get_full_name }}</div>
+                        <div><small class="text-muted">{{ admin.email }}</small></div>
                       </li>
                     {% endfor %}
                   </ul>
