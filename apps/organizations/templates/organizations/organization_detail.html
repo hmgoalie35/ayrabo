@@ -62,7 +62,10 @@
                 <tbody>
                 {% for team in teams %}
                   <tr>
-                    <td data-title="Team">{{ team.name }}</td>
+                    <td data-title="Team">
+                      {% include 'includes/team_logo.html' with team=team %}
+                      {{ team.name }}
+                    </td>
                     <td data-title="Division">{{ team.division.name }}</td>
                     <td data-title="League">{{ team.division.league.name }}</td>
                     <td data-title="">
