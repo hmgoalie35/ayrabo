@@ -1,1 +1,1 @@
-from .factories.RefereeFactory import RefereeFactory
+from .factories import RefereeFactory
