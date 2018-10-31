@@ -1,5 +1,4 @@
-import factory
-from factory import Faker, django, post_generation
+from factory import Faker, SubFactory, django, post_generation
 
 from divisions.models import Division
 from leagues.tests import LeagueFactory
@@ -7,7 +6,7 @@ from leagues.tests import LeagueFactory
 
 class DivisionFactory(django.DjangoModelFactory):
     name = Faker('text', max_nb_chars=8)
-    league = factory.SubFactory(LeagueFactory)
+    league = SubFactory(LeagueFactory)
 
     class Meta:
         model = Division

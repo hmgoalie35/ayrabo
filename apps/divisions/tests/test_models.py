@@ -1,10 +1,10 @@
 from django.db.utils import IntegrityError
 from django.utils.text import slugify
 
-from divisions.models import Division
 from ayrabo.utils.testing import BaseTestCase
+from divisions.models import Division
+from divisions.tests import DivisionFactory
 from leagues.tests import LeagueFactory
-from .factories.DivisionFactory import DivisionFactory
 
 
 class DivisionModelTests(BaseTestCase):
