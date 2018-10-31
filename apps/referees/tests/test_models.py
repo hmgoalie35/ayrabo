@@ -2,8 +2,8 @@ from django.db.utils import IntegrityError
 
 from ayrabo.utils.testing import BaseTestCase
 from leagues.tests import LeagueFactory
+from referees.tests import RefereeFactory
 from users.tests import UserFactory
-from .factories.RefereeFactory import RefereeFactory
 
 
 class RefereeModelTests(BaseTestCase):

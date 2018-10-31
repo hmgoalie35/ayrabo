@@ -2,8 +2,8 @@ from django.core.exceptions import ValidationError
 from django.db.utils import IntegrityError
 
 from ayrabo.utils.testing import BaseTestCase
+from players.tests import BaseballPlayerFactory, BasketballPlayerFactory, HockeyPlayerFactory
 from teams.tests import TeamFactory
-from .factories.PlayerFactory import BaseballPlayerFactory, BasketballPlayerFactory, HockeyPlayerFactory
 
 
 class PlayerModelTests(BaseTestCase):
