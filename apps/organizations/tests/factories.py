@@ -1,4 +1,4 @@
-from factory import django, Sequence, post_generation, SubFactory
+from factory import Sequence, SubFactory, django, post_generation
 
 from organizations.models import Organization
 from sports.tests import SportFactory
