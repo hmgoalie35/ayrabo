@@ -1,6 +1,6 @@
 import datetime
 
-from factory import django, SubFactory
+from factory import SubFactory, django
 
 from games.tests import HockeyGameFactory
 from periods import models

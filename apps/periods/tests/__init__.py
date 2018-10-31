@@ -1,1 +1,1 @@
-from .factories.PeriodFactory import HockeyPeriodFactory
+from .factories import HockeyPeriodFactory
