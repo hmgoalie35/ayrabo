@@ -2,7 +2,7 @@ import datetime
 import random
 
 from django.conf import settings
-from factory import django, Faker, SubFactory, LazyFunction
+from factory import Faker, LazyFunction, SubFactory, django
 
 from userprofiles.models import UserProfile
 
