@@ -17,10 +17,10 @@ class LeagueFactory(django.DjangoModelFactory):
     sport = SubFactory(SportFactory)
     website = Faker('url')
 
-    @post_generation
-    def full_clean(self, obj, extracted, **kwargs):
-        self.full_clean(exclude=['slug', 'abbreviated_name'])
-
     class Meta:
         model = League
         django_get_or_create = ('name',)
+
+    @post_generation
+    def full_clean(self, obj, extracted, **kwargs):
+        self.full_clean(exclude=['slug', 'abbreviated_name'])
