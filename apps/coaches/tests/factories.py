@@ -1,15 +1,14 @@
-import factory
-from factory import django, Faker
+from factory import Faker, SubFactory, django
 
-from users.tests import UserFactory
 from coaches.models import Coach
 from teams.tests import TeamFactory
+from users.tests import UserFactory
 
 
 class CoachFactory(django.DjangoModelFactory):
-    user = factory.SubFactory(UserFactory)
+    user = SubFactory(UserFactory)
     position = Faker('random_element', elements=[position[0] for position in Coach.POSITIONS])
-    team = factory.SubFactory(TeamFactory)
+    team = SubFactory(TeamFactory)
     is_active = True
 
     class Meta:
