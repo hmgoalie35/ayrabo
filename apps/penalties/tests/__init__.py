@@ -1,2 +1,1 @@
-from .factories.GenericPenaltyChoiceFactory import GenericPenaltyChoiceFactory
-from .factories.HockeyPenaltyFactory import HockeyPenaltyFactory
+from .factories import GenericPenaltyChoiceFactory, HockeyPenaltyFactory

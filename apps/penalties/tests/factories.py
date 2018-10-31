@@ -1,11 +1,20 @@
 import datetime
 
-from factory import django, SubFactory, LazyAttribute
+from factory import Faker, LazyAttribute, SubFactory, django
 
 from games.tests import HockeyGameFactory
 from penalties import models
+from penalties.models import GenericPenaltyChoice
 from periods.tests import HockeyPeriodFactory
 from players.tests import HockeyPlayerFactory
+
+
+class GenericPenaltyChoiceFactory(django.DjangoModelFactory):
+    name = 'Interference'
+    description = Faker('sentences', nb=5)
+
+    class Meta:
+        model = GenericPenaltyChoice
 
 
 class HockeyPenaltyFactory(django.DjangoModelFactory):
