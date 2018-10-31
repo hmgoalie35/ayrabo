@@ -9,10 +9,15 @@ from users.models import Permission
 class OrganizationDetailView(LoginRequiredMixin, HasPermissionMixin, PreSelectedTabMixin, generic.DetailView):
     template_name = 'organizations/organization_detail.html'
     context_object_name = 'organization'
-    model = Organization
     queryset = Organization.objects.prefetch_related('teams', 'teams__division', 'teams__division__league')
     valid_tabs = ['teams', 'organization_admins']
     default_tab = 'teams'
+
+    def get_object(self, queryset=None):
+        if hasattr(self, 'object'):
+            return self.object
+        self.object = super().get_object(queryset)
+        return self.object
 
     def has_permission_func(self):
         user = self.request.user
