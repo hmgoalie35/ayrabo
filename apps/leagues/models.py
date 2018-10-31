@@ -3,6 +3,7 @@ from django.utils.text import slugify
 from easy_thumbnails.fields import ThumbnailerImageField
 
 from ayrabo.utils import UploadTo
+from ayrabo.utils.model_fields import WebsiteField
 from common.models import TimestampedModel
 from sports.models import Sport
 
@@ -17,6 +18,7 @@ class League(TimestampedModel):
     slug = models.SlugField(max_length=255, verbose_name='Slug')
     sport = models.ForeignKey(Sport, verbose_name='Sport')
     logo = ThumbnailerImageField(verbose_name='Logo', upload_to=UploadTo('leagues/logos/'), null=True, blank=True)
+    website = WebsiteField()
 
     class Meta:
         ordering = ['name']
