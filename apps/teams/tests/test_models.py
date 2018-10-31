@@ -7,7 +7,7 @@ from leagues.tests import LeagueFactory
 from organizations.tests import OrganizationFactory
 from sports.tests import SportFactory
 from teams.models import Team
-from .factories.TeamFactory import TeamFactory
+from teams.tests import TeamFactory
 
 
 class TeamModelTests(BaseTestCase):

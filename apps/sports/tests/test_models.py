@@ -4,9 +4,8 @@ from django.utils.text import slugify
 
 from ayrabo.utils.testing import BaseTestCase
 from sports.models import Sport
+from sports.tests import SportFactory, SportRegistrationFactory
 from users.tests import UserFactory
-from .factories.SportFactory import SportFactory
-from .factories.SportRegistrationFactory import SportRegistrationFactory
 
 
 class SportModelTests(BaseTestCase):

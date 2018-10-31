@@ -3,8 +3,8 @@ from django.utils.text import slugify
 
 from ayrabo.utils.testing import BaseTestCase
 from leagues.models import League
+from leagues.tests import LeagueFactory
 from sports.tests import SportFactory
-from .factories.LeagueFactory import LeagueFactory
 
 
 class LeagueModelTests(BaseTestCase):
@@ -30,7 +30,7 @@ class LeagueModelTests(BaseTestCase):
         League.objects.create(name='National Hockey League', sport=self.ice_hockey)
         with self.assertRaises(IntegrityError):
             League.objects.create(name='National Hockey League', sport=self.ice_hockey).full_clean(
-                    exclude=['abbreviated_name'])
+                exclude=['abbreviated_name'])
 
     def test_abbreviated_name_lowercase(self):
         # Make sure first letters are capitalized
