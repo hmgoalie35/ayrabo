@@ -1,14 +1,13 @@
-import factory
-from factory import django
+from factory import SubFactory, django
 
-from users.tests import UserFactory
 from scorekeepers.models import Scorekeeper
 from sports.tests import SportFactory
+from users.tests import UserFactory
 
 
 class ScorekeeperFactory(django.DjangoModelFactory):
-    user = factory.SubFactory(UserFactory)
-    sport = factory.SubFactory(SportFactory)
+    user = SubFactory(UserFactory)
+    sport = SubFactory(SportFactory)
     is_active = True
 
     class Meta:
