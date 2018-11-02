@@ -1,9 +1,9 @@
 from django.db.utils import IntegrityError
 
 from ayrabo.utils.testing import BaseTestCase
+from coaches.tests import CoachFactory
 from teams.tests import TeamFactory
 from users.tests import UserFactory
-from .factories.CoachFactory import CoachFactory
 
 
 class CoachModelTests(BaseTestCase):

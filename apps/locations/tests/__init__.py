@@ -1,2 +1,1 @@
-from .factories.LocationFactory import LocationFactory
-from .factories.TeamLocationFactory import TeamLocationFactory
+from .factories import LocationFactory, TeamLocationFactory

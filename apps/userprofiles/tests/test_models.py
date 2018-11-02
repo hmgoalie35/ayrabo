@@ -2,7 +2,7 @@ from django.core.exceptions import ValidationError
 
 from ayrabo.utils.testing import BaseTestCase
 from userprofiles.models import UserProfile
-from .factories.UserProfileFactory import UserProfileFactory
+from userprofiles.tests import UserProfileFactory
 
 
 class UserProfileModelTests(BaseTestCase):

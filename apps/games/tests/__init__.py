@@ -1,1 +1,1 @@
-from .factories.GameFactory import HockeyGameFactory, HockeyGoalFactory, HockeyAssistFactory
+from .factories import HockeyAssistFactory, HockeyGameFactory, HockeyGoalFactory

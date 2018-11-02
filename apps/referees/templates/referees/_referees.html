@@ -10,7 +10,12 @@
     <tbody>
     {% for referee in referees %}
       <tr>
-        <td data-title="League">{{ referee.league }}</td>
+        <td data-title="League">
+          {% with league=referee.league %}
+            {% include 'includes/league_logo.html' with league=league %}
+            <a href="{% url 'leagues:detail' slug=league.slug %}">{{ league.name }}</a>
+          {% endwith %}
+        </td>
       </tr>
     {% endfor %}
     </tbody>

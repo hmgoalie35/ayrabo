@@ -1,1 +1,1 @@
-from .factories.ScorekeeperFactory import ScorekeeperFactory
+from .factories import ScorekeeperFactory

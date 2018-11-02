@@ -1,1 +1,1 @@
-from .factories.ManagerFactory import ManagerFactory
+from .factories import ManagerFactory

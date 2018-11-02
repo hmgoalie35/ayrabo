@@ -8,6 +8,7 @@ from home.views import AboutUsView, ContactUsView, HomePageView
 from locations.views import BulkUploadLocationsView
 from teams.views import BulkUploadTeamsView
 
+
 urlpatterns = [
     url(r'^admin/teams/bulk-upload$', BulkUploadTeamsView.as_view(), name='bulk_upload_teams'),
     url(r'^admin/locations/bulk-upload$', BulkUploadLocationsView.as_view(), name='bulk_upload_locations'),
@@ -19,11 +20,12 @@ urlpatterns = [
     url(r'^contact-us/$', ContactUsView.as_view(), name='contact_us'),
     url(r'^account/', include('accounts.urls')),  # Use our custom allauth views
     url(r'^account/', include('allauth.urls')),
-    url(r'^sports/', include('sports.urls', namespace='sports')),
-    url(r'^teams/', include('teams.urls', namespace='teams')),
+    url(r'^api/', include('api.urls')),  # Don't add an `api` namespace here, drf login/logout views will break
+    url(r'^leagues/', include('leagues.urls', namespace='leagues')),
     url(r'^locations/', include('locations.urls', namespace='locations')),
     url(r'^organizations/', include('organizations.urls', namespace='organizations')),
-    url(r'^api/', include('api.urls')),  # Don't add an `api` namespace here, drf login/logout views will break
+    url(r'^sports/', include('sports.urls', namespace='sports')),
+    url(r'^teams/', include('teams.urls', namespace='teams')),
 ]
 
 if settings.DEBUG:

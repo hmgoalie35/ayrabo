@@ -128,6 +128,10 @@ class BaseTestCase(TestCase):
         if msg in messages:
             self.fail(msg='{} unexpectedly found in messages'.format(msg))
 
+    def assertLoginRequired(self, url):
+        response = self.client.get(url)
+        self.assertRedirects(response, self.get_login_required_url(url))
+
     def assert_200(self, response):
         self.assertEqual(response.status_code, 200)
 
