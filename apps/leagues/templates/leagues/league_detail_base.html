@@ -1,0 +1,49 @@
+{% extends 'site_base.html' %}
+{% load get_tab_active_class from utils %}
+
+{% block title %}{{ league.name }}{% block page %}{% endblock %}{% endblock %}
+
+{% block content %}
+  <div class="container profile">
+
+    <div class="row">
+      <div class="col-md-12">
+        <h3 class="text-center mb20">{{ league.name }}</h3>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-12">
+
+        <div role="navigation">
+          <ul class="nav nav-pills nav-justified nav-bordered" role="tablist">
+            <li role="presentation" class="{% get_tab_active_class 'schedule' %}">
+              <a
+                id="tab-item-schedule"
+                class="tab-link"
+                href="{% url 'leagues:detail' slug=league.slug %}"
+                aria-controls="schedule"
+                role="tab"
+              >Schedule
+              </a>
+            </li>
+            <li role="presentation" class="{% get_tab_active_class 'divisions' %}">
+              <a
+                id="tab-item-divisions"
+                class="tab-link"
+                href="{% url 'leagues:detail' slug=league.slug %}"
+                aria-controls="divisions"
+                role="tab"
+              >Divisions
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <div class="tab-content mt30">
+          {% block tab_content %}{% endblock %}
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
