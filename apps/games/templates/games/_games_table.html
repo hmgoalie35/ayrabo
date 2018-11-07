@@ -1,0 +1,78 @@
+<table class="table js-table responsive-table table-thin-th-border">
+  <thead>
+  <tr>
+    {# !!! Remember to update the datatables column indexes if modifying this !!! #}
+    <th scope="col">#</th>
+    <th scope="col">Home</th>
+    <th scope="col">Away</th>
+    <th scope="col">Type</th>
+    <th scope="col">Status</th>
+    <th scope="col">Location</th>
+    <th scope="col">Start</th>
+    <th scope="col">End</th>
+    <th scope="col">Season</th>
+    <th scope="col"></th>
+  </tr>
+  </thead>
+  <tbody>
+  {% for game in games %}
+    <tr>
+      <td data-title="#">{{ game.pk }}</td>
+      <td data-title="Home">
+        {% with team=game.home_team %}
+          {% include 'includes/team_logo.html' with team=team %}
+          {{ team.name }}
+        {% endwith %}
+      </td>
+      <td data-title="Away">
+        {% with team=game.away_team %}
+          {% include 'includes/team_logo.html' with team=team %}
+          {{ team.name }}
+        {% endwith %}
+      </td>
+      <td data-title="Type">{{ game.type }}</td>
+      <td data-title="Status">{{ game.get_status_display }}</td>
+      <td data-title="Location">
+        <a href="{% url 'locations:detail' slug=game.location.slug %}">{{ game.location.name }}</a>
+      </td>
+      <td data-title="Start">{{ game.start_formatted }}</td>
+      <td data-title="End">{{ game.end_formatted }}</td>
+      <td data-title="Season">{{ game.season }}</td>
+      <td>
+        <div class="dropdown table-dropdown">
+          <a
+            type="button"
+            class="btn btn-link"
+            data-toggle="dropdown"
+            aria-haspopup="true"
+            id="actions-dropdown-{{ game.id }}"
+            aria-expanded="false"
+          >Actions<i class="fa fa-fw fa-caret-down"></i>
+          </a>
+          <ul class="dropdown-menu dropdown-menu-right table-dropdown-menu" aria-labelledby="{{ game.id }}">
+            {% if game.team_id in team_ids_managed_by_user %}
+              <li>
+                <a
+                  id="update-game-{{ game.pk }}"
+                  href="{% url 'teams:games:update' team_pk=game.team_id pk=game.pk %}"
+                ><i class="fa fa-pencil fa-primary"></i>&nbsp;Edit
+                </a>
+              </li>
+            {% endif %}
+            {% if game.home_team_id in team_ids_managed_by_user or game.away_team_id in team_ids_managed_by_user or is_scorekeeper %}
+              <li>
+                <a
+                  id="update-game-rosters-{{ game.pk }}"
+                  href="{% url 'sports:games:rosters:update' slug=sport.slug game_pk=game.pk %}"
+                >
+                  <i class="fa fa-wrench fa-ayrabo-gray"></i>&nbsp;Rosters
+                </a>
+              </li>
+            {% endif %}
+          </ul>
+        </div>
+      </td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>

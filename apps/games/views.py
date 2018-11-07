@@ -10,6 +10,7 @@ from ayrabo.utils.mixins import HandleSportNotConfiguredMixin, HasPermissionMixi
 from common.views import CsvBulkUploadView
 from games.forms import DATETIME_INPUT_FORMAT, HockeyGameCreateForm
 from games.models import HockeyGame
+from games.utils import get_game_list_context
 from managers.models import Manager
 from scorekeepers.models import Scorekeeper
 from sports.models import Sport
@@ -178,11 +179,11 @@ class GameListView(LoginRequiredMixin, HandleSportNotConfiguredMixin, generic.Li
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         user = self.request.user
-        managers_for_user = Manager.objects.active().filter(user=user)
-        context['can_create_game'] = managers_for_user.filter(team=self.team).exists()
+        game_list_context = get_game_list_context(user, self.sport)
+        team_ids_managed_by_user = game_list_context.get('team_ids_managed_by_user')
+        context['can_create_game'] = self.team.id in team_ids_managed_by_user
+        context['team_ids_managed_by_user'] = team_ids_managed_by_user
         context['is_scorekeeper'] = Scorekeeper.objects.active().filter(user=user, sport=self.sport).exists()
-        context['team_ids_for_manager'] = managers_for_user.filter(
-            team__division__league__sport=self.sport).values_list('team_id', flat=True)
         context['team'] = self.team
         context['sport'] = self.sport
         return context
