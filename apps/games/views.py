@@ -182,10 +182,9 @@ class GameListView(LoginRequiredMixin, HandleSportNotConfiguredMixin, generic.Li
         game_list_context = get_game_list_context(user, self.sport)
         team_ids_managed_by_user = game_list_context.get('team_ids_managed_by_user')
         context['can_create_game'] = self.team.id in team_ids_managed_by_user
-        context['team_ids_managed_by_user'] = team_ids_managed_by_user
         context['is_scorekeeper'] = Scorekeeper.objects.active().filter(user=user, sport=self.sport).exists()
         context['team'] = self.team
-        context['sport'] = self.sport
+        context.update(game_list_context)
         return context
 
     def get(self, request, *args, **kwargs):

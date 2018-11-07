@@ -16,5 +16,6 @@ def get_game_list_context(user, sport):
     team_ids_managed_by_user = manager_objects_for_user.filter(team__division__league__sport=sport).values_list(
         'team_id', flat=True)
     return {
-        'team_ids_managed_by_user': team_ids_managed_by_user
+        'team_ids_managed_by_user': team_ids_managed_by_user,
+        'sport': sport
     }

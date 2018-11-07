@@ -48,8 +48,14 @@
         // Initially sort by game start. If add/remove columns need to update this.
         order: [[6, 'desc']],
         columnDefs: [
-          { orderable: false, targets: 9 },
-          { type: 'date', targets: [6, 7] },
+          {
+            orderable: false,
+            targets: 9
+          },
+          {
+            type: 'date',
+            targets: [6, 7]
+          },
         ],
         language: {
           searchPlaceholder: 'Search games',
