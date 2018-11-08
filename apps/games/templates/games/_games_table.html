@@ -19,16 +19,10 @@
     <tr>
       <td data-title="#">{{ game.pk }}</td>
       <td data-title="Home">
-        {% with team=game.home_team %}
-          {% include 'includes/team_logo.html' with team=team %}
-          {{ team.name }}
-        {% endwith %}
+        {% include 'games/_team.html' with team=game.home_team %}
       </td>
       <td data-title="Away">
-        {% with team=game.away_team %}
-          {% include 'includes/team_logo.html' with team=team %}
-          {{ team.name }}
-        {% endwith %}
+        {% include 'games/_team.html' with team=game.away_team %}
       </td>
       <td data-title="Type">{{ game.type }}</td>
       <td data-title="Status">{{ game.get_status_display }}</td>
