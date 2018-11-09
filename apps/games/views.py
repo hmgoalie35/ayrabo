@@ -9,8 +9,9 @@ from ayrabo.utils.exceptions import SportNotConfiguredException
 from ayrabo.utils.mixins import HandleSportNotConfiguredMixin, HasPermissionMixin
 from common.views import CsvBulkUploadView
 from games.forms import DATETIME_INPUT_FORMAT, HockeyGameCreateForm
+from games.mappings import get_game_model_cls
 from games.models import HockeyGame
-from games.utils import get_game_list_context
+from games.utils import get_game_list_context, optimize_games_query
 from managers.models import Manager
 from scorekeepers.models import Scorekeeper
 from sports.models import Sport
@@ -170,11 +171,9 @@ class GameListView(LoginRequiredMixin, HandleSportNotConfiguredMixin, generic.Li
         return self.team
 
     def get_queryset(self):
-        model_cls = mappings.SPORT_GAME_MODEL_MAPPINGS.get(self.sport.name, None)
-        if model_cls is None:
-            raise SportNotConfiguredException(self.sport)
-        return model_cls.objects.filter(Q(home_team=self.team) | Q(away_team=self.team)).select_related(
-            'home_team', 'away_team', 'type', 'location', 'season', 'team')
+        model_cls = get_game_model_cls(self.sport)
+        qs = model_cls.objects.filter(Q(home_team=self.team) | Q(away_team=self.team))
+        return optimize_games_query(qs)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

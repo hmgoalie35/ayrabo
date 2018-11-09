@@ -19,3 +19,24 @@ def get_game_list_context(user, sport):
         'team_ids_managed_by_user': team_ids_managed_by_user,
         'sport': sport
     }
+
+
+def optimize_games_query(qs):
+    """
+    Applies query optimizations to the QuerySet.
+
+    In the future, we will need to selectively choose what fields to select related, prefetch related on because qs
+    can be for HockeyGames, BaseballGames, etc and the fields may not be common among those model classes.
+
+    :param qs: QuerySet of games
+    :return: The QuerySet with any query optimizations applied
+    """
+    return qs.select_related(
+        'home_team',
+        'home_team__division',
+        'away_team',
+        'away_team__division',
+        'type',
+        'location',
+        'team'
+    )

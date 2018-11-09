@@ -3,7 +3,7 @@ from django.views.generic import DetailView
 
 from ayrabo.utils.mixins import HandleSportNotConfiguredMixin
 from games.mappings import get_game_model_cls
-from games.utils import get_game_list_context
+from games.utils import get_game_list_context, optimize_games_query
 from leagues.models import League
 from seasons.models import Season
 
@@ -18,9 +18,8 @@ class LeagueDetailView(LoginRequiredMixin, HandleSportNotConfiguredMixin, Detail
 
     def _get_games(self, sport, season):
         model_cls = get_game_model_cls(sport)
-        return model_cls.objects.select_related(
-            'home_team', 'home_team__division', 'away_team', 'away_team__division', 'type', 'location', 'season', 'team'
-        ).filter(season=season)
+        qs = model_cls.objects.filter(season=season)
+        return optimize_games_query(qs)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
