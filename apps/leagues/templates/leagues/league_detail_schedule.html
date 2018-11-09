@@ -5,7 +5,9 @@
 
 {% block tab_content %}
   <div role="tabpanel" class="tab-pane {% get_tab_active_class 'schedule' %}" id="schedule">
-    <h4 class="text-center">{{ season }} Schedule</h4>
+    {% if season %}
+      <h4 class="text-center">{{ season }} Schedule</h4>
+    {% endif %}
 
     <div class="text-center js-loading">
       {% include 'includes/loading.html' %}
@@ -24,19 +26,8 @@
     $(function () {
       var hasGames = {% if games %}true{% else %}false{% endif %};
       $('.js-table').enableDataTable({
-        dom: '<"pull-left"f>tpr',
-        // Initially sort by game start. If add/remove columns need to update this.
+        // Initially sort by game start. If add/remove columns need to update the column index.
         order: [[6, 'desc']],
-        columnDefs: [
-          {
-            orderable: false,
-            targets: 9
-          },
-          {
-            type: 'date',
-            targets: [6, 7]
-          },
-        ],
         language: {
           searchPlaceholder: 'Search games',
           zeroRecords: 'No games match your search criteria.',
