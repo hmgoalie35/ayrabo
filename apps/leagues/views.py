@@ -18,6 +18,7 @@ class LeagueDetailView(LoginRequiredMixin, HandleSportNotConfiguredMixin, Detail
 
     def _get_games(self, sport, season):
         model_cls = get_game_model_cls(sport)
+        # Seasons are tied to leagues so we don't need to exclude games for other leagues
         qs = model_cls.objects.filter(season=season)
         return optimize_games_query(qs)
 
