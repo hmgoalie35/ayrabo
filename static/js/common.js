@@ -107,7 +107,7 @@ $(function () {
           previous: '<i class="fa fa-angle-double-left"></i>',
           next: '<i class="fa fa-angle-double-right"></i>',
         },
-        search: '',
+        search: '<i class="fa fa-search"></i>_INPUT_',
         searchPlaceholder: 'Search items',
         zeroRecords: 'No items match your search criteria.',
       }
