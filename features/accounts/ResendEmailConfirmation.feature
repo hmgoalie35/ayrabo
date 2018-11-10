@@ -29,7 +29,7 @@ Feature: Resend account confirmation
     When I fill in "new_email_confirmation" with "myinvalidemail@ayrabo.com"
     And I press "request_new_confirmation_email"
     Then I should see "myinvalidemail@ayrabo.com is not a valid e-mail address or has already been confirmed."
-    And "user@ayrabo.com" should have no emails
+    And "user@ayrabo.com" should have 0 emails
 
 
   Scenario: Request email confirmation when already logged in

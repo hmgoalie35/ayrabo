@@ -461,6 +461,6 @@ try:
     else:
         # Running in dev mode
         from .local_settings import *  # noqa
-except ImportError as e:
+except ImportError:
     # Running in production mode
     pass

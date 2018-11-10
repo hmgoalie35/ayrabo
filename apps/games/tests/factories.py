@@ -1,21 +1,21 @@
 import datetime
 
 from django.utils import timezone
-from factory import django, SubFactory, LazyFunction, LazyAttribute, post_generation
+from factory import LazyAttribute, LazyFunction, SubFactory, django, post_generation
 
-from users.tests import UserFactory
 from games import models
 from locations.tests import LocationFactory
 from players.tests import HockeyPlayerFactory
 from seasons.tests import SeasonFactory
 from teams.tests import TeamFactory
+from users.tests import UserFactory
 
 
 # NOTE: fields such as type, point_value, etc. should be explicitly set in tests so bad data isn't used.
 class AbstractGameFactory(django.DjangoModelFactory):
     home_team = SubFactory(TeamFactory)
     away_team = LazyAttribute(lambda obj: TeamFactory(division=obj.home_team.division))
-    status = models.AbstractGame.GAME_STATUSES[0][0]
+    status = models.AbstractGame.SCHEDULED
     location = SubFactory(LocationFactory)
     # `timezone.now` is defaulting to UTC because the user/userprofile factories default the timzone to UTC
     start = LazyFunction(timezone.now)

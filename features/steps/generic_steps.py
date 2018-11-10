@@ -254,7 +254,7 @@ def step_impl(context, username_or_email):
     context.test.assertIsInstance(get_user(username_or_email), User)
 
 
-@step('"(?P<text>.*)" should show up (?P<num>\d+) times?')
+@step(r'"(?P<text>.*)" should show up (?P<num>\d+) times?')
 def step_impl(context, text, num):
     # findall returns a list of all matches
     num_matches = len(re.findall(text, context.driver.page_source))
@@ -297,7 +297,7 @@ def step_impl(context, deselect, select_option, element):
             'Cannot locate {select_option} by value, visible text or index'.format(select_option=select_option))
 
 
-@step('I select (?P<num_selections>\d+) [a-zA-Z]+ from "(?P<element>[^"]*)"')
+@step(r'I select (?P<num_selections>\d+) [a-zA-Z]+ from "(?P<element>[^"]*)"')
 def step_impl(context, num_selections, element):
     the_element = Select(find_element(context, element))
     for i in range(0, int(num_selections)):

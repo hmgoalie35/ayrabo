@@ -14,11 +14,15 @@ class AbstractGame(TimestampedModel):
     """
     Abstract class representing a game.
     """
+    SCHEDULED = 'scheduled'
+    POSTPONED = 'postponed'
+    CANCELLED = 'cancelled'
+    COMPLETED = 'completed'
     GAME_STATUSES = (
-        ('scheduled', 'Scheduled'),
-        ('postponed', 'Postponed'),
-        ('cancelled', 'Cancelled'),
-        ('completed', 'Completed'),
+        (SCHEDULED, 'Scheduled'),
+        (POSTPONED, 'Postponed'),
+        (CANCELLED, 'Cancelled'),
+        (COMPLETED, 'Completed'),
     )
 
     GRACE_PERIOD = datetime.timedelta(hours=24)
@@ -31,7 +35,7 @@ class AbstractGame(TimestampedModel):
                              related_name='+')
     point_value = models.ForeignKey('common.GenericChoice', verbose_name='Point Value', on_delete=models.PROTECT,
                                     related_name='+')
-    status = models.CharField(verbose_name='Status', max_length=255, choices=GAME_STATUSES, default=GAME_STATUSES[0][0])
+    status = models.CharField(verbose_name='Status', max_length=255, choices=GAME_STATUSES, default=SCHEDULED)
     location = models.ForeignKey('locations.Location', verbose_name='Location', on_delete=models.PROTECT,
                                  related_name='%(class)ss')
     start = models.DateTimeField(verbose_name='Game Start')
@@ -60,7 +64,7 @@ class AbstractGame(TimestampedModel):
         return self.datetime_formatted(self.end)
 
     def can_update(self):
-        return self.status not in ['completed'] and timezone_util.now() <= self.end + self.GRACE_PERIOD
+        return self.status not in [self.COMPLETED] and timezone_util.now() <= self.end + self.GRACE_PERIOD
 
     def init_periods(self, duration):
         """

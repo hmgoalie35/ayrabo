@@ -132,6 +132,10 @@ class BaseTestCase(TestCase):
         response = self.client.get(url)
         self.assertRedirects(response, self.get_login_required_url(url))
 
+    def assertSportNotConfigured(self, url):
+        response = self.client.get(url)
+        self.assertTemplateUsed(response, 'sport_not_configured_msg.html')
+
     def assert_200(self, response):
         self.assertEqual(response.status_code, 200)
 

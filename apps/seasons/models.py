@@ -8,8 +8,10 @@ from django.dispatch import receiver
 from django.urls import reverse
 
 from common.models import TimestampedModel
+from seasons.managers import SeasonManager
 from teams.models import Team
 from users.models import User
+
 
 logger = logging.getLogger()
 
@@ -23,6 +25,8 @@ class Season(TimestampedModel):
     teams = models.ManyToManyField(Team, related_name='seasons')
     start_date = models.DateField(verbose_name='Start Date')
     end_date = models.DateField(verbose_name='End Date')
+
+    objects = SeasonManager()
 
     class Meta:
         ordering = ['-end_date', '-start_date']

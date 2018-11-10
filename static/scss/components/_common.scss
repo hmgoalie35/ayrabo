@@ -51,15 +51,6 @@ body {
   color: $black;
 }
 
-.dataTables_filter {
-  label {
-    &:before {
-      font: normal normal normal 18px/2 FontAwesome;
-      content: "\f002";
-    }
-  }
-}
-
 .google-map {
   border: 0;
   @media (max-width: $screen-sm-min) {
