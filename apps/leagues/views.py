@@ -54,8 +54,11 @@ class LeagueDivisionsView(AbstractLeagueDetailView):
         league = self.object
         divisions = league.divisions.all()
         per_row = 4
+        # The generator gets exhausted after the template loops over the chunked divisions so using it anywhere else
+        # resulted in an empty array. Convert to a list here to prevent this problem.
+        chunked_divisions = list(chunk(divisions, per_row))
         context.update({
             'active_tab': 'divisions',
-            'chunked_divisions': chunk(divisions, per_row),
+            'chunked_divisions': chunked_divisions,
         })
         return context
