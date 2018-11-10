@@ -31,7 +31,7 @@
               </a>
             </span>
           {% endif %}
-          {% include 'games/_games_table.html' with games=games team_ids_managed_by_user=team_ids_managed_by_user %}
+          {% include 'games/_games_table.html' with games=games team_ids_managed_by_user=team_ids_managed_by_user is_scorekeeper=is_scorekeeper %}
         </div>
       </div>
     </div>

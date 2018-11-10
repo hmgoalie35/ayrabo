@@ -4,8 +4,8 @@ import pytz
 from behave import *
 from django.utils import timezone
 
-from common.models import GenericChoice
 from ayrabo.utils.testing import string_to_kwargs_dict
+from common.models import GenericChoice
 from games.models import HockeyGame
 from games.tests import HockeyGameFactory
 from locations.models import Location
