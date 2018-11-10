@@ -17,6 +17,7 @@ $icon-font-path: "~bootstrap-sass/assets/fonts/bootstrap/";
 @import "components/tables";
 
 // Page specific styles
+@import "pages/leagueDetail";
 @import "pages/gameRosters";
 @import "pages/profiles";
 @import "pages/userprofiles";

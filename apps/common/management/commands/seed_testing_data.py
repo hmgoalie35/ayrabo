@@ -249,7 +249,7 @@ class Command(BaseCommand):
 
         for division_name, config in liahl_divisions.items():
             division = get_object(Division, name=division_name, league=league)
-            teams = division.team_set.all()
+            teams = division.teams.all()
             self.stdout.write('\nGenerating matchups for {} teams'.format(len(teams)))
             matchups = list(permutations(teams, 2))
             tz = 'US/Eastern'

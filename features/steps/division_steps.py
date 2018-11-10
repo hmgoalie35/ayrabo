@@ -20,4 +20,7 @@ def step_impl(context):
     for row in context.table:
         data = row.as_dict()
 
+        if 'league' in data:
+            data['league__name'] = data.pop('league')
+
         DivisionFactory(**data)

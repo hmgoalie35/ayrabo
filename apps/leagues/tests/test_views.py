@@ -13,13 +13,7 @@ from teams.tests import TeamFactory
 from users.tests import UserFactory
 
 
-class LeagueDetailViewTests(BaseTestCase):
-    url = 'leagues:detail'
-
-    def _create_game(self, home_team, away_team, season):
-        return HockeyGameFactory(home_team=home_team, away_team=away_team, team=home_team, season=season,
-                                 type=self.game_type, point_value=self.point_value)
-
+class LeagueDetailViewTestCase(BaseTestCase):
     def setUp(self):
         self.user = UserFactory()
         self.ice_hockey = SportFactory(name='Ice Hockey')
@@ -53,19 +47,30 @@ class LeagueDetailViewTests(BaseTestCase):
         self.bruins = TeamFactory(name='Boston Bruins', division=self.atlantic, organization=self.bruins_organization)
         self.sabres = TeamFactory(name='Buffalo Sabres', division=self.atlantic, organization=self.sabres_organization)
 
-        teams = [self.icecats_mm_aa, self.icecats_peewee, self.edge_mm_aa, self.edge_peewee, self.rebels_mm_aa,
-                 self.rebels_peewee]
+        self.teams = [self.icecats_mm_aa, self.icecats_peewee, self.edge_mm_aa, self.edge_peewee, self.rebels_mm_aa,
+                      self.rebels_peewee]
+
+
+class LeagueScheduleViewTests(LeagueDetailViewTestCase):
+    url = 'leagues:schedule'
+
+    def _create_game(self, home_team, away_team, season):
+        return HockeyGameFactory(home_team=home_team, away_team=away_team, team=home_team, season=season,
+                                 type=self.game_type, point_value=self.point_value)
+
+    def setUp(self):
+        super().setUp()
 
         self.start_date = date.today()
         self.past_start_date = self.start_date - timedelta(days=365)
         self.future_start_date = self.start_date + timedelta(days=365)
         self.previous_season = SeasonFactory(league=self.liahl, start_date=self.past_start_date,
                                              end_date=self.start_date,
-                                             teams=teams)
+                                             teams=self.teams)
         self.current_season = SeasonFactory(league=self.liahl, start_date=self.start_date,
-                                            end_date=self.future_start_date, teams=teams)
+                                            end_date=self.future_start_date, teams=self.teams)
         self.next_season = SeasonFactory(league=self.liahl, start_date=self.future_start_date,
-                                         end_date=self.future_start_date + timedelta(days=365), teams=teams)
+                                         end_date=self.future_start_date + timedelta(days=365), teams=self.teams)
 
         self.game_type = GenericChoiceFactory(short_value='exhibition', long_value='Exhibition', type='game_type',
                                               content_object=self.ice_hockey)
@@ -102,3 +107,32 @@ class LeagueDetailViewTests(BaseTestCase):
         self.assertEqual(context.get('season'), self.current_season)
         self.assertListEqual(list(context.get('team_ids_managed_by_user')), team_ids_managed_by_user)
         self.assertListEqual(list(context.get('games')), self.games)
+
+
+class LeagueDivisionsViewTests(LeagueDetailViewTestCase):
+    url = 'leagues:divisions'
+
+    def setUp(self):
+        super().setUp()
+        self.login(user=self.user)
+
+    def test_login_required(self):
+        self.client.logout()
+        self.assertLoginRequired(self.format_url(slug=self.liahl.slug))
+
+    # GET
+    def test_get(self):
+        self.d1 = DivisionFactory(league=self.liahl, name='Division 1')
+        self.d2 = DivisionFactory(league=self.liahl, name='Division 2')
+        self.d3 = DivisionFactory(league=self.liahl, name='Division 3')
+        response = self.client.get(self.format_url(slug=self.liahl.slug))
+        context = response.context
+        self.assert_200(response)
+        self.assertTemplateUsed('leagues/league_detail_divisions.html')
+        self.assertEqual(context.get('league'), self.liahl)
+        self.assertEqual(context.get('active_tab'), 'divisions')
+        expected = [
+            [self.d1, self.d2, self.d3, self.mm_aa],
+            [self.peewee]
+        ]
+        self.assertListEqual(list(context.get('chunked_divisions')), expected)

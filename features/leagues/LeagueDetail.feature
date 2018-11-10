@@ -38,12 +38,12 @@ Feature: League detail
     And I login with "user@ayrabo.com" and "myweakpassword"
 
   Scenario: Basic info displayed to user
-    Given I am on the "leagues:detail" page with kwargs "slug=liahl"
+    Given I am on the "leagues:schedule" page with kwargs "slug=liahl"
     Then I should see "Long Island Amateur Hockey League"
     And I should see "Schedule"
 
   Scenario: Games displayed
-    Given I am on the "leagues:detail" page with kwargs "slug=liahl"
+    Given I am on the "leagues:schedule" page with kwargs "slug=liahl"
     Then I should see "Green Machine IceCats"
     And I should see "Long Island Edge"
     And I should see "League"

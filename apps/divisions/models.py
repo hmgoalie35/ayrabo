@@ -2,7 +2,6 @@ from django.db import models
 from django.utils.text import slugify
 
 from common.models import TimestampedModel
-from leagues.models import League
 
 
 class Division(TimestampedModel):
@@ -13,7 +12,8 @@ class Division(TimestampedModel):
     """
     name = models.CharField(max_length=255, verbose_name='Name')
     slug = models.SlugField(max_length=255, verbose_name='Slug')
-    league = models.ForeignKey(League)
+    league = models.ForeignKey('leagues.League', verbose_name='League', on_delete=models.PROTECT,
+                               related_name='divisions')
 
     def clean(self):
         self.slug = slugify(self.name)
