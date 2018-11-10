@@ -64,7 +64,7 @@ class AbstractGame(TimestampedModel):
         return self.datetime_formatted(self.end)
 
     def can_update(self):
-        return self.status not in ['completed'] and timezone_util.now() <= self.end + self.GRACE_PERIOD
+        return self.status not in [self.COMPLETED] and timezone_util.now() <= self.end + self.GRACE_PERIOD
 
     def init_periods(self, duration):
         """
