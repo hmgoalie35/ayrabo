@@ -10,7 +10,8 @@
     {% for chunk in chunked_divisions %}
       <div class="row">
         {% if not forloop.first %}
-          <hr class="hidden-xs hidden-sm">{% endif %}
+          <hr class="hidden-xs hidden-sm">
+        {% endif %}
         {% for division in chunk %}
           <div class="col-md-3">
             <div class="panel panel-default">
