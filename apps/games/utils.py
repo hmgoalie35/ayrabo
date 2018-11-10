@@ -1,4 +1,5 @@
 from managers.models import Manager
+from scorekeepers.models import Scorekeeper
 
 
 def get_game_list_context(user, sport):
@@ -15,8 +16,10 @@ def get_game_list_context(user, sport):
     # and some team.
     team_ids_managed_by_user = manager_objects_for_user.filter(team__division__league__sport=sport).values_list(
         'team_id', flat=True)
+    is_scorekeeper = Scorekeeper.objects.active().filter(user=user, sport=sport).exists()
     return {
         'team_ids_managed_by_user': team_ids_managed_by_user,
+        'is_scorekeeper': is_scorekeeper,
         'sport': sport
     }
 
