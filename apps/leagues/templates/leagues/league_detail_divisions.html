@@ -1,10 +1,9 @@
 {% extends 'leagues/league_detail_base.html' %}
-{% load get_tab_active_class from utils %}
 
 {% block page %}{{ block.super }} Divisions{% endblock %}
 
 {% block tab_content %}
-  <div role="tabpanel" class="tab-pane league-detail--divisions {% get_tab_active_class 'divisions' %}" id="divisions">
+  <div role="tabpanel" class="tab-pane league-detail--divisions active" id="divisions">
     <h4 class="text-center mb20">Divisions</h4>
 
     {% for chunk in chunked_divisions %}
