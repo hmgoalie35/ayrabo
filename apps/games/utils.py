@@ -4,12 +4,12 @@ from scorekeepers.models import Scorekeeper
 
 def get_game_list_context(user, sport):
     """
-    Computes the manager objects for the given user and what teams the user is a manager. These values will be used
-    for any view/template listing games.
+    Computes common values used when listing games. Mainly the team ids the user is a manager for and if the user is a
+    scorekeeper.
 
     :param user: User to get managers for
     :param sport: Only include managers for this sport
-    :return: managers for the given user and teams the user is a manager for
+    :return: Dict containing common values for listing games
     """
     manager_objects_for_user = Manager.objects.active().filter(user=user)
     # It's more efficient to compute this once and use `in` rather than query to see if a manager exists for the user
