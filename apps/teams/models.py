@@ -6,7 +6,6 @@ from easy_thumbnails.fields import ThumbnailerImageField
 from ayrabo.utils import UploadTo
 from ayrabo.utils.model_fields import WebsiteField
 from common.models import TimestampedModel
-from divisions.models import Division
 
 
 class Team(TimestampedModel):
@@ -17,7 +16,8 @@ class Team(TimestampedModel):
     slug = models.SlugField(max_length=255, verbose_name='Slug')
     logo = ThumbnailerImageField(verbose_name='Logo', upload_to=UploadTo('teams/logos/'), null=True, blank=True)
     website = WebsiteField()
-    division = models.ForeignKey(Division)
+    division = models.ForeignKey('divisions.Division', verbose_name='Division', on_delete=models.PROTECT,
+                                 related_name='teams')
     locations = models.ManyToManyField('locations.Location', through='locations.TeamLocation', verbose_name='Locations',
                                        related_name='teams')
     organization = models.ForeignKey('organizations.Organization', verbose_name='Organization',
