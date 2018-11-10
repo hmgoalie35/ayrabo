@@ -9,7 +9,7 @@ from teams.models import Team
 
 class PlayersListAPIView(generics.ListAPIView):
     permission_classes = (IsAuthenticated,)
-    filter_fields = ('is_active',)
+    filterset_fields = ('is_active',)
 
     def _get_team(self):
         if hasattr(self, 'team'):  # pragma: no cover

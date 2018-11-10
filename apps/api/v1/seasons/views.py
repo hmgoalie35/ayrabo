@@ -19,7 +19,7 @@ SPORT_SEASON_ROSTER_MODEL_MAPPINGS = {
 
 class SeasonRostersListAPIView(generics.ListAPIView):
     permission_classes = (IsAuthenticated, SeasonRostersListPermission)
-    filter_fields = ('season',)
+    filterset_fields = ('season',)
 
     def _get_team(self):
         if hasattr(self, 'team'):
