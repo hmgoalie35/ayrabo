@@ -13,8 +13,8 @@ from teams.tests import TeamFactory
 from users.tests import UserFactory
 
 
-class LeagueDetailViewTests(BaseTestCase):
-    url = 'leagues:detail'
+class LeagueScheduleViewTests(BaseTestCase):
+    url = 'leagues:schedule'
 
     def _create_game(self, home_team, away_team, season):
         return HockeyGameFactory(home_team=home_team, away_team=away_team, team=home_team, season=season,

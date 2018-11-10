@@ -69,7 +69,7 @@
                     <td data-title="Division">{{ team.division.name }}</td>
                     {% with league=team.division.league %}
                       <td data-title="League">
-                        <a href="{% url 'leagues:detail' slug=league.slug %}">{{ league.name }}</a>
+                        <a href="{% url 'leagues:schedule' slug=league.slug %}">{{ league.name }}</a>
                       </td>
                     {% endwith %}
                     <td data-title="">

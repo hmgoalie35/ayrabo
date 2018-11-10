@@ -13,7 +13,7 @@
         <td data-title="League">
           {% with league=referee.league %}
             {% include 'includes/league_logo.html' with league=league %}
-            <a href="{% url 'leagues:detail' slug=league.slug %}">{{ league.name }}</a>
+            <a href="{% url 'leagues:schedule' slug=league.slug %}">{{ league.name }}</a>
           {% endwith %}
         </td>
       </tr>

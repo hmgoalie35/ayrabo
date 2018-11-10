@@ -1,6 +1,7 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import DetailView
 
+from ayrabo.utils import chunk
 from ayrabo.utils.mixins import HandleSportNotConfiguredMixin
 from games.mappings import get_game_model_cls
 from games.utils import get_game_list_context, optimize_games_query
@@ -8,7 +9,12 @@ from leagues.models import League
 from seasons.models import Season
 
 
-class LeagueDetailView(LoginRequiredMixin, HandleSportNotConfiguredMixin, DetailView):
+class AbstractLeagueDetailView(LoginRequiredMixin, HandleSportNotConfiguredMixin, DetailView):
+    context_object_name = 'league'
+    queryset = League.objects.select_related('sport')
+
+
+class LeagueScheduleView(AbstractLeagueDetailView):
     """
     League detail view that defaults to displaying the league's schedule for the current season
     """
@@ -36,4 +42,20 @@ class LeagueDetailView(LoginRequiredMixin, HandleSportNotConfiguredMixin, Detail
             'games': games,
         })
         context.update(game_list_context)
+        return context
+
+
+class LeagueDivisionsView(AbstractLeagueDetailView):
+    template_name = 'leagues/league_detail_divisions.html'
+    queryset = AbstractLeagueDetailView.queryset.prefetch_related('divisions', 'divisions__teams')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        league = self.object
+        divisions = league.divisions.all()
+        per_row = 4
+        context.update({
+            'active_tab': 'divisions',
+            'chunked_divisions': chunk(divisions, per_row),
+        })
         return context
