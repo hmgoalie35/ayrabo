@@ -42,7 +42,8 @@ class LeagueScheduleView(AbstractLeagueDetailView):
         league = self.object
         season_pk = self.kwargs.get('season_pk')
         if season_pk is not None:
-            season = get_object_or_404(Season.objects.filter(league=league), pk=season_pk)
+            past_seasons = context.get('past_seasons')
+            season = get_object_or_404(past_seasons, pk=season_pk)
             active_tab = 'past_seasons'
         else:
             season = Season.objects.get_current(league=league)

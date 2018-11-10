@@ -65,7 +65,7 @@ class LeagueScheduleViewTests(LeagueDetailViewTestCase):
         self.past_start_date = self.start_date - timedelta(days=365)
         self.future_start_date = self.start_date + timedelta(days=365)
         self.previous_season = SeasonFactory(league=self.liahl, start_date=self.past_start_date,
-                                             end_date=self.start_date,
+                                             end_date=self.start_date - timedelta(days=2),
                                              teams=self.teams)
         self.current_season = SeasonFactory(league=self.liahl, start_date=self.start_date,
                                             end_date=self.future_start_date, teams=self.teams)
@@ -122,9 +122,15 @@ class LeagueScheduleViewTests(LeagueDetailViewTestCase):
         response = self.client.get(self.format_url(slug=self.liahl.slug, season_pk=season.pk))
         self.assert_404(response)
 
-    def test_get_with_season_pk(self):
+    def test_get_with_current_season_pk(self):
         self.url = 'leagues:seasons'
         season_pk = self.current_season.pk
+        response = self.client.get(self.format_url(slug=self.liahl.slug, season_pk=season_pk))
+        self.assert_404(response)
+
+    def test_get_with_past_season_pk(self):
+        self.url = 'leagues:seasons'
+        season_pk = self.previous_season.pk
         response = self.client.get(self.format_url(slug=self.liahl.slug, season_pk=season_pk))
         context = response.context
         self.assert_200(response)

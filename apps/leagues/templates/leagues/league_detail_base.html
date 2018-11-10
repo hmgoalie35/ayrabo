@@ -54,6 +54,8 @@
                   <li>
                     <a href="{% url 'leagues:seasons' slug=league.slug season_pk=past_season.pk %}">{{ past_season }}</a>
                   </li>
+                {% empty %}
+                  <li><a>There are no past seasons at this time.</a></li>
                 {% endfor %}
               </ul>
             </li>
