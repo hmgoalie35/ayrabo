@@ -64,9 +64,7 @@ Feature: List games for a team
 
   Scenario: No games
     Given I am on the "teams:games:list" page with kwargs "team_pk=1"
-    Then "no-games-header" should be visible
-    And I should see "There are no games for this team."
-    And "create-game-btn-empty-state" should be visible
+    Then I should see "There are no games for Green Machine IceCats at this time."
 
   Scenario: Games exist
     Given The following game objects exist
@@ -84,7 +82,6 @@ Feature: List games for a team
     And I should see "Iceland"
     And I should see "10/23/2017 07:00 PM EDT"
     And I should see "10/23/2017 09:00 PM EDT"
-    And I should see season "today" "1y"
     And I should not see "Aviator Gulls"
 
   Scenario: Not team manager
