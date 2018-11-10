@@ -52,7 +52,11 @@
               <ul class="dropdown-menu">
                 {% for past_season in past_seasons %}
                   <li>
-                    <a href="{% url 'leagues:seasons' slug=league.slug season_pk=past_season.pk %}">{{ past_season }}</a>
+                    <a
+                      id="past-season-{{ past_season.pk }}"
+                      href="{% url 'leagues:seasons' slug=league.slug season_pk=past_season.pk %}"
+                    >{{ past_season }}
+                    </a>
                   </li>
                 {% empty %}
                   <li><a>There are no past seasons at this time.</a></li>
