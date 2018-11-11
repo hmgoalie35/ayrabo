@@ -19,7 +19,7 @@ class CoachAdmin(admin.ModelAdmin):
     division.short_description = 'Division'
 
     def league(self, obj):
-        return obj.team.division.league.full_name
+        return obj.team.division.league.name
 
     league.short_description = 'League'
 

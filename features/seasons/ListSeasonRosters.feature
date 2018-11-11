@@ -17,8 +17,8 @@ Feature: List season rosters
     And The following manager object exists
       | username_or_email | team                  |
       | user@ayrabo.com   | Green Machine IceCats |
-    And I am on the absolute url page for "sports.SportRegistration" and "user__email=user@ayrabo.com, sport__name=Ice Hockey"
-    And I press "manager_tab"
+    And I am on the "sports:dashboard" page with kwargs "slug=ice-hockey"
+    And I press "manager-tab"
     And I press "actions-dropdown-manager-green-machine-icecats"
     And I press "list_season_rosters_btn_green-machine-icecats"
     Then I should be on the "teams:season_rosters:list" page with kwargs "team_pk=1"

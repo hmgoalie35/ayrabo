@@ -1,1 +1,1 @@
-from .factories.EmailAddressFactory import EmailAddressFactory
+from .factories import EmailAddressFactory

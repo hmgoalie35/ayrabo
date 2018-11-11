@@ -1,0 +1,69 @@
+{% extends 'site_base.html' %}
+{% load pluralize_role get_tab_active_class from utils %}
+
+{% block title %}{{ sport.name }} Dashboard{% endblock %}
+
+{% block content %}
+  <div class="container">
+
+    <div class="row mb35">
+      <div class="col-md-12">
+        <div class="text-center">
+          <h3>{{ sport.name }} Dashboard</h3>
+        </div>
+      </div>
+    </div>
+
+    <div class="row ">
+      <div class="col-md-12">
+        <div>
+          <ul class="nav nav-tabs nav-justified" role="tablist">
+            {% for role in sport_data.roles %}
+              <li role="presentation" class="{% get_tab_active_class role %}">
+                <a
+                  href="#{{ role }}"
+                  id="{{ role }}-tab"
+                  class="nav-tab"
+                  role="tab"
+                  data-toggle="tab"
+                  data-tab="{{ role }}"
+                  aria-controls="{{ role }}"
+                >{% pluralize_role role %}
+                </a>
+              </li>
+            {% endfor %}
+          </ul>
+
+          <div class="tab-content mt20">
+            {% for role, objects in sport_data.roles.items %}
+              <div role="tabpanel" class="tab-pane {% get_tab_active_class role %}" id="{{ role }}">
+                {% if objects %}
+                  {% if role == 'player' %}
+                    {% include 'players/_players.html' with players=objects %}
+                  {% elif role == 'coach' %}
+                    {% include 'coaches/_coaches.html' with coaches=objects %}
+                  {% elif role == 'referee' %}
+                    {% include 'referees/_referees.html' with referees=objects %}
+                  {% elif role == 'manager' %}
+                    {% include 'managers/_managers.html' with managers=objects %}
+                  {% elif role == 'scorekeeper' %}
+                    {% include 'scorekeepers/_scorekeepers.html' with scorekeepers=objects %}
+                  {% elif role == 'organization' %}
+                    {% include 'organizations/_organizations.html' with organizations=objects %}
+                  {% endif %}
+                {% else %}
+                  {% pluralize_role role as pluralized_role %}
+                  {% with pluralized_role_lower=pluralized_role|lower %}
+                    <div class="col-md-offset-2 col-md-8">
+                      {% include 'includes/_data_missing_message.html' with message='There are currently no '|add:pluralized_role_lower|add:' associated with your account.' %}
+                    </div>
+                  {% endwith %}
+                {% endif %}
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

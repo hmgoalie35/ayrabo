@@ -1,0 +1,149 @@
+{% extends 'site_base.html' %}
+{% load get_tab_active_class from utils %}
+
+{% block title %}{{ organization.name }} Organization{% endblock %}
+
+{% block content %}
+  <div class="container profile">
+
+    <div class="row">
+      <div class="col-md-12">
+        <h3 class="text-center mb20">{{ organization.name }} Organization</h3>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-12">
+
+        <div role="navigation">
+          <ul class="nav nav-pills nav-justified nav-bordered" role="tablist">
+            <li role="presentation" class="{% get_tab_active_class 'teams' %}">
+              <a
+                id="tab-item-teams"
+                class="tab-link"
+                href="#teams"
+                aria-controls="teams"
+                role="tab"
+                data-toggle="pill"
+                data-tab="teams"
+              >Teams
+              </a>
+            </li>
+            <li role="presentation" class="{% get_tab_active_class 'organization_admins' %}">
+              <a
+                id="tab-item-organization-admins"
+                class="tab-link"
+                href="#organization_admins"
+                aria-controls="organization_admins"
+                role="tab"
+                data-toggle="pill"
+                data-tab="organization_admins"
+              >Organization Admins
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <div class="tab-content mt30">
+          <div role="tabpanel" class="tab-pane {% get_tab_active_class 'teams' %}" id="teams">
+            <h3 class="text-center">Teams</h3>
+
+            {% if teams %}
+              <table class="table js-table responsive-table table-thin-th-border">
+                <thead>
+                <tr>
+                  {# !!! Remember to update the datatables column indexes if modifying this !!! #}
+                  <th scope="col">Team</th>
+                  <th scope="col">Division</th>
+                  <th scope="col">League</th>
+                  <th scope="col"></th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for team in teams %}
+                  <tr>
+                    <td data-title="Team">
+                      {% include 'includes/team_logo.html' with team=team %}
+                      {{ team.name }}
+                    </td>
+                    <td data-title="Division">{{ team.division.name }}</td>
+                    {% with league=team.division.league %}
+                      <td data-title="League">
+                        <a href="{% url 'leagues:schedule' slug=league.slug %}">{{ league.name }}</a>
+                      </td>
+                    {% endwith %}
+                    <td data-title="">
+                      <a href="">Manage</a>
+                    </td>
+                  </tr>
+                {% endfor %}
+                </tbody>
+              </table>
+            {% else %}
+              <p class="text-center mt30">This organization does not have any teams.</p>
+            {% endif %}
+          </div>
+
+          <div
+            role="tabpanel"
+            class="tab-pane {% get_tab_active_class 'organization_admins' %}"
+            id="organization_admins"
+          >
+            <h3 class="text-center mb30">Organization Admins</h3>
+
+            <div class="row">
+              <div class="col-md-offset-4 col-md-4">
+                {% if organization_admins %}
+                  <ul class="list-group">
+                    {% for admin in organization_admins %}
+                      <li class="list-group-item">
+                        <div>{{ admin.get_full_name }}</div>
+                        <div><small class="text-muted">{{ admin.email }}</small></div>
+                      </li>
+                    {% endfor %}
+                  </ul>
+                {% else %}
+                  <p class="text-center">There are no admins for this organization.</p>
+                {% endif %}
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-12">
+                <h5 class="text-center">
+                  <i class="fa fa-lg fa-color-warning fa-lightbulb-o"></i>
+                  Organization admins are managed by our staff. <a href="{% url 'contact_us' %}">Contact us</a> to make
+                  updates.
+                </h5>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+{% endblock %}
+
+{% block extra_js %}
+  <script>
+    $(function () {
+      {% if teams %}
+        $('.js-table').enableDataTable({
+          dom: '<"pull-right"f>tpr',
+          order: [[1, 'desc']],
+          columnDefs: [
+            {
+              orderable: false,
+              targets: 3
+            }
+          ],
+          language: {
+            searchPlaceholder: 'Search teams',
+            zeroRecords: 'No teams match your search criteria.',
+          },
+        });
+      {% endif %}
+    });
+  </script>
+{% endblock %}

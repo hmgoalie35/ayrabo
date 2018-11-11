@@ -1,32 +1,17 @@
 from django.contrib import admin
 
-from . import models, forms
+from .models import Sport, SportRegistration
 
 
-@admin.register(models.Sport)
+@admin.register(Sport)
 class SportAdmin(admin.ModelAdmin):
     list_display = ('id', 'name', 'slug', 'description')
     search_fields = ('name',)
     prepopulated_fields = {'slug': ('name',)}
 
 
-@admin.register(models.SportRegistration)
+@admin.register(SportRegistration)
 class SportRegistrationAdmin(admin.ModelAdmin):
-    list_display = ['id', 'user', 'roles_mask', 'roles_mask_to_string', 'is_complete', 'sport']
-    search_fields = ['user__email', 'user__first_name', 'user__last_name', 'sport__name']
-    form = forms.SportRegistrationAdminForm
-    readonly_fields = ['roles_mask']
-
-    def roles_mask_to_string(self, obj):
-        return ', '.join(obj.roles)
-
-    roles_mask_to_string.short_description = 'Roles'
-
-    def get_form(self, request, obj=None, **kwargs):
-        form = super(SportRegistrationAdmin, self).get_form(request, obj, **kwargs)
-        if obj is not None:
-            form.declared_fields['roles'].initial = obj.roles
-        return form
-
-    def save_model(self, request, obj, form, change):
-        obj.set_roles(form.cleaned_data['roles'])
+    list_display = ('id', 'user', 'sport', 'role', 'is_complete', 'created')
+    search_fields = ('user__email', 'user__first_name', 'user__last_name', 'sport__name')
+    raw_id_fields = ('user',)

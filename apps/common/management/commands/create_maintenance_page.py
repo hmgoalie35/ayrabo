@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.contrib.sites.models import Site
 from django.core.management import BaseCommand
 from django.template.loader import render_to_string
 
@@ -15,7 +16,7 @@ class Command(BaseCommand):
             self.stdout.write('The maintenance file must be an html file.')
             exit(1)
 
-        context = {'support_email': settings.SUPPORT_EMAIL}
+        context = {'support_contact': settings.SUPPORT_CONTACT, 'site': Site.objects.get_current()}
         template = render_to_string('common/maintenance.html', context=context).strip()
         with open(maintenance_file, 'w') as f:
             f.write(template)

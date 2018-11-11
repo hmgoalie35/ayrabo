@@ -1,72 +1,56 @@
-from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.shortcuts import get_object_or_404, Http404, render, redirect
+from django.contrib.messages.views import SuccessMessageMixin
+from django.shortcuts import get_object_or_404, redirect
+from django.urls import reverse
 from django.views import generic
-from django.views.generic import base
 
-from coaches.formset_helpers import CoachFormSetHelper
+from ayrabo.utils.mixins import HasPermissionMixin, WaffleSwitchMixin
+from ayrabo.utils.urls import url_with_query_string
 from coaches.models import Coach
-from common.views import BaseCreateRelatedObjectsView
-from sports.models import SportRegistration
-from . import forms
+from sports.models import Sport, SportRegistration
+from .forms import CoachUpdateForm
 
 
-class CoachesCreateView(BaseCreateRelatedObjectsView):
-    def get_formset_prefix(self):
-        return 'coaches'
-
-    def get_model_class(self, sport_name):
-        return Coach
-
-    def get_form_class(self, sport_name):
-        return forms.CoachForm
-
-    def get_formset_class(self, sport_name):
-        return forms.CoachModelFormSet
-
-    def get_formset_helper_class(self, sport_name):
-        return CoachFormSetHelper
-
-    def get_template_name(self):
-        return 'coaches/coaches_create.html'
-
-    def get_role(self):
-        return 'Coach'
-
-
-class CoachesUpdateView(LoginRequiredMixin, base.ContextMixin, generic.View):
+class CoachesUpdateView(LoginRequiredMixin,
+                        WaffleSwitchMixin,
+                        HasPermissionMixin,
+                        SuccessMessageMixin,
+                        generic.UpdateView):
+    """
+    Even though sport is not used here at all, we want to still require a valid sport slug in the url.
+    """
     template_name = 'coaches/coaches_update.html'
+    pk_url_kwarg = 'coach_pk'
+    context_object_name = 'coach'
+    success_message = 'Your coach information has been updated.'
+    queryset = Coach.objects.select_related('team')
+    form_class = CoachUpdateForm
+    waffle_identifier = 'coach_update'
 
-    def _get_sport_registration(self):
-        return get_object_or_404(SportRegistration, pk=self.kwargs.get('pk', None))
+    def get_success_url(self):
+        return url_with_query_string(reverse('sports:dashboard', kwargs={'slug': self.sport.slug}),
+                                     tab=SportRegistration.COACH)
 
-    def _get_coach(self):
-        return get_object_or_404(Coach, pk=self.kwargs.get('coach_pk', None))
+    def _get_sport(self):
+        if hasattr(self, 'sport'):
+            return self.sport
+        self.sport = get_object_or_404(Sport, slug=self.kwargs.get('slug'))
+        return self.sport
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        sport_registration = self._get_sport_registration()
-        coach = self._get_coach()
+    def has_permission_func(self):
+        user = self.request.user
+        coach = self.get_object()
+        return user.id == coach.user_id
 
-        user_id = self.request.user.id
-        if user_id != sport_registration.user_id or user_id != coach.user_id:
-            raise Http404
-
-        context['sport_registration'] = sport_registration
-        context['coach'] = coach
-        context['form'] = forms.CoachUpdateForm(self.request.POST or None, instance=coach)
-        return context
+    def form_valid(self, form):
+        if form.has_changed():
+            return super().form_valid(form)
+        return redirect(self.get_success_url())
 
     def get(self, request, *args, **kwargs):
-        return render(request, self.template_name, self.get_context_data(**kwargs))
+        self._get_sport()
+        return super().get(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
-        context = self.get_context_data(**kwargs)
-        form = context.get('form')
-        sr = context.get('sport_registration')
-        if form.is_valid():
-            if form.has_changed():
-                form.save()
-                messages.success(request, 'Your coach information has been updated.')
-            return redirect(sr.get_absolute_url())
-        return render(request, self.template_name, context)
+        self._get_sport()
+        return super().post(request, *args, **kwargs)

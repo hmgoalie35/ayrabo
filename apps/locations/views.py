@@ -27,7 +27,7 @@ class LocationDetailView(LoginRequiredMixin, generic.DetailView):
 class BulkUploadLocationsView(CsvBulkUploadView):
     success_url = reverse_lazy('bulk_upload_locations')
     model = Location
-    fields = ['name', 'street', 'street_number', 'city', 'state', 'zip_code', 'phone_number', 'website']
+    fields = ('name', 'street', 'street_number', 'city', 'state', 'zip_code', 'phone_number', 'website')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

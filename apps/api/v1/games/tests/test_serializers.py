@@ -26,7 +26,7 @@ class AbstractGameRosterSerializerTests(BaseAPITestCase):
 
     def setUp(self):
         self.ice_hockey = SportFactory(name='Ice Hockey')
-        self.liahl = LeagueFactory(full_name='Long Island Amateur Hockey League', sport=self.ice_hockey)
+        self.liahl = LeagueFactory(name='Long Island Amateur Hockey League', sport=self.ice_hockey)
         self.mm_aa = DivisionFactory(name='Midget Minor AA', league=self.liahl)
 
         self.home_team = TeamFactory(id=1, name='Green Machine IceCats', division=self.mm_aa)

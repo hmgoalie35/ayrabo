@@ -14,7 +14,7 @@ class HockeySeasonRosterSerializerTests(BaseAPITestCase):
 
     def test_data(self):
         sport = SportFactory(id=1, name='Ice Hockey')
-        league = LeagueFactory(sport=sport, full_name='Long Island Amateur Hockey League')
+        league = LeagueFactory(sport=sport, name='Long Island Amateur Hockey League')
         division = DivisionFactory(name='Midget Minor AA', league=league)
         team = TeamFactory(id=1, name='Green Machine Icecats', division=division)
         season = SeasonFactory(id=1, league=league)

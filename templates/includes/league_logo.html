@@ -1,0 +1,6 @@
+{% load thumbnail %}
+
+{% if league.logo %}
+  {% thumbnail league.logo 'sm' as thumb %}
+  <img src="{{ thumb|data_uri }}" alt="{{ league.name }}">
+{% endif %}

@@ -1,4 +1,4 @@
-#!/usr/bin/python3.6
+#!venv/bin/python3.6
 
 import argparse
 import datetime
@@ -34,8 +34,7 @@ class Devops(object):
         parser.add_argument('-m', '--mode', required=True, choices=MODES, help='What would you like to do?')
         parser.add_argument('-s', '--server', required=True, choices=SERVER_TYPES,
                             help='The type of server to work with')
-        parser.add_argument('-d', '--deployment_version', default='master',
-                            help='Branch name, SHA hash, release version')
+        parser.add_argument('-d', '--deployment_version', help='Branch name, SHA hash, release version')
         parser.add_argument('-t', '--tags', help='Only run plays tagged with these values')
         parser.add_argument('-v', '--verbosity', action='count', help='Specify verbosity for ansible-playbook')
         parser.add_argument('--check', action='store_true', default=False, help='Enable ansible\'s check mode')

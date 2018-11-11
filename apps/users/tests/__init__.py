@@ -1,1 +1,1 @@
-from .factories.UserFactory import UserFactory
+from .factories import PermissionFactory, UserFactory

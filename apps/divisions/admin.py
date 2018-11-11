@@ -6,7 +6,7 @@ from .models import Division
 @admin.register(Division)
 class DivisionAdmin(admin.ModelAdmin):
     list_display = ['id', 'name', 'slug', 'league', 'sport']
-    search_fields = ['name', 'slug', 'league__full_name']
+    search_fields = ['name', 'slug', 'league__name']
     prepopulated_fields = {'slug': ('name',)}
 
     def sport(self, obj):

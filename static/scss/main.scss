@@ -5,15 +5,19 @@
 $icon-font-path: "~bootstrap-sass/assets/fonts/bootstrap/";
 @import "~bootstrap-sass/assets/stylesheets/_bootstrap.scss";
 
-// Partials
-@import "common";
-@import "buttons";
-@import "icons";
-@import "typography";
-@import "sidebar";
-@import "tables";
-@import "margins";
+// Components
+@import "components/alerts";
+@import "components/buttons";
+@import "components/common";
+@import "components/footer";
+@import "components/forms";
+@import "components/icons";
+@import "components/margins";
+@import "components/sidebar";
+@import "components/tables";
 
-// Project Styles
-@import "dataTables.fontAwesome";
-@import "gameRosters";
+// Page specific styles
+@import "pages/leagueDetail";
+@import "pages/gameRosters";
+@import "pages/profiles";
+@import "pages/userprofiles";

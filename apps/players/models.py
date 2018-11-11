@@ -1,17 +1,17 @@
 from collections import OrderedDict
 
-from django.core.validators import MinValueValidator, MaxValueValidator, ValidationError
+from django.core.validators import MaxValueValidator, MinValueValidator, ValidationError
 from django.db import models
-from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 
 from common import managers
-from sports.models import Sport, SportRegistration
+from common.models import TimestampedModel
+from sports.models import Sport
 from teams.models import Team
 from users.models import User
 
 
-class AbstractPlayer(models.Model):
+class AbstractPlayer(TimestampedModel):
     """
     An abstract base class used to represent a Player. It contains fields common to all players.
     Sub classes shall add custom fields for their specific sport because every sport has different positions, terms for
@@ -23,12 +23,10 @@ class AbstractPlayer(models.Model):
 
     user = models.ForeignKey(User)
     sport = models.ForeignKey(Sport)
-    # TODO add in team/player history model to keep track of a player's teams throughout their career
     team = models.ForeignKey(Team)
     jersey_number = models.SmallIntegerField(verbose_name='Jersey Number',
                                              validators=[MinValueValidator(MIN_JERSEY_NUMBER),
                                                          MaxValueValidator(MAX_JERSEY_NUMBER)])
-    created = models.DateTimeField(default=timezone.now, verbose_name='Created')
     is_active = models.BooleanField(default=True, verbose_name='Is Active')
 
     objects = managers.ActiveManager()
@@ -57,17 +55,6 @@ class AbstractPlayer(models.Model):
         fields['Division'] = self.division
         fields['Jersey Number'] = self.jersey_number
         return fields
-
-    def clean(self):
-        # hasattr is needed for when the admin panel is used, where an object w/o a user or team may be created by
-        # accident
-        if hasattr(self, 'user') and hasattr(self, 'sport'):
-            qs = SportRegistration.objects.filter(user=self.user, sport=self.sport)
-            if qs.exists() and not qs.first().has_role('Player'):
-                raise ValidationError(
-                    '{user} - {sport} might not have a sportregistration object or the '
-                    'sportregistration object does not have the player role assigned'.format(
-                        user=self.user.email, sport=self.sport.name))
 
     class Meta:
         abstract = True
@@ -150,7 +137,6 @@ class BaseballPlayer(AbstractPlayer):
         ('Right', 'Right'),
     )
 
-    # TODO definitely need to add more fields, im definitely missing stuff
     position = models.CharField(max_length=255, choices=POSITIONS, verbose_name='Position')
     catches = models.CharField(max_length=255, choices=CATCHES, verbose_name='Catches')
     bats = models.CharField(max_length=255, choices=BATS, verbose_name='Bats')

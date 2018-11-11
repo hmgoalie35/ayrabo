@@ -2,10 +2,12 @@ const path = require('path');
 const webpack = require('webpack');
 const glob = require('glob');
 
-const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const BundleTracker = require('webpack-bundle-tracker');
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+
 
 // Paths
 const projectRoot = path.resolve(__dirname);
@@ -19,10 +21,8 @@ const PATHS = {
     main: path.join(jsRoot, 'main.js'),
   },
   jsx: {
-    vendor: path.join(jsxRoot, 'vendor.jsx'),
-  },
-  scss: {
-    main: path.join(scssRoot, 'main.scss'),
+    main: path.join(jsxRoot, 'main.jsx'),
+    vendor: path.join(jsxRoot, 'vendor.jsx')
   },
   dist: path.join(staticRoot, 'dist')
 };
@@ -30,10 +30,9 @@ const PATHS = {
 const generateEntryPoints = () => {
   const retVal = {
     jqueryMain: PATHS.js.main,
-    // styleMain.js is never used
-    styleMain: PATHS.scss.main,
-    polyfills: ['babel-polyfill', 'raf/polyfill'],
+    main: PATHS.jsx.main,
     vendor: PATHS.jsx.vendor,
+    polyfills: ['babel-polyfill', 'raf/polyfill'],
   };
   const entryPoints = glob.sync(path.join(jsxRoot, '**/entry.jsx'));
   entryPoints.map((entry) => {
@@ -44,33 +43,46 @@ const generateEntryPoints = () => {
 };
 
 module.exports = function (env, argv) {
-  const productionBuild = env.nodeEnv === 'production';
+  const productionBuild = argv.mode === 'production';
 
   let cssFileName = '[name]';
   let jsFileName = '[name]';
   if (productionBuild) {
     cssFileName = '[name].[contenthash]';
-    jsFileName = '[name].[chunkhash]';
+    jsFileName = '[name].[contenthash]';
   }
 
-  const extractScss = new ExtractTextPlugin(`css/${cssFileName}.css`);
   const entryPoints = generateEntryPoints();
 
   return {
     entry: entryPoints,
     output: {
       filename: `js/${jsFileName}.js`,
+      chunkFilename: `js/${jsFileName}.js`,
       path: PATHS.dist,
-      pathinfo: !productionBuild,
       library: 'App',
       publicPath: '/static/dist/'
     },
     resolve: {
-      extensions: ['.js', '.jsx', '.json']
+      extensions: ['.js', '.jsx', '.json'],
+      symlinks: false
     },
     stats: {
       // Don't show CopyWebpackPlugin output
       excludeAssets: [/^vendor/]
+    },
+    optimization: {
+      splitChunks: {
+        cacheGroups: {
+          globals: {
+            name: 'globals',
+            chunks: 'all',
+            test: /(noty\.js|clipboard)/,
+            minChunks: 1
+          }
+        }
+      },
+      runtimeChunk: 'single'
     },
     module: {
       rules: [
@@ -90,32 +102,36 @@ module.exports = function (env, argv) {
         {
           test: /\.scss$/,
           include: [scssRoot],
-          use: extractScss.extract({
-            fallback: 'style-loader',
-            use: [
-              {
-                loader: 'css-loader',
-                options: {
-                  importLoaders: 1
-                }
-              },
-              'postcss-loader',
-              {
-                loader: 'sass-loader',
-                options: {
-                  precision: 8
-                }
+          use: [
+            MiniCssExtractPlugin.loader,
+            {
+              loader: 'css-loader',
+              options: {
+                importLoaders: 2,
               }
-            ]
-          })
+            },
+            {
+              loader: 'postcss-loader',
+              options: {
+                ident: 'postcss',
+                plugins: [
+                  require('autoprefixer')
+                ]
+              }
+            },
+            {
+              loader: 'sass-loader',
+              options: {
+                precision: 8
+              }
+            }
+          ]
         },
         {
-          test: /\.(png|svg|jpe?g|gif)$/,
-          use: {
-            loader: 'file-loader',
-            options: {
-              outputPath: 'img/'
-            }
+          test: /\.(png|svg|jpe?g|gif)(\?v=\d+\.\d+\.\d+)?$/,
+          loader: 'file-loader',
+          options: {
+            outputPath: 'img/'
           }
         },
         {
@@ -124,29 +140,36 @@ module.exports = function (env, argv) {
           options: {
             outputPath: 'fonts/'
           }
+        },
+        {
+          test: require.resolve('noty'),
+          use: [
+            {
+              loader: 'expose-loader',
+              options: 'Noty'
+            }
+          ]
+        },
+        {
+          test: require.resolve('clipboard'),
+          use: [
+            {
+              loader: 'expose-loader',
+              options: 'ClipboardJS'
+            }
+          ]
         }
       ],
     },
     devtool: productionBuild ? '' : 'cheap-module-source-map',
     plugins: [
-      new webpack.DefinePlugin({
-        'process.env.NODE_ENV': JSON.stringify(env.nodeEnv)
-      }),
+      // new BundleAnalyzerPlugin(),
       new CleanWebpackPlugin([PATHS.dist]),
-      extractScss,
+      new MiniCssExtractPlugin({
+        filename: `css/${cssFileName}.css`
+      }),
       new BundleTracker({ filename: './webpack-stats.json' }),
       new webpack.HashedModuleIdsPlugin(),
-      // Anything shared b/w the vendor file and actual feature code will be moved to the vendor
-      // chunk. Ex: react, react-dom, etc. The order here matters. After moving shared code  to the
-      // vendor chunk, any other shared code will be moved to the commons chunk. Right now commons
-      // should just contain the webpack boilerplate. Eventually other duplicated code not in the
-      // vendor file will get moved there (because that's what happens when a chunk name isn't the
-      // same as an entry point). I think adding another name called manifest should move the
-      // webpack boilerplate to that chunk and leave duplicated code in commons.
-      new webpack.optimize.CommonsChunkPlugin({
-        names: ['vendor', 'commons'],
-        minChunks: 2
-      }),
       new CopyWebpackPlugin([
         {
           from: 'jquery/dist/jquery.min.js',
@@ -161,31 +184,6 @@ module.exports = function (env, argv) {
         {
           from: 'bootstrap-select/dist',
           to: 'vendor/bootstrap-select',
-          context: 'node_modules'
-        },
-        {
-          from: 'noty/lib/noty.min.js',
-          to: 'vendor',
-          context: 'node_modules'
-        },
-        {
-          from: 'noty/lib/noty.css',
-          to: 'vendor',
-          context: 'node_modules'
-        },
-        {
-          from: 'animate.css/animate.min.css',
-          to: 'vendor',
-          context: 'node_modules'
-        },
-        {
-          from: 'font-awesome/css',
-          to: 'vendor/font-awesome/css',
-          context: 'node_modules'
-        },
-        {
-          from: 'font-awesome/fonts',
-          to: 'vendor/font-awesome/fonts',
           context: 'node_modules'
         },
         {

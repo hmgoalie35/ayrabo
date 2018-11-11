@@ -1,0 +1,30 @@
+<div>
+  <p class="text-center text-muted small">
+    You are an administrator for the organizations below
+  </p>
+  <table class="table responsive-table table-thin-th-border">
+
+    <thead>
+    <tr>
+      <th scope="col">Name</th>
+      <th scope="col"># of Teams</th>
+      <th scope="col"></th>
+    </tr>
+    </thead>
+
+    <tbody>
+    {% for organization in organizations %}
+      <tr>
+        <td data-title="Name">{{ organization.name }}</td>
+        <td data-title="# of Teams">{{ organization.teams.all|length }}</td>
+        <td data-title="">
+          <a href="{% url 'organizations:detail' organization.id %}" id="organization-detail-link">
+            Manage
+          </a>
+        </td>
+      </tr>
+    {% endfor %}
+    </tbody>
+
+  </table>
+</div>

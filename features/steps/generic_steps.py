@@ -1,3 +1,5 @@
+import datetime
+import json
 import os
 import re
 
@@ -10,7 +12,7 @@ from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.select import Select
 from selenium.webdriver.support.ui import WebDriverWait
 
-from ayrabo.utils.testing import string_to_kwargs_dict, get_user
+from ayrabo.utils.testing import string_to_kwargs_dict, get_user, handle_date, handle_time
 from users.models import User
 
 
@@ -103,7 +105,10 @@ def step_impl(context, url):
 @step('I should be on the "(?P<url>.*)" page with kwargs "(?P<url_kwargs>[^"]*)"')
 def step_impl(context, url, url_kwargs):
     kwargs = string_to_kwargs_dict(url_kwargs)
-    context.test.assertEqual(context.driver.current_url, context.get_url(url, **kwargs))
+    current_url = context.driver.current_url
+    if '?' in current_url:
+        current_url = current_url.split('?')[0]
+    context.test.assertEqual(current_url, context.get_url(url, **kwargs))
 
 
 @step('I am on the absolute url page for "(?P<model_class>.*)" and "(?P<kwarg_data>.*)"')
@@ -125,8 +130,7 @@ def step_impl(context, model_class, kwarg_data):
     context.test.assertEqual(url_to_check, context.driver.current_url)
 
 
-@step(
-    'I am on the "(?P<model_class>[^"]*)" "(?P<model_kwargs>[^"]*)" "(?P<url_or_url_name>[^"]*)" page with url kwargs "(?P<url_kwargs>[^"]*)"')  # noqa
+@step('I am on the "(?P<model_class>[^"]*)" "(?P<model_kwargs>[^"]*)" "(?P<url_or_url_name>[^"]*)" page with url kwargs "(?P<url_kwargs>[^"]*)"')  # noqa
 def step_impl(context, model_class, model_kwargs, url_or_url_name, url_kwargs):
     url_kwargs_dict = string_to_kwargs_dict(url_kwargs)
     obj = get_first_obj_for_model(model_class, model_kwargs)
@@ -139,8 +143,7 @@ def step_impl(context, model_class, model_kwargs, url_or_url_name, url_kwargs):
     navigate_to_page(context, url_or_url_name, url_kwargs_dict)
 
 
-@step(
-    'I go to the "(?P<model_class>[^"]*)" "(?P<model_kwargs>[^"]*)" "(?P<url_or_url_name>[^"]*)" page with url kwargs "(?P<url_kwargs>[^"]*)"')  # noqa
+@step('I go to the "(?P<model_class>[^"]*)" "(?P<model_kwargs>[^"]*)" "(?P<url_or_url_name>[^"]*)" page with url kwargs "(?P<url_kwargs>[^"]*)"')  # noqa
 def step_impl(context, model_class, model_kwargs, url_or_url_name, url_kwargs):
     url_kwargs_dict = string_to_kwargs_dict(url_kwargs)
     obj = get_first_obj_for_model(model_class, model_kwargs)
@@ -153,8 +156,7 @@ def step_impl(context, model_class, model_kwargs, url_or_url_name, url_kwargs):
     navigate_to_page(context, url_or_url_name, url_kwargs_dict)
 
 
-@step(
-    'I should be on the "(?P<model_class>[^"]*)" "(?P<model_kwargs>[^"]*)" "(?P<url_or_url_name>[^"]*)" page with url kwargs "(?P<url_kwargs>[^"]*)"')  # noqa
+@step('I should be on the "(?P<model_class>[^"]*)" "(?P<model_kwargs>[^"]*)" "(?P<url_or_url_name>[^"]*)" page with url kwargs "(?P<url_kwargs>[^"]*)"')  # noqa
 def step_impl(context, model_class, model_kwargs, url_or_url_name, url_kwargs):
     url_kwargs_dict = string_to_kwargs_dict(url_kwargs)
     obj = get_first_obj_for_model(model_class, model_kwargs)
@@ -177,6 +179,17 @@ def step_impl(context, element, value):
     the_element = find_element(context, element)
     the_element.clear()
     the_element.send_keys(value)
+
+
+@step('I fill in "(?P<element>.*)" with date "(?P<date>.*)" and time "(?P<time>.*)"')
+def step_impl(context, element, date, time):
+    the_element = find_element(context, element)
+    the_element.clear()
+    date = handle_date(date)
+    time = handle_time(time)
+    fmt = '%m/%d/%Y %I:%M %p'
+    date_time = datetime.datetime.combine(date, time)
+    the_element.send_keys(date_time.strftime(fmt))
 
 
 @step('I press "(?P<element>[^"]*)"')
@@ -213,16 +226,16 @@ def step_impl(context):
     WebDriverWait(context.driver, 15).until(check_for_refresh)
 
 
-@step('I press "(?P<prefix>[^"]*)" with kwargs "(?P<kwargs>[^"]*)"')
-def step_impl(context, prefix, kwargs):
-    element_selector = prefix + str(context.url_kwargs[kwargs])
-    element = find_element(context, element_selector)
-    element.click()
-
-
 @step('I should see "(?P<text>.*)"')
 def step_impl(context, text):
     context.test.assertIn(text, str(context.driver.page_source))
+
+
+@step('I should see season "(?P<start>.*)" "(?P<end>.*)"')
+def step_impl(context, start, end):
+    start = handle_date(start)
+    end = handle_date(end)
+    context.test.assertIn('{}-{} Season'.format(start.year, end.year), str(context.driver.page_source))
 
 
 @step('The page should contain "(?P<text>.*)"')
@@ -241,7 +254,7 @@ def step_impl(context, username_or_email):
     context.test.assertIsInstance(get_user(username_or_email), User)
 
 
-@step('"(?P<text>.*)" should show up (?P<num>\d+) times?')
+@step(r'"(?P<text>.*)" should show up (?P<num>\d+) times?')
 def step_impl(context, text, num):
     # findall returns a list of all matches
     num_matches = len(re.findall(text, context.driver.page_source))
@@ -276,11 +289,7 @@ def step_impl(context, deselect, select_option, element):
         else:
             the_element.select_by_index(int(select_option))
         success = True
-    except TypeError:
-        pass
-    except ValueError:
-        pass
-    except NoSuchElementException:
+    except (ValueError, TypeError, NoSuchElementException):
         pass
 
     if not success:
@@ -288,7 +297,7 @@ def step_impl(context, deselect, select_option, element):
             'Cannot locate {select_option} by value, visible text or index'.format(select_option=select_option))
 
 
-@step('I select (?P<num_selections>\d+) [a-zA-Z]+ from "(?P<element>[^"]*)"')
+@step(r'I select (?P<num_selections>\d+) [a-zA-Z]+ from "(?P<element>[^"]*)"')
 def step_impl(context, num_selections, element):
     the_element = Select(find_element(context, element))
     for i in range(0, int(num_selections)):
@@ -379,3 +388,9 @@ def step_impl(context, attribute, element, values):
     the_element = find_element(context, element)
     attribute_values = the_element.get_attribute(attribute)
     context.test.assertEqual(attribute_values, values)
+
+
+@step('I view the console logs')
+def step_impl(context):
+    logs = context.driver.get_log('browser')
+    print(json.dumps(logs, indent=2))

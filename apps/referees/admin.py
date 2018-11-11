@@ -6,7 +6,7 @@ from .models import Referee
 @admin.register(Referee)
 class RefereeAdmin(admin.ModelAdmin):
     list_display = ['id', 'name', 'user', 'league', 'sport', 'is_active']
-    search_fields = ['user__email', 'league__full_name']
+    search_fields = ['user__email', 'league__name']
 
     def name(self, obj):
         return str(obj)

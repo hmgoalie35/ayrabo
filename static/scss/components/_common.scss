@@ -1,0 +1,64 @@
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+  margin-bottom: 60px;
+}
+
+.nav-tab {
+  color: $dusty-gray;
+  &:hover {
+    color: $dove-gray;
+  }
+}
+
+.list-group-item {
+  &__hoverable {
+    cursor: pointer;
+    &:hover {
+      background-color: $concrete;
+    }
+  }
+  &__flush-bottom {
+    &:last-child {
+      margin-bottom: -1px;
+    }
+  }
+}
+
+.vertical-line-left {
+  @media (min-width: $screen-sm-min) {
+    border-left: $navbar-vertical-line;
+  }
+}
+
+.clickable {
+  cursor: pointer;
+}
+
+.password-guidelines {
+  margin-right: 5px;
+}
+
+.no-js {
+  margin-bottom: 0;
+}
+
+// Fix bootstrap-select caret color
+.bootstrap-select > .dropdown-toggle.bs-placeholder .bs-caret {
+  color: $black;
+}
+
+.google-map {
+  border: 0;
+  @media (max-width: $screen-sm-min) {
+    width: 100%;
+    height: 100%;
+  }
+}
+
+hr {
+  border-top: 1px solid $alto;
+}

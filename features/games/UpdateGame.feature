@@ -28,8 +28,8 @@ Feature: Update a game
       | Iceland  |
       | IceWorks |
     And The following season object exists
-      | id | league                            | start_date | end_date   | teams                 |
-      | 1  | Long Island Amateur Hockey League | 2017-09-14 | 2018-09-14 | Green Machine IceCats |
+      | id | league                            | start_date | end_date | teams                 |
+      | 1  | Long Island Amateur Hockey League | -30d       | 1y       | Green Machine IceCats |
     And The following game objects exist
       | id | home_team             | away_team             | type   | point_value | location | start               | end                 | timezone   | season |
       | 1  | Green Machine IceCats | Long Island Edge      | league | 2           | Iceland  | today               | today               | US/Eastern | 1      |
@@ -57,9 +57,9 @@ Feature: Update a game
 
   Scenario: Submit invalid form
     Given I am on the "teams:games:update" page with kwargs "team_pk=1, pk=1"
-    And I fill in "id_end" with "10/23/2017 03:00 PM"
+    And I select "---------" from "id_location"
     And I press "update_game_btn"
-    Then I should see "Game end must be after game start."
+    Then I should see "This field is required."
 
   Scenario: Form disabled
     Given The following game object exists

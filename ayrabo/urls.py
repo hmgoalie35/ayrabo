@@ -1,32 +1,31 @@
 from django.conf import settings
-from django.conf.urls import url, include
+from django.conf.urls import include, url
 from django.conf.urls.static import static
 from django.contrib import admin
 
 from games.views import BulkUploadHockeyGamesView
-from home.views import HomePageView, AboutUsView, ContactUsView
+from home.views import AboutUsView, ContactUsView, HomePageView
 from locations.views import BulkUploadLocationsView
 from teams.views import BulkUploadTeamsView
 
+
 urlpatterns = [
-    url(r'^admin/bulk-upload-teams/$', BulkUploadTeamsView.as_view(), name='bulk_upload_teams'),
-    url(r'^admin/bulk-upload-locations/$', BulkUploadLocationsView.as_view(), name='bulk_upload_locations'),
-    url(r'^admin/bulk-upload-hockey-games/$', BulkUploadHockeyGamesView.as_view(), name='bulk_upload_hockeygames'),
+    url(r'^admin/teams/bulk-upload$', BulkUploadTeamsView.as_view(), name='bulk_upload_teams'),
+    url(r'^admin/locations/bulk-upload$', BulkUploadLocationsView.as_view(), name='bulk_upload_locations'),
+    url(r'^admin/hockey-games/bulk-upload$', BulkUploadHockeyGamesView.as_view(), name='bulk_upload_hockeygames'),
     url(r'^admin/', admin.site.urls),
 
     url(r'^$', HomePageView.as_view(), name='home'),
     url(r'^about-us/$', AboutUsView.as_view(), name='about_us'),
     url(r'^contact-us/$', ContactUsView.as_view(), name='contact_us'),
-
-    # This allows me to override allauth views, and add in custom views under account/
-    url(r'^account/', include('accounts.urls')),
+    url(r'^account/', include('accounts.urls')),  # Use our custom allauth views
     url(r'^account/', include('allauth.urls')),
-    url(r'^', include('sports.urls')),
-    url(r'^teams/', include('teams.urls', namespace='teams')),
+    url(r'^api/', include('api.urls')),  # Don't add an `api` namespace here, drf login/logout views will break
+    url(r'^leagues/', include('leagues.urls', namespace='leagues')),
     url(r'^locations/', include('locations.urls', namespace='locations')),
-    # Adding namespace of `api` will cause drf login/logout/obtain token endpoints to fail because they need to
-    # only be under the rest_framework namespace.
-    url(r'^api/', include('api.urls')),
+    url(r'^organizations/', include('organizations.urls', namespace='organizations')),
+    url(r'^sports/', include('sports.urls', namespace='sports')),
+    url(r'^teams/', include('teams.urls', namespace='teams')),
 ]
 
 if settings.DEBUG:

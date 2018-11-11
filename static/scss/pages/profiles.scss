@@ -1,0 +1,27 @@
+.profile {
+  $profile-nav-pills-border: 1px solid $alto;
+  .nav-bordered {
+    .list-item--pill {
+      margin-left: 0;
+      // Rules for xs devices
+      border-top: $profile-nav-pills-border;
+      border-left: $profile-nav-pills-border;
+      border-right: $profile-nav-pills-border;
+      &:last-of-type {
+        border-bottom: $profile-nav-pills-border;
+      }
+      // Rules for sm and up devices
+      @media (min-width: $screen-sm-min) {
+        border-right: none;
+        border-bottom: $profile-nav-pills-border;
+        &:last-of-type {
+          border-right: $profile-nav-pills-border;
+        }
+      }
+    }
+  }
+  .tab-link {
+    border-radius: 0;
+    margin-bottom: 0;
+  }
+}

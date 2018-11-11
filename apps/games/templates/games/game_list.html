@@ -24,102 +24,14 @@
 
         {# Hide the table and show a loading icon while datatables is being initialized #}
         <div class="text-center hidden js-table-section">
-          {% if games %}
-
-            {% if can_create_game %}
-              <span class="pull-right mt5">
-                <a id="create-game-btn" href="{% url 'teams:games:create' team.pk %}" class="btn btn-sm btn-default">
-                  <i class="fa fa-plus-circle fa-success"></i>
-                  Game
-                </a>
-              </span>
-            {% endif %}
-
-            <table class="table js-table responsive-table table-thin-th-border">
-              <thead>
-              <tr>
-                {# !!! Remember to update the datatables column indexes if modifying this !!! #}
-                <th scope="col">#</th>
-                <th scope="col">Home</th>
-                <th scope="col">Away</th>
-                <th scope="col">Type</th>
-                <th scope="col">Status</th>
-                <th scope="col">Location</th>
-                <th scope="col">Start</th>
-                <th scope="col">End</th>
-                <th scope="col">Season</th>
-                <th scope="col"></th>
-              </tr>
-              </thead>
-              <tbody>
-              {% for game in games %}
-                <tr>
-                  <td data-title="#">{{ game.pk }}</td>
-                  <td data-title="Home">
-                    {% include 'includes/team_logo.html' with team=game.home_team %}
-                    {{ game.home_team }}
-                  </td>
-                  <td data-title="Away">
-                    {% include 'includes/team_logo.html' with team=game.away_team %}
-                    {{ game.away_team }}
-                  </td>
-                  <td data-title="Type">{{ game.type }}</td>
-                  <td data-title="Status">{{ game.get_status_display }}</td>
-                  <td data-title="Location">
-                    <a href="{% url 'locations:detail' game.location.slug %}">{{ game.location.name }}</a>
-                  </td>
-                  <td data-title="Start">{{ game.start_formatted }}</td>
-                  <td data-title="End">{{ game.end_formatted }}</td>
-                  <td data-title="Season">{{ game.season }}</td>
-                  <td>
-                    <div class="dropdown table-dropdown">
-                      <a type="button" class="btn btn-link" data-toggle="dropdown" aria-haspopup="true"
-                         id="actions-dropdown-{{ game.id }}" aria-expanded="false">
-                        Actions
-                        <i class="fa fa-caret-down"></i>
-                      </a>
-                      <ul class="dropdown-menu dropdown-menu-right table-dropdown-menu" aria-labelledby="{{ game.id }}">
-                        <li>
-                          <a href="">
-                            {# If game finished maybe text should change to "View Result". Result should also be #}
-                            {# shown in the table so user doesn't need to navigate to another page #}
-                            <i class="fa fa-eye"></i>&nbsp;View
-                          </a>
-                        </li>
-                        {% if game.team_id in team_ids_for_manager %}
-                          <li>
-                            <a id="update-game-{{ game.pk }}"
-                               href="{% url 'teams:games:update' team_pk=game.team_id pk=game.pk %}">
-                              <i class="fa fa-pencil fa-primary"></i>&nbsp;Edit
-                            </a>
-                          </li>
-                        {% endif %}
-                        {% if game.home_team.id in team_ids_for_manager or game.away_team.id in team_ids_for_manager or is_scorekeeper %}
-                          <li>
-                            <a id="update-game-rosters-{{ game.pk }}" href="{% url 'sports:games:rosters:update' sport.slug game.pk %}">
-                              <i class="fa fa-wrench fa-ayrabo-gray"></i>&nbsp;Rosters
-                            </a>
-                          </li>
-                        {% endif %}
-                      </ul>
-                    </div>
-                  </td>
-                </tr>
-              {% endfor %}
-              </tbody>
-            </table>
-          {% else %}
-            <br><br>
-            <h3 id="no-games-header">There are no games for this team.</h3>
-            {% if can_create_game %}
-              <a id="create-game-btn-empty-state" href="{% url 'teams:games:create' team.pk %}"
-                 class="btn btn-sm btn-success">
-                <i class="fa fa-plus-circle fa-white"></i>
-                Game
+          {% if can_create_game %}
+            <span class="pull-right mt5">
+              <a id="create-game-btn" href="{% url 'teams:games:create' team.pk %}" class="btn btn-sm btn-default">
+                <i class="fa fa-plus-circle fa-success"></i>&nbsp;Game
               </a>
-            {% endif %}
-
+            </span>
           {% endif %}
+          {% include 'games/_games_table.html' with games=games team_ids_managed_by_user=team_ids_managed_by_user is_scorekeeper=is_scorekeeper %}
         </div>
       </div>
     </div>
@@ -130,27 +42,18 @@
 {% block extra_js %}
   <script>
     $(function () {
-      {% if games %}
-        $('.js-table').DataTable({
-          dom: '<"pull-left"f>tpr',
-          // Initially sort by game start. If add/remove columns need to update this.
-          order: [[6, 'desc']],
-          columnDefs: [
-            { orderable: false, targets: 9 },
-            { type: 'date', targets: [6, 7] },
-          ],
-          pageLength: 10,
-          language: {
-            paginate: {
-              previous: '<i class="fa fa-angle-double-left"></i>',
-              next: '<i class="fa fa-angle-double-right"></i>',
-            },
-            search: '',
-            searchPlaceholder: 'Search games',
-            zeroRecords: 'No games match your search criteria.',
-          },
-        });
-      {% endif %}
+      var hasGames = {% if games %}true{% else %}false{% endif %};
+      $('.js-table').enableDataTable({
+        // Initially sort by game start. If add/remove columns need to update the column index.
+        order: [[6, 'desc']],
+        language: {
+          searchPlaceholder: 'Search games',
+          zeroRecords: 'No games match your search criteria.',
+          emptyTable: 'There are no games for {{ team.name }} at this time.'
+        },
+        paging: hasGames,
+        searching: hasGames,
+      });
       $('.js-loading').remove();
       $('.js-table-section').removeClass('hidden');
     });

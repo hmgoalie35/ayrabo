@@ -32,7 +32,7 @@ class SeasonAdminForm(forms.ModelForm):
                 if team.division.league_id != league.id:
                     errors['teams'].append(
                         'The team specified ({team_name}) does not belong to {league}'.format(
-                            team_name=team.name, league=league.full_name))
+                            team_name=team.name, league=league.name))
 
             if errors['teams']:
                 raise ValidationError(errors)

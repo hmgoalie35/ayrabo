@@ -12,4 +12,4 @@ email_port: 2525
 allowed_hosts: "*"
 secret_key: "9(31c+k9q8p++7a46ite17(@a3os_*)gg@+yqn4_5isb^v5=tr"
 google_maps_api_key: ASK_HARRIS
-media_root: "{{ project_root }}/media"
+media_root:

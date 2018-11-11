@@ -45,7 +45,7 @@ class RefereeForm(forms.ModelForm):
         fields = ['user', 'league']
 
 
-class RefereeModelFormSet(BaseModelFormSet):
+class RefereeModelFormSet(BaseModelFormSet):  # pragma: no cover
     def clean(self):
         leagues_already_seen = []
         for form in self.forms:
@@ -54,7 +54,7 @@ class RefereeModelFormSet(BaseModelFormSet):
                 if league.id in leagues_already_seen:
                     form.add_error('league',
                                    '{} has already been selected. '
-                                   'Please choose another league or remove this form.'.format(league.full_name))
+                                   'Please choose another league or remove this form.'.format(league.name))
                 else:
                     leagues_already_seen.append(league.id)
         super().clean()

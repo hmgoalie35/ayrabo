@@ -1,20 +1,15 @@
-from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.shortcuts import get_object_or_404, render, redirect, Http404
+from django.contrib.messages.views import SuccessMessageMixin
+from django.shortcuts import get_object_or_404, redirect
+from django.urls import reverse
 from django.views import generic
-from django.views.generic import base
 
-from common.views import BaseCreateRelatedObjectsView
+from ayrabo.utils.exceptions import SportNotConfiguredException
 from ayrabo.utils.mappings import SPORT_PLAYER_MODEL_MAPPINGS
-from sports.models import SportRegistration
+from ayrabo.utils.mixins import HandleSportNotConfiguredMixin, HasPermissionMixin, WaffleSwitchMixin
+from ayrabo.utils.urls import url_with_query_string
+from sports.models import Sport, SportRegistration
 from . import forms
-from .formset_helpers import HockeyPlayerFormSetHelper, BaseballPlayerFormSetHelper
-
-SPORT_CREATE_PLAYER_FORM_MAPPINGS = {
-    'Ice Hockey': forms.HockeyPlayerForm,
-    'Baseball': forms.BaseballPlayerForm,
-    'Basketball': forms.BasketballPlayerForm
-}
 
 SPORT_UPDATE_PLAYER_FORM_MAPPINGS = {
     'Ice Hockey': forms.HockeyPlayerUpdateForm,
@@ -22,74 +17,58 @@ SPORT_UPDATE_PLAYER_FORM_MAPPINGS = {
     'Basketball': forms.BasketballPlayerUpdateForm
 }
 
-SPORT_PLAYER_FORMSET_HELPER_MAPPINGS = {
-    'Ice Hockey': HockeyPlayerFormSetHelper,
-    'Basketball': None,
-    'Baseball': BaseballPlayerFormSetHelper
-}
 
-
-class PlayersCreateView(BaseCreateRelatedObjectsView):
-    def get_formset_prefix(self):
-        return 'players'
-
-    def get_model_class(self, sport_name):
-        return SPORT_PLAYER_MODEL_MAPPINGS.get(sport_name)
-
-    def get_form_class(self, sport_name):
-        return SPORT_CREATE_PLAYER_FORM_MAPPINGS.get(sport_name)
-
-    def get_formset_class(self, sport_name):
-        return forms.PlayerModelFormSet
-
-    def get_formset_helper_class(self, sport_name):
-        return SPORT_PLAYER_FORMSET_HELPER_MAPPINGS.get(sport_name)
-
-    def get_template_name(self):
-        return 'players/players_create.html'
-
-    def get_role(self):
-        return 'Player'
-
-
-# NOTE: I am currently omitting checks for improperly configured sports because I don't
-# think it's possible to even get to this page.
-class PlayerUpdateView(LoginRequiredMixin, base.ContextMixin, generic.View):
+class PlayerUpdateView(LoginRequiredMixin,
+                       WaffleSwitchMixin,
+                       HandleSportNotConfiguredMixin,
+                       HasPermissionMixin,
+                       SuccessMessageMixin,
+                       generic.UpdateView):
     template_name = 'players/players_update.html'
+    pk_url_kwarg = 'player_pk'
+    context_object_name = 'player'
+    success_message = 'Your player information has been updated.'
+    waffle_identifier = 'player_update'
 
-    def _get_sport_registration(self):
-        return get_object_or_404(SportRegistration.objects.select_related('sport'), pk=self.kwargs.get('pk'))
+    def get_success_url(self):
+        return url_with_query_string(reverse('sports:dashboard', kwargs={'slug': self.sport.slug}),
+                                     tab=SportRegistration.PLAYER)
 
-    def _get_player(self, sport_name):
-        model_cls = SPORT_PLAYER_MODEL_MAPPINGS.get(sport_name)
-        return get_object_or_404(model_cls.objects.select_related('team'), pk=self.kwargs.get('player_pk'))
+    def _get_sport(self):
+        if hasattr(self, 'sport'):
+            return self.sport
+        self.sport = get_object_or_404(Sport, slug=self.kwargs.get('slug'))
+        return self.sport
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        sport_registration = self._get_sport_registration()
-        sport_name = sport_registration.sport.name
-        player = self._get_player(sport_name)
+    def has_permission_func(self):
+        user = self.request.user
+        player = self.get_object()
+        return user.id == player.user_id
 
-        user_id = self.request.user.id
-        if user_id != sport_registration.user_id or user_id != player.user_id:
-            raise Http404
+    def get_object(self, queryset=None):
+        sport = self._get_sport()
+        model_cls = SPORT_PLAYER_MODEL_MAPPINGS.get(sport.name)
+        if model_cls is None:
+            raise SportNotConfiguredException(sport)
+        pk = self.kwargs.get(self.pk_url_kwarg, None)
+        return get_object_or_404(model_cls.objects.select_related('team'), pk=pk)
 
-        context['player'] = player
-        context['sport_registration'] = sport_registration
-        form_cls = SPORT_UPDATE_PLAYER_FORM_MAPPINGS.get(sport_name)
-        context['form'] = form_cls(self.request.POST or None, instance=player)
-        return context
+    def get_form_class(self):
+        sport = self._get_sport()
+        form_cls = SPORT_UPDATE_PLAYER_FORM_MAPPINGS.get(sport.name)
+        if form_cls is None:
+            raise SportNotConfiguredException(self.sport)
+        return form_cls
+
+    def form_valid(self, form):
+        if form.has_changed():
+            return super().form_valid(form)
+        return redirect(self.get_success_url())
 
     def get(self, request, *args, **kwargs):
-        return render(request, self.template_name, self.get_context_data(**kwargs))
+        self._get_sport()
+        return super().get(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
-        context = self.get_context_data(**kwargs)
-        sr = context.get('sport_registration')
-        form = context.get('form')
-        if form.is_valid():
-            if form.has_changed():
-                form.save()
-                messages.success(request, 'Your player information has been updated.')
-            return redirect(sr.get_absolute_url())
-        return render(request, self.template_name, context)
+        self._get_sport()
+        return super().post(request, *args, **kwargs)

@@ -1,84 +1,44 @@
 import os
 
 from django.conf import settings
+from django.core.files.uploadedfile import SimpleUploadedFile
 from django.urls import reverse
 
-from users.tests import UserFactory
-from divisions.tests import DivisionFactory
 from ayrabo.utils.testing import BaseTestCase
-from sports.tests import SportFactory, SportRegistrationFactory
+from divisions.tests import DivisionFactory
+from leagues.tests import LeagueFactory
+from organizations.tests import OrganizationFactory
+from sports.tests import SportFactory
+from teams.models import Team
+from users.tests import UserFactory
 
 
-class TeamViewTests(BaseTestCase):
+class BulkUploadTeamsViewTests(BaseTestCase):
     def setUp(self):
+        self.url = reverse('bulk_upload_teams')
         self.email = 'user@ayrabo.com'
         self.password = 'myweakpassword'
-        self.user = UserFactory.create(email=self.email, password=self.password, is_staff=True)
-        self.ice_hockey = SportFactory(name='Ice Hockey')
-        SportRegistrationFactory(user=self.user, sport=self.ice_hockey, is_complete=True)
-        self.non_staff = UserFactory.create(email='non_staff@ayrabo.com', password=self.password)
-        SportRegistrationFactory(user=self.non_staff, sport=self.ice_hockey, is_complete=True)
+        self.test_file_path = os.path.join(settings.BASE_DIR, 'static', 'csv_examples')
+        self.user = UserFactory(email=self.email, password=self.password, is_staff=True)
+
+    def test_post_valid_csv(self):
+        ice_hockey = SportFactory(name='Ice Hockey')
+        liahl = LeagueFactory(name='Long Island Amateur Hockey League', sport=ice_hockey)
+        DivisionFactory(name='10U Milner', league=liahl)
+        OrganizationFactory(name='Green Machine IceCats', sport=ice_hockey)
         self.client.login(email=self.email, password=self.password)
-        self.test_file_path = os.path.join(settings.BASE_DIR, 'static', 'csv_examples', 'testing')
-        self.midget_minor_aa = DivisionFactory.create(name='Midget Minor AA')
+        with open(os.path.join(self.test_file_path, 'bulk_upload_teams_example.csv')) as f:
+            response = self.client.post(self.url, {'file': f}, follow=True)
+            self.assertHasMessage(response, 'Successfully created 1 team object(s)')
+            self.assertEqual(Team.objects.count(), 1)
 
-    # GET
-    def test_get_not_staff(self):
-        self.client.logout()
-        self.client.login(email=self.non_staff.email, password=self.password)
-        response = self.client.get(reverse('bulk_upload_teams'))
-        self.assertRedirects(response, reverse('home'))
-
-    def test_get_status_code_correct_template(self):
-        response = self.client.get(reverse('bulk_upload_teams'))
-
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'teams/team_bulk_upload.html')
-
-    def test_get_context_has_form(self):
-        response = self.client.get(reverse('bulk_upload_teams'))
-        self.assertIn('form', response.context)
-
-    # POST
-    def test_post_not_staff(self):
-        self.client.logout()
-        self.client.login(email=self.non_staff.email, password=self.password)
-        response = self.client.post(reverse('bulk_upload_teams'), {}, follow=True)
-        self.assertRedirects(response, reverse('home'))
-
-    def test_post_valid_form(self):
-        with open(os.path.join(self.test_file_path, 'valid_team_csv_formatting.csv')) as the_file:
-            response = self.client.post(reverse('bulk_upload_teams'), {'file': the_file}, follow=True)
-            self.assertHasMessage(response, '1 out of 1 teams successfully created.')
-
-    def test_post_no_csv_headers(self):
-        with open(os.path.join(self.test_file_path, 'no_headers.csv')) as the_file:
-            response = self.client.post(reverse('bulk_upload_teams'), {'file': the_file}, follow=True)
-            self.assertIn(
-                    'You must include Team Name, Website and Division as headings in the .csv '
-                    'on line 1', response.context['errors'])
-
-            self.assertIn('errors', response.context)
-            self.assertTemplateUsed(response, 'teams/team_bulk_upload.html')
-
-    def test_post_team_name_empty(self):
-        with open(os.path.join(self.test_file_path, 'team_name_empty.csv')) as the_file:
-            response = self.client.post(reverse('bulk_upload_teams'), {'file': the_file}, follow=True)
-            self.assertIn("Team Name and/or Division can't be blank on line 1", response.context['errors'])
-
-    def test_post_specified_division_dne(self):
-        with open(os.path.join(self.test_file_path, 'division_dne.csv')) as the_file:
-            response = self.client.post(reverse('bulk_upload_teams'), {'file': the_file}, follow=True)
-            self.assertIn('The division Division DNE does not currently exist, you need to create it under the correct '
-                          'league and sport', response.context['errors'])
-
-    def test_post_duplicate_teams(self):
-        with open(os.path.join(self.test_file_path, 'duplicate_teams.csv')) as the_file:
-            response = self.client.post(reverse('bulk_upload_teams'), {'file': the_file}, follow=True)
-            self.assertIn('Validation failed on line 2. Error: Team with this Name and Division already exists.',
-                          response.context['errors'])
-
-    def test_post_non_csv_file(self):
-        with open(os.path.join(self.test_file_path, 'not_a_csv_file.txt')) as the_file:
-            response = self.client.post(reverse('bulk_upload_teams'), {'file': the_file}, follow=True)
-            self.assertFormError(response, 'form', 'file', errors=['Uploaded files must be in .csv format'])
+    def test_post_invalid_csv(self):
+        self.client.login(email=self.email, password=self.password)
+        content = b'name, website, division, organization\n\na,b,c,d'
+        f = SimpleUploadedFile('test.csv', content)
+        response = self.client.post(self.url, {'file': f}, follow=True)
+        self.assertEqual(Team.objects.count(), 0)
+        self.assertFormsetError(response, 'formset', 0, 'division',
+                                ['Select a valid choice. That choice is not one of the available choices.'])
+        self.assertFormsetError(response, 'formset', 0, 'organization',
+                                ['Select a valid choice. That choice is not one of the available choices.'])

@@ -2,17 +2,17 @@ import re
 
 from django.core.validators import RegexValidator
 from django.db import models
-from django.utils import timezone
 from django.utils.text import slugify
 from localflavor.us import models as us_models
 from localflavor.us.us_states import US_STATES
 
 from ayrabo.utils.model_fields import WebsiteField
+from common.models import TimestampedModel
 
 PHONE_NUMBER_REGEX = re.compile(r'^\(?[2-9]\d{2}\)? \d{3}-\d{4}$')
 
 
-class Location(models.Model):
+class Location(TimestampedModel):
     name = models.CharField(max_length=255, unique=True, verbose_name='Name')
     slug = models.SlugField(max_length=255, unique=True, verbose_name='Slug')
     street = models.CharField(max_length=255, verbose_name='Street')
@@ -26,8 +26,6 @@ class Location(models.Model):
                                         RegexValidator(regex=PHONE_NUMBER_REGEX, message='Enter a valid phone number.',
                                                        code='invalid')])
     website = WebsiteField()
-    created = models.DateTimeField(default=timezone.now, verbose_name='Created')
-    updated = models.DateTimeField(auto_now=True, verbose_name='Updated')
 
     def clean(self):
         # Don't call .save here for 2 reasons. 1. In the admin pressing save w/o entering anything will result in a
@@ -42,15 +40,13 @@ class Location(models.Model):
         return self.name
 
 
-class TeamLocation(models.Model):
+class TeamLocation(TimestampedModel):
     """
     Used as a through model for a Team's relation to Location (m2m)
     """
     team = models.ForeignKey('teams.Team')
     location = models.ForeignKey(Location)
     primary = models.BooleanField(default=False, verbose_name='Primary Location')
-    created = models.DateTimeField(default=timezone.now, verbose_name='Created')
-    updated = models.DateTimeField(auto_now=True, verbose_name='Updated')
 
     class Meta:
         unique_together = (

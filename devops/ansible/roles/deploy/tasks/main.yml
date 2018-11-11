@@ -3,7 +3,6 @@
     update_cache: yes
 
 - block:
-    # TODO setup github keys https://docs.ansible.com/ansible/github_key_module.html
     - name: "git Starting deployment for {{ deployment_version }}: {{ ongoing_deployment|basename }}"
       git:
         accept_hostkey: yes
@@ -174,7 +173,6 @@
     - import_tasks: ../../utils/restart_gunicorn.yml
       when: current_symlink_stat is defined and current_symlink_stat.stat.exists
 
-    # TODO Clean up failed_deployments/ dir (cron?)
     - name: "Moving {{ ongoing_deployment|basename }} to {{ failed_deployments_dir|basename }}/"
       command: "mv {{ ongoing_deployment }} {{ failed_deployments_dir }}/{{ ongoing_deployment|basename }}"
       args:

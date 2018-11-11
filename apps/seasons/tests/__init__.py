@@ -1,2 +1,1 @@
-from .factories.SeasonFactory import SeasonFactory
-from .factories.SeasonRosterFactory import *
+from .factories import HockeySeasonRosterFactory, SeasonFactory

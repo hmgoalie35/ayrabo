@@ -47,10 +47,10 @@
     command: "migrate --noinput"
     virtualenv: "{{ venv_path }}"
 
-- name: Load dev fixtures
+- name: Run seeds
   django_manage:
     app_path: "{{ project_root }}"
-    command: "loaddata dev_fixtures"
+    command: "seed"
     virtualenv: "{{ venv_path }}"
 
 # Don't use ansible to run the test suite because the user should really see all stdout while the tests are running.

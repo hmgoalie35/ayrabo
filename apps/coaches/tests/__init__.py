@@ -1,1 +1,1 @@
-from .factories.CoachFactory import CoachFactory
+from .factories import CoachFactory

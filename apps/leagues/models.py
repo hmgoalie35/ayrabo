@@ -1,36 +1,40 @@
 from django.db import models
-from django.utils import timezone
 from django.utils.text import slugify
+from easy_thumbnails.fields import ThumbnailerImageField
 
+from ayrabo.utils import UploadTo
+from ayrabo.utils.model_fields import WebsiteField
+from common.models import TimestampedModel
 from sports.models import Sport
 
 
-class League(models.Model):
+class League(TimestampedModel):
     """
     Represents a league. A sport has many leagues and a league has many divisions.
     """
-    full_name = models.CharField(max_length=255, verbose_name='Full Name',
-                                 error_messages={'unique': 'League with this name already exists'})
+    name = models.CharField(max_length=255, verbose_name='Name',
+                            error_messages={'unique': 'League with this name already exists'})
     abbreviated_name = models.CharField(max_length=32, verbose_name='Abbreviated Name')
-    slug = models.SlugField(verbose_name='Slug')
+    slug = models.SlugField(max_length=255, verbose_name='Slug')
     sport = models.ForeignKey(Sport, verbose_name='Sport')
-    created = models.DateTimeField(default=timezone.now, verbose_name='Created')
+    logo = ThumbnailerImageField(verbose_name='Logo', upload_to=UploadTo('leagues/logos/'), null=True, blank=True)
+    website = WebsiteField()
 
     class Meta:
-        ordering = ['full_name']
+        ordering = ['name']
         unique_together = (
-            ('full_name', 'sport'),
+            ('name', 'sport'),
             ('slug', 'sport')
         )
 
     def generate_abbreviation(self):
         """
-        Generates an abbreviation based on the model's `full_name`. ex: National Hockey League --> NHL
+        Generates an abbreviation based on the model's `name`. ex: National Hockey League --> NHL
 
-        :return: Abbreviation for the model's `full_name`
+        :return: Abbreviation for the model's `name`
         """
         # Takes the first letter of each word and concatenates them together.
-        words = self.full_name.split(' ')
+        words = self.name.split(' ')
         return ''.join([word[:1].strip().upper() for word in words])
 
     def clean(self):
@@ -39,4 +43,4 @@ class League(models.Model):
         self.slug = slugify(abbreviated_name)
 
     def __str__(self):
-        return self.full_name
+        return self.name

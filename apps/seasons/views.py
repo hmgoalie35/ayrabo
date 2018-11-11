@@ -5,9 +5,8 @@ from django.urls import reverse
 from django.views import generic
 
 from ayrabo.utils.exceptions import SportNotConfiguredException
-from ayrabo.utils.mixins import HasPermissionMixin, HandleSportNotConfiguredMixin
+from ayrabo.utils.mixins import HandleSportNotConfiguredMixin, HasPermissionMixin
 from managers.models import Manager
-from sports.models import SportRegistration
 from teams.models import Team
 from .forms import HockeySeasonRosterCreateUpdateForm
 from .models import HockeySeasonRoster
@@ -64,8 +63,7 @@ class SeasonRosterCreateView(LoginRequiredMixin,
         return context
 
     def get_success_url(self):
-        sport_registration = SportRegistration.objects.filter(user=self.request.user, sport=self.sport).first()
-        return sport_registration.get_absolute_url() if sport_registration else reverse('home')
+        return reverse('sports:dashboard', kwargs={'slug': self.sport.slug})
 
     def get(self, request, *args, **kwargs):
         self._get_team()

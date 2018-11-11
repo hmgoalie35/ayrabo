@@ -21,8 +21,7 @@ class LocationDetailViewTests(BaseTestCase):
         self.password = 'myweakpassword'
         self.user = UserFactory(email=self.email, password=self.password)
         sport = SportFactory(name='Ice Hockey')
-        sr = SportRegistrationFactory(user=self.user, sport=sport)
-        sr.set_roles(['Manager'])
+        SportRegistrationFactory(user=self.user, sport=sport, role='manager')
         ManagerFactory(user=self.user, team=TeamFactory(name='Icecats', division__league__sport=sport))
         self.location = LocationFactory(id=1, name='Iceland', street_number=3345, street='Hillside Ave',
                                         city='New Hyde Park', state='NY', zip_code='11040')

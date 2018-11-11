@@ -11,7 +11,7 @@ from sports.tests import SportFactory
 class GenericChoiceManagerTests(BaseTestCase):
     def setUp(self):
         self.sport = SportFactory(name='Ice Hockey')
-        self.league = LeagueFactory(full_name='Long Island Amateur Hockey League')
+        self.league = LeagueFactory(name='Long Island Amateur Hockey League')
 
         self.choice1 = GenericChoiceFactory(content_object=self.sport, short_value='exhibition',
                                             long_value='Exhibition')

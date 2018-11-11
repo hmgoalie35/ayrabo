@@ -1,0 +1,42 @@
+{% extends 'leagues/league_detail_base.html' %}
+
+{% block page %}{{ block.super }} {{ season }} Schedule{% endblock %}
+
+{% block tab_content %}
+  <div role="tabpanel" class="tab-pane active" id="schedule">
+    {% if season %}
+      <h4 class="text-center">{{ season }} Schedule</h4>
+    {% endif %}
+
+    <div class="text-center js-loading">
+      {% include 'includes/loading.html' %}
+    </div>
+
+    {# Hide the table and show a loading icon while datatables is being initialized #}
+    <div class="text-center hidden js-table-section">
+      {% include 'games/_games_table.html' with games=games team_ids_managed_by_user=team_ids_managed_by_user is_scorekeeper=is_scorekeeper %}
+    </div>
+
+  </div>
+{% endblock %}
+
+{% block extra_js %}
+  <script>
+    $(function () {
+      var hasGames = {% if games %}true{% else %}false{% endif %};
+      $('.js-table').enableDataTable({
+        // Initially sort by game start. If add/remove columns need to update the column index.
+        order: [[6, 'desc']],
+        language: {
+          searchPlaceholder: 'Search games',
+          zeroRecords: 'No games match your search criteria.',
+          emptyTable: 'There are no games for {{ league.name }} at this time.'
+        },
+        paging: hasGames,
+        searching: hasGames,
+      });
+      $('.js-loading').remove();
+      $('.js-table-section').removeClass('hidden');
+    });
+  </script>
+{% endblock %}

@@ -6,15 +6,17 @@ from django.db import models
 from django.db.models.signals import m2m_changed
 from django.dispatch import receiver
 from django.urls import reverse
-from django.utils import timezone
 
+from common.models import TimestampedModel
+from seasons.managers import SeasonManager
 from teams.models import Team
 from users.models import User
+
 
 logger = logging.getLogger()
 
 
-class Season(models.Model):
+class Season(TimestampedModel):
     """
     Represents a season which is used to organize games, etc. under. A league has many seasons. A season has many teams
     and a team has many seasons.
@@ -23,6 +25,8 @@ class Season(models.Model):
     teams = models.ManyToManyField(Team, related_name='seasons')
     start_date = models.DateField(verbose_name='Start Date')
     end_date = models.DateField(verbose_name='End Date')
+
+    objects = SeasonManager()
 
     class Meta:
         ordering = ['-end_date', '-start_date']
@@ -85,11 +89,11 @@ def validate_leagues(action, instance, pk_set, reverse, **kwargs):
                     pk_set.remove(pk)
                     errors.append(
                         error_msg.format(cls.__name__.lower(), str(obj), obj.pk,
-                                         instance.division.league.full_name))
+                                         instance.division.league.name))
                 elif not reverse and obj.division.league_id != instance.league_id:
                     # Remove the pk from the set so it is not added
                     pk_set.remove(pk)
-                    errors.append(error_msg.format(cls.__name__.lower(), str(obj), obj.pk, instance.league.full_name))
+                    errors.append(error_msg.format(cls.__name__.lower(), str(obj), obj.pk, instance.league.name))
             else:
                 logger.error('{cls} with pk {pk} does not exist'.format(cls=cls.__name__, pk=pk))
         if errors:
@@ -97,7 +101,7 @@ def validate_leagues(action, instance, pk_set, reverse, **kwargs):
             # raise ValidationError(errors)
 
 
-class AbstractSeasonRoster(models.Model):
+class AbstractSeasonRoster(TimestampedModel):
     """
     Abstract base class used to represent a season roster. A season roster keeps tabs on all players for a team. This is
     different from a game roster because a game roster may not include all players in the season roster due to players
@@ -108,7 +112,6 @@ class AbstractSeasonRoster(models.Model):
     season = models.ForeignKey(Season)
     team = models.ForeignKey(Team, related_name='season_rosters')
     default = models.BooleanField(default=False, verbose_name='Default Season Roster')
-    created = models.DateTimeField(default=timezone.now, verbose_name='Created')
     created_by = models.ForeignKey(User, null=True, related_name='season_rosters', verbose_name='Created By')
 
     def clean(self):

@@ -1,6 +1,21 @@
 $(function () {
   $('[data-toggle="tooltip"]').tooltip();
 
+  function updateTooltipTitle($element, title) {
+    return $element.attr('title', title).tooltip('fixTitle').tooltip('show');
+  }
+
+  var clipboard = new ClipboardJS('.js-clipboard-btn');
+  clipboard.on('success', function (e) {
+    var $element = $(e.trigger);
+    updateTooltipTitle($element, 'Copied!');
+    setTimeout(function () {
+      updateTooltipTitle($element, 'Copy');
+      $element.blur();
+    }, 2000);
+    e.clearSelection();
+  });
+
   function getCookie(name) {
     var cookieValue = null;
     if (document.cookie && document.cookie !== '') {
@@ -36,6 +51,7 @@ $(function () {
     return (/android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(navigator.userAgent.toLowerCase()));
   };
 
+  $.fn.selectpicker.Constructor.BootstrapVersion = '3';
   $.fn.enableBootstrapSelect = function (option_overrides) {
     var options = {
       header: 'Select an option',
@@ -53,7 +69,7 @@ $(function () {
         caret: '<span class="fa fa-caret-down"></span>'
       }
     };
-    $.extend(options, option_overrides);
+    $.extend(true, options, option_overrides);
     this.selectpicker(options);
     return this;
   };
@@ -77,8 +93,27 @@ $(function () {
         close: 'fa fa-times'
       }
     };
-    $.extend(options, option_overrides);
+    $.extend(true, options, option_overrides);
     this.datetimepicker(options);
+    return this;
+  };
+
+  $.fn.enableDataTable = function (option_overrides) {
+    // Some attributes that should be specified: `dom`, `order`.
+    var options = {
+      pageLength: 10,
+      language: {
+        paginate: {
+          previous: '<i class="fa fa-angle-double-left"></i>',
+          next: '<i class="fa fa-angle-double-right"></i>',
+        },
+        search: '<i class="fa fa-search"></i>_INPUT_',
+        searchPlaceholder: 'Search items',
+        zeroRecords: 'No items match your search criteria.',
+      }
+    };
+    $.extend(true, options, option_overrides);
+    this.DataTable(options);
     return this;
   };
 
@@ -109,12 +144,6 @@ $(function () {
     },
   });
 
-  $('#edit_account_link.disabled').click(function (e) {
-    e.preventDefault();
-    e.stopPropagation();
-    return false;
-  });
-
   $('#logout_btn_acct_menu').click(function (e) {
     e.preventDefault();
     e.stopPropagation();
@@ -130,11 +159,42 @@ $(function () {
 
   // Any tabs on the site can opt into this functionality by adding `data-tab=<value>`.
   // The corresponding Django view needs to set the `active` class based off of the `tab` query param.
-  $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+  $('a[data-toggle="tab"], a[data-toggle="pill"]').on('shown.bs.tab', function (e) {
     var tab = $(e.target).data('tab');
     if (tab) {
       var baseUrl = window.location.origin + window.location.pathname;
       window.history.replaceState({}, '', baseUrl + '?tab=' + encodeURIComponent(tab));
     }
+  });
+
+  // Turns a dropdown into a dropup if there is not enough space under the dropdown
+  $(document).on('shown.bs.dropdown', '.dropdown', function () {
+    // calculate the required sizes, spaces
+    var $ul = $(this).children('.dropdown-menu');
+    var $button = $(this).children('.dropdown-toggle');
+    var ulOffset = $ul.offset();
+    // how much space would be left on the top if the dropdown opened that direction
+    var spaceUp = (ulOffset.top - $button.height() - $ul.height()) - $(window).scrollTop();
+    // how much space is left at the bottom
+    var spaceDown = $(window).scrollTop() + $(window).height() - (ulOffset.top + $ul.height());
+    // switch to dropup only if there is no space at the bottom AND there is space at the top, or there isn't either but it would be still better fit
+    if (spaceDown < 0 && (spaceUp >= 0 || spaceUp > spaceDown)) {
+      $(this).addClass('dropup');
+    }
+  });
+
+  $(document).on('hidden.bs.dropdown', '.dropdown', function () {
+    // always reset after close
+    $(this).removeClass('dropup');
+  });
+
+  $('.js-api-error-button').click(function (e) {
+    e.preventDefault();
+    e.stopPropagation();
+    var $errorContainer = $('.js-api-error');
+    $errorContainer.animateCss('fadeOut', function () {
+      $errorContainer.addClass('hidden');
+    });
+    return false;
   });
 });

@@ -17,7 +17,7 @@ EXPIRATION_DAYS = 30
 class CopyExpiringSeasonsTests(BaseTestCase):
     def setUp(self):
         self.today = datetime.date.today()
-        self.league = LeagueFactory(full_name='Long Island Amateur Hockey League', sport__name='Ice Hockey')
+        self.league = LeagueFactory(name='Long Island Amateur Hockey League', sport__name='Ice Hockey')
         self.division = DivisionFactory(league=self.league)
         self.teams = TeamFactory.create_batch(5, division=self.division)
 
