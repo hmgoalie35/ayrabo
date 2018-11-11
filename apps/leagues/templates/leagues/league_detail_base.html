@@ -1,7 +1,7 @@
 {% extends 'site_base.html' %}
 {% load get_tab_active_class from utils %}
 
-{% block title %}{{ league.name }}{% block page %}{% endblock %}{% endblock %}
+{% block title %}{{ league.abbreviated_name }}{% block page %}{% endblock %}{% endblock %}
 
 {% block content %}
   <div class="container profile">
@@ -17,7 +17,7 @@
 
         <div role="navigation">
           <ul class="nav nav-pills nav-justified nav-bordered" role="tablist">
-            <li role="presentation" class="{% get_tab_active_class 'schedule' %}">
+            <li role="presentation" class="list-item--pill {% get_tab_active_class 'schedule' %}">
               <a
                 id="tab-item-schedule"
                 class="tab-link"
@@ -27,7 +27,7 @@
               >Schedule
               </a>
             </li>
-            <li role="presentation" class="{% get_tab_active_class 'divisions' %}">
+            <li role="presentation" class="list-item--pill {% get_tab_active_class 'divisions' %}">
               <a
                 id="tab-item-divisions"
                 class="tab-link"
@@ -36,6 +36,32 @@
                 role="tab"
               >Divisions
               </a>
+            </li>
+            <li role="presentation" class="list-item--pill dropdown {% get_tab_active_class 'past_seasons' %}">
+              <a
+                id="tab-item-past-seasons"
+                class="tab-link dropdown-toggle"
+                data-toggle="dropdown"
+                href="#"
+                aria-controls="schedule"
+                aria-haspopup="true"
+                aria-expanded="false"
+                role="tab"
+              >Past Seasons<i class="fa fa-fw fa-caret-down"></i>
+              </a>
+              <ul class="dropdown-menu">
+                {% for past_season in past_seasons %}
+                  <li>
+                    <a
+                      id="past-season-{{ past_season.pk }}"
+                      href="{% url 'leagues:seasons' slug=league.slug season_pk=past_season.pk %}"
+                    >{{ past_season }}
+                    </a>
+                  </li>
+                {% empty %}
+                  <li><a>There are no past seasons at this time.</a></li>
+                {% endfor %}
+              </ul>
             </li>
           </ul>
         </div>

@@ -10,7 +10,6 @@ Feature: League detail
     And The following league objects exist
       | name                              | sport      |
       | Long Island Amateur Hockey League | Ice Hockey |
-
     And The following team objects exist
       | id | name                  | division        | league                            | sport      |
       | 1  | Green Machine IceCats | Midget Minor AA | Long Island Amateur Hockey League | Ice Hockey |
@@ -40,7 +39,7 @@ Feature: League detail
   Scenario: Basic info displayed to user
     Given I am on the "leagues:schedule" page with kwargs "slug=liahl"
     Then I should see "Long Island Amateur Hockey League"
-    And I should see "Schedule"
+    And I should see season "today" "1y"
 
   Scenario: Games displayed
     Given I am on the "leagues:schedule" page with kwargs "slug=liahl"
@@ -53,3 +52,13 @@ Feature: League detail
     And I should see "Iceland"
     And I should see "Long Island Rebels"
     And I should see "Aviator Gulls"
+
+  Scenario: View past season
+    Given The following season object exists
+      | id | league                            | start_date | end_date | teams                 |
+      | 2  | Long Island Amateur Hockey League | -1y        | -5d      | Green Machine IceCats |
+    And I am on the "leagues:schedule" page with kwargs "slug=liahl"
+    And I press "tab-item-past-seasons"
+    And I press "past-season-2"
+    Then I should be on the "leagues:seasons" page with kwargs "slug=liahl, season_pk=2"
+    And I should see season "-1y" "-5d"

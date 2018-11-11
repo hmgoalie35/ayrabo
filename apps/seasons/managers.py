@@ -20,3 +20,16 @@ class SeasonManager(models.Manager):
         today = date.today()
         qs = self.filter(league=league, start_date__lte=today, end_date__gt=today)
         return qs.first()
+
+    def get_past(self, league):
+        """
+        Computes past seasons for the given league.
+
+        We do not use `__lte` because we only treat the season as in the past if its end date has passed.
+
+        :param league: The league to get past seasons for
+        :return: Past seasons for the league
+        """
+        today = date.today()
+        # Order matters, we want to display recently finished seasons first.
+        return self.filter(league=league, end_date__lt=today).order_by('-end_date')

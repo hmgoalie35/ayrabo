@@ -1,7 +1,7 @@
 .profile {
   $profile-nav-pills-border: 1px solid $alto;
   .nav-bordered {
-    li {
+    .list-item--pill {
       margin-left: 0;
       // Rules for xs devices
       border-top: $profile-nav-pills-border;

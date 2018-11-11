@@ -1,10 +1,9 @@
 {% extends 'leagues/league_detail_base.html' %}
-{% load get_tab_active_class from utils %}
 
-{% block page %}{{ block.super }} Schedule{% endblock %}
+{% block page %}{{ block.super }} {{ season }} Schedule{% endblock %}
 
 {% block tab_content %}
-  <div role="tabpanel" class="tab-pane {% get_tab_active_class 'schedule' %}" id="schedule">
+  <div role="tabpanel" class="tab-pane active" id="schedule">
     {% if season %}
       <h4 class="text-center">{{ season }} Schedule</h4>
     {% endif %}
