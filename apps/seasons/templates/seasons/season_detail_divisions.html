@@ -3,12 +3,12 @@
 {% block page %}{{ block.super }} Divisions{% endblock %}
 
 {% block tab_content %}
-  <div role="tabpanel" class="tab-pane league-detail--divisions active" id="divisions">
+  <div role="tabpanel" class="tab-pane active" id="divisions">
 
     {% for chunk in chunked_divisions %}
       <div class="row">
         {% if not forloop.first %}
-          <hr class="hidden-xs hidden-sm">
+          <hr class="mtauto hidden-xs hidden-sm">
         {% endif %}
         {% for division in chunk %}
           <div class="col-md-3">
