@@ -1,8 +1,12 @@
-from django.conf.urls import url, include
+from django.conf.urls import include, url
 
 from . import views
 
-season_urls = []
+
+season_urls = [
+    url(r'^(?P<season_pk>\d+)/$', views.SeasonScheduleDetailView.as_view(), name='schedule'),
+    url(r'^(?P<season_pk>\d+)/divisions/$', views.SeasonDivisionsDetailView.as_view(), name='divisions'),
+]
 
 season_roster_urls = [
     url(r'^$', views.SeasonRosterListView.as_view(), name='list'),
@@ -11,6 +15,5 @@ season_roster_urls = [
 ]
 
 urlpatterns = [
-    url(r'^seasons/', include(season_urls, namespace='seasons')),
     url(r'^season-rosters/', include(season_roster_urls, namespace='season_rosters')),
 ]

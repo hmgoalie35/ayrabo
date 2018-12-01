@@ -1,0 +1,43 @@
+{% extends 'seasons/season_detail_base.html' %}
+
+{% block page %}{{ block.super }} Divisions{% endblock %}
+
+{% block tab_content %}
+  <div role="tabpanel" class="tab-pane league-detail--divisions active" id="divisions">
+
+    {% for chunk in chunked_divisions %}
+      <div class="row">
+        {% if not forloop.first %}
+          <hr class="hidden-xs hidden-sm">
+        {% endif %}
+        {% for division in chunk %}
+          <div class="col-md-3">
+            <div class="panel panel-default">
+              <div class="panel-heading">
+                <h3 class="panel-title">{{ division.name }}</h3>
+              </div>
+              {# Can set a max height on this element so panels are approx. the same height #}
+              <ul class="list-group">
+                {% for team in division.teams.all %}
+                  <li class="list-group-item">
+                    {% include 'includes/team_logo.html' with team=team %}
+                    {{ team.name }}
+                  </li>
+                {% empty %}
+                  <li class="list-group-item text-center">
+                    There are no teams tied to {{ division.name }} at this time.
+                  </li>
+                {% endfor %}
+              </ul>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    {% empty %}
+      <div class="text-center">
+        <p>There are no divisions tied to {{ league.name }} at this time.</p>
+      </div>
+    {% endfor %}
+
+  </div>
+{% endblock %}

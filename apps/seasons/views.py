@@ -3,13 +3,20 @@ from django.contrib.messages.views import SuccessMessageMixin
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse
 from django.views import generic
+from django.views.generic import DetailView
 
+from ayrabo.utils import chunk
 from ayrabo.utils.exceptions import SportNotConfiguredException
 from ayrabo.utils.mixins import HandleSportNotConfiguredMixin, HasPermissionMixin
+from divisions.models import Division
+from games.mappings import get_game_model_cls
+from games.utils import get_game_list_context, optimize_games_query
 from managers.models import Manager
+from seasons.models import Season
 from teams.models import Team
 from .forms import HockeySeasonRosterCreateUpdateForm
 from .models import HockeySeasonRoster
+
 
 SPORT_FORM_MAPPINGS = {
     'Ice Hockey': HockeySeasonRosterCreateUpdateForm
@@ -180,3 +187,73 @@ class SeasonRosterUpdateView(LoginRequiredMixin,
     def post(self, request, *args, **kwargs):
         self._get_team()
         return super().post(request, *args, **kwargs)
+
+
+class AbstractSeasonDetailView(LoginRequiredMixin, HandleSportNotConfiguredMixin, DetailView):
+    context_object_name = 'season'
+    pk_url_kwarg = 'season_pk'
+    queryset = Season.objects.select_related('league')
+
+    def get_object(self, queryset=None):
+        if hasattr(self, 'object'):
+            return self.object
+        self.object = super().get_object(queryset)
+        return self.object
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        season = context.get('season')
+        league = season.league
+        past_seasons = Season.objects.get_past(league=league)
+        context.update({
+            'past_seasons': past_seasons,
+            'league': league,
+        })
+        return context
+
+
+class SeasonScheduleDetailView(AbstractSeasonDetailView):
+    template_name = 'seasons/season_detail_schedule.html'
+
+    def _get_games(self, sport, season):
+        model_cls = get_game_model_cls(sport)
+        # Seasons are tied to leagues so we don't need to exclude games for other leagues
+        qs = model_cls.objects.filter(season=season)
+        return optimize_games_query(qs)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        league = context.get('league')
+        season = context.get('season')
+        user = self.request.user
+        sport = league.sport
+        game_list_context = get_game_list_context(user, sport)
+        games = self._get_games(sport, season)
+        context.update({
+            'active_tab': 'schedule',
+            'season': season,
+            'games': games,
+        })
+        context.update(game_list_context)
+        return context
+
+
+class SeasonDivisionsDetailView(AbstractSeasonDetailView):
+    template_name = 'seasons/season_detail_divisions.html'
+    queryset = AbstractSeasonDetailView.queryset.prefetch_related('teams', 'teams__division')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        season = context.get('season')
+        teams = season.teams.all()
+        division_ids = teams.values_list('division', flat=True)
+        divisions = Division.objects.prefetch_related('teams').filter(id__in=division_ids)
+        per_row = 4
+        # The generator gets exhausted after the template loops over the chunked divisions so using it anywhere else
+        # resulted in an empty array. Convert to a list here to prevent this problem.
+        chunked_divisions = list(chunk(divisions, per_row))
+        context.update({
+            'active_tab': 'divisions',
+            'chunked_divisions': chunked_divisions,
+        })
+        return context
