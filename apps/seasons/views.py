@@ -11,6 +11,7 @@ from ayrabo.utils.mixins import HandleSportNotConfiguredMixin, HasPermissionMixi
 from divisions.models import Division
 from games.mappings import get_game_model_cls
 from games.utils import get_game_list_context, optimize_games_query
+from leagues.models import League
 from managers.models import Manager
 from seasons.models import Season
 from teams.models import Team
@@ -192,7 +193,21 @@ class SeasonRosterUpdateView(LoginRequiredMixin,
 class AbstractSeasonDetailView(LoginRequiredMixin, HandleSportNotConfiguredMixin, DetailView):
     context_object_name = 'season'
     pk_url_kwarg = 'season_pk'
-    queryset = Season.objects.select_related('league')
+
+    def _get_league(self):
+        """
+        We can prevent the need for a select_related call (and therefore an extra query) in get_queryset by using
+        `self.league` over `season.league`.
+        """
+        if hasattr(self, 'league'):
+            return self.league
+        self.league = get_object_or_404(League, slug=self.kwargs.get('slug'))
+        return self.league
+
+    def get_queryset(self):
+        league = self._get_league()
+        # Make sure the season belongs to the league taken from the slug in the url.
+        return Season.objects.filter(league=league)
 
     def get_object(self, queryset=None):
         if hasattr(self, 'object'):
@@ -202,12 +217,10 @@ class AbstractSeasonDetailView(LoginRequiredMixin, HandleSportNotConfiguredMixin
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        season = context.get('season')
-        league = season.league
-        past_seasons = Season.objects.get_past(league=league)
+        past_seasons = Season.objects.get_past(league=self.league)
         context.update({
             'past_seasons': past_seasons,
-            'league': league,
+            'league': self.league,
         })
         return context
 
@@ -240,7 +253,6 @@ class SeasonScheduleDetailView(AbstractSeasonDetailView):
 
 class SeasonDivisionsDetailView(AbstractSeasonDetailView):
     template_name = 'seasons/season_detail_divisions.html'
-    queryset = AbstractSeasonDetailView.queryset.prefetch_related('teams', 'teams__division')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
