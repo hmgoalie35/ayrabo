@@ -1,0 +1,12 @@
+{% load get_tab_active_class from utils %}
+
+<li role="presentation" class="list-item--pill {% get_tab_active_class 'divisions' %}">
+  <a
+    id="tab-item-divisions"
+    class="tab-link"
+    href="{{ divisions_link }}"
+    aria-controls="divisions"
+    role="tab"
+  >{{ link_text }}
+  </a>
+</li>

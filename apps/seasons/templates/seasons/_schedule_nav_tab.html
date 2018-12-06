@@ -1,0 +1,12 @@
+{% load get_tab_active_class from utils %}
+
+<li role="presentation" class="list-item--pill {% get_tab_active_class 'schedule' %}">
+  <a
+    id="tab-item-schedule"
+    class="tab-link"
+    href="{{ schedule_link }}"
+    aria-controls="schedule"
+    role="tab"
+  >Schedule
+  </a>
+</li>
