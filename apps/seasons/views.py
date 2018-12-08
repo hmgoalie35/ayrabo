@@ -5,15 +5,13 @@ from django.urls import reverse
 from django.views import generic
 from django.views.generic import DetailView
 
-from ayrabo.utils import chunk
 from ayrabo.utils.exceptions import SportNotConfiguredException
 from ayrabo.utils.mixins import HandleSportNotConfiguredMixin, HasPermissionMixin
 from divisions.models import Division
-from games.mappings import get_game_model_cls
-from games.utils import get_game_list_context, optimize_games_query
 from leagues.models import League
 from managers.models import Manager
 from seasons.models import Season
+from seasons.utils import get_chunked_divisions, get_schedule_view_context
 from teams.models import Team
 from .forms import HockeySeasonRosterCreateUpdateForm
 from .models import HockeySeasonRoster
@@ -225,14 +223,8 @@ class AbstractSeasonDetailView(LoginRequiredMixin, HandleSportNotConfiguredMixin
         return context
 
 
-class SeasonScheduleDetailView(AbstractSeasonDetailView):
+class SeasonDetailScheduleView(AbstractSeasonDetailView):
     template_name = 'seasons/season_detail_schedule.html'
-
-    def _get_games(self, sport, season):
-        model_cls = get_game_model_cls(sport)
-        # Seasons are tied to leagues so we don't need to exclude games for other leagues
-        qs = model_cls.objects.filter(season=season)
-        return optimize_games_query(qs)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -240,18 +232,11 @@ class SeasonScheduleDetailView(AbstractSeasonDetailView):
         season = context.get('season')
         user = self.request.user
         sport = league.sport
-        game_list_context = get_game_list_context(user, sport)
-        games = self._get_games(sport, season)
-        context.update({
-            'active_tab': 'schedule',
-            'season': season,
-            'games': games,
-        })
-        context.update(game_list_context)
+        context.update(get_schedule_view_context(user, sport, season))
         return context
 
 
-class SeasonDivisionsDetailView(AbstractSeasonDetailView):
+class SeasonDetailDivisionsView(AbstractSeasonDetailView):
     template_name = 'seasons/season_detail_divisions.html'
 
     def get_context_data(self, **kwargs):
@@ -260,10 +245,7 @@ class SeasonDivisionsDetailView(AbstractSeasonDetailView):
         teams = season.teams.all()
         division_ids = teams.values_list('division', flat=True)
         divisions = Division.objects.prefetch_related('teams').filter(id__in=division_ids)
-        per_row = 4
-        # The generator gets exhausted after the template loops over the chunked divisions so using it anywhere else
-        # resulted in an empty array. Convert to a list here to prevent this problem.
-        chunked_divisions = list(chunk(divisions, per_row))
+        chunked_divisions = get_chunked_divisions(divisions)
         context.update({
             'active_tab': 'divisions',
             'chunked_divisions': chunked_divisions,
