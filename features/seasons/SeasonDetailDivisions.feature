@@ -1,7 +1,7 @@
-Feature: League detail divisions
+Feature: Season detail divisions
   As a user,
-  I want to be able to view the divisions and teams for a league
-  So that I can see an overview of the league
+  I want to be able to view the divisions and teams for a season
+  So that I can see an overview of the season
 
   Background:
     Given The following confirmed user account exists
@@ -10,22 +10,26 @@ Feature: League detail divisions
     And The following league objects exist
       | name                              | sport      |
       | Long Island Amateur Hockey League | Ice Hockey |
-
+      | National Hockey League            | Ice Hockey |
     And The following team objects exist
       | id | name                  | division        | league                            | sport      |
       | 1  | Green Machine IceCats | Midget Minor AA | Long Island Amateur Hockey League | Ice Hockey |
       | 2  | Long Island Edge      | Midget Minor AA | Long Island Amateur Hockey League | Ice Hockey |
       | 3  | Aviator Gulls         | PeeWee          | Long Island Amateur Hockey League | Ice Hockey |
       | 4  | Long Island Rebels    | PeeWee          | Long Island Amateur Hockey League | Ice Hockey |
+    And The following season objects exist
+      | id | league                            | teams                                                                      |
+      | 1  | Long Island Amateur Hockey League | Green Machine IceCats, Long Island Edge, Aviator Gulls, Long Island Rebels |
+      | 2  | National Hockey League            |                                                                            |
     And I login with "user@ayrabo.com" and "myweakpassword"
 
-  Scenario: Navigate to league divisions page
-    Given I am on the "leagues:schedule" page with kwargs "slug=liahl"
+  Scenario: Navigate to season divisions page
+    Given I am on the "leagues:seasons:schedule" page with kwargs "slug=liahl, season_pk=1"
     And I press "tab-item-divisions"
-    Then I should be on the "leagues:divisions" page with kwargs "slug=liahl"
+    Then I should be on the "leagues:seasons:divisions" page with kwargs "slug=liahl, season_pk=1"
 
   Scenario: Basic info displayed to user
-    Given I am on the "leagues:divisions" page with kwargs "slug=liahl"
+    Given I am on the "leagues:seasons:divisions" page with kwargs "slug=liahl, season_pk=1"
     Then I should see "Divisions"
     And I should see "Midget Minor AA"
     And I should see "Green Machine IceCats"
@@ -35,18 +39,6 @@ Feature: League detail divisions
     And I should see "Long Island Rebels"
 
   Scenario: No divisions exist
-    Given The following league object exists
-      | name                   | sport      |
-      | National Hockey League | Ice Hockey |
-    And I am on the "leagues:divisions" page with kwargs "slug=nhl"
+    Given I am on the "leagues:seasons:divisions" page with kwargs "slug=nhl, season_pk=2"
     Then I should see "There are no divisions tied to National Hockey League at this time."
 
-  Scenario: No teams for division exist
-    Given The following league object exists
-      | name                   | sport      |
-      | National Hockey League | Ice Hockey |
-    And The following division object exists
-      | name              | league                 |
-      | Atlantic Division | National Hockey League |
-    And I am on the "leagues:divisions" page with kwargs "slug=nhl"
-    Then I should see "There are no teams tied to Atlantic Division at this time."

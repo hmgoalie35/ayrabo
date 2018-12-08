@@ -4,7 +4,7 @@ A module that contains useful methods for testing
 import datetime
 import re
 
-from django.db.models import Q
+from django.db.models import Q, QuerySet
 from django.test import TestCase
 from django.urls import reverse
 from rest_framework import status
@@ -45,8 +45,17 @@ def clean_kwargs(kwargs):
 def to_bool(value):
     if isinstance(value, str):
         value = value.lower()
-
     return value in [True, 'true']
+
+
+def comma_separated_string_to_list(string):
+    """
+    Takes a string of comma separated values and converts it to a list.
+
+    :param string: String of comma separated values
+    :return: List of items
+    """
+    return [item.strip() for item in string.split(',')] if isinstance(string, str) else []
 
 
 def handle_date(value):
@@ -135,6 +144,12 @@ class BaseTestCase(TestCase):
     def assertSportNotConfigured(self, url):
         response = self.client.get(url)
         self.assertTemplateUsed(response, 'sport_not_configured_msg.html')
+
+    def assertDictWithQuerySetEqual(self, dictionary, expected):
+        cleaned_dict = {}
+        for k, v in dictionary.items():
+            cleaned_dict[k] = list(v) if isinstance(v, QuerySet) else v
+        self.assertDictEqual(cleaned_dict, expected)
 
     def assert_200(self, response):
         self.assertEqual(response.status_code, 200)

@@ -60,5 +60,5 @@ Feature: League detail
     And I am on the "leagues:schedule" page with kwargs "slug=liahl"
     And I press "tab-item-past-seasons"
     And I press "past-season-2"
-    Then I should be on the "leagues:seasons" page with kwargs "slug=liahl, season_pk=2"
+    Then I should be on the "leagues:seasons:schedule" page with kwargs "slug=liahl, season_pk=2"
     And I should see season "-1y" "-5d"
