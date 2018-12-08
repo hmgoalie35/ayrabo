@@ -5,6 +5,7 @@ from . import views
 
 
 urlpatterns = [
-    url(r'^(?P<slug>[-\w]+)/divisions/$', views.LeagueDivisionsView.as_view(), name='divisions'),
+    url(r'^(?P<slug>[-\w]+)/$', views.LeagueDetailScheduleView.as_view(), name='schedule'),
+    url(r'^(?P<slug>[-\w]+)/divisions/$', views.LeagueDetailDivisionsView.as_view(), name='divisions'),
     url(r'^(?P<slug>[-\w]+)/seasons/', include(season_urls, namespace='seasons')),
 ]

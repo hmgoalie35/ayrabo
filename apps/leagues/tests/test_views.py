@@ -51,7 +51,7 @@ class LeagueDetailViewTestCase(BaseTestCase):
                       self.rebels_peewee]
 
 
-class LeagueScheduleViewTests(LeagueDetailViewTestCase):
+class LeagueDetailScheduleViewTests(LeagueDetailViewTestCase):
     url = 'leagues:schedule'
 
     def _create_game(self, home_team, away_team, season):
@@ -106,40 +106,13 @@ class LeagueScheduleViewTests(LeagueDetailViewTestCase):
         self.assertEqual(context.get('active_tab'), 'schedule')
         self.assertEqual(context.get('season'), self.current_season)
         self.assertListEqual(list(context.get('team_ids_managed_by_user')), team_ids_managed_by_user)
+        self.assertFalse(context.get('is_scorekeeper'))
         self.assertListEqual(list(context.get('games')), self.games)
+        self.assertTrue(context.get('has_games'))
         self.assertIsNotNone(context.get('past_seasons'))
 
-    def test_get_with_season_pk_dne(self):
-        self.url = 'leagues:seasons'
-        response = self.client.get(self.format_url(slug=self.liahl.slug, season_pk=100))
-        self.assert_404(response)
 
-    def test_get_with_season_pk_for_different_league(self):
-        self.url = 'leagues:seasons'
-        baseball = SportFactory(name='Baseball')
-        league = LeagueFactory(name='Major League Baseball', sport=baseball)
-        season = SeasonFactory(league=league)
-        response = self.client.get(self.format_url(slug=self.liahl.slug, season_pk=season.pk))
-        self.assert_404(response)
-
-    def test_get_with_current_season_pk(self):
-        self.url = 'leagues:seasons'
-        season_pk = self.current_season.pk
-        response = self.client.get(self.format_url(slug=self.liahl.slug, season_pk=season_pk))
-        self.assert_404(response)
-
-    def test_get_with_past_season_pk(self):
-        self.url = 'leagues:seasons'
-        season_pk = self.previous_season.pk
-        response = self.client.get(self.format_url(slug=self.liahl.slug, season_pk=season_pk))
-        context = response.context
-        self.assert_200(response)
-        self.assertTemplateUsed(response, 'leagues/league_detail_schedule.html')
-        self.assertEqual(context.get('active_tab'), 'past_seasons')
-        self.assertEqual(context.get('season').id, season_pk)
-
-
-class LeagueDivisionsViewTests(LeagueDetailViewTestCase):
+class LeagueDetailDivisionsViewTests(LeagueDetailViewTestCase):
     url = 'leagues:divisions'
 
     def setUp(self):

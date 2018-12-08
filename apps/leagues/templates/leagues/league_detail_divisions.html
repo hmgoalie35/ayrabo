@@ -1,10 +1,10 @@
 {% extends 'leagues/league_detail_base.html' %}
 
-{% block page %}{{ block.super }} Divisions{% endblock %}
+{% block page %}{{ block.super }} Divisions Archive{% endblock %}
 
 {% block tab_content %}
   <div role="tabpanel" class="tab-pane active" id="divisions">
-    <h4 class="text-center mb20">Divisions</h4>
+    <h4 class="text-center mb20">Divisions Archive</h4>
 
     {% for chunk in chunked_divisions %}
       <div class="row">

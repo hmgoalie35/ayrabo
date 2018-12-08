@@ -1,12 +1,11 @@
 {% extends 'leagues/league_detail_base.html' %}
+{% load booltojson from utils %}
 
 {% block page %}{{ block.super }} {{ season }} Schedule{% endblock %}
 
 {% block tab_content %}
   <div role="tabpanel" class="tab-pane active" id="schedule">
-    {% if season %}
-      <h4 class="text-center">{{ season }} Schedule</h4>
-    {% endif %}
+    <h4 class="text-center">{{ season }} Schedule</h4>
 
     <div class="text-center js-loading">
       {% include 'includes/loading.html' %}
@@ -23,7 +22,7 @@
 {% block extra_js %}
   <script>
     $(function () {
-      var hasGames = {% if games %}true{% else %}false{% endif %};
+      var hasGames = {{ has_games|booltojson }};
       $('.js-table').enableDataTable({
         // Initially sort by game start. If add/remove columns need to update the column index.
         order: [[6, 'desc']],
@@ -34,9 +33,11 @@
         },
         paging: hasGames,
         searching: hasGames,
+        initComplete: function () {
+          $('.js-loading').remove();
+          $('.js-table-section').removeClass('hidden');
+        }
       });
-      $('.js-loading').remove();
-      $('.js-table-section').removeClass('hidden');
     });
   </script>
 {% endblock %}
