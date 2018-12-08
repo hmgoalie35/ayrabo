@@ -1,4 +1,5 @@
 {% extends 'seasons/season_detail_base.html' %}
+{% load booltojson from utils %}
 
 {% block page %}{{ block.super }} Schedule{% endblock %}
 
@@ -19,7 +20,7 @@
 {% block extra_js %}
   <script>
     $(function () {
-      var hasGames = {% if games %}true{% else %}false{% endif %};
+      var hasGames = {{ has_games|booltojson }};
       $('.js-table').enableDataTable({
         // Initially sort by game start. If add/remove columns need to update the column index.
         order: [[6, 'desc']],
@@ -30,9 +31,11 @@
         },
         paging: hasGames,
         searching: hasGames,
+        initComplete: function () {
+          $('.js-loading').remove();
+          $('.js-table-section').removeClass('hidden');
+        }
       });
-      $('.js-loading').remove();
-      $('.js-table-section').removeClass('hidden');
     });
   </script>
 {% endblock %}
