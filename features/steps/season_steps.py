@@ -1,7 +1,7 @@
 from behave import *
 from django.db.models import Q
 
-from ayrabo.utils.testing import handle_date
+from ayrabo.utils.testing import comma_separated_string_to_list, handle_date
 from leagues.models import League
 from seasons.tests import SeasonFactory
 from teams.models import Team
@@ -34,6 +34,7 @@ def step_impl(context):
 
         season = SeasonFactory(**kwargs)
 
-        teams = data.get('teams').split(',')
-        for team in teams:
-            season.teams.add(Team.objects.get(name=team))
+        teams = comma_separated_string_to_list(data.get('teams'))
+        if all(teams):
+            for team in teams:
+                season.teams.add(Team.objects.get(name=team))

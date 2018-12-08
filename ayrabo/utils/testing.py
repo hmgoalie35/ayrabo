@@ -45,8 +45,17 @@ def clean_kwargs(kwargs):
 def to_bool(value):
     if isinstance(value, str):
         value = value.lower()
-
     return value in [True, 'true']
+
+
+def comma_separated_string_to_list(string):
+    """
+    Takes a string of comma separated values and converts it to a list.
+
+    :param string: String of comma separated values
+    :return: List of items
+    """
+    return [item.strip() for item in string.split(',')] if isinstance(string, str) else []
 
 
 def handle_date(value):
