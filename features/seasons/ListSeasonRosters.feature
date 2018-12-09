@@ -64,5 +64,5 @@ Feature: List season rosters
     And I should see "Squad B"
     And I should see "2016-2017 Season"
     And I should see "2017-2018 Season"
-    And I should see "John Doe (you)"
+    And I should see "John Doe&nbsp;(you)"
     And "View" should show up 2 times
