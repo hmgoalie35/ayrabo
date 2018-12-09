@@ -311,6 +311,7 @@ class HockeyGameListViewTests(BaseTestCase):
         response = self.client.get(self.format_url(team_pk=1))
         context = response.context
         self.assertTrue(context.get('can_create_game'))
+        self.assertTrue(context.get('has_games'))
         self.assertEqual(context.get('team'), self.icecats)
         self.assertEqual(context.get('sport'), self.ice_hockey)
 

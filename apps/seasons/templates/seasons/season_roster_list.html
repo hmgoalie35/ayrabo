@@ -128,10 +128,12 @@
             searchPlaceholder: 'Search season rosters',
             zeroRecords: 'No season rosters match your search criteria.',
           },
+          initComplete: function () {
+            $('.js-loading').remove();
+            $('.js-table-section').removeClass('hidden');
+          }
         });
       {% endif %}
-      $('.js-loading').remove();
-      $('.js-table-section').removeClass('hidden');
     });
   </script>
 {% endblock %}
