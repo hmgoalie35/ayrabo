@@ -150,8 +150,7 @@ class SeasonRosterListViewTests(BaseTestCase):
     # General
     def test_login_required(self):
         self.client.logout()
-        response = self.client.get(self.formatted_url)
-        self.assertRedirects(response, self.get_login_required_url(self.formatted_url))
+        self.assertLoginRequired(self.formatted_url)
 
     def test_sport_not_configured(self):
         team = TeamFactory()
@@ -191,6 +190,7 @@ class SeasonRosterListViewTests(BaseTestCase):
         self.assertEqual(context['team'].pk, self.icecats.pk)
         self.assertEqual(set(context['season_rosters']), set(season_rosters))
         self.assertEqual(context['season_rosters'][season_rosters[0]].count(), 3)
+        self.assertTrue(context.get('has_season_rosters'))
 
 
 class SeasonRosterUpdateViewTests(BaseTestCase):
