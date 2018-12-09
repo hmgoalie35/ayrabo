@@ -44,9 +44,7 @@ Feature: List season rosters
       | username_or_email | team                  |
       | user@ayrabo.com   | Green Machine IceCats |
     And I am on the "teams:season_rosters:list" page with kwargs "team_pk=1"
-    Then I should see "There are no season rosters for this team."
-    And "create-season-roster-btn-empty-state" should be visible
-    And "create-season-roster-btn" should not exist on the page
+    Then I should see "There are no season rosters for Green Machine IceCats at this time."
 
   Scenario: Season rosters are listed
     Given "user@ayrabo.com" is completely registered for "Ice Hockey" with role "Manager"
@@ -66,5 +64,5 @@ Feature: List season rosters
     And I should see "Squad B"
     And I should see "2016-2017 Season"
     And I should see "2017-2018 Season"
-    And I should see "John Doe (you)"
+    And I should see "John Doe&nbsp;(you)"
     And "View" should show up 2 times

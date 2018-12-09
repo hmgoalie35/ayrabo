@@ -178,10 +178,14 @@ class GameListView(LoginRequiredMixin, HandleSportNotConfiguredMixin, generic.Li
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         user = self.request.user
+        games = context.get('games')
         game_list_context = get_game_list_context(user, self.sport)
         team_ids_managed_by_user = game_list_context.get('team_ids_managed_by_user')
-        context['can_create_game'] = self.team.id in team_ids_managed_by_user
-        context['team'] = self.team
+        context.update({
+            'can_create_game': self.team.id in team_ids_managed_by_user,
+            'team': self.team,
+            'has_games': games.count() > 0
+        })
         context.update(game_list_context)
         return context
 
