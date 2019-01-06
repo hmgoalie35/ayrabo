@@ -1,7 +1,9 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.urls import reverse
 from django.views.generic import DetailView
 
 from ayrabo.utils.mixins import HandleSportNotConfiguredMixin
+from ayrabo.utils.urls import url_with_query_string
 from leagues.models import League
 from seasons.models import Season
 from seasons.utils import get_chunked_divisions, get_schedule_view_context
@@ -37,6 +39,11 @@ class LeagueDetailScheduleView(AbstractLeagueDetailView):
         sport = league.sport
         current_season = Season.objects.get_current(league=league)
         context.update(get_schedule_view_context(user, sport, current_season))
+        url = reverse('v1:sports:games:list', kwargs={'pk': sport.pk})
+        api_url = url_with_query_string(url, season=current_season.pk)
+        context.update({
+            'api_url': api_url
+        })
         return context
 
 

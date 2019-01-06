@@ -2,6 +2,9 @@ import json
 
 from django import template
 
+from ayrabo.utils.urls import url_with_query_string as url_with_query_string_util
+
+
 register = template.Library()
 
 
@@ -45,3 +48,8 @@ def get_tab_active_class(context, comparator):
 @register.inclusion_tag('includes/copy_to_clipboard_btn.html')
 def copy_to_clipboard_btn(text, title='Copy'):
     return {'text': text, 'title': title}
+
+
+@register.simple_tag
+def url_with_query_string(url, **kwargs):
+    return url_with_query_string_util(url, **kwargs)

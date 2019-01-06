@@ -7,13 +7,8 @@
   <div role="tabpanel" class="tab-pane active" id="schedule">
     <h4 class="text-center">{{ season }} Schedule</h4>
 
-    <div class="text-center js-loading">
-      {% include 'includes/loading.html' %}
-    </div>
-
-    {# Hide the table and show a loading icon while datatables is being initialized #}
-    <div class="text-center hidden js-table-section">
-      {% include 'games/_games_table.html' with games=games team_ids_managed_by_user=team_ids_managed_by_user is_scorekeeper=is_scorekeeper %}
+    <div class="text-center">
+      {% include 'games/_games_table.html' with games=None team_ids_managed_by_user=None is_scorekeeper=False %}
     </div>
 
   </div>
@@ -23,11 +18,81 @@
   <script>
     $(function () {
       var hasGames = {{ has_games|booltojson }};
+      var teamRenderer = function (data, type, row, meta) {
+        var teamName = data.name;
+        var divisionName = data.division.name;
+        switch (type) {
+          case 'display':
+            return `
+              <img src="${data.logo}" alt="${teamName}">
+              ${teamName} - <i>${divisionName}</i>
+            `;
+          case 'filter':
+            return teamName + ' ' + divisionName;
+          case 'sort':
+            return teamName + ' ' + divisionName;
+          case 'type':
+            return teamName;
+          default:
+            return teamName;
+        }
+      };
       $('.js-table').enableDataTable({
+        deferRender: true,
+        ajax: {
+          url: "{{ api_url }}",
+          dataSrc: '',
+        },
+        columns: [
+          {
+            name: 'id',
+            data: 'id'
+          },
+          {
+            name: 'home',
+            data: 'home_team',
+            render: teamRenderer,
+          },
+          {
+            name: 'away',
+            data: 'away_team',
+            render: teamRenderer,
+          },
+          {
+            name: 'type',
+            data: 'type'
+          },
+          {
+            name: 'status',
+            data: 'status'
+          },
+          {
+            name: 'location',
+            data: 'location.name'
+          },
+          {
+            name: 'start',
+            // TODO filter, sort on diff values
+            data: 'start_formatted',
+            type: 'date',
+          },
+          {
+            name: 'end',
+            data: 'end_formatted',
+            type: 'date',
+          },
+          {
+            name: 'actions',
+            render: function (data, type, row, meta) {
+              return '<button class="btn btn-primary">Placeholder</button>';
+            }
+          },
+        ],
         // Initially sort by game start. If add/remove columns need to update the column index.
         order: [[6, 'desc']],
         language: {
           searchPlaceholder: 'Search games',
+          loadingRecords: '{% spaceless %}{% include 'includes/loading.html' %}{% endspaceless %}',
           zeroRecords: 'No games match your search criteria.',
           emptyTable: 'There are no games for {{ league.name }} at this time.'
         },

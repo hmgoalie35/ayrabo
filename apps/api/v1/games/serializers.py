@@ -1,6 +1,8 @@
 from django.core import exceptions
 from rest_framework import serializers
 
+from api.v1.locations.serializers import LocationSerializer
+from api.v1.teams.serializers import TeamSerializer
 from games.models import HockeyGame
 from players.models import HockeyPlayer
 
@@ -46,3 +48,14 @@ class HockeyGameRosterSerializer(AbstractGameRosterSerializer):
 
     class Meta(AbstractGameRosterSerializer.Meta):
         model = HockeyGame
+
+
+class HockeyGameSerializer(serializers.ModelSerializer):
+    home_team = TeamSerializer()
+    away_team = TeamSerializer()
+    location = LocationSerializer()
+
+    class Meta:
+        model = HockeyGame
+        fields = ('id', 'home_team', 'away_team', 'type', 'status', 'location', 'start', 'start_formatted', 'end',
+                  'end_formatted')
