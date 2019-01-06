@@ -18,7 +18,7 @@
     "babel-polyfill": "6.26.0",
     "babel-preset-env": "1.7.0",
     "babel-preset-react": "6.24.1",
-    "bootstrap-sass": "3.3.7",
+    "bootstrap-sass": "3.4.0",
     "bootstrap-select": "1.13.2",
     "classnames": "2.2.6",
     "clean-webpack-plugin": "0.1.19",
