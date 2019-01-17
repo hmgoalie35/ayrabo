@@ -3,7 +3,7 @@
 
 # IDEs
 
-# PyCharm
+# PyCharm (see https://github.com/github/gitignore/blob/master/Global/JetBrains.gitignore)
 # User-specific stuff
 .idea/**/workspace.xml
 .idea/**/tasks.xml
