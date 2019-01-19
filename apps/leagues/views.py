@@ -2,9 +2,10 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import DetailView
 
 from ayrabo.utils.mixins import HandleSportNotConfiguredMixin
+from games.utils import get_game_list_view_context
 from leagues.models import League
 from seasons.models import Season
-from seasons.utils import get_chunked_divisions, get_schedule_view_context
+from seasons.utils import get_chunked_divisions
 
 
 class AbstractLeagueDetailView(LoginRequiredMixin, HandleSportNotConfiguredMixin, DetailView):
@@ -36,7 +37,7 @@ class LeagueDetailScheduleView(AbstractLeagueDetailView):
         league = context.get('league')
         sport = league.sport
         current_season = Season.objects.get_current(league=league)
-        context.update(get_schedule_view_context(user, sport, current_season))
+        context.update(get_game_list_view_context(user, sport, current_season))
         return context
 
 

@@ -8,10 +8,11 @@ from django.views.generic import DetailView
 from ayrabo.utils.exceptions import SportNotConfiguredException
 from ayrabo.utils.mixins import HandleSportNotConfiguredMixin, HasPermissionMixin
 from divisions.models import Division
+from games.utils import get_game_list_view_context
 from leagues.models import League
 from managers.models import Manager
 from seasons.models import Season
-from seasons.utils import get_chunked_divisions, get_schedule_view_context
+from seasons.utils import get_chunked_divisions
 from teams.models import Team
 from .forms import HockeySeasonRosterCreateUpdateForm
 from .models import HockeySeasonRoster
@@ -235,7 +236,7 @@ class SeasonDetailScheduleView(AbstractSeasonDetailView):
         season = context.get('season')
         user = self.request.user
         sport = league.sport
-        context.update(get_schedule_view_context(user, sport, season))
+        context.update(get_game_list_view_context(user, sport, season))
         return context
 
 

@@ -184,7 +184,7 @@ class GameListView(LoginRequiredMixin, HandleSportNotConfiguredMixin, generic.Li
         context.update({
             'can_create_game': self.team.id in team_ids_managed_by_user,
             'team': self.team,
-            'has_games': games.count() > 0
+            'has_games': games.exists()
         })
         context.update(game_list_context)
         return context
