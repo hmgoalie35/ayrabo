@@ -1,3 +1,50 @@
 {% extends 'teams/team_detail_base.html' %}
+{% load booltojson from utils %}
 
-{% block page %}Schedule{% endblock %}
+{% block page %}{{ season }} Schedule{% endblock %}
+
+{% block tab_content %}
+  <div role="tabpanel" class="tab-pane active" id="schedule">
+    <h4 class="text-center">{{ season }} Schedule</h4>
+
+    <div class="text-center js-loading">
+      {% include 'includes/loading.html' %}
+    </div>
+
+    {# Hide the table and show a loading icon while datatables is being initialized #}
+    <div class="text-center hidden js-table-section">
+      {% if can_create_game %}
+        <span class="pull-right mt5">
+          <a id="create-game-btn" href="{% url 'teams:games:create' team.pk %}" class="btn btn-sm btn-default">
+            <i class="fa fa-plus-circle fa-success"></i>&nbsp;Game
+          </a>
+        </span>
+      {% endif %}
+      {% include 'games/_games_table.html' with games=games team_ids_managed_by_user=team_ids_managed_by_user is_scorekeeper=is_scorekeeper %}
+    </div>
+
+  </div>
+{% endblock %}
+
+{% block extra_js %}
+  <script>
+    $(function () {
+      var hasGames = {{ has_games|booltojson }};
+      $('.js-table').enableDataTable({
+        // Initially sort by game start. If add/remove columns need to update the column index.
+        order: [[6, 'desc']],
+        language: {
+          searchPlaceholder: 'Search games',
+          zeroRecords: 'No games match your search criteria.',
+          emptyTable: 'There are no games for {{ team.name }} at this time.'
+        },
+        paging: hasGames,
+        searching: hasGames,
+        initComplete: function () {
+          $('.js-loading').remove();
+          $('.js-table-section').removeClass('hidden');
+        }
+      });
+    });
+  </script>
+{% endblock %}

@@ -378,7 +378,11 @@ class LeagueSeasonDetailViewTestCase(BaseTestCase):
                       self.rebels_peewee]
 
 
-class LeagueSeasonDetailScheduleViewTestCase(LeagueSeasonDetailViewTestCase):
+class AbstractScheduleViewTestCase(LeagueSeasonDetailViewTestCase):
+    """
+    Abstract test case that sets up all of the necessary objects to test a schedule view
+    """
+
     def _create_game(self, home_team, away_team, season):
         return HockeyGameFactory(home_team=home_team, away_team=away_team, team=home_team, season=season,
                                  type=self.game_type, point_value=self.point_value)
@@ -412,7 +416,7 @@ class LeagueSeasonDetailScheduleViewTestCase(LeagueSeasonDetailViewTestCase):
         self.login(user=self.user)
 
 
-class SeasonDetailScheduleViewTests(LeagueSeasonDetailScheduleViewTestCase):
+class SeasonDetailScheduleViewTests(AbstractScheduleViewTestCase):
     url = 'leagues:seasons:schedule'
 
     def setUp(self):
