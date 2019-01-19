@@ -18,7 +18,7 @@
           {% url 'leagues:schedule' slug=league.slug as schedule_link %}
           {% url 'leagues:divisions' slug=league.slug as divisions_link %}
           <ul class="nav nav-pills nav-justified nav-bordered" role="tablist">
-            {% include 'seasons/_schedule_nav_tab.html' %}
+            {% include 'profile_nav_tabs/_schedule_nav_tab.html' %}
             {% include 'seasons/_divisions_nav_tab.html' with link_text="Divisions Archive" %}
             {% include 'profile_nav_tabs/_past_seasons_nav_tab.html' with profile_type='league' %}
           </ul>
