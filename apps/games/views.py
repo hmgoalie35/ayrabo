@@ -105,7 +105,7 @@ class GameUpdateView(LoginRequiredMixin,
         return can_update_game and team.id == game.team_id
 
     def get_success_url(self):
-        return reverse('teams:games:list', kwargs={'team_pk': self.team.pk})
+        return reverse('teams:schedule', kwargs={'team_pk': self.team.pk})
 
     def get_object(self, queryset=None):
         model_cls = mappings.SPORT_GAME_MODEL_MAPPINGS.get(self.sport.name, None)
@@ -142,11 +142,12 @@ class GameUpdateView(LoginRequiredMixin,
             if 'away_team' in form.changed_data:
                 self.object.away_players.clear()
             return response
-        return redirect(reverse('teams:games:list', kwargs={'team_pk': self.team.pk}))
+        return redirect(self.get_success_url())
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['team'] = self.team
+        context.update(get_team_detail_view_context(self.team))
         return context
 
     def get(self, request, *args, **kwargs):
