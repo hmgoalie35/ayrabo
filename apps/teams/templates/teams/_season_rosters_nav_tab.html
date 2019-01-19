@@ -1,0 +1,25 @@
+<li role="presentation" class="list-item--pill dropdown">
+  <a
+    id="tab-item-season-rosters"
+    class="tab-link dropdown-toggle"
+    data-toggle="dropdown"
+    href="#"
+    aria-controls="season_rosters"
+    aria-haspopup="true"
+    aria-expanded="false"
+    role="tab"
+  >Season Rosters<i class="fa fa-fw fa-caret-down"></i>
+  </a>
+  <ul class="dropdown-menu">
+    <li>
+      <a id="create-season-roster-btn" href="{% url 'teams:season_rosters:create' team.pk %}" role="button">
+        <i class="fa fa-plus-circle fa-success"></i>&nbsp;Create
+      </a>
+    </li>
+    <li>
+      <a id="list-season-rosters-btn" href="{% url 'teams:season_rosters:list' team.pk %}" role="button">
+        <i class="fa fa-list-alt fa-primary"></i>&nbsp;List
+      </a>
+    </li>
+  </ul>
+</li>

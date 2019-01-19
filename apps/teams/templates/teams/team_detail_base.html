@@ -1,0 +1,33 @@
+{% extends 'site_base.html' %}
+
+{% block title %}{{ team_display_name }} {% block page %}{% endblock %}{% endblock %}
+
+{% block content %}
+  <div class="container profile">
+
+    <div class="row">
+      <div class="col-md-12">
+        <h3 class="text-center mb20">{{ team_display_name }}</h3>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-12">
+
+        <div role="navigation">
+          {% url 'teams:schedule' team_pk=team.pk as schedule_link %}
+          <ul class="nav nav-pills nav-justified nav-bordered" role="tablist">
+            {% include 'teams/_schedule_nav_tab.html' %}
+            {% include 'teams/_players_nav_tab.html' %}
+            {% include 'teams/_season_rosters_nav_tab.html' %}
+            {% include 'profile_nav_tabs/_past_seasons_nav_tab.html' with profile_type='team' %}
+          </ul>
+        </div>
+
+        <div class="tab-content mt30">
+          {% block tab_content %}{% endblock %}
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

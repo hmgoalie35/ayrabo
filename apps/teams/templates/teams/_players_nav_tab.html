@@ -1,0 +1,12 @@
+{% load get_tab_active_class from utils %}
+
+<li role="presentation" class="list-item--pill {% get_tab_active_class 'players' %}">
+  <a
+    id="tab-item-players"
+    class="tab-link"
+    href="{{ players_link }}"
+    aria-controls="players"
+    role="tab"
+  >Players
+  </a>
+</li>
