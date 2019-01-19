@@ -1,17 +1,14 @@
-{% extends 'site_base.html' %}
+{% extends 'teams/team_detail_base.html' %}
 {% load crispy_forms_tags %}
 
-{% block title %}Create Game for {{ team.name }} - {{ team.division.name }}{% endblock %}
+{% block page %}Create Game{% endblock %}
 
-
-{% block content %}
-  <div class="container">
-
+{% block tab_content %}
+  <div role="tabpanel" class="tab-pane active" id="game-create">
+    <h4 class="text-center">Create Game</h4>
     <div class="row">
       <div class="col-md-12">
         <div class="text-center">
-          <h3>Create Game for {{ team.name }}</h3>
-          <h4>{{ team.division.name }} - {{ team.division.league.abbreviated_name }}</h4>
           <p class="text-muted">
             <i class="fa fa-lg fa-color-warning fa-lightbulb-o"></i>
             Make sure the date and time entered for Game Start and Game End are for the timezone you choose.<br>
@@ -49,15 +46,15 @@
   <script>
     $(function () {
       var team_options = { header: 'Select a team' };
-      $("#id_home_team").enableBootstrapSelect(team_options);
-      $("#id_away_team").enableBootstrapSelect(team_options);
-      $("#id_type").enableBootstrapSelect({ header: 'Select a game type' });
-      $("#id_point_value").enableBootstrapSelect({ header: 'Select a point value' });
-      $("#id_location").enableBootstrapSelect({ header: 'Select a location' });
-      $("#id_timezone").enableBootstrapSelect({ header: 'Select a timezone' });
-      $("#id_season").enableBootstrapSelect({ header: 'Select a season' });
-      var $game_start = $("#id_start");
-      var $game_end = $("#id_end");
+      $('#id_home_team').enableBootstrapSelect(team_options);
+      $('#id_away_team').enableBootstrapSelect(team_options);
+      $('#id_type').enableBootstrapSelect({ header: 'Select a game type' });
+      $('#id_point_value').enableBootstrapSelect({ header: 'Select a point value' });
+      $('#id_location').enableBootstrapSelect({ header: 'Select a location' });
+      $('#id_timezone').enableBootstrapSelect({ header: 'Select a timezone' });
+      $('#id_season').enableBootstrapSelect({ header: 'Select a season' });
+      var $game_start = $('#id_start');
+      var $game_end = $('#id_end');
       $game_start.enableDatetimepicker();
       $game_end.enableDatetimepicker();
 

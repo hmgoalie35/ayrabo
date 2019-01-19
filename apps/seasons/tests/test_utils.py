@@ -5,7 +5,7 @@ from seasons import utils
 from sports.tests import SportFactory
 
 
-class TestUtils(BaseTestCase):
+class UtilsTests(BaseTestCase):
     def setUp(self):
         self.ice_hockey = SportFactory(name='Ice Hockey')
         self.liahl = LeagueFactory(sport=self.ice_hockey, name='Long Island Amateur Hockey League')

@@ -16,6 +16,7 @@ from managers.models import Manager
 from scorekeepers.models import Scorekeeper
 from sports.models import Sport
 from teams.models import Team
+from teams.utils import get_team_detail_view_context
 from . import mappings
 
 
@@ -28,7 +29,7 @@ class GameCreateView(LoginRequiredMixin,
     success_message = 'Your game has been created.'
 
     def get_success_url(self):
-        return reverse('sports:dashboard', kwargs={'slug': self.sport.slug})
+        return reverse('teams:schedule', kwargs={'team_pk': self.team.pk})
 
     def _get_team(self):
         if hasattr(self, 'team'):
@@ -59,6 +60,7 @@ class GameCreateView(LoginRequiredMixin,
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['team'] = self.team
+        context.update(get_team_detail_view_context(self.team))
         return context
 
     def form_valid(self, form):

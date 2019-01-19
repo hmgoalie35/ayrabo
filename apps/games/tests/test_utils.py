@@ -15,7 +15,7 @@ from teams.tests import TeamFactory
 from users.tests import UserFactory
 
 
-class TestUtils(BaseTestCase):
+class UtilsTests(BaseTestCase):
     def setUp(self):
         self.ice_hockey = SportFactory(name='Ice Hockey')
         self.liahl = LeagueFactory(sport=self.ice_hockey, name='Long Island Amateur Hockey League')

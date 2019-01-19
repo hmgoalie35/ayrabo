@@ -8,6 +8,7 @@ from divisions.models import Division
 from games.utils import get_game_list_view_context
 from organizations.models import Organization
 from seasons.models import Season
+from teams.utils import get_team_detail_view_context
 from .models import Team
 
 
@@ -52,10 +53,7 @@ class AbstractTeamDetailView(LoginRequiredMixin, HandleSportNotConfiguredMixin, 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         team = self.get_object()
-        context.update({
-            'team_display_name': f'{team.name} - {self.division.name}',
-            'past_seasons': Season.objects.get_past(league=self.league)
-        })
+        context.update(get_team_detail_view_context(team))
         return context
 
 
