@@ -55,7 +55,7 @@ def get_games(sport, season, team=None):
     :param sport: The sport to get games for, it is used to determine what model to use (HockeyGame, etc)
     :param season: Season to get games for
     :param team: Optional team to further narrow queryset down by
-    :raises SportNotConfiguredException if the `sport` has not been configured
+    :raises SportNotConfiguredException: if the sport argument has not been configured
     :return: QuerySet of games for the given sport (HockeyGame, BaseballGame, etc)
     """
     model_cls = get_game_model_cls(sport)
