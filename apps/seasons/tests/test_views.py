@@ -203,7 +203,7 @@ class SeasonRosterUpdateViewTests(BaseTestCase):
         cls.ice_hockey = SportFactory(name='Ice Hockey')
         cls.liahl = LeagueFactory(name='Long Island Amateur Hockey League', sport=cls.ice_hockey)
         cls.mm_aa = DivisionFactory(name='Midget Minor AA', league=cls.liahl)
-        cls.icecats = TeamFactory(name='Green Machine Icecats', division=cls.mm_aa)
+        cls.icecats = TeamFactory(name='Green Machine IceCats', division=cls.mm_aa)
         cls.liahl_season = SeasonFactory(league=cls.liahl)
 
     def setUp(self):
@@ -276,6 +276,8 @@ class SeasonRosterUpdateViewTests(BaseTestCase):
         self.assertTemplateUsed(response, 'seasons/season_roster_update.html')
         self.assertEqual(context['team'].pk, self.icecats.pk)
         self.assertEqual(context['form'].instance.pk, self.season_roster.pk)
+        self.assertEqual(context.get('team_display_name'), 'Green Machine IceCats - Midget Minor AA')
+        self.assertIsNotNone(context.get('past_seasons'))
 
     # POST
     def test_post_valid_changed_form(self):
