@@ -68,10 +68,11 @@ class SeasonRosterCreateView(LoginRequiredMixin,
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['team'] = self.team
+        context.update(get_team_detail_view_context(self.team))
         return context
 
     def get_success_url(self):
-        return reverse('sports:dashboard', kwargs={'slug': self.sport.slug})
+        return reverse('teams:season_rosters:list', kwargs={'team_pk': self.team.pk})
 
     def get(self, request, *args, **kwargs):
         self._get_team()
