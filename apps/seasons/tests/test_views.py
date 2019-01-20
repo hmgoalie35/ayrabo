@@ -132,7 +132,7 @@ class SeasonRosterListViewTests(BaseTestCase):
         cls.ice_hockey = SportFactory(name='Ice Hockey')
         cls.liahl = LeagueFactory(name='Long Island Amateur Hockey League', sport=cls.ice_hockey)
         cls.mm_aa = DivisionFactory(name='Midget Minor AA', league=cls.liahl)
-        cls.icecats = TeamFactory(name='Green Machine Icecats', division=cls.mm_aa)
+        cls.icecats = TeamFactory(name='Green Machine IceCats', division=cls.mm_aa)
         cls.liahl_season = SeasonFactory(league=cls.liahl)
 
     def setUp(self):
@@ -175,11 +175,6 @@ class SeasonRosterListViewTests(BaseTestCase):
 
     # GET
     def test_get(self):
-        response = self.client.get(self.formatted_url)
-        self.assert_200(response)
-        self.assertTemplateUsed(response, 'seasons/season_roster_list.html')
-
-    def test_get_context_populated(self):
         season_rosters = HockeySeasonRosterFactory.create_batch(5, season=self.liahl_season, team=self.icecats)
         players = HockeyPlayerFactory.create_batch(4)
         players[0].is_active = False
@@ -187,10 +182,15 @@ class SeasonRosterListViewTests(BaseTestCase):
         season_rosters[0].players.set(players)
         response = self.client.get(self.formatted_url)
         context = response.context
+        self.assert_200(response)
+        self.assertTemplateUsed(response, 'seasons/season_roster_list.html')
         self.assertEqual(context['team'].pk, self.icecats.pk)
         self.assertEqual(set(context['season_rosters']), set(season_rosters))
         self.assertEqual(context['season_rosters'][season_rosters[0]].count(), 3)
         self.assertTrue(context.get('has_season_rosters'))
+        self.assertEqual(context.get('active_tab'), 'season_rosters')
+        self.assertEqual(context.get('team_display_name'), 'Green Machine IceCats - Midget Minor AA')
+        self.assertIsNotNone(context.get('past_seasons'))
 
 
 class SeasonRosterUpdateViewTests(BaseTestCase):
