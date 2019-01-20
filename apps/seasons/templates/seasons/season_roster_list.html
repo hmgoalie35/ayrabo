@@ -1,22 +1,10 @@
-{% extends 'site_base.html' %}
+{% extends 'teams/team_detail_base.html' %}
 {% load booltojson from utils %}
 
-{% block title %}
-  Season Rosters for {{ team.name }} {{ team.division.name }} - {{ team.division.league.abbreviated_name }}
-{% endblock %}
+{% block page %}Season Rosters{% endblock %}
 
-{% block content %}
-  <div class="container">
-
-    <div class="row">
-      <div class="col-md-12">
-        <div class="text-center">
-          <h3>Season Rosters for {{ team.name }}</h3>
-          <h4 class="text-muted">{{ team.division.name }} - {{ team.division.league.abbreviated_name }}</h4>
-        </div>
-      </div>
-    </div>
-
+{% block tab_content %}
+  <div role="tabpanel" class="tab-pane active" id="season-roster-list">
     <div class="row">
       <div class="col-md-12">
 
@@ -93,7 +81,7 @@
                 </td>
               </tr>
 
-              {% include 'seasons/_players_modal.html' with id=season_roster.id players=players %}
+              {% include 'seasons/_players_modal.html' with id=season_roster.id players=players season_roster=season_roster %}
 
             {% endfor %}
             </tbody>

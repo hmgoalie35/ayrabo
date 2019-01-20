@@ -14,6 +14,7 @@ from managers.models import Manager
 from seasons.models import Season
 from seasons.utils import get_chunked_divisions
 from teams.models import Team
+from teams.utils import get_team_detail_view_context
 from .forms import HockeySeasonRosterCreateUpdateForm
 from .models import HockeySeasonRoster
 
@@ -117,9 +118,11 @@ class SeasonRosterListView(LoginRequiredMixin, HandleSportNotConfiguredMixin, Ha
         season_rosters = context.pop(self.context_object_name)
         context.update({
             'season_rosters': {roster: self._get_players(roster) for roster in season_rosters},
-            'has_season_rosters': season_rosters.count() > 0,
-            'team': self.team
+            'has_season_rosters': season_rosters.exists(),
+            'team': self.team,
+            'active_tab': 'season_rosters'
         })
+        context.update(get_team_detail_view_context(team=self.team))
         return context
 
     def get(self, request, *args, **kwargs):

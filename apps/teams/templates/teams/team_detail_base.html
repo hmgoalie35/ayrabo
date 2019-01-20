@@ -17,6 +17,7 @@
 
         <div role="navigation">
           {% url 'teams:schedule' team_pk=team.pk as schedule_link %}
+          {% url 'teams:season_rosters:list' team_pk=team.pk as season_rosters_link %}
           <ul class="nav nav-pills nav-justified nav-bordered" role="tablist">
             {% include 'profile_nav_tabs/_schedule_nav_tab.html' %}
             {% include 'teams/_players_nav_tab.html' %}
