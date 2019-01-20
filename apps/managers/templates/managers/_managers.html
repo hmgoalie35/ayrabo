@@ -54,7 +54,7 @@
                 </a>
               </li>
               <li>
-                <a id="list_games_manager_btn_{{ manager.team.slug }}" href="{% url 'teams:games:list' manager.team.pk %}" role="button">
+                <a id="list_games_manager_btn_{{ manager.team.slug }}" href="{% url 'teams:schedule' team_pk=manager.team.pk %}" role="button">
                   <i class="fa fa-list-alt fa-primary"></i>&nbsp;List
                 </a>
               </li>

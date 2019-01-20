@@ -15,7 +15,7 @@
     {% for organization in organizations %}
       <tr>
         <td data-title="Name"><a href="{% url 'organizations:detail' pk=organization.pk %}">{{ organization.name }}</a></td>
-        <td data-title="# of Teams">{{ organization.teams.all|length }}</td>
+        <td data-title="# of Teams">{{ organization.teams.all.count }}</td>
       </tr>
     {% endfor %}
     </tbody>

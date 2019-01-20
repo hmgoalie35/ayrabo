@@ -53,7 +53,7 @@
               {# Game items #}
               <li class="dropdown-header">Games</li>
               <li>
-                <a id="list_games_player_btn_{{ player.team.slug }}" href="{% url 'teams:games:list' player.team.pk %}" role="button">
+                <a id="list_games_player_btn_{{ player.team.slug }}" href="{% url 'teams:schedule' team_pk=player.team.pk %}" role="button">
                   <i class="fa fa-list-alt fa-primary"></i>&nbsp;List
                 </a>
               </li>
