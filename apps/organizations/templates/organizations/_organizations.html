@@ -8,20 +8,14 @@
     <tr>
       <th scope="col">Name</th>
       <th scope="col"># of Teams</th>
-      <th scope="col"></th>
     </tr>
     </thead>
 
     <tbody>
     {% for organization in organizations %}
       <tr>
-        <td data-title="Name">{{ organization.name }}</td>
+        <td data-title="Name"><a href="{% url 'organizations:detail' pk=organization.pk %}">{{ organization.name }}</a></td>
         <td data-title="# of Teams">{{ organization.teams.all|length }}</td>
-        <td data-title="">
-          <a href="{% url 'organizations:detail' organization.id %}" id="organization-detail-link">
-            Manage
-          </a>
-        </td>
       </tr>
     {% endfor %}
     </tbody>

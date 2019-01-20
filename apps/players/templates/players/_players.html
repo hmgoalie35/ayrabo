@@ -20,8 +20,10 @@
           <td data-title="{{ field_name }}">
             {% if field_name|lower == 'team' %}
               {% include 'includes/team_logo.html' with team=field_value %}
+              <a href="{% url 'teams:schedule' team_pk=field_value.pk %}">{{ field_value.name }}</a>
+            {% else %}
+              {{ field_value }}
             {% endif %}
-            {{ field_value }}
           </td>
         {% endfor %}
         <td data-title="">

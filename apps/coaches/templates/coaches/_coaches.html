@@ -16,8 +16,10 @@
     {% for coach in coaches %}
       <tr>
         <td data-title="Team">
-          {% include 'includes/team_logo.html' with team=coach.team %}
-          {{ coach.team.name }}
+          {% with team=coach.team %}
+            {% include 'includes/team_logo.html' with team=team %}
+            <a href="{% url 'teams:schedule' team_pk=team.pk %}">{{ team.name }}</a>
+          {% endwith %}
         </td>
         <td data-title="Division">{{ coach.team.division.name }}</td>
         <td data-title="Position">{{ coach.get_position_display }}</td>

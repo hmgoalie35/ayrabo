@@ -83,7 +83,7 @@ class SeasonRosterCreateView(LoginRequiredMixin,
         return super().post(request, *args, **kwargs)
 
 
-class SeasonRosterListView(LoginRequiredMixin, HandleSportNotConfiguredMixin, HasPermissionMixin, generic.ListView):
+class SeasonRosterListView(LoginRequiredMixin, HandleSportNotConfiguredMixin, generic.ListView):
     template_name = 'seasons/season_roster_list.html'
     context_object_name = 'season_rosters'
 
@@ -95,12 +95,13 @@ class SeasonRosterListView(LoginRequiredMixin, HandleSportNotConfiguredMixin, Ha
             pk=self.kwargs.get('team_pk')
         )
         self.sport = self.team.division.league.sport
+        self.can_user_list = self.can_user_list_season_rosters()
         return self.team
 
     def _get_players(self, season_roster):
         return season_roster.players.active().order_by('jersey_number').select_related('user')
 
-    def has_permission_func(self):
+    def can_user_list_season_rosters(self):
         user = self.request.user
         team = self._get_team()
         return Manager.objects.active().filter(user=user, team=team).exists()
@@ -111,8 +112,10 @@ class SeasonRosterListView(LoginRequiredMixin, HandleSportNotConfiguredMixin, Ha
             raise SportNotConfiguredException(self.sport)
         # Datatables is ordering by season, desc. It seems to be doing a lexicographical sort so it works, but isn't
         # the best way to sort season rosters.
-        return season_roster_cls.objects.filter(team=self.team).select_related(
-            'season', 'team', 'team__division', 'created_by')
+        if self.can_user_list:
+            return season_roster_cls.objects.filter(team=self.team).select_related('season', 'team', 'team__division',
+                                                                                   'created_by')
+        return season_roster_cls.objects.none()
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -121,7 +124,8 @@ class SeasonRosterListView(LoginRequiredMixin, HandleSportNotConfiguredMixin, Ha
             'season_rosters': {roster: self._get_players(roster) for roster in season_rosters},
             'has_season_rosters': season_rosters.exists(),
             'team': self.team,
-            'active_tab': 'season_rosters'
+            'active_tab': 'season_rosters',
+            'can_user_list': self.can_user_list
         })
         context.update(get_team_detail_view_context(team=self.team))
         return context

@@ -163,13 +163,17 @@ class SeasonRosterListViewTests(BaseTestCase):
     def test_has_permission_false_not_manager(self):
         team = TeamFactory(division=self.mm_aa)
         response = self.client.get(self.format_url(team_pk=team.pk))
-        self.assert_404(response)
+        context = response.context
+        self.assertFalse(context.get('can_user_list'))
+        self.assertDictEqual(context.get('season_rosters'), {})
 
     def test_has_permission_false_inactive_manager(self):
         self.hockey_manager.is_active = False
         self.hockey_manager.save()
         response = self.client.get(self.formatted_url)
-        self.assert_404(response)
+        context = response.context
+        self.assertFalse(context.get('can_user_list'))
+        self.assertDictEqual(context.get('season_rosters'), {})
 
     def test_team_dne(self):
         response = self.client.get(self.format_url(team_pk=1000))
@@ -193,6 +197,7 @@ class SeasonRosterListViewTests(BaseTestCase):
         self.assertEqual(context.get('active_tab'), 'season_rosters')
         self.assertEqual(context.get('team_display_name'), 'Green Machine IceCats - Midget Minor AA')
         self.assertIsNotNone(context.get('past_seasons'))
+        self.assertTrue(context.get('can_user_list'))
 
 
 class SeasonRosterUpdateViewTests(BaseTestCase):
