@@ -16,6 +16,7 @@ from managers.models import Manager
 from scorekeepers.models import Scorekeeper
 from sports.models import Sport
 from teams.models import Team
+from teams.utils import get_team_detail_view_context
 from . import mappings
 
 
@@ -28,7 +29,7 @@ class GameCreateView(LoginRequiredMixin,
     success_message = 'Your game has been created.'
 
     def get_success_url(self):
-        return reverse('sports:dashboard', kwargs={'slug': self.sport.slug})
+        return reverse('teams:schedule', kwargs={'team_pk': self.team.pk})
 
     def _get_team(self):
         if hasattr(self, 'team'):
@@ -59,6 +60,7 @@ class GameCreateView(LoginRequiredMixin,
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['team'] = self.team
+        context.update(get_team_detail_view_context(self.team))
         return context
 
     def form_valid(self, form):
@@ -103,7 +105,7 @@ class GameUpdateView(LoginRequiredMixin,
         return can_update_game and team.id == game.team_id
 
     def get_success_url(self):
-        return reverse('teams:games:list', kwargs={'team_pk': self.team.pk})
+        return reverse('teams:schedule', kwargs={'team_pk': self.team.pk})
 
     def get_object(self, queryset=None):
         model_cls = mappings.SPORT_GAME_MODEL_MAPPINGS.get(self.sport.name, None)
@@ -140,11 +142,12 @@ class GameUpdateView(LoginRequiredMixin,
             if 'away_team' in form.changed_data:
                 self.object.away_players.clear()
             return response
-        return redirect(reverse('teams:games:list', kwargs={'team_pk': self.team.pk}))
+        return redirect(self.get_success_url())
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['team'] = self.team
+        context.update(get_team_detail_view_context(self.team))
         return context
 
     def get(self, request, *args, **kwargs):
@@ -184,7 +187,7 @@ class GameListView(LoginRequiredMixin, HandleSportNotConfiguredMixin, generic.Li
         context.update({
             'can_create_game': self.team.id in team_ids_managed_by_user,
             'team': self.team,
-            'has_games': games.count() > 0
+            'has_games': games.exists()
         })
         context.update(game_list_context)
         return context

@@ -32,8 +32,9 @@ Feature: Update season roster
     When I press "actions-dropdown-1"
     And I press "update-season-roster-1-link"
     Then I should be on the "teams:season_rosters:update" page with kwargs "team_pk=1, pk=1"
-    And I should see "Update Season Roster for Green Machine IceCats"
-    And I should see "Midget Minor AA - LIAHL"
+    And I should see "Green Machine IceCats - Midget Minor AA"
+    And I should see "Long Island Amateur Hockey League"
+    And I should see "Update Season Roster"
 
   Scenario: Submit valid ice hockey form
     Given "user@ayrabo.com" is completely registered for "Ice Hockey" with role "Manager"

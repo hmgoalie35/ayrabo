@@ -8,8 +8,10 @@ from ayrabo.utils.testing import BaseTestCase
 from divisions.tests import DivisionFactory
 from leagues.tests import LeagueFactory
 from organizations.tests import OrganizationFactory
+from seasons.tests.test_views import AbstractScheduleViewTestCase
 from sports.tests import SportFactory
 from teams.models import Team
+from teams.tests import TeamFactory
 from users.tests import UserFactory
 
 
@@ -42,3 +44,41 @@ class BulkUploadTeamsViewTests(BaseTestCase):
                                 ['Select a valid choice. That choice is not one of the available choices.'])
         self.assertFormsetError(response, 'formset', 0, 'organization',
                                 ['Select a valid choice. That choice is not one of the available choices.'])
+
+
+class TeamDetailScheduleViewTests(AbstractScheduleViewTestCase):
+    url = 'teams:schedule'
+
+    def setUp(self):
+        super().setUp()
+        self.formatted_url = self.format_url(team_pk=self.icecats_mm_aa.pk)
+
+    def test_login_required(self):
+        self.client.logout()
+        self.assertLoginRequired(self.formatted_url)
+
+    def test_sport_not_configured(self):
+        team = TeamFactory()
+        self.assertSportNotConfigured(self.format_url(team_pk=team.pk))
+
+    # GET
+    def test_get(self):
+        response = self.client.get(self.formatted_url)
+        context = response.context
+        team_ids_managed_by_user = [m.team_id for m in self.managers]
+
+        self.assert_200(response)
+        self.assertTemplateUsed('teams/team_detail_schedule.html')
+
+        self.assertEqual(context.get('team_display_name'), 'Green Machine IceCats - Midget Minor AA')
+        self.assertIsNotNone(context.get('past_seasons'))
+        self.assertTrue(context.get('can_create_game'))
+
+        self.assertEqual(context.get('active_tab'), 'schedule')
+        self.assertEqual(context.get('season'), self.current_season)
+        self.assertListEqual(list(context.get('games')), [self.game1, self.game2])
+        self.assertTrue(context.get('has_games'))
+
+        self.assertListEqual(list(context.get('team_ids_managed_by_user')), team_ids_managed_by_user)
+        self.assertFalse(context.get('is_scorekeeper'))
+        self.assertEqual(context.get('sport'), self.ice_hockey)

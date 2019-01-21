@@ -43,7 +43,9 @@ const generateEntryPoints = () => {
 };
 
 module.exports = function (env, argv) {
-  const productionBuild = argv.mode === 'production';
+  // PyCharm's webpack feature wasn't working because `argv` was undefined.
+  const mode = argv ? argv.mode : 'development';
+  const productionBuild = mode === 'production';
 
   let cssFileName = '[name]';
   let jsFileName = '[name]';

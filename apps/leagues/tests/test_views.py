@@ -1,10 +1,10 @@
 from divisions.tests import DivisionFactory
 from leagues.tests import LeagueFactory
-from seasons.tests.test_views import LeagueSeasonDetailScheduleViewTestCase, LeagueSeasonDetailViewTestCase
+from seasons.tests.test_views import AbstractScheduleViewTestCase, LeagueSeasonDetailViewTestCase
 from sports.tests import SportFactory
 
 
-class LeagueDetailScheduleViewTests(LeagueSeasonDetailScheduleViewTestCase):
+class LeagueDetailScheduleViewTests(AbstractScheduleViewTestCase):
     url = 'leagues:schedule'
 
     def test_login_required(self):

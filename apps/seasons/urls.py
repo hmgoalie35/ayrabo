@@ -1,4 +1,4 @@
-from django.conf.urls import include, url
+from django.conf.urls import url
 
 from . import views
 
@@ -14,6 +14,4 @@ season_roster_urls = [
     url(r'^(?P<pk>\d+)/update/$', views.SeasonRosterUpdateView.as_view(), name='update'),
 ]
 
-urlpatterns = [
-    url(r'^season-rosters/', include(season_roster_urls, namespace='season_rosters')),
-]
+urlpatterns = []

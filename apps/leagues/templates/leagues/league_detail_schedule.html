@@ -1,7 +1,7 @@
 {% extends 'leagues/league_detail_base.html' %}
 {% load booltojson from utils %}
 
-{% block page %}{{ block.super }} {{ season }} Schedule{% endblock %}
+{% block page %}{{ season }} Schedule{% endblock %}
 
 {% block tab_content %}
   <div role="tabpanel" class="tab-pane active" id="schedule">

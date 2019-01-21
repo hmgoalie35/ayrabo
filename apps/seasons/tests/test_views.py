@@ -26,7 +26,7 @@ class SeasonRosterCreateViewTests(BaseTestCase):
         cls.ice_hockey = SportFactory(name='Ice Hockey')
         cls.liahl = LeagueFactory(name='Long Island Amateur Hockey League', sport=cls.ice_hockey)
         cls.mm_aa = DivisionFactory(name='Midget Minor AA', league=cls.liahl)
-        cls.icecats = TeamFactory(name='Green Machine Icecats', division=cls.mm_aa)
+        cls.icecats = TeamFactory(name='Green Machine IceCats', division=cls.mm_aa)
         cls.liahl_season = SeasonFactory(league=cls.liahl)
 
     def setUp(self):
@@ -79,9 +79,11 @@ class SeasonRosterCreateViewTests(BaseTestCase):
     def test_get(self):
         response = self.client.get(self.formatted_url)
         context = response.context
-        self.assertEqual(context['team'].pk, self.icecats.pk)
         self.assert_200(response)
         self.assertTemplateUsed(response, 'seasons/season_roster_create.html')
+        self.assertEqual(context['team'].pk, self.icecats.pk)
+        self.assertEqual(context.get('team_display_name'), 'Green Machine IceCats - Midget Minor AA')
+        self.assertIsNotNone(context.get('past_seasons'))
 
     # POST
     def test_post_valid_hockeyseasonroster(self):
@@ -95,7 +97,7 @@ class SeasonRosterCreateViewTests(BaseTestCase):
         roster = HockeySeasonRoster.objects.first()
 
         self.assertHasMessage(response, 'Your season roster has been created.')
-        url = reverse('sports:dashboard', kwargs={'slug': self.ice_hockey.slug})
+        url = reverse('teams:season_rosters:list', kwargs={'team_pk': self.icecats.pk})
         self.assertRedirects(response, url)
         self.assertEqual(roster.created_by.id, self.user.id)
         self.assertEqual(roster.team.id, self.icecats.id)
@@ -132,7 +134,7 @@ class SeasonRosterListViewTests(BaseTestCase):
         cls.ice_hockey = SportFactory(name='Ice Hockey')
         cls.liahl = LeagueFactory(name='Long Island Amateur Hockey League', sport=cls.ice_hockey)
         cls.mm_aa = DivisionFactory(name='Midget Minor AA', league=cls.liahl)
-        cls.icecats = TeamFactory(name='Green Machine Icecats', division=cls.mm_aa)
+        cls.icecats = TeamFactory(name='Green Machine IceCats', division=cls.mm_aa)
         cls.liahl_season = SeasonFactory(league=cls.liahl)
 
     def setUp(self):
@@ -161,13 +163,17 @@ class SeasonRosterListViewTests(BaseTestCase):
     def test_has_permission_false_not_manager(self):
         team = TeamFactory(division=self.mm_aa)
         response = self.client.get(self.format_url(team_pk=team.pk))
-        self.assert_404(response)
+        context = response.context
+        self.assertFalse(context.get('can_user_list'))
+        self.assertDictEqual(context.get('season_rosters'), {})
 
     def test_has_permission_false_inactive_manager(self):
         self.hockey_manager.is_active = False
         self.hockey_manager.save()
         response = self.client.get(self.formatted_url)
-        self.assert_404(response)
+        context = response.context
+        self.assertFalse(context.get('can_user_list'))
+        self.assertDictEqual(context.get('season_rosters'), {})
 
     def test_team_dne(self):
         response = self.client.get(self.format_url(team_pk=1000))
@@ -175,11 +181,6 @@ class SeasonRosterListViewTests(BaseTestCase):
 
     # GET
     def test_get(self):
-        response = self.client.get(self.formatted_url)
-        self.assert_200(response)
-        self.assertTemplateUsed(response, 'seasons/season_roster_list.html')
-
-    def test_get_context_populated(self):
         season_rosters = HockeySeasonRosterFactory.create_batch(5, season=self.liahl_season, team=self.icecats)
         players = HockeyPlayerFactory.create_batch(4)
         players[0].is_active = False
@@ -187,10 +188,16 @@ class SeasonRosterListViewTests(BaseTestCase):
         season_rosters[0].players.set(players)
         response = self.client.get(self.formatted_url)
         context = response.context
+        self.assert_200(response)
+        self.assertTemplateUsed(response, 'seasons/season_roster_list.html')
         self.assertEqual(context['team'].pk, self.icecats.pk)
         self.assertEqual(set(context['season_rosters']), set(season_rosters))
         self.assertEqual(context['season_rosters'][season_rosters[0]].count(), 3)
         self.assertTrue(context.get('has_season_rosters'))
+        self.assertEqual(context.get('active_tab'), 'season_rosters')
+        self.assertEqual(context.get('team_display_name'), 'Green Machine IceCats - Midget Minor AA')
+        self.assertIsNotNone(context.get('past_seasons'))
+        self.assertTrue(context.get('can_user_list'))
 
 
 class SeasonRosterUpdateViewTests(BaseTestCase):
@@ -201,7 +208,7 @@ class SeasonRosterUpdateViewTests(BaseTestCase):
         cls.ice_hockey = SportFactory(name='Ice Hockey')
         cls.liahl = LeagueFactory(name='Long Island Amateur Hockey League', sport=cls.ice_hockey)
         cls.mm_aa = DivisionFactory(name='Midget Minor AA', league=cls.liahl)
-        cls.icecats = TeamFactory(name='Green Machine Icecats', division=cls.mm_aa)
+        cls.icecats = TeamFactory(name='Green Machine IceCats', division=cls.mm_aa)
         cls.liahl_season = SeasonFactory(league=cls.liahl)
 
     def setUp(self):
@@ -274,6 +281,8 @@ class SeasonRosterUpdateViewTests(BaseTestCase):
         self.assertTemplateUsed(response, 'seasons/season_roster_update.html')
         self.assertEqual(context['team'].pk, self.icecats.pk)
         self.assertEqual(context['form'].instance.pk, self.season_roster.pk)
+        self.assertEqual(context.get('team_display_name'), 'Green Machine IceCats - Midget Minor AA')
+        self.assertIsNotNone(context.get('past_seasons'))
 
     # POST
     def test_post_valid_changed_form(self):
@@ -378,7 +387,11 @@ class LeagueSeasonDetailViewTestCase(BaseTestCase):
                       self.rebels_peewee]
 
 
-class LeagueSeasonDetailScheduleViewTestCase(LeagueSeasonDetailViewTestCase):
+class AbstractScheduleViewTestCase(LeagueSeasonDetailViewTestCase):
+    """
+    Abstract test case that sets up all of the necessary objects to test a schedule view
+    """
+
     def _create_game(self, home_team, away_team, season):
         return HockeyGameFactory(home_team=home_team, away_team=away_team, team=home_team, season=season,
                                  type=self.game_type, point_value=self.point_value)
@@ -412,7 +425,7 @@ class LeagueSeasonDetailScheduleViewTestCase(LeagueSeasonDetailViewTestCase):
         self.login(user=self.user)
 
 
-class SeasonDetailScheduleViewTests(LeagueSeasonDetailScheduleViewTestCase):
+class SeasonDetailScheduleViewTests(AbstractScheduleViewTestCase):
     url = 'leagues:seasons:schedule'
 
     def setUp(self):

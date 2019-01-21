@@ -1,104 +1,108 @@
-{% extends 'site_base.html' %}
+{% extends 'teams/team_detail_base.html' %}
 {% load booltojson from utils %}
 
-{% block title %}
-  Season Rosters for {{ team.name }} {{ team.division.name }} - {{ team.division.league.abbreviated_name }}
-{% endblock %}
+{% block page %}Season Rosters{% endblock %}
 
-{% block content %}
-  <div class="container">
-
-    <div class="row">
-      <div class="col-md-12">
-        <div class="text-center">
-          <h3>Season Rosters for {{ team.name }}</h3>
-          <h4 class="text-muted">{{ team.division.name }} - {{ team.division.league.abbreviated_name }}</h4>
-        </div>
-      </div>
-    </div>
-
+{% block tab_content %}
+  <div role="tabpanel" class="tab-pane active" id="season-roster-list">
     <div class="row">
       <div class="col-md-12">
 
-        <div class="text-center js-loading">
-          <br>
-          {% include 'includes/loading.html' %}
-        </div>
+        {% if can_user_list %}
 
-        {# Hide the table and show a loading icon while datatables is being initialized #}
-        <div class="text-center hidden js-table-section">
-          <span class="pull-right mt5">
-            <a
-              id="create-season-roster-btn"
-              href="{% url 'teams:season_rosters:create' team.pk %}"
-              class="btn btn-sm btn-default"
-            ><i class="fa fa-plus-circle fa-success"></i>&nbsp;Season Roster
-            </a>
-          </span>
+          <div class="text-center js-loading">
+            <br>
+            {% include 'includes/loading.html' %}
+          </div>
 
-          <table class="table js-table responsive-table table-thin-th-border">
-            <thead>
-            <tr>
-              {# !!! Remember to update the datatables column indexes if modifying this !!! #}
-              <th scope="col">Name</th>
-              <th scope="col">Season</th>
-              <th scope="col">Default</th>
-              <th scope="col">Created By</th>
-              <th scope="col">Players</th>
-              <th scope="col"></th>
-            </tr>
-            </thead>
-            <tbody>
-            {% for season_roster, players in season_rosters.items %}
+          {# Hide the table and show a loading icon while datatables is being initialized #}
+          <div class="text-center hidden js-table-section">
+            <span class="pull-right mt5">
+              <a
+                id="create-season-roster-btn"
+                href="{% url 'teams:season_rosters:create' team.pk %}"
+                class="btn btn-sm btn-default"
+              ><i class="fa fa-plus-circle fa-success"></i>&nbsp;Season Roster
+              </a>
+            </span>
+
+            <table class="table js-table responsive-table table-thin-th-border">
+              <thead>
               <tr>
-                <td data-title="Name">{{ season_roster.name }}</td>
-                <td data-title="Season">{{ season_roster.season }}</td>
-                <td data-title="Default">
-                  {% if season_roster.default %}
-                    <span class="fa fa-check fa-check-green"></span>
-                  {% else %}
-                    <span class="fa fa-close fa-close-red"></span>
-                  {% endif %}
-                </td>
-                <td data-title="Created By">
-                  {{ season_roster.created_by.get_full_name }}{% if season_roster.created_by_id == request.user.id %}&nbsp;(you){% endif %}
-                </td>
-                <td data-title="Players">
-                  <a class="btn btn-link" data-toggle="modal" data-target="#{{ season_roster.id }}-modal">View</a>
-                </td>
-                <td>
-                  <div class="dropdown table-dropdown">
-                    <a
-                      type="button"
-                      class="btn btn-link"
-                      data-toggle="dropdown"
-                      aria-haspopup="true"
-                      id="actions-dropdown-{{ season_roster.id }}"
-                      aria-expanded="false"
-                    >Actions&nbsp;<i class="fa fa-caret-down"></i>
-                    </a>
-                    <ul
-                      class="dropdown-menu table-dropdown-menu"
-                      aria-labelledby="{{ season_roster.id }}"
-                    >
-                      <li>
-                        <a
-                          id="update-season-roster-{{ season_roster.pk }}-link"
-                          href="{% url 'teams:season_rosters:update' team.pk season_roster.pk %}"
-                        ><i class="fa fa-pencil fa-primary"></i>&nbsp;Edit
-                        </a>
-                      </li>
-                    </ul>
-                  </div>
-                </td>
+                {# !!! Remember to update the datatables column indexes if modifying this !!! #}
+                <th scope="col">Name</th>
+                <th scope="col">Season</th>
+                <th scope="col">Default</th>
+                <th scope="col">Created By</th>
+                <th scope="col">Players</th>
+                <th scope="col"></th>
               </tr>
+              </thead>
+              <tbody>
+              {% for season_roster, players in season_rosters.items %}
+                <tr>
+                  <td data-title="Name">{{ season_roster.name }}</td>
+                  <td data-title="Season">{{ season_roster.season }}</td>
+                  <td data-title="Default">
+                    {% if season_roster.default %}
+                      <span class="fa fa-check fa-check-green"></span>
+                    {% else %}
+                      <span class="fa fa-close fa-close-red"></span>
+                    {% endif %}
+                  </td>
+                  <td data-title="Created By">
+                    {{ season_roster.created_by.get_full_name }}{% if season_roster.created_by_id == request.user.id %}&nbsp;(you){% endif %}
+                  </td>
+                  <td data-title="Players">
+                    <a class="btn btn-link" data-toggle="modal" data-target="#{{ season_roster.id }}-modal">View</a>
+                  </td>
+                  <td>
+                    <div class="dropdown table-dropdown">
+                      <a
+                        type="button"
+                        class="btn btn-link"
+                        data-toggle="dropdown"
+                        aria-haspopup="true"
+                        id="actions-dropdown-{{ season_roster.id }}"
+                        aria-expanded="false"
+                      >Actions&nbsp;<i class="fa fa-caret-down"></i>
+                      </a>
+                      <ul
+                        class="dropdown-menu table-dropdown-menu"
+                        aria-labelledby="{{ season_roster.id }}"
+                      >
+                        <li>
+                          <a
+                            id="update-season-roster-{{ season_roster.pk }}-link"
+                            href="{% url 'teams:season_rosters:update' team.pk season_roster.pk %}"
+                          ><i class="fa fa-pencil fa-primary"></i>&nbsp;Edit
+                          </a>
+                        </li>
+                      </ul>
+                    </div>
+                  </td>
+                </tr>
 
-              {% include 'seasons/_players_modal.html' with id=season_roster.id players=players %}
+                {% include 'seasons/_players_modal.html' with id=season_roster.id players=players season_roster=season_roster %}
 
-            {% endfor %}
-            </tbody>
-          </table>
-        </div>
+              {% endfor %}
+              </tbody>
+            </table>
+          </div>
+
+        {% else %}
+          <div class="row">
+            <div class="col-md-offset-3 col-md-6">
+              <div class="text-center">
+                <div class="alert alert-danger" role="alert">
+                  Your account does not currently have access to this functionality.
+                  {% include 'includes/contact_info.html' %}
+                </div>
+              </div>
+            </div>
+          </div>
+        {% endif %}
+
       </div>
 
     </div>
@@ -107,31 +111,33 @@
 {% endblock %}
 
 {% block extra_js %}
-  <script>
-    $(function () {
-      var hasSeasonRosters = {{ has_season_rosters|booltojson }};
-      $('.js-table').enableDataTable({
-        dom: '<"pull-left"f>tpr',
-        // Initially sort by season desc. If add/remove columns need to update this.
-        order: [[1, 'desc']],
-        columnDefs: [
-          {
-            orderable: false,
-            targets: [2, 4, 5]
+  {% if can_user_list %}
+    <script>
+      $(function () {
+        var hasSeasonRosters = {{ has_season_rosters|booltojson }};
+        $('.js-table').enableDataTable({
+          dom: '<"pull-left"f>tpr',
+          // Initially sort by season desc. If add/remove columns need to update this.
+          order: [[1, 'desc']],
+          columnDefs: [
+            {
+              orderable: false,
+              targets: [2, 4, 5]
+            },
+          ],
+          language: {
+            searchPlaceholder: 'Search season rosters',
+            zeroRecords: 'No season rosters match your search criteria.',
+            emptyTable: 'There are no season rosters for {{ team.name }} at this time.'
           },
-        ],
-        language: {
-          searchPlaceholder: 'Search season rosters',
-          zeroRecords: 'No season rosters match your search criteria.',
-          emptyTable: 'There are no season rosters for {{ team.name }} at this time.'
-        },
-        paging: hasSeasonRosters,
-        searching: hasSeasonRosters,
-        initComplete: function () {
-          $('.js-loading').remove();
-          $('.js-table-section').removeClass('hidden');
-        }
+          paging: hasSeasonRosters,
+          searching: hasSeasonRosters,
+          initComplete: function () {
+            $('.js-loading').remove();
+            $('.js-table-section').removeClass('hidden');
+          }
+        });
       });
-    });
-  </script>
+    </script>
+  {% endif %}
 {% endblock %}

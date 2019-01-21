@@ -13,8 +13,10 @@
     {% for manager in managers %}
       <tr>
         <td data-title="Team">
-          {% include 'includes/team_logo.html' with team=manager.team %}
-          {{ manager.team.name }}
+          {% with team=manager.team %}
+            {% include 'includes/team_logo.html' with team=team %}
+            <a href="{% url 'teams:schedule' team_pk=team.pk %}">{{ team.name }}</a>
+          {% endwith %}
         </td>
         <td data-title="Division">{{ manager.team.division }}</td>
         <td data-title="">
@@ -52,7 +54,7 @@
                 </a>
               </li>
               <li>
-                <a id="list_games_manager_btn_{{ manager.team.slug }}" href="{% url 'teams:games:list' manager.team.pk %}" role="button">
+                <a id="list_games_manager_btn_{{ manager.team.slug }}" href="{% url 'teams:schedule' team_pk=manager.team.pk %}" role="button">
                   <i class="fa fa-list-alt fa-primary"></i>&nbsp;List
                 </a>
               </li>

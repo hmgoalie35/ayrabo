@@ -1,3 +1,5 @@
+{% load get_past_seasons_nav_tab_url from utils %}
+
 <li role="presentation" class="list-item--pill dropdown">
   <a
     id="tab-item-past-seasons"
@@ -15,7 +17,7 @@
       <li>
         <a
           id="past-season-{{ past_season.pk }}"
-          href="{% url 'leagues:seasons:schedule' slug=league.slug season_pk=past_season.pk %}"
+          href="{% get_past_seasons_nav_tab_url profile_type %}"
         >{{ past_season }}
         </a>
       </li>

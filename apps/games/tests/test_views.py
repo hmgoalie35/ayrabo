@@ -100,19 +100,18 @@ class HockeyGameCreateViewTests(BaseTestCase):
     def test_get(self):
         self.login(email=self.email, password=self.password)
         response = self.client.get(self.format_url(team_pk=1))
+        context = response.context
+
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'games/game_create.html')
+        self.assertEqual(context.get('team'), self.t1)
+        self.assertEqual(context.get('team_display_name'), 'Green Machine IceCats - Midget Minor AA')
+        self.assertIsNotNone(context.get('past_seasons'))
 
     def test_get_team_dne(self):
         self.login(email=self.email, password=self.password)
         response = self.client.get(self.format_url(team_pk=999))
         self.assertEqual(response.status_code, 404)
-
-    def test_get_context_data(self):
-        self.login(email=self.email, password=self.password)
-        response = self.client.get(self.format_url(team_pk=1))
-        context = response.context
-        self.assertEqual(context['team'].id, self.t1.id)
 
     # Testing some generic functionality in this test...
     def test_get_sport_not_configured(self):
@@ -128,7 +127,7 @@ class HockeyGameCreateViewTests(BaseTestCase):
     def test_valid_post(self):
         self.login(email=self.email, password=self.password)
         response = self.client.post(self.format_url(team_pk=1), data=self.post_data, follow=True)
-        url = reverse('sports:dashboard', kwargs={'slug': self.ice_hockey.slug})
+        url = reverse('teams:schedule', kwargs={'team_pk': self.t1.pk})
         self.assertRedirects(response, url)
         self.assertHasMessage(response, 'Your game has been created.')
         game = HockeyGame.objects.first()
@@ -455,9 +454,13 @@ class HockeyGameUpdateViewTests(BaseTestCase):
     def test_get(self):
         self.login(email=self.email, password=self.password)
         response = self.client.get(self.format_url(team_pk=1, pk=1))
+        context = response.context
         self.assertTemplateUsed(response, 'games/game_update.html')
         self.assert_200(response)
-        self.assertEqual(response.context.get('game'), self.game)
+        self.assertEqual(context.get('game'), self.game)
+        self.assertEqual(context.get('team'), self.t1)
+        self.assertEqual(context.get('team_display_name'), 'Green Machine IceCats - Midget Minor AA')
+        self.assertIsNotNone(context.get('past_seasons'))
 
     # POST
     def test_has_changed_custom_logic(self):
@@ -465,7 +468,7 @@ class HockeyGameUpdateViewTests(BaseTestCase):
         self.login(email=self.email, password=self.password)
         response = self.client.post(self.formatted_url, data=self.post_data, follow=True)
         self.assertNoMessage(response, 'Your game has been updated.')
-        self.assertRedirects(response, reverse('teams:games:list', kwargs={'team_pk': self.t1.id}))
+        self.assertRedirects(response, reverse('teams:schedule', kwargs={'team_pk': self.t1.id}))
 
     def test_post_valid(self):
         location = LocationFactory()
@@ -474,7 +477,7 @@ class HockeyGameUpdateViewTests(BaseTestCase):
         self.post_data.update({'location': location.id})
         response = self.client.post(self.formatted_url, data=self.post_data, follow=True)
         self.assertHasMessage(response, 'Your game has been updated.')
-        self.assertRedirects(response, reverse('teams:games:list', kwargs={'team_pk': self.t1.id}))
+        self.assertRedirects(response, reverse('teams:schedule', kwargs={'team_pk': self.t1.id}))
         self.game.refresh_from_db()
         self.assertEqual(self.game.location.id, location.id)
 

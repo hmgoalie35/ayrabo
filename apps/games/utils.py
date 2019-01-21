@@ -1,3 +1,6 @@
+from django.db.models import Q
+
+from games.mappings import get_game_model_cls
 from managers.models import Manager
 from scorekeepers.models import Scorekeeper
 
@@ -43,3 +46,35 @@ def optimize_games_query(qs):
         'location',
         'team'
     )
+
+
+def get_games(sport, season, team=None):
+    """
+    Get games for the given sport and season. If a team is specified, the result will only include games for that team.
+
+    :param sport: The sport to get games for, it is used to determine what model to use (HockeyGame, etc)
+    :param season: Season to get games for
+    :param team: Optional team to further narrow queryset down by
+    :raises SportNotConfiguredException: if the sport argument has not been configured
+    :return: QuerySet of games for the given sport (HockeyGame, BaseballGame, etc)
+    """
+    model_cls = get_game_model_cls(sport)
+    # Seasons are tied to leagues so we don't need to exclude games for other leagues
+    qs = model_cls.objects.filter(season=season)
+    if team is not None:
+        qs = qs.filter(Q(home_team=team) | Q(away_team=team))
+    return optimize_games_query(qs)
+
+
+def get_game_list_view_context(user, sport, season, team=None):
+    context = {}
+    game_list_context = get_game_list_context(user, sport)
+    games = get_games(sport, season, team=team)
+    context.update({
+        'active_tab': 'schedule',
+        'season': season,
+        'games': games,
+        'has_games': games.exists()
+    })
+    context.update(game_list_context)
+    return context

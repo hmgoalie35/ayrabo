@@ -31,6 +31,24 @@ Feature: Organization profile
     And I should see "16U Tier I"
     And I should see "14U Milner"
     And "Long Island Amateur Hockey League" should show up 3 times
+    When I press "Green Machine IceCats"
+    Then I should be on the "teams:schedule" page with kwargs "team_pk=1"
+
+  Scenario: Teams tab team name link works
+    Given The following team object exists
+      | id | name                  | division        | league                            | sport      | organization |
+      | 1  | Green Machine IceCats | Midget Minor AA | Long Island Amateur Hockey League | Ice Hockey | 1            |
+    And I am on the "organizations:detail" page with kwargs "pk=1"
+    When I press "Green Machine IceCats"
+    Then I should be on the "teams:schedule" page with kwargs "team_pk=1"
+
+  Scenario: Teams tab league name link works
+    Given The following team object exists
+      | id | name                  | division        | league                            | sport      | organization |
+      | 1  | Green Machine IceCats | Midget Minor AA | Long Island Amateur Hockey League | Ice Hockey | 1            |
+    And I am on the "organizations:detail" page with kwargs "pk=1"
+    When I press "Long Island Amateur Hockey League"
+    Then I should be on the "leagues:schedule" page with kwargs "slug=liahl"
 
   Scenario: Teams tab (empty state)
     Given I am on the "organizations:detail" page with kwargs "pk=1"

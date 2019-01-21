@@ -8,11 +8,13 @@ from django.views.generic import DetailView
 from ayrabo.utils.exceptions import SportNotConfiguredException
 from ayrabo.utils.mixins import HandleSportNotConfiguredMixin, HasPermissionMixin
 from divisions.models import Division
+from games.utils import get_game_list_view_context
 from leagues.models import League
 from managers.models import Manager
 from seasons.models import Season
-from seasons.utils import get_chunked_divisions, get_schedule_view_context
+from seasons.utils import get_chunked_divisions
 from teams.models import Team
+from teams.utils import get_team_detail_view_context
 from .forms import HockeySeasonRosterCreateUpdateForm
 from .models import HockeySeasonRoster
 
@@ -66,10 +68,11 @@ class SeasonRosterCreateView(LoginRequiredMixin,
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['team'] = self.team
+        context.update(get_team_detail_view_context(self.team))
         return context
 
     def get_success_url(self):
-        return reverse('sports:dashboard', kwargs={'slug': self.sport.slug})
+        return reverse('teams:season_rosters:list', kwargs={'team_pk': self.team.pk})
 
     def get(self, request, *args, **kwargs):
         self._get_team()
@@ -80,7 +83,7 @@ class SeasonRosterCreateView(LoginRequiredMixin,
         return super().post(request, *args, **kwargs)
 
 
-class SeasonRosterListView(LoginRequiredMixin, HandleSportNotConfiguredMixin, HasPermissionMixin, generic.ListView):
+class SeasonRosterListView(LoginRequiredMixin, HandleSportNotConfiguredMixin, generic.ListView):
     template_name = 'seasons/season_roster_list.html'
     context_object_name = 'season_rosters'
 
@@ -92,12 +95,13 @@ class SeasonRosterListView(LoginRequiredMixin, HandleSportNotConfiguredMixin, Ha
             pk=self.kwargs.get('team_pk')
         )
         self.sport = self.team.division.league.sport
+        self.can_user_list = self.can_user_list_season_rosters()
         return self.team
 
     def _get_players(self, season_roster):
         return season_roster.players.active().order_by('jersey_number').select_related('user')
 
-    def has_permission_func(self):
+    def can_user_list_season_rosters(self):
         user = self.request.user
         team = self._get_team()
         return Manager.objects.active().filter(user=user, team=team).exists()
@@ -108,17 +112,22 @@ class SeasonRosterListView(LoginRequiredMixin, HandleSportNotConfiguredMixin, Ha
             raise SportNotConfiguredException(self.sport)
         # Datatables is ordering by season, desc. It seems to be doing a lexicographical sort so it works, but isn't
         # the best way to sort season rosters.
-        return season_roster_cls.objects.filter(team=self.team).select_related(
-            'season', 'team', 'team__division', 'created_by')
+        if self.can_user_list:
+            return season_roster_cls.objects.filter(team=self.team).select_related('season', 'team', 'team__division',
+                                                                                   'created_by')
+        return season_roster_cls.objects.none()
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         season_rosters = context.pop(self.context_object_name)
         context.update({
             'season_rosters': {roster: self._get_players(roster) for roster in season_rosters},
-            'has_season_rosters': season_rosters.count() > 0,
-            'team': self.team
+            'has_season_rosters': season_rosters.exists(),
+            'team': self.team,
+            'active_tab': 'season_rosters',
+            'can_user_list': self.can_user_list
         })
+        context.update(get_team_detail_view_context(team=self.team))
         return context
 
     def get(self, request, *args, **kwargs):
@@ -172,6 +181,7 @@ class SeasonRosterUpdateView(LoginRequiredMixin,
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['team'] = self.team
+        context.update(get_team_detail_view_context(self.team))
         return context
 
     def form_valid(self, form):
@@ -235,7 +245,7 @@ class SeasonDetailScheduleView(AbstractSeasonDetailView):
         season = context.get('season')
         user = self.request.user
         sport = league.sport
-        context.update(get_schedule_view_context(user, sport, season))
+        context.update(get_game_list_view_context(user, sport, season))
         return context
 
 

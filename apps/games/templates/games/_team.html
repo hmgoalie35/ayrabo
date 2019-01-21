@@ -1,2 +1,2 @@
 {% include 'includes/team_logo.html' with team=team %}
-{{ team.name }} - <i>{{ team.division.name }}</i>
+<a href="{% url 'teams:schedule' team_pk=team.pk %}">{{ team.name }}</a> - <i>{{ team.division.name }}</i>
