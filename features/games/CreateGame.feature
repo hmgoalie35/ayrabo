@@ -31,22 +31,28 @@ Feature: Create game
       | 1  | Long Island Amateur Hockey League | today      | 1y       | Green Machine IceCats |
     And I login with "user@ayrabo.com" and "myweakpassword"
 
-  Scenario: Navigate to game create page
+  Scenario: Navigate to game create page from dashboard
     Given I am on the "sports:dashboard" page with kwargs "slug=ice-hockey"
     And I press "manager-tab"
     And I press "actions-dropdown-manager-green-machine-icecats"
     And I press "create_game_btn_green-machine-icecats"
-    Then I should be on the "/teams/1/games/create/" page
+    Then I should be on the "teams:games:create" page with kwargs "team_pk=1"
+
+  Scenario: Navigate to game create page from team detail schedule page
+    Given I am on the "teams:schedule" page with kwargs "team_pk=1"
+    When I press "create-game-btn"
+    Then I should be on the "teams:games:create" page with kwargs "team_pk=1"
 
   Scenario: Informative text displayed to user
-    Given I am on the "/teams/1/games/create/" page
-    Then I should see "Create Game for Green Machine IceCats"
-    And I should see "Midget Minor AA - LIAHL"
+    Given I am on the "teams:games:create" page with kwargs "team_pk=1"
+    Then I should see "Green Machine IceCats - Midget Minor AA"
+    And I should see "Long Island Amateur Hockey League"
+    And I should see "Create Game"
     And I should see "Make sure the date and time entered for Game Start and Game End are for the timezone you choose."
     And I should see "All dates and times will be automatically displayed in common timezones throughout example.com."
 
   Scenario: Valid form
-    Given I am on the "/teams/1/games/create/" page
+    Given I am on the "teams:games:create" page with kwargs "team_pk=1"
     And I select "Aviator Gulls - Midget Minor AA" from "id_home_team"
     And I select "Green Machine IceCats - Midget Minor AA" from "id_away_team"
     And I select "Exhibition" from "id_type"
@@ -56,10 +62,10 @@ Feature: Create game
     And I fill in "id_end" with date "today" and time "09:00 PM"
     And I select "1" from "id_season"
     And I press "create_game_btn"
-    Then I should be on the "sports:dashboard" page with kwargs "slug=ice-hockey"
+    Then I should be on the "teams:schedule" page with kwargs "team_pk=1"
     And I should see "Your game has been created."
 
   Scenario: Invalid form
-    Given I am on the "/teams/1/games/create/" page
+    Given I am on the "teams:games:create" page with kwargs "team_pk=1"
     And I press "create_game_btn"
     Then "This field is required." should show up 8 times
