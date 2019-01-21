@@ -38,6 +38,11 @@ Feature: Season detail divisions
     And I should see "Aviator Gulls"
     And I should see "Long Island Rebels"
 
+  Scenario: Team names are links
+    Given I am on the "leagues:seasons:divisions" page with kwargs "slug=liahl, season_pk=1"
+    When I press "Green Machine IceCats"
+    Then I should be on the "teams:schedule" page with kwargs "team_pk=1"
+
   Scenario: No divisions exist
     Given I am on the "leagues:seasons:divisions" page with kwargs "slug=nhl, season_pk=2"
     Then I should see "There are no divisions tied to National Hockey League at this time."

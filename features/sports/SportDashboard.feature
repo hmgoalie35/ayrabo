@@ -44,6 +44,16 @@ Feature: Sport dashboard
     When I press "Long Island Edge"
     Then I should be on the "teams:schedule" page with kwargs "team_pk=2"
 
+  Scenario: Coaches tab actions dropdown
+    Given The following coach object exists
+      | username_or_email | team             | position        |
+      | user@ayrabo.com   | Long Island Edge | assistant_coach |
+    And I am on the "sports:dashboard" page with kwargs "slug=ice-hockey"
+    And I press "coach-tab"
+    And I press "actions-dropdown-coach-long-island-edge"
+    And I press "list_games_coach_btn_long-island-edge"
+    Then I should be on the "teams:schedule" page with kwargs "team_pk=2"
+
   Scenario: Managers tab
     Given The following manager object exists
       | username_or_email | team             | position        |
@@ -52,6 +62,16 @@ Feature: Sport dashboard
     And I press "manager-tab"
     Then I should see "Midget Minor AA"
     When I press "Long Island Edge"
+    Then I should be on the "teams:schedule" page with kwargs "team_pk=2"
+
+  Scenario: Managers tab actions dropdown
+    Given The following manager object exists
+      | username_or_email | team             | position        |
+      | user@ayrabo.com   | Long Island Edge | assistant_coach |
+    And I am on the "sports:dashboard" page with kwargs "slug=ice-hockey"
+    And I press "manager-tab"
+    And I press "actions-dropdown-manager-long-island-edge"
+    And I press "list_games_manager_btn_long-island-edge"
     Then I should be on the "teams:schedule" page with kwargs "team_pk=2"
 
   Scenario: Organizations tab
@@ -72,6 +92,16 @@ Feature: Sport dashboard
     And I should see "35"
     And I should see "Goaltender"
     When I press "Long Island Edge"
+    Then I should be on the "teams:schedule" page with kwargs "team_pk=2"
+
+  Scenario: Players tab actions dropdown
+    Given The following player object exists
+      | username_or_email | team             | sport      | jersey_number | position   |
+      | user@ayrabo.com   | Long Island Edge | Ice Hockey | 35            | Goaltender |
+    And I am on the "sports:dashboard" page with kwargs "slug=ice-hockey"
+    And I press "player-tab"
+    And I press "actions-dropdown-player-long-island-edge"
+    And I press "list_games_player_btn_long-island-edge"
     Then I should be on the "teams:schedule" page with kwargs "team_pk=2"
 
   Scenario: Referees tab

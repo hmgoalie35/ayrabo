@@ -30,33 +30,6 @@ Feature: List games for a team
       | 1  | Long Island Amateur Hockey League | today      | 1y       | Green Machine IceCats |
     And I login with "user@ayrabo.com" and "myweakpassword"
 
-  Scenario: Navigate to hockey game list page as manager
-    Given I am on the "sports:dashboard" page with kwargs "slug=ice-hockey"
-    And I press "manager-tab"
-    And I press "actions-dropdown-manager-green-machine-icecats"
-    And I press "list_games_manager_btn_green-machine-icecats"
-    Then I should be on the "teams:games:list" page with kwargs "team_pk=1"
-
-  Scenario: Navigate to hockey game list page as player
-    Given The following player object exists
-      | username_or_email | sport      | team                  |
-      | user@ayrabo.com   | Ice Hockey | Green Machine IceCats |
-    And I am on the "sports:dashboard" page with kwargs "slug=ice-hockey"
-    And I press "player-tab"
-    And I press "actions-dropdown-player-green-machine-icecats"
-    And I press "list_games_player_btn_green-machine-icecats"
-    Then I should be on the "teams:games:list" page with kwargs "team_pk=1"
-
-  Scenario: Navigate to hockey game list page as coach
-    Given The following coach object exists
-      | username_or_email | team                  |
-      | user@ayrabo.com   | Green Machine IceCats |
-    And I am on the "sports:dashboard" page with kwargs "slug=ice-hockey"
-    And I press "coach-tab"
-    And I press "actions-dropdown-coach-green-machine-icecats"
-    And I press "list_games_coach_btn_green-machine-icecats"
-    Then I should be on the "teams:games:list" page with kwargs "team_pk=1"
-
   Scenario: Helpful text displayed to user
     Given I am on the "teams:games:list" page with kwargs "team_pk=1"
     Then I should see "Games for Green Machine IceCats"

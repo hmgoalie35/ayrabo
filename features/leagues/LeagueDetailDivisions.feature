@@ -34,6 +34,11 @@ Feature: League detail divisions
     And I should see "Aviator Gulls"
     And I should see "Long Island Rebels"
 
+  Scenario: Team names are links
+    Given I am on the "leagues:divisions" page with kwargs "slug=liahl"
+    When I press "Green Machine IceCats"
+    Then I should be on the "teams:schedule" page with kwargs "team_pk=1"
+
   Scenario: No divisions exist
     Given The following league object exists
       | name                   | sport      |

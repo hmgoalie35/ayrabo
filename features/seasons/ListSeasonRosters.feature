@@ -12,7 +12,7 @@ Feature: List season rosters
       | 1  | Green Machine IceCats | Midget Minor AA | Long Island Amateur Hockey League | Ice Hockey |
     And I login with "user@ayrabo.com" and "myweakpassword"
 
-  Scenario: Navigate to season roster list page
+  Scenario: Navigate to season roster list page from dashboard
     Given "user@ayrabo.com" is completely registered for "Ice Hockey" with role "Manager"
     And The following manager object exists
       | username_or_email | team                  |
@@ -32,8 +32,8 @@ Feature: List season rosters
       | username_or_email | team                  |
       | user@ayrabo.com   | Green Machine IceCats |
     And I am on the "teams:season_rosters:list" page with kwargs "team_pk=1"
-    Then I should see "Season Rosters for Green Machine IceCats"
-    And I should see "Midget Minor AA - LIAHL"
+    Then I should see "Green Machine IceCats - Midget Minor AA"
+    And I should see "Long Island Amateur Hockey League"
 
   Scenario: No season rosters
     Given "user@ayrabo.com" is completely registered for "Ice Hockey" with role "Manager"
@@ -66,3 +66,8 @@ Feature: List season rosters
     And I should see "2017-2018 Season"
     And I should see "John Doe&nbsp;(you)"
     And "View" should show up 2 times
+
+  Scenario: Error message displayed to user that can't list season rosters
+    Given I am on the "teams:season_rosters:list" page with kwargs "team_pk=1"
+    Then I should see "Your account does not currently have access to this functionality."
+    And I should see "Please contact us at "
