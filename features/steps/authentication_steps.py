@@ -1,4 +1,5 @@
 import re
+import time
 
 from allauth.account.models import EmailAddress
 from behave import *
@@ -109,6 +110,8 @@ def step_impl(context, account_type):
 @when('I confirm "(?P<username_or_email>.*)" via "(?P<method>.*)"')
 def step_impl(context, username_or_email, method):
     confirm_account(context, username_or_email, method)
+    # Not a fan of this, but it seems to work better than the wait for a page refresh step
+    time.sleep(3)
 
 
 @when("I follow an invalid email link")
