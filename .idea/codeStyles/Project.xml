@@ -61,6 +61,9 @@
     </codeStyleSettings>
     <codeStyleSettings language="Python">
       <option name="BLANK_LINES_AFTER_IMPORTS" value="2" />
+      <indentOptions>
+        <option name="CONTINUATION_INDENT_SIZE" value="4" />
+      </indentOptions>
     </codeStyleSettings>
     <codeStyleSettings language="SCSS">
       <indentOptions>
