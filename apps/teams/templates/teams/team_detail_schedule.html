@@ -13,7 +13,7 @@
 
     {# Hide the table and show a loading icon while datatables is being initialized #}
     <div class="text-center hidden js-table-section">
-      {% if can_create_game %}
+      {% if can_create_game and not season.expired %}
         <span class="pull-right mt5">
           <a id="create-game-btn" href="{% url 'teams:games:create' team.pk %}" class="btn btn-sm btn-default">
             <i class="fa fa-plus-circle fa-success"></i>&nbsp;Game
