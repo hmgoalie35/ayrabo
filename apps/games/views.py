@@ -9,9 +9,7 @@ from ayrabo.utils.exceptions import SportNotConfiguredException
 from ayrabo.utils.mixins import HandleSportNotConfiguredMixin, HasPermissionMixin
 from common.views import CsvBulkUploadView
 from games.forms import DATETIME_INPUT_FORMAT, HockeyGameCreateForm
-from games.mappings import get_game_model_cls
 from games.models import HockeyGame
-from games.utils import get_game_list_context, optimize_games_query
 from managers.models import Manager
 from scorekeepers.models import Scorekeeper
 from sports.models import Sport
@@ -159,44 +157,6 @@ class GameUpdateView(LoginRequiredMixin,
         return super().post(request, *args, **kwargs)
 
 
-class GameListView(LoginRequiredMixin, HandleSportNotConfiguredMixin, generic.ListView):
-    template_name = 'games/game_list.html'
-    context_object_name = 'games'
-
-    def _get_team(self):
-        if hasattr(self, 'team'):
-            return self.team
-        self.team = get_object_or_404(
-            Team.objects.select_related('division', 'division__league', 'division__league__sport'),
-            pk=self.kwargs.get('team_pk', None)
-        )
-        self.sport = self.team.division.league.sport
-        return self.team
-
-    def get_queryset(self):
-        model_cls = get_game_model_cls(self.sport)
-        qs = model_cls.objects.filter(Q(home_team=self.team) | Q(away_team=self.team))
-        return optimize_games_query(qs)
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        user = self.request.user
-        games = context.get('games')
-        game_list_context = get_game_list_context(user, self.sport)
-        team_ids_managed_by_user = game_list_context.get('team_ids_managed_by_user')
-        context.update({
-            'can_create_game': self.team.id in team_ids_managed_by_user,
-            'team': self.team,
-            'has_games': games.exists()
-        })
-        context.update(game_list_context)
-        return context
-
-    def get(self, request, *args, **kwargs):
-        self._get_team()
-        return super().get(request, *args, **kwargs)
-
-
 class GameRostersUpdateView(LoginRequiredMixin,
                             HandleSportNotConfiguredMixin,
                             HasPermissionMixin,
@@ -260,9 +220,9 @@ class GameRostersUpdateView(LoginRequiredMixin,
         context['home_team_name'] = '{} {}'.format(home_team.name, home_team.division.name)
         context['away_team_name'] = '{} {}'.format(away_team.name, away_team.division.name)
         context['can_update_home_team_roster'] = can_update_game and (
-                self.managers.filter(team=home_team).exists() or is_scorekeeper)
+            self.managers.filter(team=home_team).exists() or is_scorekeeper)
         context['can_update_away_team_roster'] = can_update_game and (
-                self.managers.filter(team=away_team).exists() or is_scorekeeper)
+            self.managers.filter(team=away_team).exists() or is_scorekeeper)
         context['sport'] = self.sport
         return context
 

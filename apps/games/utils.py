@@ -72,7 +72,7 @@ def get_game_list_view_context(user, sport, season, team=None):
     games = get_games(sport, season, team=team)
     context.update({
         'active_tab': 'schedule',
-        'season': season,
+        'season': season,  # Note `get_team_detail_view_context` is also setting this context key to the same value.
         'games': games,
         'has_games': games.exists()
     })

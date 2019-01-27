@@ -2,9 +2,11 @@ from django.urls import reverse
 
 from ayrabo.utils.testing import BaseTestCase
 from common.templatetags.utils import get_past_seasons_nav_tab_url
+from divisions.tests import DivisionFactory
 from leagues.tests import LeagueFactory
 from seasons.tests import SeasonFactory
 from sports.tests import SportFactory
+from teams.tests import TeamFactory
 
 
 class TemplateTagUtilsTests(BaseTestCase):
@@ -21,9 +23,11 @@ class TemplateTagUtilsTests(BaseTestCase):
         self.assertEqual(url, expected_url)
 
     def test_get_past_seasons_nav_tab_url_team(self):
-        ctx = {'league': self.liahl, 'past_season': self.past_season}
+        division = DivisionFactory(league=self.liahl, name='Midget Minor AA')
+        team = TeamFactory(division=division)
+        ctx = {'league': self.liahl, 'past_season': self.past_season, 'team': team}
         url = get_past_seasons_nav_tab_url(ctx, 'team')
-        expected_url = ''
+        expected_url = reverse('teams:seasons:schedule', kwargs={'team_pk': team.pk, 'season_pk': self.past_season.pk})
         self.assertEqual(url, expected_url)
 
     def test_get_past_seasons_nav_tab_url_none(self):

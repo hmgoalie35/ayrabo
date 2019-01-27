@@ -56,7 +56,7 @@ def get_past_seasons_nav_tab_url(context, profile_type):
         league = context.get('league')
         return reverse('leagues:seasons:schedule', kwargs={'slug': league.slug, 'season_pk': past_season.pk})
     elif profile_type == 'team':
-        # team = context.get('team')
-        return ''  # reverse('teams:seasons:schedule', kwargs={'team_pk': team.pk, 'season_pk': past_season.pk})
+        team = context.get('team')
+        return reverse('teams:seasons:schedule', kwargs={'team_pk': team.pk, 'season_pk': past_season.pk})
     # Don't return `None`, None will be used as the url.
     return ''

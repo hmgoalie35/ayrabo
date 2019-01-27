@@ -69,3 +69,20 @@ Feature: View a team's schedule for the current season
     Then "create-game-btn" should not exist on the page
     And "create-game-btn-empty-state" should not exist on the page
     And "i.fa.fa-pencil" should not exist on the page
+
+  Scenario: Navigate to team detail schedule page for a past season
+    Given The following season object exists
+      | id | league                            | start_date | end_date | teams                 |
+      | 2  | Long Island Amateur Hockey League | -1y        | -5d      | Green Machine IceCats |
+    And I am on the "teams:schedule" page with kwargs "team_pk=1"
+    And I press "tab-item-past-seasons"
+    And I press "past-season-2"
+    Then I should be on the "teams:seasons:schedule" page with kwargs "team_pk=1, season_pk=2"
+
+  Scenario: View team detail schedule page for a past season
+    Given The following season object exists
+      | id | league                            | start_date | end_date | teams                 |
+      | 2  | Long Island Amateur Hockey League | -1y        | -5d      | Green Machine IceCats |
+    And I am on the "teams:seasons:schedule" page with kwargs "team_pk=1, season_pk=2"
+    Then I should see "This season has been archived."
+    And I should see "The current season's schedule is available"
