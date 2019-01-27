@@ -58,6 +58,7 @@ class TeamDetailScheduleViewTests(AbstractScheduleViewTestCase):
         self.assertLoginRequired(self.formatted_url)
 
     def test_sport_not_configured(self):
+        # Note no season has been configured for this team's league, so the current season will be None.
         team = TeamFactory()
         self.assertSportNotConfigured(self.format_url(team_pk=team.pk))
 
@@ -71,14 +72,42 @@ class TeamDetailScheduleViewTests(AbstractScheduleViewTestCase):
         self.assertTemplateUsed('teams/team_detail_schedule.html')
 
         self.assertEqual(context.get('team_display_name'), 'Green Machine IceCats - Midget Minor AA')
+        self.assertEqual(context.get('season'), self.current_season)
+        self.assertEqual(context.get('schedule_link'), reverse('teams:schedule',
+                                                               kwargs={'team_pk': self.icecats_mm_aa.pk}))
+        self.assertEqual(context.get('season_rosters_link'), reverse('teams:season_rosters:list',
+                                                                     kwargs={'team_pk': self.icecats_mm_aa.pk}))
         self.assertIsNotNone(context.get('past_seasons'))
+        self.assertEqual(context.get('page'), 'schedule')
+        self.assertEqual(context.get('current_season_page_url'), reverse('teams:schedule',
+                                                                         kwargs={'team_pk': self.icecats_mm_aa.pk}))
         self.assertTrue(context.get('can_create_game'))
 
         self.assertEqual(context.get('active_tab'), 'schedule')
-        self.assertEqual(context.get('season'), self.current_season)
         self.assertListEqual(list(context.get('games')), [self.game1, self.game2])
         self.assertTrue(context.get('has_games'))
 
         self.assertListEqual(list(context.get('team_ids_managed_by_user')), team_ids_managed_by_user)
         self.assertFalse(context.get('is_scorekeeper'))
         self.assertEqual(context.get('sport'), self.ice_hockey)
+
+    def test_get_past_season(self):
+        url = reverse('teams:seasons:schedule',
+                      kwargs={'team_pk': self.icecats_mm_aa.pk, 'season_pk': self.previous_season.pk})
+        response = self.client.get(url)
+        context = response.context
+
+        self.assert_200(response)
+        self.assertTemplateUsed('teams/team_detail_schedule.html')
+
+        self.assertEqual(context.get('season'), self.previous_season)
+        self.assertEqual(context.get('schedule_link'), reverse('teams:seasons:schedule', kwargs={
+            'team_pk': self.icecats_mm_aa.pk, 'season_pk': self.previous_season.pk}))
+        self.assertEqual(context.get('season_rosters_link'), reverse('teams:season_rosters:list', kwargs={
+            'team_pk': self.icecats_mm_aa.pk}))
+        self.assertIsNotNone(context.get('past_seasons'))
+        self.assertEqual(context.get('page'), 'schedule')
+
+        # The user is a manager for this team, but the season is expired.
+        self.assertFalse(context.get('can_create_game'))
+        self.assertFalse(context.get('has_games'))
