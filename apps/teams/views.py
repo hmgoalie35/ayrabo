@@ -70,8 +70,13 @@ class TeamDetailScheduleView(AbstractTeamDetailView):
         season = context.get('season')
         game_list_context = get_game_list_view_context(user, self.sport, season, team=team)
         team_ids_managed_by_user = game_list_context.get('team_ids_managed_by_user')
+        is_manager = team.id in team_ids_managed_by_user
+        if season is not None:
+            can_create_game = is_manager and not season.expired
+        else:
+            can_create_game = is_manager
         context.update({
-            'can_create_game': team.id in team_ids_managed_by_user and not season.expired,
+            'can_create_game': can_create_game,
             'page': 'schedule',
             'current_season_page_url': reverse('teams:schedule', kwargs={'team_pk': team.pk})
         })
