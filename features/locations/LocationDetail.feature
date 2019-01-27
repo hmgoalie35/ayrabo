@@ -31,7 +31,7 @@ Feature: Location details
     And I login with "user@ayrabo.com" and "myweakpassword"
 
   Scenario: Navigate to location detail page
-    Given I am on the "/teams/1/games/" page
+    Given I am on the "teams:seasons:schedule" page with kwargs "team_pk=1, season_pk=1"
     When I press "Iceland"
     Then I should be on the "locations:detail" page with kwargs "slug=iceland"
 
