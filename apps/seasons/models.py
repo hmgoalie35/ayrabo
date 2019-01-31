@@ -139,6 +139,18 @@ class HockeySeasonRoster(AbstractSeasonRoster):
     """
     players = models.ManyToManyField('players.HockeyPlayer')
 
+    def get_players(self):
+        """
+        Grab active players tied to this season roster.
+
+        NOTE: Since this function is using .filter (via .active) it can't reuse objects prefetched
+        through .prefetch_related. If we were using .all the prefetched objects would be used. There is probably a way
+        around this...
+
+        :return: Active players for this season roster, sorted by jersey number ascending.
+        """
+        return self.players.active().order_by('jersey_number').select_related('user')
+
     def clean(self):
         super().clean()
         if hasattr(self, 'team') and hasattr(self, 'season'):
