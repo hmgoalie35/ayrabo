@@ -29,6 +29,8 @@ def get_team_detail_view_context(team, season_pk=None):
     season_rosters_link = reverse('teams:season_rosters:list', kwargs={'team_pk': team.pk})
     if season is not None and season.expired:
         schedule_link = reverse('teams:seasons:schedule', kwargs={'team_pk': team.pk, 'season_pk': season.pk})
+        season_rosters_link = reverse('teams:seasons:season_rosters-list',
+                                      kwargs={'team_pk': team.pk, 'season_pk': season.pk})
     return {
         'team_display_name': f'{team.name} - {division.name}',
         'season': season,  # Note `get_game_list_view_context` is also setting the same context key.

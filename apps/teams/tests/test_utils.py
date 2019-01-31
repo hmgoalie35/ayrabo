@@ -65,6 +65,7 @@ class UtilsTests(BaseTestCase):
             'season': self.past_season,
             'schedule_link': reverse('teams:seasons:schedule',
                                      kwargs={'team_pk': self.icecats.pk, 'season_pk': self.past_season.pk}),
-            'season_rosters_link': reverse('teams:season_rosters:list', kwargs={'team_pk': self.icecats.pk})
+            'season_rosters_link': reverse('teams:seasons:season_rosters-list',
+                                           kwargs={'team_pk': self.icecats.pk, 'season_pk': self.past_season.pk})
         })
         self.assertDictWithQuerySetEqual(result, self.expected_team_detail_view_context)
