@@ -7,9 +7,12 @@ from django.urls import reverse
 from ayrabo.utils.testing import BaseTestCase
 from divisions.tests import DivisionFactory
 from leagues.tests import LeagueFactory
+from managers.tests import ManagerFactory
 from organizations.tests import OrganizationFactory
+from players.tests import HockeyPlayerFactory
+from seasons.tests import HockeySeasonRosterFactory
 from seasons.tests.test_views import AbstractScheduleViewTestCase
-from sports.tests import SportFactory
+from sports.tests import SportFactory, SportRegistrationFactory
 from teams.models import Team
 from teams.tests import TeamFactory
 from users.tests import UserFactory
@@ -111,3 +114,73 @@ class TeamDetailScheduleViewTests(AbstractScheduleViewTestCase):
         # The user is a manager for this team, but the season is expired.
         self.assertFalse(context.get('can_create_game'))
         self.assertFalse(context.get('has_games'))
+
+
+class TeamDetailSeasonRostersView(BaseTestCase):
+    url = 'teams:season_rosters:list'
+
+    def setUp(self):
+        self.email = 'user@ayrabo.com'
+        self.password = 'myweakpassword'
+        self.user = UserFactory(email=self.email, password=self.password)
+
+        self.ice_hockey = SportFactory(name='Ice Hockey')
+        self.liahl = LeagueFactory(name='Long Island Amateur Hockey League', sport=self.ice_hockey)
+        self.mm_aa = DivisionFactory(name='Midget Minor AA', league=self.liahl)
+        self.icecats = TeamFactory(name='Green Machine IceCats', division=self.mm_aa)
+        self.past_season, self.current_season, self.future_season = self.create_past_current_future_seasons(self.liahl)
+
+        self.hockey_sr = SportRegistrationFactory(user=self.user, sport=self.ice_hockey, role='manager')
+        self.hockey_manager = ManagerFactory(user=self.user, team=self.icecats)
+
+        self.hockey_players = HockeyPlayerFactory.create_batch(5, sport=self.ice_hockey, team=self.icecats)
+        self.formatted_url = self.format_url(team_pk=self.icecats.pk)
+        self.login(user=self.user)
+
+    # General
+    def test_login_required(self):
+        self.client.logout()
+        self.assertLoginRequired(self.formatted_url)
+
+    def test_sport_not_configured(self):
+        team = TeamFactory()
+        self.assertSportNotConfigured(self.format_url(team_pk=team.pk))
+
+    def test_can_user_list_season_rosters_not_manager(self):
+        team = TeamFactory(division=self.mm_aa)
+        response = self.client.get(self.format_url(team_pk=team.pk))
+        context = response.context
+        self.assertFalse(context.get('can_user_list'))
+        self.assertQuerysetEqual(context.get('season_rosters'), [])
+
+    def test_can_user_list_season_rosters_not_active_manager(self):
+        self.hockey_manager.is_active = False
+        self.hockey_manager.save()
+        response = self.client.get(self.formatted_url)
+        context = response.context
+        self.assertFalse(context.get('can_user_list'))
+        self.assertQuerysetEqual(context.get('season_rosters'), [])
+
+    # GET
+    def test_get(self):
+        sr1 = HockeySeasonRosterFactory(name='SR1', season=self.current_season, team=self.icecats)
+        sr2 = HockeySeasonRosterFactory(name='SR2', season=self.current_season, team=self.icecats)
+        sr3 = HockeySeasonRosterFactory(name='SR3', season=self.current_season, team=self.icecats)
+        sr4 = HockeySeasonRosterFactory(name='SR4', season=self.current_season, team=self.icecats)
+        HockeySeasonRosterFactory(season=self.past_season, team=self.icecats)
+
+        response = self.client.get(self.formatted_url)
+        context = response.context
+
+        self.assert_200(response)
+        self.assertTemplateUsed(response, 'teams/team_detail_season_rosters.html')
+
+        self.assertEqual(context.get('team_display_name'), 'Green Machine IceCats - Midget Minor AA')
+        self.assertEqual(context.get('season'), self.current_season)
+        self.assertIsNotNone(context.get('past_seasons'))
+
+        # Only includes season rosters for the current season.
+        self.assertListEqual(list(context.get('season_rosters')), [sr1, sr2, sr3, sr4])
+        self.assertTrue(context.get('has_season_rosters'))
+        self.assertEqual(context.get('active_tab'), 'season_rosters')
+        self.assertTrue(context.get('can_user_list'))
