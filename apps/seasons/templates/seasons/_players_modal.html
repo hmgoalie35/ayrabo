@@ -1,4 +1,4 @@
-<div class="modal fade" tabindex="-1" role="dialog" id="{{ id }}-modal">
+<div class="modal fade" tabindex="-1" role="dialog" id="{{ season_roster.id }}-modal">
   <br>
   <div class="modal-dialog modal-sm" role="document">
     <div class="modal-content">
@@ -6,18 +6,20 @@
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
-        <h4 class="modal-title">Players at a glance for<br><i>{{ season_roster.name }}</i></h4>
+        <h4 class="modal-title">Players for<br><i>{{ season_roster.name }}</i></h4>
       </div>
       <div class="modal-body text-left">
-        {% for player in players %}
-          #{{ player.jersey_number }} {{ player }} {{ player.position }}
+        {% with players=season_roster.get_players %}
+          {% for player in players %}
+            #{{ player.jersey_number }} {{ player }} {{ player.position }}
+            <br>
+          {% endfor %}
           <br>
-        {% endfor %}
-        <br>
-        <div class="pull-left">
-          {{ players.count }} Player{{ players.count|pluralize }}
-        </div>
-        <br>
+          <div class="pull-left">
+            {{ players.count }} Player{{ players.count|pluralize }}
+          </div>
+          <br>
+        {% endwith %}
       </div>
     </div>
   </div>
