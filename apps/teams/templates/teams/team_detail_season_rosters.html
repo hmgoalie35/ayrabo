@@ -2,6 +2,7 @@
 {% load booltojson from utils %}
 
 {% block page %}Season Rosters{% endblock %}
+{% block current_season_page_text %}rosters are available{% endblock %}
 
 {% block tab_content %}
   <div role="tabpanel" class="tab-pane active" id="season-rosters">
@@ -16,14 +17,16 @@
 
           {# Hide the table and show a loading icon while datatables is being initialized #}
           <div class="text-center hidden js-table-section">
-            <span class="pull-right mt5">
-              <a
-                id="create-season-roster-btn"
-                href="{% url 'teams:season_rosters:create' team.pk %}"
-                class="btn btn-sm btn-default"
-              ><i class="fa fa-plus-circle fa-success"></i>&nbsp;Season Roster
-              </a>
-            </span>
+            {% if can_create_season_roster %}
+              <span class="pull-right mt5">
+                <a
+                  id="create-season-roster-btn"
+                  href="{% url 'teams:season_rosters:create' team.pk %}"
+                  class="btn btn-sm btn-default"
+                ><i class="fa fa-plus-circle fa-success"></i>&nbsp;Season Roster
+                </a>
+              </span>
+            {% endif %}
 
             <table class="table js-table responsive-table table-thin-th-border">
               <thead>

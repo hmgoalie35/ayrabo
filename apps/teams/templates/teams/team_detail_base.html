@@ -22,7 +22,7 @@
           <div class="alert alert-warning text-center" role="alert">
             This season has been archived.
             <br>
-            The current season's {{ page }} is available <a class="alert-link" href="{{ current_season_page_url }}">here</a>.
+            The current season's {% block current_season_page_text %}{% endblock %} <a class="alert-link" href="{{ current_season_page_url }}">here</a>.
           </div>
         </div>
       </div>
