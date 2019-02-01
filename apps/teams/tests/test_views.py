@@ -76,14 +76,11 @@ class TeamDetailScheduleViewTests(AbstractScheduleViewTestCase):
 
         self.assertEqual(context.get('team_display_name'), 'Green Machine IceCats - Midget Minor AA')
         self.assertEqual(context.get('season'), self.current_season)
-        self.assertEqual(context.get('schedule_link'), reverse('teams:schedule',
-                                                               kwargs={'team_pk': self.icecats_mm_aa.pk}))
+        self.assertEqual(context.get('schedule_link'), self.formatted_url)
         self.assertEqual(context.get('season_rosters_link'), reverse('teams:season_rosters:list',
                                                                      kwargs={'team_pk': self.icecats_mm_aa.pk}))
         self.assertIsNotNone(context.get('past_seasons'))
-        self.assertEqual(context.get('page'), 'schedule')
-        self.assertEqual(context.get('current_season_page_url'), reverse('teams:schedule',
-                                                                         kwargs={'team_pk': self.icecats_mm_aa.pk}))
+        self.assertEqual(context.get('current_season_page_url'), self.formatted_url)
         self.assertTrue(context.get('can_create_game'))
 
         self.assertEqual(context.get('active_tab'), 'schedule')
@@ -95,8 +92,8 @@ class TeamDetailScheduleViewTests(AbstractScheduleViewTestCase):
         self.assertEqual(context.get('sport'), self.ice_hockey)
 
     def test_get_past_season(self):
-        url = reverse('teams:seasons:schedule',
-                      kwargs={'team_pk': self.icecats_mm_aa.pk, 'season_pk': self.previous_season.pk})
+        kwargs = {'team_pk': self.icecats_mm_aa.pk, 'season_pk': self.previous_season.pk}
+        url = reverse('teams:seasons:schedule', kwargs=kwargs)
         response = self.client.get(url)
         context = response.context
 
@@ -104,12 +101,10 @@ class TeamDetailScheduleViewTests(AbstractScheduleViewTestCase):
         self.assertTemplateUsed('teams/team_detail_schedule.html')
 
         self.assertEqual(context.get('season'), self.previous_season)
-        self.assertEqual(context.get('schedule_link'), reverse('teams:seasons:schedule', kwargs={
-            'team_pk': self.icecats_mm_aa.pk, 'season_pk': self.previous_season.pk}))
-        self.assertEqual(context.get('season_rosters_link'), reverse('teams:season_rosters:list', kwargs={
-            'team_pk': self.icecats_mm_aa.pk}))
+        self.assertEqual(context.get('schedule_link'), reverse('teams:seasons:schedule', kwargs=kwargs))
+        self.assertEqual(context.get('season_rosters_link'),
+                         reverse('teams:seasons:season_rosters-list', kwargs=kwargs))
         self.assertIsNotNone(context.get('past_seasons'))
-        self.assertEqual(context.get('page'), 'schedule')
 
         # The user is a manager for this team, but the season is expired.
         self.assertFalse(context.get('can_create_game'))
@@ -135,6 +130,13 @@ class TeamDetailSeasonRostersView(BaseTestCase):
 
         self.hockey_players = HockeyPlayerFactory.create_batch(5, sport=self.ice_hockey, team=self.icecats)
         self.formatted_url = self.format_url(team_pk=self.icecats.pk)
+
+        self.sr1 = HockeySeasonRosterFactory(name='SR1', season=self.current_season, team=self.icecats)
+        self.sr2 = HockeySeasonRosterFactory(name='SR2', season=self.current_season, team=self.icecats)
+        self.sr3 = HockeySeasonRosterFactory(name='SR3', season=self.current_season, team=self.icecats)
+        self.sr4 = HockeySeasonRosterFactory(name='SR4', season=self.current_season, team=self.icecats)
+        self.sr5 = HockeySeasonRosterFactory(season=self.past_season, team=self.icecats)
+
         self.login(user=self.user)
 
     # General
@@ -163,12 +165,6 @@ class TeamDetailSeasonRostersView(BaseTestCase):
 
     # GET
     def test_get(self):
-        sr1 = HockeySeasonRosterFactory(name='SR1', season=self.current_season, team=self.icecats)
-        sr2 = HockeySeasonRosterFactory(name='SR2', season=self.current_season, team=self.icecats)
-        sr3 = HockeySeasonRosterFactory(name='SR3', season=self.current_season, team=self.icecats)
-        sr4 = HockeySeasonRosterFactory(name='SR4', season=self.current_season, team=self.icecats)
-        HockeySeasonRosterFactory(season=self.past_season, team=self.icecats)
-
         response = self.client.get(self.formatted_url)
         context = response.context
 
@@ -180,7 +176,27 @@ class TeamDetailSeasonRostersView(BaseTestCase):
         self.assertIsNotNone(context.get('past_seasons'))
 
         # Only includes season rosters for the current season.
-        self.assertListEqual(list(context.get('season_rosters')), [sr1, sr2, sr3, sr4])
+        self.assertListEqual(list(context.get('season_rosters')), [self.sr1, self.sr2, self.sr3, self.sr4])
         self.assertTrue(context.get('has_season_rosters'))
         self.assertEqual(context.get('active_tab'), 'season_rosters')
         self.assertTrue(context.get('can_user_list'))
+        self.assertTrue(context.get('can_create_season_roster'))
+        self.assertEqual(context.get('current_season_page_url'), self.formatted_url)
+
+    def test_get_past_season(self):
+        kwargs = {'team_pk': self.icecats.pk, 'season_pk': self.past_season.pk}
+        url = reverse('teams:seasons:season_rosters-list', kwargs=kwargs)
+        response = self.client.get(url)
+        context = response.context
+
+        self.assert_200(response)
+        self.assertTemplateUsed('teams/team_detail_season_rosters.html')
+
+        self.assertEqual(context.get('season'), self.past_season)
+        self.assertIsNotNone(context.get('past_seasons'))
+
+        self.assertListEqual(list(context.get('season_rosters')), [self.sr5])
+        self.assertTrue(context.get('has_season_rosters'))
+        self.assertEqual(context.get('schedule_link'), reverse('teams:seasons:schedule', kwargs=kwargs))
+        self.assertEqual(context.get('season_rosters_link'), url)
+        self.assertFalse(context.get('can_create_season_roster'))

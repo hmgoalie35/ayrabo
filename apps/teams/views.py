@@ -79,7 +79,6 @@ class TeamDetailScheduleView(AbstractTeamDetailView):
             can_create_game = is_manager
         context.update({
             'can_create_game': can_create_game,
-            'page': 'schedule',
             'current_season_page_url': reverse('teams:schedule', kwargs={'team_pk': team.pk})
         })
         context.update(game_list_context)
@@ -107,6 +106,7 @@ class TeamDetailSeasonRostersView(AbstractTeamDetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        team = self.get_object()
         season = context.get('season')
         can_user_list = self.can_user_list_season_rosters()
         season_rosters = self.get_season_rosters(season, can_user_list)
@@ -114,6 +114,8 @@ class TeamDetailSeasonRostersView(AbstractTeamDetailView):
             'season_rosters': season_rosters,  # We'll just sort with datatables
             'has_season_rosters': season_rosters.exists(),
             'active_tab': 'season_rosters',
-            'can_user_list': can_user_list
+            'can_user_list': can_user_list,
+            'can_create_season_roster': season is not None and not season.expired,
+            'current_season_page_url': reverse('teams:season_rosters:list', kwargs={'team_pk': team.pk})
         })
         return context
