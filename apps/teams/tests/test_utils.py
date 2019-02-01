@@ -60,12 +60,11 @@ class UtilsTests(BaseTestCase):
         self.assertDictWithQuerySetEqual(result, self.expected_team_detail_view_context)
 
     def test_get_team_detail_view_context_past_season(self):
+        kwargs = {'team_pk': self.icecats.pk, 'season_pk': self.past_season.pk}
         result = utils.get_team_detail_view_context(self.icecats, season_pk=self.past_season.pk)
         self.expected_team_detail_view_context.update({
             'season': self.past_season,
-            'schedule_link': reverse('teams:seasons:schedule',
-                                     kwargs={'team_pk': self.icecats.pk, 'season_pk': self.past_season.pk}),
-            'season_rosters_link': reverse('teams:seasons:season_rosters-list',
-                                           kwargs={'team_pk': self.icecats.pk, 'season_pk': self.past_season.pk})
+            'schedule_link': reverse('teams:seasons:schedule', kwargs=kwargs),
+            'season_rosters_link': reverse('teams:seasons:season_rosters-list', kwargs=kwargs)
         })
         self.assertDictWithQuerySetEqual(result, self.expected_team_detail_view_context)

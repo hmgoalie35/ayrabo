@@ -101,7 +101,7 @@ class TeamDetailScheduleViewTests(AbstractScheduleViewTestCase):
         self.assertTemplateUsed('teams/team_detail_schedule.html')
 
         self.assertEqual(context.get('season'), self.previous_season)
-        self.assertEqual(context.get('schedule_link'), reverse('teams:seasons:schedule', kwargs=kwargs))
+        self.assertEqual(context.get('schedule_link'), url)
         self.assertEqual(context.get('season_rosters_link'),
                          reverse('teams:seasons:season_rosters-list', kwargs=kwargs))
         self.assertIsNotNone(context.get('past_seasons'))
