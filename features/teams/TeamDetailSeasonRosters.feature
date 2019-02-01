@@ -1,7 +1,6 @@
-Feature: List season rosters
-  As a site admin, team manager or team coach,
-  I want to be able to view all season rosters for a team,
-  So that I can see all season rosters and update them as needed
+Feature: View season rosters created for a team for current season and past seasons
+  As a user,
+  I want to be able to view a team's season rosters for past and current seasons
 
   Background: User exists
     Given The following confirmed user account exists
@@ -26,14 +25,16 @@ Feature: List season rosters
   Scenario: Informative text shown to user
     Given "user@ayrabo.com" is completely registered for "Ice Hockey" with role "Manager"
     And The following season object exists
-      | league                            | teams                 |
-      | Long Island Amateur Hockey League | Green Machine IceCats |
+      | league                            | teams                 | start_date | end_date |
+      | Long Island Amateur Hockey League | Green Machine IceCats | today      | 1y       |
     And The following manager object exists
       | username_or_email | team                  |
       | user@ayrabo.com   | Green Machine IceCats |
     And I am on the "teams:season_rosters:list" page with kwargs "team_pk=1"
     Then I should see "Green Machine IceCats - Midget Minor AA"
     And I should see "Long Island Amateur Hockey League"
+    And I should see season "today" "1y"
+    And "create-season-roster-btn" should be visible
 
   Scenario: No season rosters
     Given "user@ayrabo.com" is completely registered for "Ice Hockey" with role "Manager"
@@ -46,28 +47,46 @@ Feature: List season rosters
     And I am on the "teams:season_rosters:list" page with kwargs "team_pk=1"
     Then I should see "There are no season rosters for Green Machine IceCats at this time."
 
-  Scenario: Season rosters are listed
+  Scenario: Season rosters exist
     Given "user@ayrabo.com" is completely registered for "Ice Hockey" with role "Manager"
     And The following season object exists
-      | league                            | start_date | end_date   | teams                 |
-      | Long Island Amateur Hockey League | 2016-09-14 | 2017-09-14 | Green Machine IceCats |
-      | Long Island Amateur Hockey League | 2017-09-14 | 2018-09-14 | Green Machine IceCats |
+      | id | league                            | start_date | end_date | teams                 |
+      | 1  | Long Island Amateur Hockey League | today      | 1y       | Green Machine IceCats |
     And The following season rosters for "Ice Hockey" exist
-      | name    | season_start_date | season_end_date | team                  | created_by      |
-      | Squad A | 2016-09-14        | 2017-09-14      | Green Machine IceCats | user@ayrabo.com |
-      | Squad B | 2017-09-14        | 2018-09-14      | Green Machine IceCats | user@ayrabo.com |
+      | id | name    | season_id | team                  | created_by      |
+      | 1  | Squad A | 1         | Green Machine IceCats | user@ayrabo.com |
+      | 2  | Squad B | 1         | Green Machine IceCats | user@ayrabo.com |
     And The following manager object exists
       | username_or_email | team                  |
       | user@ayrabo.com   | Green Machine IceCats |
     And I am on the "teams:season_rosters:list" page with kwargs "team_pk=1"
     Then I should see "Squad A"
     And I should see "Squad B"
-    And I should see "2016-2017 Season"
-    And I should see "2017-2018 Season"
     And I should see "John Doe&nbsp;(you)"
-    And "View" should show up 2 times
+    And I press "view-players-1-link" which opens "1-modal"
+    Then "1-modal" should be visible
 
-  Scenario: Error message displayed to user that can't list season rosters
+  Scenario: Not team manager
     Given I am on the "teams:season_rosters:list" page with kwargs "team_pk=1"
     Then I should see "Your account does not currently have access to this functionality."
     And I should see "Please contact us at "
+
+  Scenario: Navigate to team detail season rosters page for a past season
+    Given The following season object exists
+      | id | league                            | start_date | end_date | teams                 |
+      | 2  | Long Island Amateur Hockey League | -1y        | -5d      | Green Machine IceCats |
+    And I am on the "teams:schedule" page with kwargs "team_pk=1"
+    And I press "tab-item-past-seasons"
+    And I press "past-season-2"
+    And I press "tab-item-season-rosters"
+    Then I should be on the "teams:seasons:season_rosters-list" page with kwargs "team_pk=1, season_pk=2"
+
+  Scenario: View team detail season rosters page for a past season
+    Given The following season object exists
+      | id | league                            | start_date | end_date | teams                 |
+      | 2  | Long Island Amateur Hockey League | -1y        | -5d      | Green Machine IceCats |
+    And I am on the "teams:seasons:season_rosters-list" page with kwargs "team_pk=1, season_pk=2"
+    Then I should see "This season has been archived."
+    And I should see "The current season's rosters are available"
+    And "create-season-roster-btn" should not exist on the page
+    And I should see season "-1y" "-5d"

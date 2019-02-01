@@ -54,7 +54,13 @@
                     {{ season_roster.created_by.get_full_name }}{% if season_roster.created_by_id == request.user.id %}&nbsp;(you){% endif %}
                   </td>
                   <td data-title="Players">
-                    <a class="btn btn-link" data-toggle="modal" data-target="#{{ season_roster.id }}-modal">View</a>
+                    <a
+                      id="view-players-{{ season_roster.id }}-link"
+                      class="btn btn-link"
+                      data-toggle="modal"
+                      data-target="#{{ season_roster.id }}-modal"
+                    >View
+                    </a>
                   </td>
                   <td>
                     <div class="dropdown table-dropdown">
