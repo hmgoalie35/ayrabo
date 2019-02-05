@@ -1,6 +1,6 @@
-Feature: View a team's schedule for the current season
+Feature: View a team's schedule for current season and past seasons
   As a user,
-  I want to be able to view a team's schedule
+  I want to be able to view a team's schedule for past and current seasons
 
   Background: User exists
     Given The following confirmed user account exists

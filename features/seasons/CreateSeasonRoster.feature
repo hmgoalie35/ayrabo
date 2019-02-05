@@ -11,6 +11,10 @@ Feature: Create season rosters
       | id | name                  | division             | league                            | sport      |
       | 1  | Green Machine IceCats | Midget Minor AA      | Long Island Amateur Hockey League | Ice Hockey |
       | 2  | New York Yankees      | American League East | Major League Baseball             | Baseball   |
+    And The following season object exists
+      | id | league                            | start_date | end_date | teams                 |
+      | 1  | Long Island Amateur Hockey League | today      | 1y       | Green Machine IceCats |
+
     And I login with "user@ayrabo.com" and "myweakpassword"
 
   Scenario: Navigate to season roster create page from dashboard
@@ -57,9 +61,6 @@ Feature: Create season rosters
     And The following manager object exists
       | username_or_email | team                  |
       | user@ayrabo.com   | Green Machine IceCats |
-    And The following season object exists
-      | id | league                            | teams                 |
-      | 1  | Long Island Amateur Hockey League | Green Machine IceCats |
     And The following player objects exist
       | username_or_email | sport      | team                  |
       | test1@ayrabo.com  | Ice Hockey | Green Machine IceCats |
@@ -80,9 +81,6 @@ Feature: Create season rosters
     And The following manager object exists
       | username_or_email | team                  |
       | user@ayrabo.com   | Green Machine IceCats |
-    And The following season object exists
-      | id | league                            | teams                 |
-      | 1  | Long Island Amateur Hockey League | Green Machine IceCats |
     And The following player objects exist
       | username_or_email | sport      | team                  |
       | test1@ayrabo.com  | Ice Hockey | Green Machine IceCats |
@@ -100,9 +98,6 @@ Feature: Create season rosters
     And The following manager object exists
       | username_or_email | team                  |
       | user@ayrabo.com   | Green Machine IceCats |
-    And The following season object exists
-      | id | league                            | teams                 |
-      | 1  | Long Island Amateur Hockey League | Green Machine IceCats |
     And The following player objects exist
       | username_or_email | sport      | team                  |
       | test1@ayrabo.com  | Ice Hockey | Green Machine IceCats |

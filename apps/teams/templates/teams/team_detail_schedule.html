@@ -2,10 +2,11 @@
 {% load booltojson from utils %}
 
 {% block page %}{{ season }} Schedule{% endblock %}
+{% block current_season_page_text %}schedule is available{% endblock %}
 
 {% block tab_content %}
   <div role="tabpanel" class="tab-pane active" id="schedule">
-    <h4 class="text-center">{{ season }} Schedule</h4>
+    <h4 class="text-center">{{ season }}</h4>
 
     <div class="text-center js-loading">
       {% include 'includes/loading.html' %}

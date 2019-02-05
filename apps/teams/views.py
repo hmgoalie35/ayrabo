@@ -6,7 +6,9 @@ from ayrabo.utils.mixins import HandleSportNotConfiguredMixin
 from common.views import CsvBulkUploadView
 from divisions.models import Division
 from games.utils import get_game_list_view_context
+from managers.models import Manager
 from organizations.models import Organization
+from seasons.mappings import get_season_roster_model_cls
 from teams.utils import get_team_detail_view_context
 from .models import Team
 
@@ -77,8 +79,43 @@ class TeamDetailScheduleView(AbstractTeamDetailView):
             can_create_game = is_manager
         context.update({
             'can_create_game': can_create_game,
-            'page': 'schedule',
             'current_season_page_url': reverse('teams:schedule', kwargs={'team_pk': team.pk})
         })
         context.update(game_list_context)
+        return context
+
+
+class TeamDetailSeasonRostersView(AbstractTeamDetailView):
+    template_name = 'teams/team_detail_season_rosters.html'
+
+    def can_user_list_season_rosters(self):
+        user = self.request.user
+        team = self.get_object()
+        return Manager.objects.active().filter(user=user, team=team).exists()
+
+    def get_season_rosters(self, season, can_user_list):
+        season_roster_cls = get_season_roster_model_cls(self.sport)
+        if can_user_list:
+            # Prefetching players__user doesn't work because the get_players call is using .filter so django can't use
+            # the prefetched records. It actually hurts performance because it's a db query we don't end up using. If we
+            # were to use .all, then the prefetching would work.
+            qs = season_roster_cls.objects.filter(team=self.object, season=season)
+            qs = qs.select_related('season', 'team', 'team__division', 'created_by')
+            return qs
+        return season_roster_cls.objects.none()
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        team = self.get_object()
+        season = context.get('season')
+        can_user_list = self.can_user_list_season_rosters()
+        season_rosters = self.get_season_rosters(season, can_user_list)
+        context.update({
+            'season_rosters': season_rosters,  # We'll just sort with datatables
+            'has_season_rosters': season_rosters.exists(),
+            'active_tab': 'season_rosters',
+            'can_user_list': can_user_list,
+            'can_create_season_roster': season is not None and not season.expired,
+            'current_season_page_url': reverse('teams:season_rosters:list', kwargs={'team_pk': team.pk})
+        })
         return context

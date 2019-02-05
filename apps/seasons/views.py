@@ -5,27 +5,16 @@ from django.urls import reverse
 from django.views import generic
 from django.views.generic import DetailView
 
-from ayrabo.utils.exceptions import SportNotConfiguredException
 from ayrabo.utils.mixins import HandleSportNotConfiguredMixin, HasPermissionMixin
 from divisions.models import Division
 from games.utils import get_game_list_view_context
 from leagues.models import League
 from managers.models import Manager
+from seasons.mappings import get_season_roster_create_update_form_cls, get_season_roster_model_cls
 from seasons.models import Season
 from seasons.utils import get_chunked_divisions
 from teams.models import Team
 from teams.utils import get_team_detail_view_context
-from .forms import HockeySeasonRosterCreateUpdateForm
-from .models import HockeySeasonRoster
-
-
-SPORT_FORM_MAPPINGS = {
-    'Ice Hockey': HockeySeasonRosterCreateUpdateForm
-}
-
-SPORT_MODEL_MAPPINGS = {
-    'Ice Hockey': HockeySeasonRoster
-}
 
 
 class SeasonRosterCreateView(LoginRequiredMixin,
@@ -52,10 +41,7 @@ class SeasonRosterCreateView(LoginRequiredMixin,
         return Manager.objects.active().filter(user=user, team=team).exists()
 
     def get_form_class(self):
-        form_cls = SPORT_FORM_MAPPINGS.get(self.sport.name)
-        if form_cls is None:
-            raise SportNotConfiguredException(self.sport)
-        return form_cls
+        return get_season_roster_create_update_form_cls(self.sport)
 
     def get_form_kwargs(self):
         form_kwargs = super().get_form_kwargs()
@@ -81,58 +67,6 @@ class SeasonRosterCreateView(LoginRequiredMixin,
     def post(self, request, *args, **kwargs):
         self._get_team()
         return super().post(request, *args, **kwargs)
-
-
-class SeasonRosterListView(LoginRequiredMixin, HandleSportNotConfiguredMixin, generic.ListView):
-    template_name = 'seasons/season_roster_list.html'
-    context_object_name = 'season_rosters'
-
-    def _get_team(self):
-        if hasattr(self, 'team'):
-            return self.team
-        self.team = get_object_or_404(
-            Team.objects.select_related('division', 'division__league', 'division__league__sport'),
-            pk=self.kwargs.get('team_pk')
-        )
-        self.sport = self.team.division.league.sport
-        self.can_user_list = self.can_user_list_season_rosters()
-        return self.team
-
-    def _get_players(self, season_roster):
-        return season_roster.players.active().order_by('jersey_number').select_related('user')
-
-    def can_user_list_season_rosters(self):
-        user = self.request.user
-        team = self._get_team()
-        return Manager.objects.active().filter(user=user, team=team).exists()
-
-    def get_queryset(self):
-        season_roster_cls = SPORT_MODEL_MAPPINGS.get(self.sport.name)
-        if season_roster_cls is None:
-            raise SportNotConfiguredException(self.sport)
-        # Datatables is ordering by season, desc. It seems to be doing a lexicographical sort so it works, but isn't
-        # the best way to sort season rosters.
-        if self.can_user_list:
-            return season_roster_cls.objects.filter(team=self.team).select_related('season', 'team', 'team__division',
-                                                                                   'created_by')
-        return season_roster_cls.objects.none()
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        season_rosters = context.pop(self.context_object_name)
-        context.update({
-            'season_rosters': {roster: self._get_players(roster) for roster in season_rosters},
-            'has_season_rosters': season_rosters.exists(),
-            'team': self.team,
-            'active_tab': 'season_rosters',
-            'can_user_list': self.can_user_list
-        })
-        context.update(get_team_detail_view_context(team=self.team))
-        return context
-
-    def get(self, request, *args, **kwargs):
-        self._get_team()
-        return super().get(request, *args, **kwargs)
 
 
 class SeasonRosterUpdateView(LoginRequiredMixin,
@@ -161,10 +95,7 @@ class SeasonRosterUpdateView(LoginRequiredMixin,
         return team.id == season_roster.team_id and Manager.objects.active().filter(user=user, team=team).exists()
 
     def get_form_class(self):
-        form_cls = SPORT_FORM_MAPPINGS.get(self.sport.name)
-        if form_cls is None:
-            raise SportNotConfiguredException(self.sport)
-        return form_cls
+        return get_season_roster_create_update_form_cls(self.sport)
 
     def get_form_kwargs(self):
         form_kwargs = super().get_form_kwargs()
@@ -172,9 +103,7 @@ class SeasonRosterUpdateView(LoginRequiredMixin,
         return form_kwargs
 
     def get_object(self, queryset=None):
-        model_cls = SPORT_MODEL_MAPPINGS.get(self.sport.name)
-        if model_cls is None:
-            raise SportNotConfiguredException(self.sport)
+        model_cls = get_season_roster_model_cls(self.sport)
         pk = self.kwargs.get(self.pk_url_kwarg, None)
         return get_object_or_404(model_cls.objects.select_related('season', 'team'), pk=pk)
 
