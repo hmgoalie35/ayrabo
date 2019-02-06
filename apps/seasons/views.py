@@ -101,7 +101,10 @@ class SeasonRosterUpdateView(LoginRequiredMixin,
 
     def get_form_kwargs(self):
         form_kwargs = super().get_form_kwargs()
-        form_kwargs['disable'] = ['season']
+        disable = ['season']
+        if not self.object.can_update():
+            disable = '__all__'
+        form_kwargs.update({'disable': disable})
         return form_kwargs
 
     def get_object(self, queryset=None):

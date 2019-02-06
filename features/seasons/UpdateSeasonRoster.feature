@@ -62,3 +62,21 @@ Feature: Update season roster
     # Am omitting a test for "Attempt to add another default season roster for a team/season" because this is handled
     # in the view tests. Not really worth it to duplicate the test here also. The test in CreateSeasonRoster is being
     # kept solely for reference
+
+  Scenario: Form disabled for expired seasons
+    Given The following manager object exists
+      | username_or_email | team                  |
+      | user@ayrabo.com   | Green Machine IceCats |
+    And The following season object exists
+      | id | league                            | teams                 | start_date | end_date |
+      | 2  | Long Island Amateur Hockey League | Green Machine IceCats | -1y        | -5d      |
+    And The following season rosters for "Ice Hockey" exist
+      | id | name          | season_id | team                  |
+      | 2  | Bash Brothers | 2         | Green Machine IceCats |
+    And I am on the "teams:season_rosters:update" page with kwargs "team_pk=1, pk=2"
+    Then I should see "Updates to this season roster are no longer permitted."
+    And "id_name" should be disabled
+    And "id_season" should be disabled
+    And "id_default" should be disabled
+    And "id_players" should be disabled
+    And "update_season_roster_btn" should not exist on the page
