@@ -186,6 +186,15 @@ class AbstractSeasonRosterModelTests(BaseTestCase):
         with self.assertRaisesMessage(ValidationError, msg):
             HockeySeasonRosterFactory(season=season, team=team, name='Main Squad')
 
+    def test_can_update(self):
+        league = LeagueFactory()
+        past_season, current_season, _ = self.create_past_current_future_seasons(league=league)
+        past_season_roster = HockeySeasonRosterFactory(season=past_season)
+        current_season_roster = HockeySeasonRosterFactory(season=current_season)
+
+        self.assertFalse(past_season_roster.can_update())
+        self.assertTrue(current_season_roster.can_update())
+
 
 class HockeySeasonRosterModelTests(BaseTestCase):
     def setUp(self):
