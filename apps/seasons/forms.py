@@ -1,17 +1,19 @@
-import datetime
-
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Layout, Div
+from crispy_forms.layout import Div, Layout
 from django import forms
 from django.contrib.admin import widgets
 from django.core.exceptions import ValidationError
 
-from ayrabo.utils.form_fields import SeasonModelChoiceField, TeamModelChoiceField, TeamModelMultipleChoiceField, \
-    PlayerModelMultipleChoiceField
+from ayrabo.utils.form_fields import (
+    PlayerModelMultipleChoiceField,
+    SeasonModelChoiceField,
+    TeamModelChoiceField,
+    TeamModelMultipleChoiceField,
+)
 from ayrabo.utils.mixins import DisableFormFieldsMixin
 from players.models import HockeyPlayer
 from teams.models import Team
-from .models import Season, HockeySeasonRoster
+from .models import HockeySeasonRoster, Season
 
 
 class SeasonAdminForm(forms.ModelForm):
@@ -84,10 +86,8 @@ class HockeySeasonRosterCreateUpdateForm(DisableFormFieldsMixin, forms.ModelForm
         )
 
         league = self.team.division.league
-        today = datetime.date.today()
 
-        self.fields['season'].queryset = Season.objects.filter(league=league).exclude(
-            end_date__lt=today).select_related('league')
+        self.fields['season'].queryset = Season.objects.filter(league=league).select_related('league')
         self.fields['players'].queryset = HockeyPlayer.objects.active().filter(team=self.team).select_related('user')
 
     # querysets are overridden in form constructor anyway
