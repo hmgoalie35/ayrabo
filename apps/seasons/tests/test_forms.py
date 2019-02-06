@@ -28,34 +28,23 @@ class HockeySeasonRosterCreateUpdateFormTests(BaseTestCase):
                                      start_date=datetime.date.today() + datetime.timedelta(weeks=4))
 
     def test_seasons_filtered_by_league(self):
-        season_other_league = SeasonFactory()
+        # Season for another league
+        SeasonFactory()
 
         form = self.get_form()
-        qs = form.fields['season'].queryset.values_list('id', flat=True)
-        self.assertNotIn(season_other_league.id, qs)
-
-    def test_no_past_seasons(self):
-        today = datetime.date.today()
-        today_last_year = today - datetime.timedelta(days=365)
-        today_2_years_ago = today - datetime.timedelta(days=365 * 2)
-        season_ending_today = SeasonFactory(league=self.league, start_date=today_last_year, end_date=today)
-        season_ended_2_yrs_ago = SeasonFactory(league=self.league, start_date=today_2_years_ago)
-
-        form = self.get_form()
-        qs = form.fields['season'].queryset.values_list('id', flat=True)
-        self.assertNotIn(season_ended_2_yrs_ago.id, qs)
-        # Test edge case where season ends today
-        self.assertIn(season_ending_today.id, qs)
+        qs = form.fields['season'].queryset
+        self.assertListEqual(list(qs), [self.season2, self.season1])
 
     def test_hockeyplayers_filtered_by_team(self):
-        HockeyPlayerFactory.create_batch(5, team=self.team, sport=self.sport)
-        inactive_player = HockeyPlayerFactory(team=self.team, sport=self.sport, is_active=False)
-        hockeyplayer_different_team = HockeyPlayerFactory(sport=self.sport)
+        players = HockeyPlayerFactory.create_batch(5, team=self.team, sport=self.sport)
+        # Inactive player
+        HockeyPlayerFactory(team=self.team, sport=self.sport, is_active=False)
+        # Player for a different team
+        HockeyPlayerFactory(sport=self.sport)
 
         form = self.get_form()
-        qs = form.fields['players'].queryset.values_list('id', flat=True)
-        self.assertNotIn(hockeyplayer_different_team.id, qs)
-        self.assertNotIn(inactive_player.id, qs)
+        qs = form.fields['players'].queryset
+        self.assertListEqual(list(qs), players)
 
     def test_players_displayed_correctly(self):
         form = self.get_form()

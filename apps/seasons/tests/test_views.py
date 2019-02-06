@@ -84,6 +84,7 @@ class SeasonRosterCreateViewTests(BaseTestCase):
         self.assertEqual(context['team'].pk, self.icecats.pk)
         self.assertEqual(context.get('team_display_name'), 'Green Machine IceCats - Midget Minor AA')
         self.assertIsNotNone(context.get('past_seasons'))
+        self.assertEqual(context.get('active_tab'), 'season_rosters')
 
     # POST
     def test_post_valid_hockeyseasonroster(self):
@@ -129,25 +130,23 @@ class SeasonRosterCreateViewTests(BaseTestCase):
 class SeasonRosterUpdateViewTests(BaseTestCase):
     url = 'teams:season_rosters:update'
 
-    @classmethod
-    def setUpTestData(cls):
-        cls.ice_hockey = SportFactory(name='Ice Hockey')
-        cls.liahl = LeagueFactory(name='Long Island Amateur Hockey League', sport=cls.ice_hockey)
-        cls.mm_aa = DivisionFactory(name='Midget Minor AA', league=cls.liahl)
-        cls.icecats = TeamFactory(name='Green Machine IceCats', division=cls.mm_aa)
-        cls.liahl_season = SeasonFactory(league=cls.liahl)
-
     def setUp(self):
         self.email = 'user@ayrabo.com'
         self.password = 'myweakpassword'
         self.user = UserFactory(email=self.email, password=self.password)
+
+        self.ice_hockey = SportFactory(name='Ice Hockey')
+        self.liahl = LeagueFactory(name='Long Island Amateur Hockey League', sport=self.ice_hockey)
+        self.mm_aa = DivisionFactory(name='Midget Minor AA', league=self.liahl)
+        self.icecats = TeamFactory(name='Green Machine IceCats', division=self.mm_aa)
+        self.past_season, self.current_season, _ = self.create_past_current_future_seasons(league=self.liahl)
 
         self.hockey_sr = SportRegistrationFactory(user=self.user, sport=self.ice_hockey, role='manager')
         self.hockey_manager = ManagerFactory(user=self.user, team=self.icecats)
 
         self.hockey_players = HockeyPlayerFactory.create_batch(5, sport=self.ice_hockey, team=self.icecats)
         self.hockey_player_ids = [player.pk for player in self.hockey_players]
-        self.season_roster = HockeySeasonRosterFactory(season=self.liahl_season, team=self.icecats,
+        self.season_roster = HockeySeasonRosterFactory(season=self.current_season, team=self.icecats,
                                                        players=self.hockey_player_ids, name='Bash Brothers',
                                                        created_by=self.user)
         self.formatted_url = self.format_url(pk=self.season_roster.pk, team_pk=self.icecats.pk)
@@ -170,6 +169,7 @@ class SeasonRosterUpdateViewTests(BaseTestCase):
         user = UserFactory()
         SportRegistrationFactory(user=user, sport=self.ice_hockey, role='coach')
         CoachFactory(user=user, team__division__league__sport=self.ice_hockey)
+        ManagerFactory(user=user, team=TeamFactory(division=self.mm_aa))
         self.login(user=user)
         response = self.client.get(self.formatted_url)
         self.assert_404(response)
@@ -180,23 +180,31 @@ class SeasonRosterUpdateViewTests(BaseTestCase):
         response = self.client.get(self.formatted_url)
         self.assert_404(response)
 
-    def test_has_permission_false_season_roster_is_for_different_team(self):
-        # This will create a hockey season roster with a random team that is different from self.icecats
-        season_roster = HockeySeasonRosterFactory()
-        response = self.client.get(self.format_url(team_pk=self.icecats.pk, pk=season_roster.pk))
-        self.assert_404(response)
-
     def test_team_dne(self):
         response = self.client.get(self.format_url(team_pk=1000, pk=self.season_roster.pk))
         self.assert_404(response)
 
     def test_form_kwargs(self):
+        # Current season
         response = self.client.get(self.formatted_url)
         form = response.context['form']
         self.assertTrue(form.fields['season'].disabled)
+        self.assertFalse(form.fields['name'].disabled)
+        # Past season
+        season_roster = HockeySeasonRosterFactory(team=self.icecats, season=self.past_season)
+        response = self.client.get(self.format_url(team_pk=self.icecats.pk, pk=season_roster.pk))
+        form = response.context['form']
+        for k, v in form.fields.items():
+            self.assertTrue(v.disabled)
 
     def test_season_roster_dne(self):
         response = self.client.get(self.format_url(team_pk=self.icecats.pk, pk=1000))
+        self.assert_404(response)
+
+    def test_get_object_qs_filtered_by_team(self):
+        # This will create a hockey season roster with a random team that is different from self.icecats
+        season_roster = HockeySeasonRosterFactory()
+        response = self.client.get(self.format_url(team_pk=self.icecats.pk, pk=season_roster.pk))
         self.assert_404(response)
 
     # GET
@@ -209,6 +217,7 @@ class SeasonRosterUpdateViewTests(BaseTestCase):
         self.assertEqual(context['form'].instance.pk, self.season_roster.pk)
         self.assertEqual(context.get('team_display_name'), 'Green Machine IceCats - Midget Minor AA')
         self.assertIsNotNone(context.get('past_seasons'))
+        self.assertEqual(context.get('active_tab'), 'season_rosters')
 
     # POST
     def test_post_valid_changed_form(self):
@@ -259,7 +268,7 @@ class SeasonRosterUpdateViewTests(BaseTestCase):
 
     def test_duplicate_season_roster_for_season_and_team(self):
         # This tests to make sure you can't have more than 1 default season roster for a given team/season
-        HockeySeasonRosterFactory(season=self.liahl_season, team=self.icecats, players=self.hockey_player_ids,
+        HockeySeasonRosterFactory(season=self.current_season, team=self.icecats, players=self.hockey_player_ids,
                                   default=True)
 
         post_data = {'default': True}
@@ -268,7 +277,7 @@ class SeasonRosterUpdateViewTests(BaseTestCase):
                              'A default season roster for this team and season already exists.')
 
     def test_duplicate_name_for_season_and_team(self):
-        HockeySeasonRosterFactory(season=self.liahl_season, team=self.icecats, players=self.hockey_player_ids,
+        HockeySeasonRosterFactory(season=self.current_season, team=self.icecats, players=self.hockey_player_ids,
                                   name='Main Squad')
         post_data = {'name': 'Main Squad'}
         response = self.client.post(self.formatted_url, data=post_data)

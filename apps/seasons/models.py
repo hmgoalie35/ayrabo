@@ -114,23 +114,26 @@ class AbstractSeasonRoster(TimestampedModel):
     default = models.BooleanField(default=False, verbose_name='Default Season Roster')
     created_by = models.ForeignKey(User, null=True, related_name='season_rosters', verbose_name='Created By')
 
+    def can_update(self):
+        return not self.season.expired
+
     def clean(self):
         if hasattr(self, 'name') and hasattr(self, 'team') and hasattr(self, 'season'):
             model_cls = self.__class__
-            if model_cls.objects.filter(name=self.name, team=self.team, season=self.season).exclude(
-                    pk=self.pk).exists():
+            qs = model_cls.objects.filter(name=self.name, team=self.team, season=self.season).exclude(pk=self.pk)
+            if qs.exists():
                 raise ValidationError({'name': 'Name must be unique for this team and season.'})
-
-    class Meta:
-        abstract = True
-        ordering = ['created']
-        get_latest_by = 'created'
 
     def get_absolute_url(self):
         return reverse('teams:season_rosters:update', kwargs={'team_pk': self.team.pk, 'pk': self.pk})
 
     def __str__(self):
         return '{team}-{division}: {season}'.format(team=self.team, division=self.team.division, season=self.season)
+
+    class Meta:
+        abstract = True
+        ordering = ['created']
+        get_latest_by = 'created'
 
 
 class HockeySeasonRoster(AbstractSeasonRoster):

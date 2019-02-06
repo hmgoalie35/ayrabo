@@ -53,7 +53,10 @@ class SeasonRosterCreateView(LoginRequiredMixin,
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['team'] = self.team
+        context.update({
+            'team': self.team,
+            'active_tab': 'season_rosters'
+        })
         context.update(get_team_detail_view_context(self.team))
         return context
 
@@ -91,25 +94,31 @@ class SeasonRosterUpdateView(LoginRequiredMixin,
     def has_permission_func(self):
         user = self.request.user
         team = self._get_team()
-        season_roster = self.get_object()
-        return team.id == season_roster.team_id and Manager.objects.active().filter(user=user, team=team).exists()
+        return Manager.objects.active().filter(user=user, team=team).exists()
 
     def get_form_class(self):
         return get_season_roster_create_update_form_cls(self.sport)
 
     def get_form_kwargs(self):
         form_kwargs = super().get_form_kwargs()
-        form_kwargs['disable'] = ['season']
+        disable = ['season']
+        if not self.object.can_update():
+            disable = '__all__'
+        form_kwargs.update({'disable': disable})
         return form_kwargs
 
     def get_object(self, queryset=None):
         model_cls = get_season_roster_model_cls(self.sport)
         pk = self.kwargs.get(self.pk_url_kwarg, None)
-        return get_object_or_404(model_cls.objects.select_related('season', 'team'), pk=pk)
+        qs = model_cls.objects.filter(team=self.team).select_related('season', 'team')
+        return get_object_or_404(qs, pk=pk)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['team'] = self.team
+        context.update({
+            'team': self.team,
+            'active_tab': 'season_rosters'
+        })
         context.update(get_team_detail_view_context(self.team))
         return context
 
