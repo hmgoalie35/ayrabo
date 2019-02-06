@@ -106,6 +106,7 @@ class HockeyGameCreateViewTests(BaseTestCase):
         self.assertTemplateUsed(response, 'games/game_create.html')
         self.assertEqual(context.get('team'), self.t1)
         self.assertEqual(context.get('team_display_name'), 'Green Machine IceCats - Midget Minor AA')
+        self.assertEqual(context.get('active_tab'), 'schedule')
         self.assertIsNotNone(context.get('past_seasons'))
 
     def test_get_team_dne(self):
@@ -361,6 +362,7 @@ class HockeyGameUpdateViewTests(BaseTestCase):
         self.assertEqual(context.get('game'), self.game)
         self.assertEqual(context.get('team'), self.t1)
         self.assertEqual(context.get('team_display_name'), 'Green Machine IceCats - Midget Minor AA')
+        self.assertEqual(context.get('active_tab'), 'schedule')
         self.assertIsNotNone(context.get('past_seasons'))
 
     # POST

@@ -57,7 +57,10 @@ class GameCreateView(LoginRequiredMixin,
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['team'] = self.team
+        context.update({
+            'team': self.team,
+            'active_tab': 'schedule'
+        })
         context.update(get_team_detail_view_context(self.team))
         return context
 
@@ -144,7 +147,10 @@ class GameUpdateView(LoginRequiredMixin,
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['team'] = self.team
+        context.update({
+            'team': self.team,
+            'active_tab': 'schedule'
+        })
         context.update(get_team_detail_view_context(self.team))
         return context
 
