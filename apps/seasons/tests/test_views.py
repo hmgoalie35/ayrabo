@@ -84,6 +84,7 @@ class SeasonRosterCreateViewTests(BaseTestCase):
         self.assertEqual(context['team'].pk, self.icecats.pk)
         self.assertEqual(context.get('team_display_name'), 'Green Machine IceCats - Midget Minor AA')
         self.assertIsNotNone(context.get('past_seasons'))
+        self.assertEqual(context.get('active_tab'), 'season_rosters')
 
     # POST
     def test_post_valid_hockeyseasonroster(self):
@@ -170,6 +171,7 @@ class SeasonRosterUpdateViewTests(BaseTestCase):
         user = UserFactory()
         SportRegistrationFactory(user=user, sport=self.ice_hockey, role='coach')
         CoachFactory(user=user, team__division__league__sport=self.ice_hockey)
+        ManagerFactory(user=user, team=TeamFactory(division=self.mm_aa))
         self.login(user=user)
         response = self.client.get(self.formatted_url)
         self.assert_404(response)
@@ -178,12 +180,6 @@ class SeasonRosterUpdateViewTests(BaseTestCase):
         self.hockey_manager.is_active = False
         self.hockey_manager.save()
         response = self.client.get(self.formatted_url)
-        self.assert_404(response)
-
-    def test_has_permission_false_season_roster_is_for_different_team(self):
-        # This will create a hockey season roster with a random team that is different from self.icecats
-        season_roster = HockeySeasonRosterFactory()
-        response = self.client.get(self.format_url(team_pk=self.icecats.pk, pk=season_roster.pk))
         self.assert_404(response)
 
     def test_team_dne(self):
@@ -199,6 +195,12 @@ class SeasonRosterUpdateViewTests(BaseTestCase):
         response = self.client.get(self.format_url(team_pk=self.icecats.pk, pk=1000))
         self.assert_404(response)
 
+    def test_get_object_qs_filtered_by_team(self):
+        # This will create a hockey season roster with a random team that is different from self.icecats
+        season_roster = HockeySeasonRosterFactory()
+        response = self.client.get(self.format_url(team_pk=self.icecats.pk, pk=season_roster.pk))
+        self.assert_404(response)
+
     # GET
     def test_get(self):
         response = self.client.get(self.formatted_url)
@@ -209,6 +211,7 @@ class SeasonRosterUpdateViewTests(BaseTestCase):
         self.assertEqual(context['form'].instance.pk, self.season_roster.pk)
         self.assertEqual(context.get('team_display_name'), 'Green Machine IceCats - Midget Minor AA')
         self.assertIsNotNone(context.get('past_seasons'))
+        self.assertEqual(context.get('active_tab'), 'season_rosters')
 
     # POST
     def test_post_valid_changed_form(self):
