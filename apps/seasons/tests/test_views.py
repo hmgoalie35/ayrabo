@@ -401,6 +401,8 @@ class SeasonDetailScheduleViewTests(AbstractScheduleViewTestCase):
         self.assertFalse(context.get('is_scorekeeper'))
         self.assertListEqual(list(context.get('games')), self.games)
         self.assertTrue(context.get('has_games'))
+        self.assertEqual(context.get('current_season_page_url'),
+                         reverse('leagues:schedule', kwargs={'slug': self.liahl.slug}))
 
 
 class SeasonDetailDivisionsViewTests(LeagueSeasonDetailViewTestCase):
@@ -440,3 +442,5 @@ class SeasonDetailDivisionsViewTests(LeagueSeasonDetailViewTestCase):
             [self.mm_aa, self.peewee],
         ]
         self.assertListEqual(list(context.get('chunked_divisions')), expected)
+        self.assertEqual(context.get('current_season_page_url'),
+                         reverse('leagues:divisions', kwargs={'slug': self.liahl.slug}))
