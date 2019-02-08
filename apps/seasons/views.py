@@ -183,6 +183,9 @@ class SeasonDetailScheduleView(AbstractSeasonDetailView):
         season = context.get('season')
         user = self.request.user
         sport = league.sport
+        context.update({
+            'current_season_page_url': reverse('leagues:schedule', kwargs={'slug': self.league.slug})
+        })
         context.update(get_game_list_view_context(user, sport, season))
         return context
 
@@ -200,5 +203,6 @@ class SeasonDetailDivisionsView(AbstractSeasonDetailView):
         context.update({
             'active_tab': 'divisions',
             'chunked_divisions': chunked_divisions,
+            'current_season_page_url': reverse('leagues:divisions', kwargs={'slug': self.league.slug})
         })
         return context
