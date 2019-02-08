@@ -40,8 +40,6 @@ Feature: Season detail
     Given I am on the "leagues:seasons:schedule" page with kwargs "slug=liahl, season_pk=1"
     Then I should see "Long Island Amateur Hockey League"
     And I should see season "today" "1y"
-    And I should see "Go to LIAHL profile"
-    And I should see "Current Season"
 
   Scenario: Games displayed
     Given I am on the "leagues:seasons:schedule" page with kwargs "slug=liahl, season_pk=1"
