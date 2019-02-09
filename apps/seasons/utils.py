@@ -1,13 +1,6 @@
 from django.shortcuts import get_object_or_404
 
-from ayrabo.utils import chunk
 from seasons.models import Season
-
-
-def get_chunked_divisions(divisions, per_row=4):
-    # The generator gets exhausted after the first iteration over the items. Convert to a list here to prevent this
-    # problem.
-    return list(chunk(divisions, per_row))
 
 
 def get_current_season_or_from_pk(league, season_pk):
