@@ -3,4 +3,6 @@
 {% if team.logo %}
   {% thumbnail team.logo 'sm' as thumb %}
   <img src="{{ thumb|data_uri }}" alt="{{ team.name }}">
+{% else %}
+  <i class="fa fa-fw fa-lg fa-picture-o"></i>
 {% endif %}
