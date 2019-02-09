@@ -1,6 +1,5 @@
 from datetime import date, timedelta
 
-from django.http import Http404
 from django.urls import reverse
 
 from ayrabo.utils.testing import BaseTestCase
@@ -10,7 +9,6 @@ from seasons.tests import SeasonFactory
 from sports.tests import SportFactory
 from teams import utils
 from teams.tests import TeamFactory
-from teams.utils import get_season
 
 
 class UtilsTests(BaseTestCase):
@@ -33,22 +31,6 @@ class UtilsTests(BaseTestCase):
             'season_rosters_link': '',
             'past_seasons': [self.past_season]
         }
-
-    def test_get_season_current_season(self):
-        season = get_season(self.liahl, None)
-        self.assertEqual(season, self.current_season)
-
-    def test_get_season_past_season_pk_dne(self):
-        with self.assertRaises(Http404):
-            get_season(self.liahl, 100)
-
-    def test_get_season_past_season_qs_filtered_by_league(self):
-        with self.assertRaises(Http404):
-            get_season(LeagueFactory(sport=self.ice_hockey), self.past_season.pk)
-
-    def test_get_season_past_season(self):
-        season = get_season(self.liahl, self.past_season.pk)
-        self.assertEqual(season, self.past_season)
 
     def test_get_team_detail_view_context_current_season(self):
         result = utils.get_team_detail_view_context(self.icecats)
