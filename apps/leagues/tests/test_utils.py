@@ -22,3 +22,6 @@ class UtilsTests(BaseTestCase):
             [self.d5]
         ]
         self.assertListEqual(chunked_divisions, expected)
+
+    def test_get_chunked_divisions_empty(self):
+        self.assertListEqual(get_chunked_divisions([]), [])
