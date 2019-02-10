@@ -125,15 +125,20 @@ class BaseTestCase(TestCase):
             return self.client.login(email=email, password=password)
         return False
 
-    def create_past_current_future_seasons(self, league):
+    def create_past_current_future_seasons(self, league, teams=None):
         start_date = datetime.date.today()
+        kwargs = {
+            'league': league
+        }
+        if teams is not None:
+            kwargs.update({'teams': teams})
         past_start_date = start_date - datetime.timedelta(days=365)
         future_start_date = start_date + datetime.timedelta(days=365)
-        past_season = SeasonFactory(league=league, start_date=past_start_date,
-                                    end_date=start_date - datetime.timedelta(days=2))
-        current_season = SeasonFactory(league=league, start_date=start_date, end_date=future_start_date)
-        future_season = SeasonFactory(league=league, start_date=future_start_date,
-                                      end_date=future_start_date + datetime.timedelta(days=365))
+        past_season = SeasonFactory(start_date=past_start_date, end_date=start_date - datetime.timedelta(days=2),
+                                    **kwargs)
+        current_season = SeasonFactory(start_date=start_date, end_date=future_start_date, **kwargs)
+        future_season = SeasonFactory(start_date=future_start_date,
+                                      end_date=future_start_date + datetime.timedelta(days=365), **kwargs)
         return past_season, current_season, future_season
 
     # Custom assertions

@@ -5,13 +5,14 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from django.urls import reverse
 
 from ayrabo.utils.testing import BaseTestCase
+from common.tests import GenericChoiceFactory
 from divisions.tests import DivisionFactory
+from games.tests import HockeyGameFactory
 from leagues.tests import LeagueFactory
 from managers.tests import ManagerFactory
 from organizations.tests import OrganizationFactory
 from players.tests import HockeyPlayerFactory
 from seasons.tests import HockeySeasonRosterFactory
-from seasons.tests.test_views import AbstractScheduleViewTestCase
 from sports.tests import SportFactory, SportRegistrationFactory
 from teams.models import Team
 from teams.tests import TeamFactory
@@ -49,12 +50,44 @@ class BulkUploadTeamsViewTests(BaseTestCase):
                                 ['Select a valid choice. That choice is not one of the available choices.'])
 
 
-class TeamDetailScheduleViewTests(AbstractScheduleViewTestCase):
+class TeamDetailScheduleViewTests(BaseTestCase):
     url = 'teams:schedule'
 
+    def _create_game(self, home_team, away_team, season):
+        return HockeyGameFactory(home_team=home_team, away_team=away_team, team=home_team, season=season,
+                                 type=self.game_type, point_value=self.point_value)
+
     def setUp(self):
-        super().setUp()
+        self.user = UserFactory()
+        self.ice_hockey = SportFactory(name='Ice Hockey')
+        self.liahl = LeagueFactory(name='Long Island Amateur Hockey League', sport=self.ice_hockey)
+        self.mm_aa = DivisionFactory(league=self.liahl, name='Midget Minor AA')
+
+        self.icecats_organization = OrganizationFactory(name='Green Machine IceCats', sport=self.ice_hockey)
+        self.edge_organization = OrganizationFactory(name='Long Island Edge', sport=self.ice_hockey)
+        self.rebels_organization = OrganizationFactory(name='Long Island Rebels', sport=self.ice_hockey)
+
+        # Teams
+        self.icecats_mm_aa = TeamFactory(name='Green Machine IceCats', division=self.mm_aa,
+                                         organization=self.icecats_organization)
+        self.managers = [ManagerFactory(user=self.user, team=self.icecats_mm_aa)]
+        self.edge_mm_aa = TeamFactory(name='Long Island Edge', division=self.mm_aa,
+                                      organization=self.edge_organization)
+        self.rebels_mm_aa = TeamFactory(name='Long Island Rebels', division=self.mm_aa,
+                                        organization=self.rebels_organization)
+
+        self.past_season, self.current_season, self.future_season = self.create_past_current_future_seasons(
+            league=self.liahl)
+
+        self.game_type = GenericChoiceFactory(short_value='exhibition', long_value='Exhibition', type='game_type',
+                                              content_object=self.ice_hockey)
+        self.point_value = GenericChoiceFactory(short_value='2', long_value='2', type='game_point_value',
+                                                content_object=self.ice_hockey)
+        self.game1 = self._create_game(self.icecats_mm_aa, self.edge_mm_aa, self.current_season)
+        self.game2 = self._create_game(self.icecats_mm_aa, self.rebels_mm_aa, self.current_season)
+
         self.formatted_url = self.format_url(team_pk=self.icecats_mm_aa.pk)
+        self.login(user=self.user)
 
     def test_login_required(self):
         self.client.logout()
@@ -92,7 +125,7 @@ class TeamDetailScheduleViewTests(AbstractScheduleViewTestCase):
         self.assertEqual(context.get('sport'), self.ice_hockey)
 
     def test_get_past_season(self):
-        kwargs = {'team_pk': self.icecats_mm_aa.pk, 'season_pk': self.previous_season.pk}
+        kwargs = {'team_pk': self.icecats_mm_aa.pk, 'season_pk': self.past_season.pk}
         url = reverse('teams:seasons:schedule', kwargs=kwargs)
         response = self.client.get(url)
         context = response.context
@@ -100,7 +133,7 @@ class TeamDetailScheduleViewTests(AbstractScheduleViewTestCase):
         self.assert_200(response)
         self.assertTemplateUsed('teams/team_detail_schedule.html')
 
-        self.assertEqual(context.get('season'), self.previous_season)
+        self.assertEqual(context.get('season'), self.past_season)
         self.assertEqual(context.get('schedule_link'), url)
         self.assertEqual(context.get('season_rosters_link'),
                          reverse('teams:seasons:season_rosters-list', kwargs=kwargs))
