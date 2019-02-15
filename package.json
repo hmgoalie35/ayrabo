@@ -64,8 +64,8 @@
   "devDependencies": {
     "babel-jest": "23.6.0",
     "chromedriver": "2.46.0",
-    "enzyme": "3.7.0",
-    "enzyme-adapter-react-16": "1.6.0",
+    "enzyme": "3.8.0",
+    "enzyme-adapter-react-16": "1.9.1",
     "geckodriver": "1.14.1",
     "jest": "23.6.0",
     "react-test-renderer": "16.5.2"
