@@ -51,9 +51,9 @@
     "postcss-loader": "3.0.0",
     "prop-types": "15.7.2",
     "raf": "3.4.1",
-    "react": "16.5.2",
+    "react": "16.8.2",
     "react-bootstrap-typeahead": "3.3.4",
-    "react-dom": "16.5.2",
+    "react-dom": "16.8.2",
     "sass-loader": "7.1.0",
     "style-loader": "0.23.1",
     "webpack": "4.29.3",
@@ -68,7 +68,7 @@
     "enzyme-adapter-react-16": "1.9.1",
     "geckodriver": "1.14.1",
     "jest": "23.6.0",
-    "react-test-renderer": "16.5.2"
+    "react-test-renderer": "16.8.2"
   },
   "scripts": {
     "dev": "webpack --debug --watch --progress --display-error-details --mode=development",
