@@ -14,7 +14,6 @@ Feature: Create season rosters
     And The following season object exists
       | id | league                            | start_date | end_date | teams                 |
       | 1  | Long Island Amateur Hockey League | today      | 1y       | Green Machine IceCats |
-
     And I login with "user@ayrabo.com" and "myweakpassword"
 
   Scenario: Navigate to season roster create page from dashboard
@@ -28,7 +27,7 @@ Feature: Create season rosters
     And I press "manager-tab"
     And I press "actions-dropdown-manager-green-machine-icecats"
     And I press "create_season_roster_btn_green-machine-icecats"
-    Then I should be on the "teams.Team" "" "teams:season_rosters:create" page with url kwargs "team_pk=pk"
+    Then I should be on the "teams:season_rosters:create" page with kwargs "team_pk=1"
     And I should see "Create Season Roster for Green Machine IceCats"
 
   Scenario: Navigate to season roster create page from season roster list page
@@ -68,7 +67,7 @@ Feature: Create season rosters
       | test3@ayrabo.com  | Ice Hockey | Green Machine IceCats |
       | test4@ayrabo.com  | Ice Hockey | Green Machine IceCats |
       | test5@ayrabo.com  | Ice Hockey | Green Machine IceCats |
-    Given I am on the "teams.Team" "" "teams:season_rosters:create" page with url kwargs "team_pk=pk"
+    Given I am on the "teams:season_rosters:create" page with kwargs "team_pk=1"
     And I fill in "id_name" with "Main Squad"
     And I select "1" from "id_season"
     And I select 5 players from "id_players"
@@ -88,30 +87,14 @@ Feature: Create season rosters
       | test3@ayrabo.com  | Ice Hockey | Green Machine IceCats |
       | test4@ayrabo.com  | Ice Hockey | Green Machine IceCats |
       | test5@ayrabo.com  | Ice Hockey | Green Machine IceCats |
-    Given I am on the "teams.Team" "" "teams:season_rosters:create" page with url kwargs "team_pk=pk"
-    And I press "create_season_roster_btn"
-    Then "This field is required." should show up 3 times
-    And I should be on the "teams.Team" "" "teams:season_rosters:create" page with url kwargs "team_pk=pk"
-
-  Scenario: Attempt to add another default season roster for a team/season
-    Given "user@ayrabo.com" is completely registered for "Ice Hockey" with role "Manager"
-    And The following manager object exists
-      | username_or_email | team                  |
-      | user@ayrabo.com   | Green Machine IceCats |
-    And The following player objects exist
-      | username_or_email | sport      | team                  |
-      | test1@ayrabo.com  | Ice Hockey | Green Machine IceCats |
-      | test2@ayrabo.com  | Ice Hockey | Green Machine IceCats |
-      | test3@ayrabo.com  | Ice Hockey | Green Machine IceCats |
-      | test4@ayrabo.com  | Ice Hockey | Green Machine IceCats |
-      | test5@ayrabo.com  | Ice Hockey | Green Machine IceCats |
     And The following season rosters for "Ice Hockey" exist
-      | name       | season_id | team                  | players           | default |
-      | Main Squad | 1         | Green Machine IceCats | John Doe, Lee Doe | True    |
-    And I am on the "teams.Team" "" "teams:season_rosters:create" page with url kwargs "team_pk=pk"
-    When I select "1" from "id_season"
+      | id | name          | season_id | team                  | default |
+      |    | Default Squad | 1         | Green Machine IceCats | True    |
+    And I am on the "teams:season_rosters:create" page with kwargs "team_pk=1"
+    When I fill in "id_name" with "Main Squad"
+    And I select "1" from "id_season"
     And I select 5 players from "id_players"
     And I press "id_default"
     And I press "create_season_roster_btn"
     Then I should see "A default season roster for this team and season already exists."
-    And I should be on the "teams.Team" "" "teams:season_rosters:create" page with url kwargs "team_pk=pk"
+    And I should be on the "teams:season_rosters:create" page with kwargs "team_pk=1"

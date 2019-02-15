@@ -59,9 +59,9 @@ Feature: Update a game
 
   Scenario: Submit invalid form
     Given I am on the "teams:games:update" page with kwargs "team_pk=1, pk=1"
-    And I select "---------" from "id_location"
+    And I select "Green Machine IceCats - Midget Minor AA" from "id_away_team"
     And I press "update_game_btn"
-    Then I should see "This field is required."
+    Then I should see "This team must be different than the home team."
 
   Scenario: Form disabled
     Given The following game object exists

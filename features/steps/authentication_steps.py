@@ -3,6 +3,7 @@ import time
 
 from allauth.account.models import EmailAddress
 from behave import *
+from django.conf import settings
 from django.core import mail
 
 from accounts.tests import EmailAddressFactory
@@ -36,8 +37,7 @@ def confirm_account(context, username_or_email, method='manual'):
     """
     if method == 'email_link':
         email_body = mail.outbox[0].body
-
-        confirmation_link = re.search(r'https?://example.com(?P<link>.+/)', str(email_body)).group('link')
+        confirmation_link = re.search(r'https?://ayrabo.com(?P<link>.+/)', str(email_body)).group('link')
         context.driver.get(context.get_url(confirmation_link))
     else:
         email_address_obj = EmailAddress.objects.get(user=get_user(username_or_email))
@@ -67,11 +67,11 @@ def login(context, username_or_email, password, login_method=None):
         context.driver.get(context.get_url(login_path))
         context.execute_steps(steps)
     else:
-        context.driver.get(context.get_url('home'))
+        # The 404 page should be pretty lightweight and fast to load
+        context.driver.get(context.get_url('/fourohfour'))
         context.test.client.login(username=username_or_email, password=password)
-        session_id = context.test.client.cookies['sessionid']
-        context.driver.execute_script('document.cookie = "{}={}; path=/;"'.format('sessionid', session_id.value))
-        context.driver.refresh()
+        session_id = context.test.client.cookies[settings.SESSION_COOKIE_NAME]
+        context.driver.add_cookie({'name': settings.SESSION_COOKIE_NAME, 'value': session_id.value, 'path': '/'})
 
 
 def logout(context):

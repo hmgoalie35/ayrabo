@@ -63,10 +63,11 @@
   },
   "devDependencies": {
     "babel-jest": "23.6.0",
+    "chromedriver": "2.46.0",
     "enzyme": "3.7.0",
     "enzyme-adapter-react-16": "1.6.0",
+    "geckodriver": "1.14.1",
     "jest": "23.6.0",
-    "phantomjs-prebuilt": "2.1.16",
     "react-test-renderer": "16.5.2"
   },
   "scripts": {
