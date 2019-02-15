@@ -8,6 +8,10 @@ cache:
 python:
   - "3.6"
 
+addons:
+  chrome: stable
+  # firefox: latest
+
 install:
   - source $HOME/.nvm/nvm.sh
   - nvm install $TRAVIS_NODE_VERSION

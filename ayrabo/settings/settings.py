@@ -411,7 +411,7 @@ LOGOUT_REDIRECT_URL = reverse_lazy('home')
 TEST_RUNNER = 'redgreenunittest.django.runner.RedGreenDiscoverRunner'
 
 FIXTURE_DIRS = [
-    os.path.join(AYRABO_MODULE_ROOT, 'fixtures')
+    os.path.join(BASE_DIR, 'fixtures')
 ]
 
 API_VERSIONS = ['v1']

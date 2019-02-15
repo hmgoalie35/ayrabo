@@ -4,28 +4,31 @@ from behave import use_step_matcher
 from django.conf import settings
 from selenium import webdriver
 
+
 use_step_matcher('re')
 
-PHANTOMJS_BINARY = os.path.join(settings.NODE_MODULES_ROOT, 'phantomjs-prebuilt/bin/phantomjs')
-CACHE_PATH = os.path.join('/tmp', '.phantomjs_cache')
+CHROMEDRIVER_BINARY = os.path.join(settings.NODE_MODULES_ROOT, 'chromedriver/bin/chromedriver')
+FIREFOX_BINARY = os.path.join(settings.NODE_MODULES_ROOT, 'geckodriver/bin/geckodriver')
+
+
+def chrome():
+    options = webdriver.ChromeOptions()
+    options.headless = True
+    return webdriver.Chrome(executable_path=CHROMEDRIVER_BINARY, options=options)
+
+
+def firefox():
+    options = webdriver.FirefoxOptions()
+    options.headless = True
+    return webdriver.Firefox(executable_path=FIREFOX_BINARY, options=options)
 
 
 def before_all(context):
-    context.driver = webdriver.PhantomJS(
-        executable_path=PHANTOMJS_BINARY,
-        service_args=['--disk-cache=true', '--disk-cache-path={}'.format(CACHE_PATH)]
-    )
+    context.fixtures = ['sites.json']
+    context.driver = chrome()
     context.driver.maximize_window()
 
 
 def after_all(context):
     context.driver.quit()
     context.driver = None
-
-
-def before_scenario(context, scenario):
-    # site = Site.objects.get_current()
-    # site.name = 'localhost'
-    # site.domain = context.get_url().split('http://')[1]
-    # site.save()
-    pass

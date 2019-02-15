@@ -49,7 +49,7 @@ Feature: Create game
     And I should see "Long Island Amateur Hockey League"
     And I should see "Create Game"
     And I should see "Make sure the date and time entered for Game Start and Game End are for the timezone you choose."
-    And I should see "All dates and times will be automatically displayed in common timezones throughout example.com."
+    And I should see "All dates and times will be automatically displayed in common timezones throughout ayrabo.com."
 
   Scenario: Valid form
     Given I am on the "teams:games:create" page with kwargs "team_pk=1"
@@ -67,5 +67,13 @@ Feature: Create game
 
   Scenario: Invalid form
     Given I am on the "teams:games:create" page with kwargs "team_pk=1"
+    And I select "Aviator Gulls - Midget Minor AA" from "id_home_team"
+    And I select "Aviator Gulls - Midget Minor AA" from "id_away_team"
+    And I select "Exhibition" from "id_type"
+    And I select "2" from "id_point_value"
+    And I select "Iceland" from "id_location"
+    And I fill in "id_start" with date "today" and time "07:00 PM"
+    And I fill in "id_end" with date "today" and time "09:00 PM"
+    And I select "1" from "id_season"
     And I press "create_game_btn"
-    Then "This field is required." should show up 8 times
+    Then I should see "This team must be different than the home team."

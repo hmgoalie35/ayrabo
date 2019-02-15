@@ -228,7 +228,10 @@ def step_impl(context):
 
 @step('I should see "(?P<text>.*)"')
 def step_impl(context, text):
-    context.test.assertIn(text, str(context.driver.page_source))
+    page_source = str(context.driver.page_source)
+    # \xa0 is the latin encoding of &nbsp;
+    page_source = page_source.replace('\xa0', '&nbsp;')
+    context.test.assertIn(text, page_source)
 
 
 @step('I should see season "(?P<start>.*)" "(?P<end>.*)"')
