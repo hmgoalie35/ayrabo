@@ -19,7 +19,7 @@ Feature: User profiles
     Then I should see "Complete Your Account Registration"
     And I should see "Players, coaches and managers will be granted team specific access by an organization admin."
 
-# Userprofile does not exist, create profile page
+  # Userprofile does not exist, create profile page
   Scenario: Prompted to fill out user profile after logging in for the first time
     Given I go to the "home" page
     Then I should be on the "account_complete_registration" page
@@ -30,34 +30,17 @@ Feature: User profiles
     Given I go to the "sports:register" page
     Then I should be on the "account_complete_registration" page
 
-  Scenario: Fill out with invalid height
+  Scenario: Submit invalid form
     Given I am on the "account_complete_registration" page
     When I select "male" from "id_gender"
     And I fill in "id_height" with "5' 7"
     And I fill in "id_weight" with "130"
+    And I select "February" from "id_birthday_month"
+    And I select "31" from "id_birthday_day"
+    And I select "2000" from "id_birthday_year"
     And I press "create_userprofile_btn"
     Then I should see "Invalid format, please enter your height according to the format below."
-
-  Scenario: Fill out with invalid weight
-    Given I am on the "account_complete_registration" page
-    When I select "male" from "id_gender"
-    And I fill in "id_height" with "5' 7""
-    And I fill in "id_weight" with "-1"
-    And I press "create_userprofile_btn"
-    Then I should see "Ensure this value is greater than or equal to 1."
-
-  Scenario: Fill out with invalid birthday
-    Given I am on the "account_complete_registration" page
-    When I select "male" from "id_gender"
-    And I fill in "id_height" with "5' 7""
-    And I fill in "id_weight" with "100"
-    And I press "create_userprofile_btn"
-    Then I should see "This field is required."
-
-  Scenario: Submit invalid form
-    Given I am on the "account_complete_registration" page
-    When I press "create_userprofile_btn"
-    Then "This field is required." should show up 4 times
+    And I should see "Enter a valid date."
 
   Scenario: Submit valid form
     Given I am on the "account_complete_registration" page
