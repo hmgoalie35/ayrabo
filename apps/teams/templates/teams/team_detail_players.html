@@ -1,0 +1,81 @@
+{% extends 'teams/team_detail_base.html' %}
+{% load booltojson from utils %}
+
+{% block page %}{{ header_text }}{% endblock %}
+{% block current_season_page_text %}players are available{% endblock %}
+
+{% block tab_content %}
+  <div role="tabpanel" class="tab-pane active" id="players">
+    <h4 class="text-center">{{ header_text }}</h4>
+
+    <div class="text-center js-loading">
+      {% include 'includes/loading.html' %}
+    </div>
+
+    <div class="text-center hidden js-table-section">
+      <table class="table js-table responsive-table table-thin-th-border" data-dom="<'pull-left'f>tpr">
+        <thead>
+        <tr>
+          {% for column in columns %}
+            <th scope="col">{{ column }}</th>
+          {% endfor %}
+          <th scope="col" data-orderable="false"></th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for player in players %}
+          <tr>
+            {% for column_name, column_value in player.table_fields.items %}
+              <td data-title="{{ column_name }}">{{ column_value }}</td>
+            {% endfor %}
+            <td>
+              <div class="dropdown table-dropdown">
+                <a
+                  type="button"
+                  class="btn btn-link"
+                  data-toggle="dropdown"
+                  aria-haspopup="true"
+                  id="actions-dropdown-{{ player.id }}"
+                  aria-expanded="false"
+                >Actions<i class="fa fa-fw fa-caret-down"></i>
+                </a>
+                <ul class="dropdown-menu table-dropdown-menu" aria-labelledby="{{ player.id }}">
+                  <li>
+                    <a
+                      id="edit-player-link-{{ player.id }}"
+                      href="{% url 'sports:players:update' slug=sport.slug player_pk=player.pk %}"
+                    ><i class="fa fa-pencil fa-primary"></i>&nbsp;Edit
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+{% endblock %}
+
+{% block extra_js %}
+  <script>
+    $(function () {
+      var hasPlayers = {{ has_players|booltojson }};
+      $('.js-table').enableDataTable({
+        order: [[0, 'asc']],
+        language: {
+          searchPlaceholder: 'Search players',
+          zeroRecords: 'No players match your search criteria.',
+          emptyTable: 'There are no players for {{ team.name }} at this time.'
+        },
+        paging: hasPlayers,
+        searching: hasPlayers,
+        initComplete: function () {
+          $('.js-loading').remove();
+          $('.js-table-section').removeClass('hidden');
+        }
+      });
+    });
+  </script>
+{% endblock %}

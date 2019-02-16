@@ -8,6 +8,7 @@ from divisions.models import Division
 from games.utils import get_game_list_view_context
 from managers.models import Manager
 from organizations.models import Organization
+from players.mappings import get_player_model_cls
 from seasons.mappings import get_season_roster_model_cls
 from teams.utils import get_team_detail_view_context
 from .models import Team
@@ -59,24 +60,18 @@ class AbstractTeamDetailView(LoginRequiredMixin, HandleSportNotConfiguredMixin, 
 
 
 class TeamDetailScheduleView(AbstractTeamDetailView):
-    """
-    This view can handle a `season_pk` in the url. If no `season_pk` is specified, the current season for the league
-    will be used.
-    """
     template_name = 'teams/team_detail_schedule.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        is_season_expired = context.get('is_season_expired')
         user = self.request.user
         team = self.get_object()
         season = context.get('season')
         game_list_context = get_game_list_view_context(user, self.sport, season, team=team)
         team_ids_managed_by_user = game_list_context.get('team_ids_managed_by_user')
         is_manager = team.id in team_ids_managed_by_user
-        if season is not None:
-            can_create_game = is_manager and not season.expired
-        else:
-            can_create_game = is_manager
+        can_create_game = is_manager and not is_season_expired
         context.update({
             'can_create_game': can_create_game,
             'current_season_page_url': reverse('teams:schedule', kwargs={'team_pk': team.pk})
@@ -106,6 +101,7 @@ class TeamDetailSeasonRostersView(AbstractTeamDetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        is_season_expired = context.get('is_season_expired')
         team = self.get_object()
         season = context.get('season')
         can_user_list = self.can_user_list_season_rosters()
@@ -115,7 +111,37 @@ class TeamDetailSeasonRostersView(AbstractTeamDetailView):
             'has_season_rosters': season_rosters.exists(),
             'active_tab': 'season_rosters',
             'can_user_list': can_user_list,
-            'can_create_season_roster': season is not None and not season.expired,
+            'can_create_season_roster': not is_season_expired,
             'current_season_page_url': reverse('teams:season_rosters:list', kwargs={'team_pk': team.pk})
+        })
+        return context
+
+
+class TeamDetailPlayersView(AbstractTeamDetailView):
+    template_name = 'teams/team_detail_players.html'
+
+    def _get_players(self, team):
+        player_model_cls = get_player_model_cls(self.sport)
+        return player_model_cls.objects.active().filter(team=team).select_related('user')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        team = self.get_object()
+        players = self._get_players(team)
+        has_players = players.exists()
+        # The default columns to show if there are no players.
+        columns = ['Jersey Number', 'Name']
+        if has_players:
+            # Player subclasses can define different fields, so we need to dynamically generate the columns.
+            player = players.first()
+            columns = list(player.table_fields.keys())
+        context.update({
+            'columns': columns,
+            'players': players,
+            'has_players': has_players,
+            'header_text': 'All Players',
+            'sport': self.sport,
+            'active_tab': 'players',
+            'current_season_page_url': reverse('teams:players', kwargs={'team_pk': team.pk}),
         })
         return context
