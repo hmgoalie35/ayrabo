@@ -282,8 +282,6 @@ class TeamDetailPlayersViewTests(BaseTestCase):
         self.assertEqual(context.get('header_text'), 'All Players')
         self.assertEqual(context.get('sport'), self.ice_hockey)
         self.assertEqual(context.get('active_tab'), 'players')
-        self.assertEqual(context.get('current_season_page_url'),
-                         reverse('teams:players', kwargs={'team_pk': self.icecats_mm_aa.pk}))
 
     def test_get_no_players(self):
         team = TeamFactory(division=self.mm_aa)

@@ -141,7 +141,6 @@ class TeamDetailPlayersView(AbstractTeamDetailView):
             'has_players': has_players,
             'header_text': 'All Players',
             'sport': self.sport,
-            'active_tab': 'players',
-            'current_season_page_url': reverse('teams:players', kwargs={'team_pk': team.pk}),
+            'active_tab': 'players'
         })
         return context
