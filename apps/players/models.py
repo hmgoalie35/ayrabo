@@ -42,7 +42,7 @@ class AbstractPlayer(TimestampedModel):
     @property
     def fields(self):
         """
-        Utility function used to display this model's fields and values in an html friendly way. This is needed due to
+        Utility property used to display this model's fields and values in an html friendly way. This is needed due to
         subclasses having different names for fields.
 
         All subclasses shall override this function, call super and update the result of the super call with any extra
@@ -54,6 +54,21 @@ class AbstractPlayer(TimestampedModel):
         fields['Team'] = self.team
         fields['Division'] = self.division
         fields['Jersey Number'] = self.jersey_number
+        return fields
+
+    @property
+    def table_fields(self):
+        """
+        Utility property used to dynamically determine what columns in an HTML table should be displayed and the correct
+        value for that column.
+
+        :return: OrderedDict where keys are the column name and values are the column values.
+        """
+        fields = OrderedDict()
+        fields.update({
+            'Jersey Number': self.jersey_number,
+            'Name': self.user.get_full_name()
+        })
         return fields
 
     class Meta:
@@ -88,13 +103,20 @@ class HockeyPlayer(AbstractPlayer):
     position = models.CharField(max_length=255, choices=POSITIONS, verbose_name='Position')
     handedness = models.CharField(max_length=255, choices=HANDEDNESS, verbose_name='Shoots')
 
-    # might need to move jersey_number into this model
-
     @property
     def fields(self):
         fields = super().fields
         fields['Position'] = self.get_position_display()
         fields['Handedness'] = self.get_handedness_display()
+        return fields
+
+    @property
+    def table_fields(self):
+        fields = super().table_fields
+        fields.update({
+            'Position': self.get_position_display(),
+            'Handedness': self.get_handedness_display()
+        })
         return fields
 
     def clean(self):
@@ -149,6 +171,16 @@ class BaseballPlayer(AbstractPlayer):
         fields['Bats'] = self.get_bats_display()
         return fields
 
+    @property
+    def table_fields(self):
+        fields = super().table_fields
+        fields.update({
+            'Position': self.get_position_display(),
+            'Catches': self.get_catches_display(),
+            'Bats': self.get_bats_display()
+        })
+        return fields
+
     def clean(self):
         super().clean()
         if hasattr(self, 'team'):
@@ -184,6 +216,15 @@ class BasketballPlayer(AbstractPlayer):
         fields = super().fields
         fields['Position'] = self.get_position_display()
         fields['Shoots'] = self.get_shoots_display()
+        return fields
+
+    @property
+    def table_fields(self):
+        fields = super().table_fields
+        fields.update({
+            'Position': self.get_position_display(),
+            'Shoots': self.get_shoots_display()
+        })
         return fields
 
     def clean(self):
