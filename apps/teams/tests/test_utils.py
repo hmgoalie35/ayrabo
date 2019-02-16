@@ -27,17 +27,21 @@ class UtilsTests(BaseTestCase):
         self.expected_team_detail_view_context = {
             'team_display_name': 'Green Machine IceCats - Midget Minor AA',
             'season': '',
+            'is_season_expired': None,
             'schedule_link': '',
+            'players_link': reverse('teams:players', kwargs={'team_pk': self.icecats.pk}),
             'season_rosters_link': '',
             'past_seasons': [self.past_season]
         }
 
     def test_get_team_detail_view_context_current_season(self):
         result = utils.get_team_detail_view_context(self.icecats)
+        kwargs = {'team_pk': self.icecats.pk}
         self.expected_team_detail_view_context.update({
             'season': self.current_season,
-            'schedule_link': reverse('teams:schedule', kwargs={'team_pk': self.icecats.pk}),
-            'season_rosters_link': reverse('teams:season_rosters:list', kwargs={'team_pk': self.icecats.pk})
+            'is_season_expired': False,
+            'schedule_link': reverse('teams:schedule', kwargs=kwargs),
+            'season_rosters_link': reverse('teams:season_rosters:list', kwargs=kwargs)
         })
         self.assertDictWithQuerySetEqual(result, self.expected_team_detail_view_context)
 
@@ -46,6 +50,7 @@ class UtilsTests(BaseTestCase):
         result = utils.get_team_detail_view_context(self.icecats, season_pk=self.past_season.pk)
         self.expected_team_detail_view_context.update({
             'season': self.past_season,
+            'is_season_expired': True,
             'schedule_link': reverse('teams:seasons:schedule', kwargs=kwargs),
             'season_rosters_link': reverse('teams:seasons:season_rosters-list', kwargs=kwargs)
         })
