@@ -28,6 +28,7 @@ def step_impl(context):
         team = data.get('team', None)
         jersey_number = data.get('jersey_number', None)
         position = data.get('position')
+        handedness = data.get('handedness')
 
         teams = Team.objects.filter(name=team)
         if teams.exists():
@@ -59,5 +60,7 @@ def step_impl(context):
             kwargs['id'] = obj_id
         if position is not None:
             kwargs['position'] = position
+        if handedness is not None:
+            kwargs['handedness'] = handedness
 
         HockeyPlayerFactory(**kwargs)
