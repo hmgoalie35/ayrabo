@@ -243,11 +243,13 @@ class TeamDetailPlayersViewTests(BaseTestCase):
         self.liahl = LeagueFactory(sport=self.ice_hockey, name='Long Island Amateur Hockey League')
         self.mm_aa = DivisionFactory(league=self.liahl, name='Midget Minor AA')
         self.icecats_mm_aa = TeamFactory(division=self.mm_aa, name='Green Machine IceCats')
+        self.edge_mm_aa = TeamFactory(division=self.mm_aa, name='Long Island Edge')
         self.p1 = HockeyPlayerFactory(team=self.icecats_mm_aa, sport=self.ice_hockey)
         self.p2 = HockeyPlayerFactory(team=self.icecats_mm_aa, sport=self.ice_hockey)
         self.p3 = HockeyPlayerFactory(team=self.icecats_mm_aa, sport=self.ice_hockey)
         self.p4 = HockeyPlayerFactory(team=self.icecats_mm_aa, sport=self.ice_hockey)
-        self.p5 = HockeyPlayerFactory(team=self.icecats_mm_aa, sport=self.ice_hockey)
+        self.p5 = HockeyPlayerFactory(team=self.icecats_mm_aa, sport=self.ice_hockey, is_active=False)
+        self.p6 = HockeyPlayerFactory(team=self.edge_mm_aa, sport=self.ice_hockey)
         _, self.current_season, _ = self.create_past_current_future_seasons(self.liahl)
 
         self.formatted_url = self.format_url(team_pk=self.icecats_mm_aa.pk)
@@ -275,7 +277,7 @@ class TeamDetailPlayersViewTests(BaseTestCase):
         self.assertIsNotNone(context.get('past_seasons'))
 
         self.assertListEqual(context.get('columns'), ['Jersey Number', 'Name', 'Position', 'Handedness'])
-        self.assertListEqual(list(context.get('players')), [self.p1, self.p2, self.p3, self.p4, self.p5])
+        self.assertListEqual(list(context.get('players')), [self.p1, self.p2, self.p3, self.p4])
         self.assertTrue(context.get('has_players'))
         self.assertEqual(context.get('header_text'), 'All Players')
         self.assertEqual(context.get('sport'), self.ice_hockey)
