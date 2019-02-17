@@ -64,7 +64,7 @@
                   <tr>
                     <td data-title="Team">
                       {% include 'includes/team_logo.html' with team=team %}
-                      {{ team.name }}
+                      <a href="{% url 'teams:schedule' team_pk=team.pk %}">{{ team.name }}</a>
                     </td>
                     <td data-title="Division">{{ team.division.name }}</td>
                     {% with league=team.division.league %}

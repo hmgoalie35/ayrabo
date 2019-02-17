@@ -13,8 +13,10 @@
     {% for manager in managers %}
       <tr>
         <td data-title="Team">
-          {% include 'includes/team_logo.html' with team=manager.team %}
-          {{ manager.team.name }}
+          {% with team=manager.team %}
+            {% include 'includes/team_logo.html' with team=team %}
+            <a href="{% url 'teams:schedule' team_pk=team.pk %}">{{ team.name }}</a>
+          {% endwith %}
         </td>
         <td data-title="Division">{{ manager.team.division }}</td>
         <td data-title="">
@@ -30,7 +32,6 @@
               <i class="fa fa-caret-down"></i>
             </a>
             <ul class="dropdown-menu table-dropdown-menu" aria-labelledby="{{ manager.id }}">
-              {# Start Season Roster items #}
               <li class="dropdown-header">Season Rosters</li>
               <li>
                 <a id="create_season_roster_btn_{{ manager.team.slug }}" href="{% url 'teams:season_rosters:create' manager.team.pk %}" role="button">
@@ -42,9 +43,7 @@
                   <i class="fa fa-list-alt fa-primary"></i>&nbsp;List
                 </a>
               </li>
-              {# End Season Roster items #}
 
-              {# Start game items #}
               <li class="dropdown-header">Games</li>
               <li>
                 <a id="create_game_btn_{{ manager.team.slug }}" href="{% url 'teams:games:create' manager.team.pk %}" role="button">
@@ -52,11 +51,17 @@
                 </a>
               </li>
               <li>
-                <a id="list_games_manager_btn_{{ manager.team.slug }}" href="{% url 'teams:games:list' manager.team.pk %}" role="button">
+                <a id="list_games_manager_btn_{{ manager.team.slug }}" href="{% url 'teams:schedule' team_pk=manager.team.pk %}" role="button">
                   <i class="fa fa-list-alt fa-primary"></i>&nbsp;List
                 </a>
               </li>
-              {# End game items #}
+
+              <li class="dropdown-header">Players</li>
+              <li>
+                <a href="{% url 'teams:players' team_pk=manager.team.pk %}" role="button">
+                  <i class="fa fa-list-alt fa-primary"></i>&nbsp;List
+                </a>
+              </li>
             </ul>
           </div>
         </td>

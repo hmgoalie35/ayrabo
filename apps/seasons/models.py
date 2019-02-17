@@ -114,17 +114,15 @@ class AbstractSeasonRoster(TimestampedModel):
     default = models.BooleanField(default=False, verbose_name='Default Season Roster')
     created_by = models.ForeignKey(User, null=True, related_name='season_rosters', verbose_name='Created By')
 
+    def can_update(self):
+        return not self.season.expired
+
     def clean(self):
         if hasattr(self, 'name') and hasattr(self, 'team') and hasattr(self, 'season'):
             model_cls = self.__class__
-            if model_cls.objects.filter(name=self.name, team=self.team, season=self.season).exclude(
-                    pk=self.pk).exists():
+            qs = model_cls.objects.filter(name=self.name, team=self.team, season=self.season).exclude(pk=self.pk)
+            if qs.exists():
                 raise ValidationError({'name': 'Name must be unique for this team and season.'})
-
-    class Meta:
-        abstract = True
-        ordering = ['created']
-        get_latest_by = 'created'
 
     def get_absolute_url(self):
         return reverse('teams:season_rosters:update', kwargs={'team_pk': self.team.pk, 'pk': self.pk})
@@ -132,12 +130,29 @@ class AbstractSeasonRoster(TimestampedModel):
     def __str__(self):
         return '{team}-{division}: {season}'.format(team=self.team, division=self.team.division, season=self.season)
 
+    class Meta:
+        abstract = True
+        ordering = ['created']
+        get_latest_by = 'created'
+
 
 class HockeySeasonRoster(AbstractSeasonRoster):
     """
     Season roster for hockey
     """
     players = models.ManyToManyField('players.HockeyPlayer')
+
+    def get_players(self):
+        """
+        Grab active players tied to this season roster.
+
+        NOTE: Since this function is using .filter (via .active) it can't reuse objects prefetched
+        through .prefetch_related. If we were using .all the prefetched objects would be used. There is probably a way
+        around this...
+
+        :return: Active players for this season roster, sorted by jersey number ascending.
+        """
+        return self.players.active().order_by('jersey_number').select_related('user')
 
     def clean(self):
         super().clean()

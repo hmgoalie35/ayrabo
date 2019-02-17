@@ -1,0 +1,12 @@
+{% load get_tab_active_class from utils %}
+
+<li role="presentation" class="list-item--pill {% get_tab_active_class 'season_rosters' %}">
+  <a
+    id="tab-item-season-rosters"
+    class="tab-link"
+    href="{{ season_rosters_link }}"
+    aria-controls="season-rosters"
+    role="tab"
+  >Season Rosters
+  </a>
+</li>

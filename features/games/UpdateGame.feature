@@ -37,14 +37,16 @@ Feature: Update a game
       | 3  | Long Island Edge      | Aviator Gulls         | league | 2           | Iceland  | 10/31/2017 07:00 PM | 10/31/2017 09:00 PM | US/Eastern | 1      |
     And I login with "user@ayrabo.com" and "myweakpassword"
 
-  Scenario: Navigate to game update page
-    Given I am on the "teams:games:list" page with kwargs "team_pk=1"
+  Scenario: Navigate to game update page from team detail schedule page
+    Given I am on the "teams:schedule" page with kwargs "team_pk=1"
     When I press "actions-dropdown-1"
     And I press "update-game-1"
     Then I should be on the "teams:games:update" page with kwargs "team_pk=1, pk=1"
 
   Scenario: Informative text shown to user
     Given I am on the "teams:games:update" page with kwargs "team_pk=1, pk=1"
+    Then I should see "Green Machine IceCats - Midget Minor AA"
+    And I should see "Long Island Amateur Hockey League"
     Then I should see "Update Game #1"
     And I should see "Green Machine IceCats Midget Minor AA vs. Long Island Edge Midget Minor AA"
 
@@ -52,14 +54,14 @@ Feature: Update a game
     Given I am on the "teams:games:update" page with kwargs "team_pk=1, pk=1"
     And I select "IceWorks" from "id_location"
     And I press "update_game_btn"
-    Then I should be on the "teams:games:list" page with kwargs "team_pk=1"
+    Then I should be on the "teams:schedule" page with kwargs "team_pk=1"
     And I should see "Your game has been updated."
 
   Scenario: Submit invalid form
     Given I am on the "teams:games:update" page with kwargs "team_pk=1, pk=1"
-    And I select "---------" from "id_location"
+    And I select "Green Machine IceCats - Midget Minor AA" from "id_away_team"
     And I press "update_game_btn"
-    Then I should see "This field is required."
+    Then I should see "This team must be different than the home team."
 
   Scenario: Form disabled
     Given The following game object exists
@@ -82,5 +84,5 @@ Feature: Update a game
     And I should see "Changing the away team for this game will clear the away team roster if one was set."
     And I should see "You will need to set new home or away team rosters."
     And I press "js-modal-continue"
-    Then I should be on the "teams:games:list" page with kwargs "team_pk=1"
+    Then I should be on the "teams:schedule" page with kwargs "team_pk=1"
     And I should see "Your game has been updated."

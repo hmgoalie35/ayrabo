@@ -1,6 +1,7 @@
 import json
 
 from django import template
+from django.urls import reverse
 
 from ayrabo.utils.urls import url_with_query_string as url_with_query_string_util
 
@@ -53,3 +54,16 @@ def copy_to_clipboard_btn(text, title='Copy'):
 @register.simple_tag
 def url_with_query_string(url, **kwargs):
     return url_with_query_string_util(url, **kwargs)
+
+
+@register.simple_tag(takes_context=True)
+def get_past_seasons_nav_tab_url(context, profile_type):
+    past_season = context.get('past_season')
+    if profile_type == 'league':
+        league = context.get('league')
+        return reverse('leagues:seasons:schedule', kwargs={'slug': league.slug, 'season_pk': past_season.pk})
+    elif profile_type == 'team':
+        team = context.get('team')
+        return reverse('teams:seasons:schedule', kwargs={'team_pk': team.pk, 'season_pk': past_season.pk})
+    # Don't return `None`, None will be used as the url.
+    return ''

@@ -38,8 +38,8 @@ def step_impl(context):
             division = DivisionFactory(name=data.pop('division'), league=league)
         data['division'] = division
 
-        if 'organization' in data:
-            organization = data.pop('organization')
-            data['organization'] = Organization.objects.get(id=organization)
+        organization_id = data.pop('organization', None)
+        if organization_id is not None and organization_id.isdigit():
+            data['organization'] = Organization.objects.get(id=int(organization_id))
 
         TeamFactory(**data)

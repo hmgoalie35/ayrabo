@@ -9,9 +9,9 @@ from ayrabo.utils.testing import BaseTestCase
 from divisions.tests import DivisionFactory
 from leagues.tests import LeagueFactory
 from players.tests import HockeyPlayerFactory
-from seasons.models import Season, HockeySeasonRoster
+from seasons.models import HockeySeasonRoster, Season
 from teams.tests import TeamFactory
-from . import SeasonFactory, HockeySeasonRosterFactory
+from . import HockeySeasonRosterFactory, SeasonFactory
 
 
 class SeasonModelTests(BaseTestCase):
@@ -186,6 +186,15 @@ class AbstractSeasonRosterModelTests(BaseTestCase):
         with self.assertRaisesMessage(ValidationError, msg):
             HockeySeasonRosterFactory(season=season, team=team, name='Main Squad')
 
+    def test_can_update(self):
+        league = LeagueFactory()
+        past_season, current_season, _ = self.create_past_current_future_seasons(league=league)
+        past_season_roster = HockeySeasonRosterFactory(season=past_season)
+        current_season_roster = HockeySeasonRosterFactory(season=current_season)
+
+        self.assertFalse(past_season_roster.can_update())
+        self.assertTrue(current_season_roster.can_update())
+
 
 class HockeySeasonRosterModelTests(BaseTestCase):
     def setUp(self):
@@ -204,3 +213,14 @@ class HockeySeasonRosterModelTests(BaseTestCase):
         # clean_default query
         self.season_roster.players.add(HockeyPlayerFactory(team=self.team, sport=self.team.division.league.sport))
         self.season_roster.full_clean()
+
+    def test_get_players(self):
+        sport = self.team.division.league.sport
+        player1 = HockeyPlayerFactory(team=self.team, sport=sport, jersey_number=1)
+        player2 = HockeyPlayerFactory(team=self.team, sport=sport, jersey_number=2)
+        player3 = HockeyPlayerFactory(team=self.team, sport=sport, jersey_number=3)
+        player4 = HockeyPlayerFactory(team=self.team, sport=sport, jersey_number=4)
+        player4.is_active = False
+        player4.save()
+        self.season_roster.players.add(player1, player2, player3, player4)
+        self.assertListEqual(list(self.season_roster.get_players()), [player1, player2, player3])

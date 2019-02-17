@@ -14,8 +14,9 @@ Feature: Update season roster
       | id | league                            | teams                 |
       | 1  | Long Island Amateur Hockey League | Green Machine IceCats |
     And The following season rosters for "Ice Hockey" exist
-      | id | name       | season_id | team                  |
-      | 1  | Main Squad | 1         | Green Machine IceCats |
+      | id | name          | season_id | team                  | default |
+      | 1  | Main Squad    | 1         | Green Machine IceCats | False   |
+      |    | Default Squad | 1         | Green Machine IceCats | True    |
     And The following "Ice Hockey" players have been added to season roster "1"
       | first_name | last_name | jersey_number | position | team_id |
       | John       | Doe       | 1             | C        | 1       |
@@ -32,8 +33,9 @@ Feature: Update season roster
     When I press "actions-dropdown-1"
     And I press "update-season-roster-1-link"
     Then I should be on the "teams:season_rosters:update" page with kwargs "team_pk=1, pk=1"
-    And I should see "Update Season Roster for Green Machine IceCats"
-    And I should see "Midget Minor AA - LIAHL"
+    And I should see "Green Machine IceCats - Midget Minor AA"
+    And I should see "Long Island Amateur Hockey League"
+    And I should see "Update Season Roster"
 
   Scenario: Submit valid ice hockey form
     Given "user@ayrabo.com" is completely registered for "Ice Hockey" with role "Manager"
@@ -41,7 +43,7 @@ Feature: Update season roster
       | username_or_email | team                  |
       | user@ayrabo.com   | Green Machine IceCats |
     And I am on the "teams:season_rosters:update" page with kwargs "team_pk=1, pk=1"
-    When I press "id_default"
+    And I fill in "id_name" with "Bash Brothers"
     And I press "update_season_roster_btn"
     Then I should be on the "teams:season_rosters:list" page with kwargs "team_pk=1"
     And I should see "Your season roster has been updated."
@@ -52,12 +54,29 @@ Feature: Update season roster
       | username_or_email | team                  |
       | user@ayrabo.com   | Green Machine IceCats |
     And I am on the "teams:season_rosters:update" page with kwargs "team_pk=1, pk=1"
-    And I deselect "#1 John Doe C" from "id_players"
-    And I deselect "#2 Lee Doe LW" from "id_players"
+    And I press "id_default"
     And I press "update_season_roster_btn"
-    Then I should be on the "teams:season_rosters:update" page with kwargs "team_pk=1, pk=1"
-    And "This field is required." should show up 1 time
+    Then I should see "A default season roster for this team and season already exists."
+    And I should be on the "teams:season_rosters:update" page with kwargs "team_pk=1, pk=1"
 
     # Am omitting a test for "Attempt to add another default season roster for a team/season" because this is handled
     # in the view tests. Not really worth it to duplicate the test here also. The test in CreateSeasonRoster is being
     # kept solely for reference
+
+  Scenario: Form disabled for expired seasons
+    Given The following manager object exists
+      | username_or_email | team                  |
+      | user@ayrabo.com   | Green Machine IceCats |
+    And The following season object exists
+      | id | league                            | teams                 | start_date | end_date |
+      | 2  | Long Island Amateur Hockey League | Green Machine IceCats | -1y        | -5d      |
+    And The following season rosters for "Ice Hockey" exist
+      | id | name          | season_id | team                  |
+      | 2  | Bash Brothers | 2         | Green Machine IceCats |
+    And I am on the "teams:season_rosters:update" page with kwargs "team_pk=1, pk=2"
+    Then I should see "Updates to this season roster are no longer permitted."
+    And "id_name" should be disabled
+    And "id_season" should be disabled
+    And "id_default" should be disabled
+    And "id_players" should be disabled
+    And "update_season_roster_btn" should not exist on the page

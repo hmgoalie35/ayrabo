@@ -1,0 +1,49 @@
+{% extends 'site_base.html' %}
+
+{% block title %}{% block page %}{% endblock %} {{ team_display_name }}{% endblock %}
+
+{% block content %}
+  <div class="container profile">
+
+    <div class="row">
+      <div class="col-md-12">
+        <h3 class="text-center">{{ team_display_name }}</h3>
+        <h5 class="text-center mb20">
+          {% with league=team.division.league %}
+            <a href="{% url 'leagues:schedule' slug=league.slug %}">{{ league.name }}</a>
+          {% endwith %}
+        </h5>
+      </div>
+    </div>
+
+    {% if is_season_expired %}
+      <div class="row">
+        <div class="col-md-offset-3 col-md-6">
+          <div class="alert alert-warning text-center" role="alert">
+            This season has been archived.
+            <br>
+            The current season's {% block current_season_page_text %}{% endblock %} <a class="alert-link" href="{{ current_season_page_url }}">here</a>.
+          </div>
+        </div>
+      </div>
+    {% endif %}
+
+    <div class="row">
+      <div class="col-md-12">
+
+        <div role="navigation">
+          <ul class="nav nav-pills nav-justified nav-bordered" role="tablist">
+            {% include 'profile_nav_tabs/_schedule_nav_tab.html' %}
+            {% include 'teams/_players_nav_tab.html' %}
+            {% include 'teams/_season_rosters_nav_tab.html' %}
+            {% include 'profile_nav_tabs/_past_seasons_nav_tab.html' with profile_type='team' %}
+          </ul>
+        </div>
+
+        <div class="tab-content mt30">
+          {% block tab_content %}{% endblock %}
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

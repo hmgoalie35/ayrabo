@@ -3,7 +3,7 @@ Feature: Register for an account
   So that I can register for an account and have my data saved
   I want to be able to register for an account
 
-  Scenario: Register for an account with valid info
+  Scenario: Submit valid form
     Given I am on the "account_register" page
     When I fill in "id_first_name" with "John"
     And I fill in "id_last_name" with "Doe"
@@ -17,12 +17,22 @@ Feature: Register for an account
     # Note this does not test confirming the account, that is done below.
     And A user account should exist for "user@ayrabo.com"
 
+  Scenario: Submit invalid form
+    Given I am on the "account_register" page
+    And I fill in "id_first_name" with "Michael"
+    And I fill in "id_last_name" with "Scott"
+    And I fill in "id_email" with "test@ayrabo.com"
+    And I fill in "id_password1" with "myweakpassword"
+    And I fill in "id_password2" with "helloworld"
+    When I press "id_submit"
+    Then I should see "You must type the same password each time."
+    And I should be on the "account_register" page
+
   Scenario: Confirm email address with a valid link
     Given The following unconfirmed user accounts exist
       | first_name | last_name | email           | password       |
       | John       | Doe       | user@ayrabo.com | myweakpassword |
     When I confirm "user@ayrabo.com" via "email_link"
-    And I wait for a page refresh
     Then I should be on the "account_login" page
     And I should see "You have confirmed user@ayrabo.com"
 
@@ -30,13 +40,6 @@ Feature: Register for an account
     Given The following unconfirmed user accounts exist
       | first_name | last_name | email           | password       |
       | John       | Doe       | user@ayrabo.com | myweakpassword |
-
     When I follow an invalid email link
     Then I should see "This confirmation link is invalid or has expired."
     And I should see "Enter your email below to request a new link."
-
-  Scenario: Register for an account with no info
-    Given I am on the "account_register" page
-    When I press "id_submit"
-    Then I should be on the "account_register" page
-    And "This field is required." should show up 5 times

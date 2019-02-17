@@ -47,10 +47,6 @@ $(function () {
     }
   });
 
-  var isMobileDevice = function () {
-    return (/android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(navigator.userAgent.toLowerCase()));
-  };
-
   $.fn.selectpicker.Constructor.BootstrapVersion = '3';
   $.fn.enableBootstrapSelect = function (option_overrides) {
     var options = {
@@ -63,7 +59,6 @@ $(function () {
       liveSearchPlaceholder: 'Search',
       noneSelectedText: '---------',
       selectedTextFormat: 'count > 2',
-      mobile: isMobileDevice(),
       dropupAuto: true,
       template: {
         caret: '<span class="fa fa-caret-down"></span>'

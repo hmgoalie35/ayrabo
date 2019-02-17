@@ -1,6 +1,6 @@
-Feature: List games for a team
-  As a user, I want to be able to view all games for a team
-  So that I can see what their schedule is like
+Feature: View a team's schedule for current season and past seasons
+  As a user,
+  I want to be able to view a team's schedule for past and current seasons
 
   Background: User exists
     Given The following confirmed user account exists
@@ -30,40 +30,14 @@ Feature: List games for a team
       | 1  | Long Island Amateur Hockey League | today      | 1y       | Green Machine IceCats |
     And I login with "user@ayrabo.com" and "myweakpassword"
 
-  Scenario: Navigate to hockey game list page as manager
-    Given I am on the "sports:dashboard" page with kwargs "slug=ice-hockey"
-    And I press "manager-tab"
-    And I press "actions-dropdown-manager-green-machine-icecats"
-    And I press "list_games_manager_btn_green-machine-icecats"
-    Then I should be on the "teams:games:list" page with kwargs "team_pk=1"
-
-  Scenario: Navigate to hockey game list page as player
-    Given The following player object exists
-      | username_or_email | sport      | team                  |
-      | user@ayrabo.com   | Ice Hockey | Green Machine IceCats |
-    And I am on the "sports:dashboard" page with kwargs "slug=ice-hockey"
-    And I press "player-tab"
-    And I press "actions-dropdown-player-green-machine-icecats"
-    And I press "list_games_player_btn_green-machine-icecats"
-    Then I should be on the "teams:games:list" page with kwargs "team_pk=1"
-
-  Scenario: Navigate to hockey game list page as coach
-    Given The following coach object exists
-      | username_or_email | team                  |
-      | user@ayrabo.com   | Green Machine IceCats |
-    And I am on the "sports:dashboard" page with kwargs "slug=ice-hockey"
-    And I press "coach-tab"
-    And I press "actions-dropdown-coach-green-machine-icecats"
-    And I press "list_games_coach_btn_green-machine-icecats"
-    Then I should be on the "teams:games:list" page with kwargs "team_pk=1"
-
-  Scenario: Helpful text displayed to user
-    Given I am on the "teams:games:list" page with kwargs "team_pk=1"
-    Then I should see "Games for Green Machine IceCats"
-    And I should see "Midget Minor AA - LIAHL"
+  Scenario: Informative text displayed to user
+    Given I am on the "teams:schedule" page with kwargs "team_pk=1"
+    Then I should see "Green Machine IceCats - Midget Minor AA"
+    And I should see "Long Island Amateur Hockey League"
+    And I should see season "today" "1y"
 
   Scenario: No games
-    Given I am on the "teams:games:list" page with kwargs "team_pk=1"
+    Given I am on the "teams:schedule" page with kwargs "team_pk=1"
     Then I should see "There are no games for Green Machine IceCats at this time."
 
   Scenario: Games exist
@@ -73,7 +47,7 @@ Feature: List games for a team
       | 2  | Long Island Edge      | Green Machine IceCats | league | 2           | Iceland  | 10/30/2017 07:00 PM | 10/30/2017 09:00 PM | US/Eastern | 1      |
       | 3  | Long Island Edge      | Aviator Gulls         | league | 2           | Iceland  | 10/31/2017 07:00 PM | 10/31/2017 09:00 PM | US/Eastern | 1      |
 
-    And I am on the "teams:games:list" page with kwargs "team_pk=1"
+    And I am on the "teams:schedule" page with kwargs "team_pk=1"
     Then "create-game-btn" should be visible
     And I should see "1"
     And I should see "Green Machine IceCats"
@@ -91,7 +65,24 @@ Feature: List games for a team
       | Long Island Edge      | Green Machine IceCats | league | 2           | Iceland  | 10/30/2017 07:00 PM | 10/30/2017 09:00 PM | US/Eastern | 1      |
       | Long Island Edge      | Aviator Gulls         | league | 2           | Iceland  | 10/31/2017 07:00 PM | 10/31/2017 09:00 PM | US/Eastern | 1      |
     And I login with "user1@ayrabo.com" and "myweakpassword"
-    And I am on the "teams:games:list" page with kwargs "team_pk=1"
+    And I am on the "teams:schedule" page with kwargs "team_pk=1"
     Then "create-game-btn" should not exist on the page
     And "create-game-btn-empty-state" should not exist on the page
     And "i.fa.fa-pencil" should not exist on the page
+
+  Scenario: Navigate to team detail schedule page for a past season
+    Given The following season object exists
+      | id | league                            | start_date | end_date | teams                 |
+      | 2  | Long Island Amateur Hockey League | -1y        | -5d      | Green Machine IceCats |
+    And I am on the "teams:schedule" page with kwargs "team_pk=1"
+    And I press "tab-item-past-seasons"
+    And I press "past-season-2"
+    Then I should be on the "teams:seasons:schedule" page with kwargs "team_pk=1, season_pk=2"
+
+  Scenario: View team detail schedule page for a past season
+    Given The following season object exists
+      | id | league                            | start_date | end_date | teams                 |
+      | 2  | Long Island Amateur Hockey League | -1y        | -5d      | Green Machine IceCats |
+    And I am on the "teams:seasons:schedule" page with kwargs "team_pk=1, season_pk=2"
+    Then I should see "This season has been archived."
+    And I should see "The current season's schedule is available"

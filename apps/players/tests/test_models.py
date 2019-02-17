@@ -4,9 +4,10 @@ from django.db.utils import IntegrityError
 from ayrabo.utils.testing import BaseTestCase
 from players.tests import BaseballPlayerFactory, BasketballPlayerFactory, HockeyPlayerFactory
 from teams.tests import TeamFactory
+from users.tests import UserFactory
 
 
-class PlayerModelTests(BaseTestCase):
+class AbstractPlayerModelTests(BaseTestCase):
     """
     The tests in this class are testing the shared functionality the abstract Player class provides to subclasses.
     Subclasses shouldn't need to test the fields, properties, etc of the Player class as all of that is handled by this
@@ -52,13 +53,27 @@ class PlayerModelTests(BaseTestCase):
         # We only want to test the fields from the super class are returned.
         del fields['Position']
         del fields['Handedness']
-        self.assertDictEqual(expected, fields)
+        self.assertDictEqual(fields, expected)
+
+    def test_table_fields(self):
+        t = TeamFactory()
+        user = UserFactory(first_name='Michael', last_name='Scott')
+        player = HockeyPlayerFactory(team=t, jersey_number=1, user=user, handedness='Left', position='G')
+        fields = player.table_fields
+        del fields['Position']
+        del fields['Handedness']
+        self.assertDictEqual(fields, {
+            'Jersey Number': 1,
+            'Name': 'Michael Scott',
+        })
 
 
 class HockeyPlayerModelTests(BaseTestCase):
     def setUp(self):
         self.jersey_number = 35
-        self.hockey_player = HockeyPlayerFactory(jersey_number=self.jersey_number)
+        user = UserFactory(first_name='Michael', last_name='Scott')
+        self.hockey_player = HockeyPlayerFactory(jersey_number=self.jersey_number, user=user, handedness='Left',
+                                                 position='G')
 
     def test_duplicate_jersey_number(self):
         validation_msg = 'Please choose another number, {jersey_number} is currently unavailable for {team}'.format(
@@ -87,6 +102,14 @@ class HockeyPlayerModelTests(BaseTestCase):
         }
         fields = player.fields
         self.assertDictEqual(expected, fields)
+
+    def test_table_fields(self):
+        self.assertDictEqual(self.hockey_player.table_fields, {
+            'Jersey Number': self.jersey_number,
+            'Name': 'Michael Scott',
+            'Position': 'Goaltender',
+            'Handedness': 'Left'
+        })
 
 
 class BaseballPlayerModelTests(BaseTestCase):
@@ -122,6 +145,18 @@ class BaseballPlayerModelTests(BaseTestCase):
         fields = player.fields
         self.assertDictEqual(expected, fields)
 
+    def test_table_fields(self):
+        user = UserFactory(first_name='Dwight', last_name='Schrute')
+        player = BaseballPlayerFactory(user=user, jersey_number=self.jersey_number, position='C', catches='Left',
+                                       bats='Left')
+        self.assertDictEqual(player.table_fields, {
+            'Jersey Number': 35,
+            'Name': 'Dwight Schrute',
+            'Position': 'Catcher',
+            'Catches': 'Left',
+            'Bats': 'Left'
+        })
+
 
 class BasketballPlayerModelTests(BaseTestCase):
     def setUp(self):
@@ -155,3 +190,13 @@ class BasketballPlayerModelTests(BaseTestCase):
         }
         fields = player.fields
         self.assertDictEqual(expected, fields)
+
+    def test_table_fields(self):
+        user = UserFactory(first_name='Ryan', last_name='Howard')
+        player = BasketballPlayerFactory(user=user, jersey_number=self.jersey_number, position='PG', shoots='Left')
+        self.assertDictEqual(player.table_fields, {
+            'Jersey Number': 35,
+            'Name': 'Ryan Howard',
+            'Position': 'Point Guard',
+            'Shoots': 'Left',
+        })

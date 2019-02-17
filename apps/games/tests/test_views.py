@@ -100,19 +100,19 @@ class HockeyGameCreateViewTests(BaseTestCase):
     def test_get(self):
         self.login(email=self.email, password=self.password)
         response = self.client.get(self.format_url(team_pk=1))
+        context = response.context
+
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'games/game_create.html')
+        self.assertEqual(context.get('team'), self.t1)
+        self.assertEqual(context.get('team_display_name'), 'Green Machine IceCats - Midget Minor AA')
+        self.assertEqual(context.get('active_tab'), 'schedule')
+        self.assertIsNotNone(context.get('past_seasons'))
 
     def test_get_team_dne(self):
         self.login(email=self.email, password=self.password)
         response = self.client.get(self.format_url(team_pk=999))
         self.assertEqual(response.status_code, 404)
-
-    def test_get_context_data(self):
-        self.login(email=self.email, password=self.password)
-        response = self.client.get(self.format_url(team_pk=1))
-        context = response.context
-        self.assertEqual(context['team'].id, self.t1.id)
 
     # Testing some generic functionality in this test...
     def test_get_sport_not_configured(self):
@@ -128,7 +128,7 @@ class HockeyGameCreateViewTests(BaseTestCase):
     def test_valid_post(self):
         self.login(email=self.email, password=self.password)
         response = self.client.post(self.format_url(team_pk=1), data=self.post_data, follow=True)
-        url = reverse('sports:dashboard', kwargs={'slug': self.ice_hockey.slug})
+        url = reverse('teams:schedule', kwargs={'team_pk': self.t1.pk})
         self.assertRedirects(response, url)
         self.assertHasMessage(response, 'Your game has been created.')
         game = HockeyGame.objects.first()
@@ -215,105 +215,6 @@ class HockeyGameCreateViewTests(BaseTestCase):
         self.assertFormError(response, 'form', 'away_team', [msg])
         self.assertFormError(response, 'form', 'start', [''])
         self.assertFormError(response, 'form', 'timezone', [''])
-
-
-class HockeyGameListViewTests(BaseTestCase):
-    url = 'teams:games:list'
-
-    def setUp(self):
-        self.ice_hockey = SportFactory(name='Ice Hockey')
-        self.liahl = LeagueFactory(name='Long Island Amateur Hockey League', sport=self.ice_hockey)
-        self.mm_aa = DivisionFactory(name='Midget Minor AA', league=self.liahl)
-        self.icecats = TeamFactory(id=1, name='Green Machine IceCats', division=self.mm_aa)
-
-        self.email = 'user@ayrabo.com'
-        self.password = 'myweakpassword'
-        self.user = UserFactory(email=self.email, password=self.password)
-        self.sport_registration = SportRegistrationFactory(user=self.user, sport=self.ice_hockey, role='manager')
-        ManagerFactory(user=self.user, team=self.icecats)
-
-    def test_login_required(self):
-        url = self.format_url(team_pk=1)
-        response = self.client.get(url)
-        self.assertRedirects(response, self.get_login_required_url(url))
-
-    def test_get(self):
-        self.login(email=self.email, password=self.password)
-        response = self.client.get(self.format_url(team_pk=1))
-        self.assertTemplateUsed(response, 'games/game_list.html')
-        self.assert_200(response)
-
-    def test_team_not_found(self):
-        self.login(email=self.email, password=self.password)
-        response = self.client.get(self.format_url(team_pk=100))
-        self.assert_404(response)
-
-    def test_sport_not_configured(self):
-        self.login(email=self.email, password=self.password)
-        team = TeamFactory()
-        response = self.client.get(self.format_url(team_pk=team.pk))
-        self.assertTemplateUsed(response, 'sport_not_configured_msg.html')
-
-    def test_get_queryset(self):
-        t2 = TeamFactory(id=2, division=self.mm_aa)
-        t3 = TeamFactory(id=3, division=self.mm_aa)
-        t4 = TeamFactory(id=4, division=self.mm_aa)
-        game_type = GenericChoiceFactory(id=1, short_value='exhibition', long_value='Exhibition', type='game_type',
-                                         content_object=self.ice_hockey)
-        point_value = GenericChoiceFactory(id=2, short_value='2', long_value='2', type='game_point_value',
-                                           content_object=self.ice_hockey)
-        tz = 'US/Eastern'
-        season_start = datetime.date(month=8, day=18, year=2017)
-        season = SeasonFactory(id=1, league=self.liahl, start_date=season_start)
-
-        # 08/18/2017 @ 07:00PM
-        start_base = datetime.datetime.combine(season_start, datetime.time(hour=19, minute=0))
-        start_base = pytz.timezone(tz).localize(start_base)
-
-        # 08/25/2017
-        g1_start = start_base + datetime.timedelta(weeks=1)
-
-        HockeyGameFactory(id=1, home_team=self.icecats, away_team=t2, type=game_type, point_value=point_value,
-                          timezone=tz, season=season, start=g1_start).full_clean()
-
-        # 08/26/2017
-        g2_start = g1_start + datetime.timedelta(days=1)
-        HockeyGameFactory(id=2, home_team=t2, away_team=self.icecats, type=game_type, point_value=point_value,
-                          timezone=tz, season=season, start=g2_start).full_clean()
-
-        # 09/01/2017
-        g3_start = g1_start + datetime.timedelta(weeks=1)
-        HockeyGameFactory(id=3, home_team=self.icecats, away_team=t3, type=game_type, point_value=point_value,
-                          timezone=tz, season=season, start=g3_start).full_clean()
-        # 09/02/2017
-        g4_start = g3_start + datetime.timedelta(days=1)
-        HockeyGameFactory(id=4, home_team=t3, away_team=self.icecats, type=game_type, point_value=point_value,
-                          timezone=tz, season=season, start=g4_start).full_clean()
-
-        # 09/09/2017
-        g5_start = g4_start + datetime.timedelta(weeks=1)
-        HockeyGameFactory(id=5, home_team=t2, away_team=t3, type=game_type, point_value=point_value,
-                          timezone=tz, season=season, start=g5_start).full_clean()
-
-        # 09/10/2017
-        HockeyGameFactory(id=6, home_team=t2, away_team=t4, type=game_type, point_value=point_value,
-                          timezone=tz, season=season, start=g5_start + datetime.timedelta(days=1)).full_clean()
-
-        self.login(email=self.email, password=self.password)
-        response = self.client.get(self.format_url(team_pk=1))
-
-        games = response.context.get('games')
-        game_ids = list(games.values_list('id', flat=True))
-        self.assertListEqual(game_ids, [1, 3, 2, 4])
-
-    def test_get_context_data(self):
-        self.login(email=self.email, password=self.password)
-        response = self.client.get(self.format_url(team_pk=1))
-        context = response.context
-        self.assertTrue(context.get('can_create_game'))
-        self.assertFalse(context.get('has_games'))
-        self.assertEqual(context.get('team'), self.icecats)
-        self.assertEqual(context.get('sport'), self.ice_hockey)
 
 
 class HockeyGameUpdateViewTests(BaseTestCase):
@@ -455,9 +356,14 @@ class HockeyGameUpdateViewTests(BaseTestCase):
     def test_get(self):
         self.login(email=self.email, password=self.password)
         response = self.client.get(self.format_url(team_pk=1, pk=1))
+        context = response.context
         self.assertTemplateUsed(response, 'games/game_update.html')
         self.assert_200(response)
-        self.assertEqual(response.context.get('game'), self.game)
+        self.assertEqual(context.get('game'), self.game)
+        self.assertEqual(context.get('team'), self.t1)
+        self.assertEqual(context.get('team_display_name'), 'Green Machine IceCats - Midget Minor AA')
+        self.assertEqual(context.get('active_tab'), 'schedule')
+        self.assertIsNotNone(context.get('past_seasons'))
 
     # POST
     def test_has_changed_custom_logic(self):
@@ -465,7 +371,7 @@ class HockeyGameUpdateViewTests(BaseTestCase):
         self.login(email=self.email, password=self.password)
         response = self.client.post(self.formatted_url, data=self.post_data, follow=True)
         self.assertNoMessage(response, 'Your game has been updated.')
-        self.assertRedirects(response, reverse('teams:games:list', kwargs={'team_pk': self.t1.id}))
+        self.assertRedirects(response, reverse('teams:schedule', kwargs={'team_pk': self.t1.id}))
 
     def test_post_valid(self):
         location = LocationFactory()
@@ -474,7 +380,7 @@ class HockeyGameUpdateViewTests(BaseTestCase):
         self.post_data.update({'location': location.id})
         response = self.client.post(self.formatted_url, data=self.post_data, follow=True)
         self.assertHasMessage(response, 'Your game has been updated.')
-        self.assertRedirects(response, reverse('teams:games:list', kwargs={'team_pk': self.t1.id}))
+        self.assertRedirects(response, reverse('teams:schedule', kwargs={'team_pk': self.t1.id}))
         self.game.refresh_from_db()
         self.assertEqual(self.game.location.id, location.id)
 

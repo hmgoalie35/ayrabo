@@ -20,8 +20,10 @@
           <td data-title="{{ field_name }}">
             {% if field_name|lower == 'team' %}
               {% include 'includes/team_logo.html' with team=field_value %}
+              <a href="{% url 'teams:schedule' team_pk=field_value.pk %}">{{ field_value.name }}</a>
+            {% else %}
+              {{ field_value }}
             {% endif %}
-            {{ field_value }}
           </td>
         {% endfor %}
         <td data-title="">
@@ -48,14 +50,19 @@
                 </li>
               {% endswitch %}
 
-              {# Game items #}
               <li class="dropdown-header">Games</li>
               <li>
-                <a id="list_games_player_btn_{{ player.team.slug }}" href="{% url 'teams:games:list' player.team.pk %}" role="button">
+                <a id="list_games_player_btn_{{ player.team.slug }}" href="{% url 'teams:schedule' team_pk=player.team.pk %}" role="button">
                   <i class="fa fa-list-alt fa-primary"></i>&nbsp;List
                 </a>
               </li>
-              {# End game items #}
+
+              <li class="dropdown-header">Players</li>
+              <li>
+                <a href="{% url 'teams:players' team_pk=player.team.pk %}" role="button">
+                  <i class="fa fa-list-alt fa-primary"></i>&nbsp;List
+                </a>
+              </li>
             </ul>
           </div>
         </td>

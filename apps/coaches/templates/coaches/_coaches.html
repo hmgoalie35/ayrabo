@@ -16,8 +16,10 @@
     {% for coach in coaches %}
       <tr>
         <td data-title="Team">
-          {% include 'includes/team_logo.html' with team=coach.team %}
-          {{ coach.team.name }}
+          {% with team=coach.team %}
+            {% include 'includes/team_logo.html' with team=team %}
+            <a href="{% url 'teams:schedule' team_pk=team.pk %}">{{ team.name }}</a>
+          {% endwith %}
         </td>
         <td data-title="Division">{{ coach.team.division.name }}</td>
         <td data-title="Position">{{ coach.get_position_display }}</td>
@@ -43,14 +45,20 @@
                   </a>
                 </li>
               {% endswitch %}
-              {# Game items #}
+
               <li class="dropdown-header">Games</li>
               <li>
-                <a id="list_games_coach_btn_{{ coach.team.slug }}" href="{% url 'teams:games:list' coach.team.pk %}" role="button">
+                <a id="list_games_coach_btn_{{ coach.team.slug }}" href="{% url 'teams:schedule' team_pk=coach.team.pk %}" role="button">
                   <i class="fa fa-list-alt fa-primary"></i>&nbsp;List
                 </a>
               </li>
-            {# End game items #}
+
+              <li class="dropdown-header">Players</li>
+              <li>
+                <a href="{% url 'teams:players' team_pk=coach.team.pk %}" role="button">
+                  <i class="fa fa-list-alt fa-primary"></i>&nbsp;List
+                </a>
+              </li>
             </ul>
           </div>
         </td>
