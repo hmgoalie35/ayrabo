@@ -32,7 +32,6 @@
               <i class="fa fa-caret-down"></i>
             </a>
             <ul class="dropdown-menu table-dropdown-menu" aria-labelledby="{{ manager.id }}">
-              {# Start Season Roster items #}
               <li class="dropdown-header">Season Rosters</li>
               <li>
                 <a id="create_season_roster_btn_{{ manager.team.slug }}" href="{% url 'teams:season_rosters:create' manager.team.pk %}" role="button">
@@ -44,9 +43,7 @@
                   <i class="fa fa-list-alt fa-primary"></i>&nbsp;List
                 </a>
               </li>
-              {# End Season Roster items #}
 
-              {# Start game items #}
               <li class="dropdown-header">Games</li>
               <li>
                 <a id="create_game_btn_{{ manager.team.slug }}" href="{% url 'teams:games:create' manager.team.pk %}" role="button">
@@ -58,7 +55,13 @@
                   <i class="fa fa-list-alt fa-primary"></i>&nbsp;List
                 </a>
               </li>
-              {# End game items #}
+
+              <li class="dropdown-header">Players</li>
+              <li>
+                <a href="{% url 'teams:players' team_pk=manager.team.pk %}" role="button">
+                  <i class="fa fa-list-alt fa-primary"></i>&nbsp;List
+                </a>
+              </li>
             </ul>
           </div>
         </td>
