@@ -50,14 +50,19 @@
                 </li>
               {% endswitch %}
 
-              {# Game items #}
               <li class="dropdown-header">Games</li>
               <li>
                 <a id="list_games_player_btn_{{ player.team.slug }}" href="{% url 'teams:schedule' team_pk=player.team.pk %}" role="button">
                   <i class="fa fa-list-alt fa-primary"></i>&nbsp;List
                 </a>
               </li>
-              {# End game items #}
+
+              <li class="dropdown-header">Players</li>
+              <li>
+                <a href="{% url 'teams:players' team_pk=player.team.pk %}" role="button">
+                  <i class="fa fa-list-alt fa-primary"></i>&nbsp;List
+                </a>
+              </li>
             </ul>
           </div>
         </td>

@@ -115,7 +115,7 @@ class User(AbstractUser):
         and sport.
         """
         # Prevents circular import error
-        from ayrabo.utils.mappings import SPORT_PLAYER_MODEL_MAPPINGS
+        from players.mappings import SPORT_PLAYER_MODEL_MAPPINGS
 
         player_model_cls = SPORT_PLAYER_MODEL_MAPPINGS.get(sport.name)
         if player_model_cls is None:

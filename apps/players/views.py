@@ -5,11 +5,12 @@ from django.urls import reverse
 from django.views import generic
 
 from ayrabo.utils.exceptions import SportNotConfiguredException
-from ayrabo.utils.mappings import SPORT_PLAYER_MODEL_MAPPINGS
 from ayrabo.utils.mixins import HandleSportNotConfiguredMixin, HasPermissionMixin, WaffleSwitchMixin
 from ayrabo.utils.urls import url_with_query_string
+from players.mappings import get_player_model_cls
 from sports.models import Sport, SportRegistration
 from . import forms
+
 
 SPORT_UPDATE_PLAYER_FORM_MAPPINGS = {
     'Ice Hockey': forms.HockeyPlayerUpdateForm,
@@ -47,9 +48,7 @@ class PlayerUpdateView(LoginRequiredMixin,
 
     def get_object(self, queryset=None):
         sport = self._get_sport()
-        model_cls = SPORT_PLAYER_MODEL_MAPPINGS.get(sport.name)
-        if model_cls is None:
-            raise SportNotConfiguredException(sport)
+        model_cls = get_player_model_cls(sport)
         pk = self.kwargs.get(self.pk_url_kwarg, None)
         return get_object_or_404(model_cls.objects.select_related('team'), pk=pk)
 

@@ -144,13 +144,11 @@ class TeamDetailScheduleViewTests(BaseTestCase):
         self.assertFalse(context.get('has_games'))
 
 
-class TeamDetailSeasonRostersView(BaseTestCase):
+class TeamDetailSeasonRostersViewTests(BaseTestCase):
     url = 'teams:season_rosters:list'
 
     def setUp(self):
-        self.email = 'user@ayrabo.com'
-        self.password = 'myweakpassword'
-        self.user = UserFactory(email=self.email, password=self.password)
+        self.user = UserFactory()
 
         self.ice_hockey = SportFactory(name='Ice Hockey')
         self.liahl = LeagueFactory(name='Long Island Amateur Hockey League', sport=self.ice_hockey)
@@ -233,3 +231,63 @@ class TeamDetailSeasonRostersView(BaseTestCase):
         self.assertEqual(context.get('schedule_link'), reverse('teams:seasons:schedule', kwargs=kwargs))
         self.assertEqual(context.get('season_rosters_link'), url)
         self.assertFalse(context.get('can_create_season_roster'))
+
+
+class TeamDetailPlayersViewTests(BaseTestCase):
+    url = 'teams:players'
+
+    def setUp(self):
+        self.user = UserFactory()
+
+        self.ice_hockey = SportFactory(name='Ice Hockey')
+        self.liahl = LeagueFactory(sport=self.ice_hockey, name='Long Island Amateur Hockey League')
+        self.mm_aa = DivisionFactory(league=self.liahl, name='Midget Minor AA')
+        self.icecats_mm_aa = TeamFactory(division=self.mm_aa, name='Green Machine IceCats')
+        self.edge_mm_aa = TeamFactory(division=self.mm_aa, name='Long Island Edge')
+        self.p1 = HockeyPlayerFactory(team=self.icecats_mm_aa, sport=self.ice_hockey)
+        self.p2 = HockeyPlayerFactory(team=self.icecats_mm_aa, sport=self.ice_hockey)
+        self.p3 = HockeyPlayerFactory(team=self.icecats_mm_aa, sport=self.ice_hockey)
+        self.p4 = HockeyPlayerFactory(team=self.icecats_mm_aa, sport=self.ice_hockey)
+        self.p5 = HockeyPlayerFactory(team=self.icecats_mm_aa, sport=self.ice_hockey, is_active=False)
+        self.p6 = HockeyPlayerFactory(team=self.edge_mm_aa, sport=self.ice_hockey)
+        _, self.current_season, _ = self.create_past_current_future_seasons(self.liahl)
+
+        self.formatted_url = self.format_url(team_pk=self.icecats_mm_aa.pk)
+        self.login(user=self.user)
+
+    def test_login_required(self):
+        self.client.logout()
+        self.assertLoginRequired(self.formatted_url)
+
+    def test_sport_not_configured(self):
+        team = TeamFactory()
+        self.assertSportNotConfigured(self.format_url(team_pk=team.pk))
+
+    # GET
+    def test_get(self):
+        response = self.client.get(self.formatted_url)
+        context = response.context
+
+        self.assert_200(response)
+        self.assertTemplateUsed('teams/team_detail_players.html')
+
+        # Don't need to go crazy and test that everything from get_team_detail_view_context is here.
+        self.assertEqual(context.get('team_display_name'), 'Green Machine IceCats - Midget Minor AA')
+        self.assertEqual(context.get('season'), self.current_season)
+        self.assertIsNotNone(context.get('past_seasons'))
+
+        self.assertListEqual(context.get('columns'), ['Jersey Number', 'Name', 'Position', 'Handedness'])
+        self.assertListEqual(list(context.get('players')), [self.p1, self.p2, self.p3, self.p4])
+        self.assertTrue(context.get('has_players'))
+        self.assertEqual(context.get('header_text'), 'All Players')
+        self.assertEqual(context.get('sport'), self.ice_hockey)
+        self.assertEqual(context.get('active_tab'), 'players')
+
+    def test_get_no_players(self):
+        team = TeamFactory(division=self.mm_aa)
+        response = self.client.get(self.format_url(team_pk=team.pk))
+        context = response.context
+
+        self.assertListEqual(context.get('columns'), ['Jersey Number', 'Name'])
+        self.assertListEqual(list(context.get('players')), [])
+        self.assertFalse(context.get('has_players'))

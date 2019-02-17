@@ -14,4 +14,5 @@ urlpatterns = [
     url(r'^(?P<team_pk>\d+)/season-rosters/', include(season_roster_urls, namespace='season_rosters')),
     url(r'^(?P<team_pk>\d+)/games/', include('games.urls', namespace='games')),
     url(r'^(?P<team_pk>\d+)/$', views.TeamDetailScheduleView.as_view(), name='schedule'),
+    url(r'^(?P<team_pk>\d+)/players/$', views.TeamDetailPlayersView.as_view(), name='players'),
 ]
