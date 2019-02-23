@@ -97,7 +97,7 @@
                   <ul class="list-group">
                     {% for admin in organization_admins %}
                       <li class="list-group-item">
-                        <div>{{ admin.get_full_name }}</div>
+                        <div><a href="{% url 'users:detail' pk=admin.pk %}">{{ admin.get_full_name }}</a></div>
                         <div><small class="text-muted">{{ admin.email }}</small></div>
                       </li>
                     {% endfor %}
