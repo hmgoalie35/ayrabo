@@ -1,0 +1,36 @@
+{% extends 'users/user_detail_base.html' %}
+{% load get_tab_active_class from utils %}
+
+{% block title %}User Profile{% endblock %}
+
+{% block tab_content %}
+
+  {# Information tab #}
+  <div role="tabpanel" class="tab-pane {% get_tab_active_class info_tab_key %}" id="{{ info_tab_key }}">
+    <div class="row">
+      <div class="text-center mt20">
+
+        <div class="col-md-offset-4 col-md-4">
+          <ul class="list-group">
+            {% for label, value in user_information.items %}
+              <li class="list-group-item">
+                <strong class="pull-left">{{ label }}</strong>
+                <span>{{ value }}</span>
+              </li>
+            {% endfor %}
+          </ul>
+        </div>
+
+      </div>
+    </div>
+  </div>
+  {# End information tab #}
+
+  {# Sports tab #}
+  <div role="tabpanel" class="tab-pane {% get_tab_active_class sports_tab_key %}" id="{{ sports_tab_key }}">
+    <h4 class="text-center">Sports</h4>
+    <div class="text-center"></div>
+  </div>
+  {# End sports tab #}
+
+{% endblock %}
