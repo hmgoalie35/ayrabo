@@ -6,6 +6,10 @@ from users.models import User
 
 
 class UserDetailView(LoginRequiredMixin, PreSelectedTabMixin, DetailView):
+    """
+    This view will overwrite the `user` context variable that the `auth` context processor sets. This shouldn't be an
+    issue though, because the currently logged in or anonymous user can be accessed via `request.user` in the template.
+    """
     context_object_name = 'user'
     template_name = 'users/user_detail.html'
     queryset = User.objects.select_related('userprofile')

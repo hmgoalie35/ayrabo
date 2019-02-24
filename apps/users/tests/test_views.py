@@ -1,6 +1,14 @@
 from datetime import date
 
 from ayrabo.utils.testing import BaseTestCase
+from coaches.tests import CoachFactory
+from divisions.tests import DivisionFactory
+from leagues.tests import LeagueFactory
+from managers.tests import ManagerFactory
+from referees.tests import RefereeFactory
+from scorekeepers.tests import ScorekeeperFactory
+from sports.tests import SportFactory, SportRegistrationFactory
+from teams.tests import TeamFactory
 from userprofiles.tests import UserProfileFactory
 from users.tests import UserFactory
 
@@ -27,10 +35,27 @@ class UserDetailViewTests(BaseTestCase):
 
     # GET
     def test_get(self):
+        ice_hockey = SportFactory(name='Ice Hockey')
+        liahl = LeagueFactory(sport=ice_hockey, name='Long Island Amateur Hockey League')
+        mm_aa = DivisionFactory(league=liahl, name='Midget Minor AA')
+        icecats = TeamFactory(name='Green Machine IceCats', division=mm_aa)
+        SportRegistrationFactory(user=self.user2, sport=ice_hockey, role='coach')
+        SportRegistrationFactory(user=self.user2, sport=ice_hockey, role='manager')
+        CoachFactory(team=icecats, user=self.user2)
+        ManagerFactory(team=icecats, user=self.user2)
+
+        baseball = SportFactory(name='Baseball')
+        mlb = LeagueFactory(name='Major League Baseball', sport=baseball)
+        SportRegistrationFactory(user=self.user2, sport=baseball, role='referee')
+        SportRegistrationFactory(user=self.user2, sport=baseball, role='scorekeeper')
+        RefereeFactory(user=self.user2, league=mlb)
+        ScorekeeperFactory(user=self.user2, sport=baseball)
+
         # User viewing user2
         response = self.client.get(self.formatted_url)
         context = response.context
         user_info = context.get('user_information')
+        sport_registration_data_by_sport = context.get('sport_registration_data_by_sport')
 
         self.assertEqual(context.get('info_tab_key'), 'information')
         self.assertEqual(context.get('sports_tab_key'), 'sports')
@@ -45,3 +70,4 @@ class UserDetailViewTests(BaseTestCase):
             'Weight': 225,
             'Timezone': 'UTC'
         })
+        self.assertListEqual(list(sport_registration_data_by_sport.keys()), [baseball, ice_hockey])
