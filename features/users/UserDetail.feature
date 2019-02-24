@@ -28,6 +28,8 @@ Feature: User profile
     And I should see "5' 7""
     And I should see "Weight"
     And I should see "150"
+    # Make sure we're not overwriting `user` in the template context.
+    And I should see "michael@ayrabo.com"
 
   Scenario: View another user's sports information
     Given The following sport registrations exist

@@ -7,10 +7,12 @@ from users.models import User
 
 class UserDetailView(LoginRequiredMixin, PreSelectedTabMixin, DetailView):
     """
-    This view will overwrite the `user` context variable that the `auth` context processor sets. This shouldn't be an
-    issue though, because the currently logged in or anonymous user can be accessed via `request.user` in the template.
+    Need to make sure we specify `context_object_name`, and that it's not set to `user`. Auth middleware sets `user`
+    so overwriting that is going to cause problems, one being the email shown in the account navbar dropdown.
+    https://github.com/django/django/blob/master/django/views/generic/detail.py#L87 causes problems if no
+    `context_object_name` is specified.
     """
-    context_object_name = 'user'
+    context_object_name = 'user_obj'
     template_name = 'users/user_detail.html'
     queryset = User.objects.select_related('userprofile')
     INFO_TAB_KEY = 'information'

@@ -57,6 +57,8 @@ class UserDetailViewTests(BaseTestCase):
         user_info = context.get('user_information')
         sport_registration_data_by_sport = context.get('sport_registration_data_by_sport')
 
+        self.assertEqual(context.get('user_obj'), self.user2)
+        self.assertEqual(context.get('user'), self.user)
         self.assertEqual(context.get('info_tab_key'), 'information')
         self.assertEqual(context.get('sports_tab_key'), 'sports')
         self.assertEqual(context.get('active_tab'), 'information')
