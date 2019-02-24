@@ -29,6 +29,7 @@ class UserDetailView(LoginRequiredMixin, PreSelectedTabMixin, DetailView):
         context.update({
             'info_tab_key': self.INFO_TAB_KEY,
             'sports_tab_key': self.SPORTS_TAB_KEY,
-            'user_information': user_information
+            'user_information': user_information,
+            'sport_registration_data_by_sport': user.sport_registration_data_by_sport()
         })
         return context

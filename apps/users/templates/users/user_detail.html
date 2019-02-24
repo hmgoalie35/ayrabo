@@ -28,8 +28,11 @@
 
   {# Sports tab #}
   <div role="tabpanel" class="tab-pane {% get_tab_active_class sports_tab_key %}" id="{{ sports_tab_key }}">
-    <h4 class="text-center">Sports</h4>
-    <div class="text-center"></div>
+    <div class="row">
+      <div class="col-md-12">
+        {% include 'userprofiles/_sport_registration_info.html' %}
+      </div>
+    </div>
   </div>
   {# End sports tab #}
 
