@@ -63,7 +63,7 @@
           </div>
         {% endfor %}
       </ul>
-    {% elif user_obj == request.user %}
+    {% elif not user_obj or user_obj == request.user %}
       {% include 'includes/_data_missing_message.html' with message='You are not registered for any sports.' %}
     {% else %}
       <div class="row">
