@@ -26,6 +26,7 @@ urlpatterns = [
     url(r'^organizations/', include('organizations.urls', namespace='organizations')),
     url(r'^sports/', include('sports.urls', namespace='sports')),
     url(r'^teams/', include('teams.urls', namespace='teams')),
+    url(r'^users/', include('users.urls', namespace='users')),
 ]
 
 if settings.DEBUG:

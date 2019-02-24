@@ -1,5 +1,5 @@
 {% extends 'site_base.html' %}
-{% load crispy_forms_tags static waffle_tags utils %}
+{% load crispy_forms_tags utils %}
 
 {% block title %}My Account{% endblock %}
 
@@ -74,61 +74,7 @@
                 </div>
               </div>
               <div class="panel-body">
-                {% switch 'sport_registrations' %}
-                  <a
-                    id="register_for_sport_btn"
-                    href="{% url 'sports:register' %}"
-                    class="btn btn-default btn-sm pull-right"
-                  >Register for a sport
-                  </a>
-                {% endswitch %}
-                <br><br>
-                {% if sport_registration_data_by_sport %}
-                  <ul class="list-group">
-                    {% for sport, data in sport_registration_data_by_sport.items %}
-                      <li
-                        id="list-item-{{ sport.slug }}"
-                        class="list-group-item list-group-item__hoverable js-list-item-sport"
-                        data-target="#{{ sport.slug }}"
-                        data-toggle="collapse"
-                      >
-                        {{ sport.name }}{% if data.roles %}:{% endif %}
-                        {% for role in data.roles %}
-                          <span class="label label-info">{{ role|title }}</span>
-                        {% endfor %}
-                        <i class="fa fa-caret-down mt3 pull-right" data-toggle="caret"></i>
-                      </li>
-                      <div class="collapse" id="{{ sport.slug }}">
-                        <div class="list-group-item list-group-item__flush-bottom">
-                          {% if data.roles %}
-                            <h4 class="text-center">At a glance</h4>
-                            {% for role, objects in data.roles.items %}
-                              <div class="role-related-objects-section">
-                                <strong>{{ role|title }}:</strong>
-                                {% for object in objects %}
-                                  <div>
-                                    {% if role == 'referee' %}
-                                      {{ object.league.name }}
-                                    {% elif role == 'scorekeeper' %}
-                                      {{ object.sport.name }}
-                                    {% else %}
-                                      {{ object.team.name }} - {{ object.team.division.name }}
-                                    {% endif %}
-                                  </div>
-                                {% empty %}
-                                  <div>N/A</div>
-                                {% endfor %}
-                              </div>
-                            {% endfor %}
-                          {% else %}
-                          {% endif %}
-                        </div>
-                      </div>
-                    {% endfor %}
-                  </ul>
-                {% else %}
-                  {% include 'includes/_data_missing_message.html' with message='You have not been registered for any sports.' %}
-                {% endif %}
+                {% include 'userprofiles/_sport_registration_info.html' %}
               </div>
             </div>
           </div>
@@ -144,11 +90,6 @@
     $(function () {
       $('#id_language').enableBootstrapSelect({ header: 'Select a language' });
       $('#id_timezone').enableBootstrapSelect({ header: 'Select a timezone' });
-
-      $('.js-list-item-sport').click(function () {
-        $(this).find('[data-toggle="caret"]').toggleClass('fa-caret-down fa-caret-up');
-      });
     });
-
   </script>
 {% endblock %}

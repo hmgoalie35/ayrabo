@@ -192,4 +192,8 @@ $(function () {
     });
     return false;
   });
+
+  $('[data-toggle="collapse"]').click(function () {
+    $(this).find('[data-toggle="caret"]').toggleClass('fa-caret-down fa-caret-up');
+  });
 });

@@ -51,7 +51,9 @@
                     {% endif %}
                   </td>
                   <td data-title="Created By">
-                    {{ season_roster.created_by.get_full_name }}{% if season_roster.created_by_id == request.user.id %}&nbsp;(you){% endif %}
+                    {% with created_by=season_roster.created_by %}
+                      <a href="{% url 'users:detail' pk=created_by.pk %}">{{ created_by.get_full_name }}</a>{% if season_roster.created_by_id == request.user.id %}&nbsp;(you){% endif %}
+                    {% endwith %}
                   </td>
                   <td data-title="Players">
                     <a

@@ -21,6 +21,8 @@ def create_unconfirmed_account(user_data, create_userprofile):
     """
     # userprofile kwarg prevents the userfactory from creating a userprofile
     user_data['userprofile'] = None
+    if not user_data.get('id'):
+        user_data.pop('id', None)
     user = UserFactory(**user_data)
     email = EmailAddressFactory(user=user, email=user_data['email'], verified=False, primary=False)
     email.send_confirmation()
@@ -125,7 +127,7 @@ def step_impl(context, username_or_email):
     user = get_user(username_or_email)
     for row in context.table:
         userprofile_data = row.as_dict()
-        UserProfileFactory.create(user=user, **userprofile_data)
+        UserProfileFactory(user=user, **userprofile_data)
 
 
 """
