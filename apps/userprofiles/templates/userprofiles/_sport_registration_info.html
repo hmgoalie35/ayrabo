@@ -1,6 +1,7 @@
 {% load waffle_tags %}
 
-{% if user_obj == request.user %}
+{# User profile update view won't set user_obj #}
+{% if not user_obj or user_obj == request.user %}
   {% switch 'sport_registrations' %}
     <div class="row">
       <div class="col-md-12">
