@@ -62,7 +62,8 @@ Feature: View season rosters created for a team for current season and past seas
     And I am on the "teams:season_rosters:list" page with kwargs "team_pk=1"
     Then I should see "Squad A"
     And I should see "Squad B"
-    And I should see "John Doe&nbsp;(you)"
+    And I should see "John Doe"
+    And I should see "(you)"
     And I press "view-players-1-link" which opens "1-modal"
     Then "1-modal" should be visible
 
