@@ -18,8 +18,11 @@
 
         <div role="navigation">
           <ul class="nav nav-pills nav-justified nav-bordered" role="tablist">
-            {% include 'profile_nav_tabs/_nav_tab.html' with key=info_tab_key text='Information' link=info_tab_key dynamic=True %}
-            {% include 'profile_nav_tabs/_nav_tab.html' with key=sports_tab_key text='Sports' link=sports_tab_key dynamic=True %}
+            {% include 'profile_nav_tabs/_nav_tab.html' with key=info_tab_key text='Information' link=info_tab_link dynamic=dynamic %}
+            {% include 'profile_nav_tabs/_nav_tab.html' with key=sports_tab_key text='Sports' link=sports_tab_link dynamic=dynamic %}
+            {% if user_obj == request.user %}
+              {% include 'profile_nav_tabs/_nav_tab.html' with key=change_password_tab_key text='Change Password' link=change_password_link dynamic=False %}
+            {% endif %}
           </ul>
         </div>
 

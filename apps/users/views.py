@@ -3,6 +3,8 @@ from django.views.generic import DetailView
 
 from ayrabo.utils.mixins import PreSelectedTabMixin
 from users.models import User
+from users.tabs import INFO_TAB_KEY, SPORTS_TAB_KEY
+from users.utils import get_user_detail_view_context
 
 
 class UserDetailView(LoginRequiredMixin, PreSelectedTabMixin, DetailView):
@@ -15,8 +17,6 @@ class UserDetailView(LoginRequiredMixin, PreSelectedTabMixin, DetailView):
     context_object_name = 'user_obj'
     template_name = 'users/user_detail.html'
     queryset = User.objects.select_related('userprofile')
-    INFO_TAB_KEY = 'information'
-    SPORTS_TAB_KEY = 'sports'
     valid_tabs = [INFO_TAB_KEY, SPORTS_TAB_KEY]
     default_tab = INFO_TAB_KEY
 
@@ -33,9 +33,9 @@ class UserDetailView(LoginRequiredMixin, PreSelectedTabMixin, DetailView):
             'Timezone': user_profile.timezone
         }
         context.update({
-            'info_tab_key': self.INFO_TAB_KEY,
-            'sports_tab_key': self.SPORTS_TAB_KEY,
             'user_information': user_information,
             'sport_registration_data_by_sport': user.sport_registration_data_by_sport()
         })
+        # This detail view is already setting `user_obj` for us, so this util function doesn't need to.
+        context.update(get_user_detail_view_context(self.request, user, include_user_obj=False))
         return context
