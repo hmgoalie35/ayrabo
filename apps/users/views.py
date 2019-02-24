@@ -20,6 +20,7 @@ class UserDetailView(LoginRequiredMixin, PreSelectedTabMixin, DetailView):
         user_profile = user.userprofile
         user_information = {
             'Gender': user_profile.get_gender_display(),
+            'Age': user_profile.age,
             'Birthday': user_profile.birthday,
             'Height': user_profile.height,
             'Weight': user_profile.weight,

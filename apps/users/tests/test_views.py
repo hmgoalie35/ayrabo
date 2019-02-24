@@ -35,8 +35,10 @@ class UserDetailViewTests(BaseTestCase):
         self.assertEqual(context.get('info_tab_key'), 'information')
         self.assertEqual(context.get('sports_tab_key'), 'sports')
         self.assertEqual(context.get('active_tab'), 'information')
-        self.assertEqual(user_info.get('Gender'), 'Male')
-        self.assertEqual(user_info.get('Birthday'), self.birthday2)
-        self.assertEqual(user_info.get('Height'), '6\' 5"')
-        self.assertEqual(user_info.get('Weight'), 225)
-        self.assertEqual(user_info.get('Timezone'), 'UTC')
+        self.assertDictEqual(user_info, {
+            'Gender': 'Male',
+            'Birthday': self.birthday2,
+            'Height': '6\' 5"',
+            'Weight': 225,
+            'Timezone': 'UTC'
+        })
