@@ -2,8 +2,9 @@ import re
 
 from django.conf import settings
 from django.conf.global_settings import LANGUAGES
-from django.core.validators import MinValueValidator, MaxValueValidator, RegexValidator
+from django.core.validators import MaxValueValidator, MinValueValidator, RegexValidator
 from django.db import models
+from django.utils import timezone
 
 from common.models import TimestampedModel
 from users.models import User
@@ -38,6 +39,17 @@ class UserProfile(TimestampedModel):
     language = models.CharField(max_length=128, choices=LANGUAGES, default='en', verbose_name='Language')
     timezone = models.CharField(max_length=128, choices=settings.COMMON_TIMEZONES, default=settings.TIME_ZONE,
                                 verbose_name='Timezone')
+
+    @property
+    def age(self):
+        # today needs to be for the currently active timezone, otherwise age will get bumped up a day early.
+        # If it's 02/23/2019 9:00PM US/Eastern, UTC is really 02/24/2019.
+        today = timezone.localdate()
+        birthday = self.birthday
+        age = today.year - birthday.year
+        if (today.month, today.day) < (birthday.month, birthday.day):
+            age -= 1
+        return age
 
     def __str__(self):
         return self.user.email
