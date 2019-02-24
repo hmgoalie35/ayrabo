@@ -44,9 +44,6 @@
                 <h4>Email: {{ user.email }}</h4>
                 <h4>Gender: {{ userprofile.get_gender_display }}</h4>
                 <h4>Birthday: {{ userprofile.birthday }}</h4>
-                <p>
-                  <a id="change_password_link" href="{% url 'account_change_password' %}">Change Password</a>
-                </p>
                 <form action="" method="post">
                   {% csrf_token %}
                   {{ form | crispy }}
