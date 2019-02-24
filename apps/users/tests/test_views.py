@@ -37,6 +37,9 @@ class UserDetailViewTests(BaseTestCase):
         self.assertEqual(context.get('active_tab'), 'information')
         self.assertDictEqual(user_info, {
             'Gender': 'Male',
+            # We really just care this key exists in the dict, the unit tests for the age property ensure it will return
+            # the correct value.
+            'Age': self.user_profile2.age,
             'Birthday': self.birthday2,
             'Height': '6\' 5"',
             'Weight': 225,
