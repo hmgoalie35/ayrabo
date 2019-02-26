@@ -1,30 +1,40 @@
 Feature: Change password when logged in
-  As a user of the site
-  So that I can change my password
-  I want to be able to change my password
+  As a user,
+  I want to be able to change my password when I already know it.
 
   Background: User account exists
     Given The following confirmed user accounts exists
-      | first_name | last_name | email           | password       |
-      | John       | Doe       | user@ayrabo.com | myweakpassword |
-    And "user@ayrabo.com" is completely registered for "Ice Hockey" with roles "Coach, Referee"
+      | id | first_name | last_name | email           | password       |
+      | 1  | John       | Doe       | user@ayrabo.com | myweakpassword |
 
-  Scenario: Navigate to change password page when not authenticated
+  Scenario: Login required
     Given I am on the "home" page
     When I go to the "account_change_password" page
     Then I should be on the "account_login" page
 
-  Scenario: Change password when entering correct current password
+  Scenario: Navigate to change password page
+    Given I login with "user@ayrabo.com" and "myweakpassword"
+    And I am on the "users:detail" page with kwargs "pk=1"
+    When I press "tab-item-change-password"
+    Then I should be on the "account_change_password" page
+
+  Scenario: Navigate back to user detail page
+    Given I login with "user@ayrabo.com" and "myweakpassword"
+    And I am on the "account_change_password" page
+    When I press "tab-item-information"
+    Then I should be on the "users:detail" page with kwargs "pk=1"
+
+  Scenario: Valid form
     Given I login with "user@ayrabo.com" and "myweakpassword"
     And I am on the "account_change_password" page
     When I fill in "id_oldpassword" with "myweakpassword"
     And I fill in "id_password1" with "mynewpassword"
     And I fill in "id_password2" with "mynewpassword"
     And I press "change_password_btn"
-    Then I should see "Password successfully changed."
-    And I should be on the "account_home" page
+    Then I should see "Your password has been updated."
+    And I should be on the "users:detail" page with kwargs "pk=1"
 
-  Scenario: Change password when entering incorrect current password
+  Scenario: Invalid form
     Given I login with "user@ayrabo.com" and "myweakpassword"
     And I am on the "account_change_password" page
     When I fill in "id_oldpassword" with "notmycurrentpassword"
