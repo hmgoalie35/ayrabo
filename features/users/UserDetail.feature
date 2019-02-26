@@ -6,7 +6,7 @@ Feature: User profile
     Given The following confirmed user account exists
       | id | first_name | last_name | email              | password       | create_userprofile |
       | 1  | John       | Doe       | user@ayrabo.com    | myweakpassword | false              |
-      |    | Michael    | Scott     | michael@ayrabo.com | myweakpassword | true               |
+      | 2  | Michael    | Scott     | michael@ayrabo.com | myweakpassword | true               |
     And The following userprofile exists for "user@ayrabo.com"
       | gender | birthday   | height | weight | timezone   |
       | male   | 1996-02-12 | 5' 7"  | 150    | US/Eastern |
@@ -30,6 +30,7 @@ Feature: User profile
     And I should see "150"
     # Make sure we're not overwriting `user` in the template context.
     And I should see "michael@ayrabo.com"
+    And I should not see "Change Password"
 
   Scenario: View another user's sports information
     Given The following sport registrations exist
@@ -46,8 +47,13 @@ Feature: User profile
     And I should see "Referee"
     And I should see "Scorekeeper"
     And "register_for_sport_btn" should not exist on the page
+    And I should not see "Change Password"
 
   Scenario: View another user's sports information, empty state
     Given I am on the "users:detail" page with kwargs "pk=1"
     And I press "tab-item-sports"
     Then I should see "John Doe is not registered for any sports at this time."
+
+  Scenario: View own profile
+    Given I am on the "users:detail" page with kwargs "pk=2"
+    Then I should see "Change Password"

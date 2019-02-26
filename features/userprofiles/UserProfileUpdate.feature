@@ -3,7 +3,6 @@ Feature: Edit information associated with my account
   So that I can keep my information up to date
   I want to be able to update my account
 
-
   Background: User account exists
     Given The following confirmed user account exists
       | first_name | last_name | email           | password       | create_userprofile |
@@ -30,11 +29,6 @@ Feature: Edit information associated with my account
     And I should see "user@ayrabo.com"
     And I should see "Male"
     And I should see "Feb. 12, 1996"
-
-  Scenario: Navigate to change password page
-    Given I go to the "account_home" page
-    When I press "change_password_link"
-    Then I should be on the "account_change_password" page
 
   Scenario: Submit unchanged form
     Given I am on the "account_home" page
