@@ -1,9 +1,10 @@
-from allauth.account.models import EmailConfirmationHMAC, EmailAddress
+from allauth.account.models import EmailAddress, EmailConfirmationHMAC
 from django.core import mail
 from django.urls import reverse
 
 from ayrabo.utils.testing import BaseTestCase
 from users.models import User
+from users.tests import UserFactory
 
 
 class NewConfirmationEmailViewTests(BaseTestCase):
@@ -83,3 +84,42 @@ class RestrictAllAuthEmailView(BaseTestCase):
     def test_url_redirects_to_home(self):
         response = self.client.get(reverse('account_email'))
         self.assertRedirects(response, reverse('home'))
+
+
+class PasswordChangeViewTests(BaseTestCase):
+    url = 'account_change_password'
+
+    def setUp(self):
+        self.user = UserFactory(email='user@ayrabo.com', password='myweakpassword')
+        self.login(user=self.user)
+
+    # General
+    def test_login_required(self):
+        self.client.logout()
+        self.assertLoginRequired(self.format_url())
+
+    # GET
+    def test_get(self):
+        response = self.client.get(self.format_url())
+        context = response.context
+
+        self.assert_200(response)
+        self.assertTemplateUsed('account/password_changed.html')
+        self.assertEqual(context.get('active_tab'), 'change-password')
+        self.assertEqual(context.get('change_password_link'), self.format_url())
+        self.assertFalse(context.get('dynamic'))
+        self.assertEqual(context.get('change_password_tab_key'), 'change-password')
+        self.assertEqual(context.get('user_obj'), self.user)
+
+    # POST
+    def test_post_valid_form(self):
+        password = 'mynewpassword'
+        data = {'oldpassword': 'myweakpassword', 'password1': password, 'password2': password}
+        response = self.client.post(self.format_url(), data=data, follow=True)
+        self.assertRedirects(response, reverse('users:detail', kwargs={'pk': self.user.pk}))
+        self.assertHasMessage(response, 'Your password has been updated.')
+
+    def test_post_invalid_form(self):
+        data = {'oldpassword': 'myweakpassword', 'password1': 'jjjjjjjj', 'password2': 'def'}
+        response = self.client.post(self.format_url(), data=data)
+        self.assertFormError(response, 'form', 'password2', 'You must type the same password each time.')
