@@ -7,13 +7,13 @@ from waffle import switch_is_active
 
 from ayrabo.utils.mixins import PreSelectedTabMixin
 from userprofiles.models import UserProfile
-from .forms import UserProfileCreateForm, UserProfileUpdateForm
+from .forms import UserProfileCreateUpdateForm
 
 
 class UserProfileCreateView(LoginRequiredMixin, generic.CreateView):
     model = UserProfile
     template_name = 'userprofiles/userprofile_create.html'
-    form_class = UserProfileCreateForm
+    form_class = UserProfileCreateUpdateForm
 
     def get_success_url(self):
         if switch_is_active('sport_registrations'):
@@ -32,7 +32,7 @@ class UserProfileCreateView(LoginRequiredMixin, generic.CreateView):
 
 class UserProfileUpdateView(LoginRequiredMixin, SuccessMessageMixin, PreSelectedTabMixin, generic.UpdateView):
     model = UserProfile
-    form_class = UserProfileUpdateForm
+    form_class = UserProfileCreateUpdateForm
     template_name = 'userprofiles/userprofile_update.html'
     success_url = reverse_lazy('account_home')
     success_message = 'Your account has been updated.'

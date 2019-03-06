@@ -1,27 +1,12 @@
-import datetime
-
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Field, Layout
 from django import forms
-from django.forms.widgets import SelectDateWidget
-from django.utils.translation import ugettext_lazy as _
 
+from ayrabo.utils.form_fields import BirthdayField, WeightField
 from .models import UserProfile
 
 
-YEAR_DIFFERENCE = 20
-MAX_AGE = 100
-
-
-def get_year_range():
-    """
-    :return: Last 100 years in descending order
-    """
-    current_year = datetime.datetime.today().year
-    return range(current_year, current_year - (MAX_AGE + 1), -1)
-
-
-class UserProfileCreateForm(forms.ModelForm):
+class UserProfileCreateUpdateForm(forms.ModelForm):
     prefix = 'user_profile'
 
     def __init__(self, *args, **kwargs):
@@ -38,53 +23,18 @@ class UserProfileCreateForm(forms.ModelForm):
             Field('timezone')
         )
 
-    # This field is actually required and validation is done below. Setting required=False allows us to specify the
-    # empty labels below and therefore prevent a date from being initially selected.
-    birthday = forms.DateField(widget=SelectDateWidget(years=get_year_range(), empty_label=('Year', 'Month', 'Day')),
-                               required=False)
-
-    weight = forms.IntegerField(label='Weight (in lbs)', min_value=UserProfile.MIN_WEIGHT,
-                                max_value=UserProfile.MAX_WEIGHT,
-                                help_text='Round to the nearest whole number')
-
-    def clean_birthday(self):
-        data = self.cleaned_data['birthday']
-        if data is None:
-            raise forms.ValidationError('This field is required.')
-        return data
+    birthday = BirthdayField()
+    weight = WeightField(min_value=UserProfile.MIN_WEIGHT, max_value=UserProfile.MAX_WEIGHT)
 
     class Meta:
         model = UserProfile
         fields = ['gender', 'birthday', 'height', 'weight', 'timezone']
 
 
-class UserProfileUpdateForm(forms.ModelForm):
-    prefix = 'user_profile'
-
-    weight = forms.IntegerField(label='Weight (in lbs)', min_value=UserProfile.MIN_WEIGHT,
-                                max_value=UserProfile.MAX_WEIGHT,
-                                help_text='Round to the nearest whole number')
-
-    class Meta:
-        model = UserProfile
-        fields = ['height', 'weight', 'language', 'timezone']
-
-
 class UserProfileAdminForm(forms.ModelForm):
-    # This field is actually required and validation is done below. Setting required=False allows us to specify the
-    # empty labels below and therefore prevent a date from being initially selected.
-    birthday = forms.DateField(widget=SelectDateWidget(years=get_year_range(), empty_label=('Year', 'Month', 'Day')),
-                               required=False)
-
-    def clean_birthday(self):
-        data = self.cleaned_data['birthday']
-        if data is None:
-            raise forms.ValidationError('This field is required.')
-        return data
+    birthday = BirthdayField()
+    weight = WeightField(min_value=UserProfile.MIN_WEIGHT, max_value=UserProfile.MAX_WEIGHT)
 
     class Meta:
         model = UserProfile
-        fields = ['user', 'gender', 'birthday', 'height', 'weight', 'language', 'timezone']
-        labels = {
-            'weight': _('Weight (in lbs)'),
-        }
+        fields = ['user', 'gender', 'birthday', 'height', 'weight', 'timezone', 'language']
