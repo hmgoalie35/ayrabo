@@ -64,3 +64,12 @@ class WeightField(forms.IntegerField):
             'help_text': 'Round to the nearest whole number.'
         })
         super().__init__(**kwargs)
+
+
+class FirstNameLastNameField(forms.CharField):
+    def __init__(self, **kwargs):
+        kwargs.update({
+            'required': True,
+            'max_length': 30  # Taken from AbstractBaseUser
+        })
+        super().__init__(**kwargs)
