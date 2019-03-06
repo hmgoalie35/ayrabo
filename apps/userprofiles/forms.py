@@ -14,6 +14,7 @@ class UserProfileCreateUpdateForm(forms.ModelForm):
 
         self.helper = FormHelper()
         self.helper.form_tag = False
+        self.helper.disable_csrf = True
         self.helper.layout = Layout(
             Field('gender'),
             # This makes the birthday select tags inline

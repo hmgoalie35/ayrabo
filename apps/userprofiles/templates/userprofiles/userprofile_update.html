@@ -46,7 +46,7 @@
                 <h4>Birthday: {{ userprofile.birthday }}</h4>
                 <form action="" method="post">
                   {% csrf_token %}
-                  {{ form | crispy }}
+                  {% crispy form %}
                   <br>
                   <div class="text-center">
                     <button id="update_userprofile_btn" class="btn btn-success" type="submit">Update</button>
