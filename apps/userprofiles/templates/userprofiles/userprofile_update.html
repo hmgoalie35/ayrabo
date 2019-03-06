@@ -83,10 +83,5 @@
 {% endblock %}
 
 {% block extra_js %}
-  <script>
-    $(function () {
-      $('#id_language').enableBootstrapSelect({ header: 'Select a language' });
-      $('#id_timezone').enableBootstrapSelect({ header: 'Select a timezone' });
-    });
-  </script>
+  {% include 'userprofiles/userprofile_js.html' %}
 {% endblock %}

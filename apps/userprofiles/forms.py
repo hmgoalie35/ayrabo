@@ -1,12 +1,13 @@
 import datetime
 
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Div, Field, HTML, Layout, Submit
+from crispy_forms.layout import Field, Layout
 from django import forms
 from django.forms.widgets import SelectDateWidget
 from django.utils.translation import ugettext_lazy as _
 
 from .models import UserProfile
+
 
 YEAR_DIFFERENCE = 20
 MAX_AGE = 100
@@ -14,29 +15,27 @@ MAX_AGE = 100
 
 def get_year_range():
     """
-    :return: Years in descending order
+    :return: Last 100 years in descending order
     """
     current_year = datetime.datetime.today().year
     return range(current_year, current_year - (MAX_AGE + 1), -1)
 
 
 class UserProfileCreateForm(forms.ModelForm):
+    prefix = 'user_profile'
+
     def __init__(self, *args, **kwargs):
-        super(UserProfileCreateForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
+
         self.helper = FormHelper()
+        self.helper.form_tag = False
         self.helper.layout = Layout(
             Field('gender'),
             # This makes the birthday select tags inline
             Field('birthday', wrapper_class='form-inline'),
             Field('height'),
             Field('weight'),
-            Field('language'),
-            Field('timezone'),
-            HTML('<br>'),
-            Div(
-                Submit('create_userprofile_btn', 'Continue', css_class='btn btn-success'),
-                css_class='text-center'
-            )
+            Field('timezone')
         )
 
     # This field is actually required and validation is done below. Setting required=False allows us to specify the
@@ -56,10 +55,12 @@ class UserProfileCreateForm(forms.ModelForm):
 
     class Meta:
         model = UserProfile
-        fields = ['gender', 'birthday', 'height', 'weight', 'language', 'timezone']
+        fields = ['gender', 'birthday', 'height', 'weight', 'timezone']
 
 
 class UserProfileUpdateForm(forms.ModelForm):
+    prefix = 'user_profile'
+
     weight = forms.IntegerField(label='Weight (in lbs)', min_value=UserProfile.MIN_WEIGHT,
                                 max_value=UserProfile.MAX_WEIGHT,
                                 help_text='Round to the nearest whole number')
