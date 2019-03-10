@@ -7,15 +7,25 @@
 
   {# Information tab #}
   <div role="tabpanel" class="tab-pane {% get_tab_active_class info_tab_key %}" id="{{ info_tab_key }}">
-    <div class="row">
-      <div class="text-center mt20">
 
+    {% if user_obj == request.user %}
+      <div class="row mb10">
         <div class="col-md-offset-4 col-md-4">
+          <div class="text-right">
+            <a id="user-edit-link" href="{% url 'users:update' %}">Edit</a>
+          </div>
+        </div>
+      </div>
+    {% endif %}
+
+    <div class="row">
+      <div class="col-md-offset-4 col-md-4">
+        <div id="user-display">
           <ul class="list-group">
             {% for label, value in user_information.items %}
               <li class="list-group-item">
-                <strong class="pull-left">{{ label }}</strong>
-                <span>{{ value }}</span>
+                <strong>{{ label }}</strong>
+                <span class="pull-right">{{ value }}</span>
               </li>
             {% endfor %}
           </ul>
