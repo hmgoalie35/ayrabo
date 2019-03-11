@@ -7,6 +7,7 @@ from .models import UserProfile
 
 
 class UserProfileCreateUpdateForm(forms.ModelForm):
+    # There might be JavaScript relying on this value, make sure to update any JS accordingly.
     prefix = 'user_profile'
 
     def __init__(self, *args, **kwargs):
