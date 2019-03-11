@@ -25,7 +25,7 @@ def get_user_detail_view_context(request, user_obj, include_user_obj):
     :return: Context variables necessary for templates inheriting from `user_detail_base.html`.
     """
     # This is a little better than checking the request path, so we don't have to deal with query params.
-    dynamic = request.resolver_match.view_name != 'account_change_password'
+    dynamic = request.resolver_match.view_name not in ['account_change_password', 'users:update']
     user_detail_url = reverse('users:detail', kwargs={'pk': user_obj.pk})
     info_tab_url = url_with_query_string(user_detail_url, tab=INFO_TAB_KEY)
     sports_tab_url = url_with_query_string(user_detail_url, tab=SPORTS_TAB_KEY)
