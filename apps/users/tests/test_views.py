@@ -1,5 +1,7 @@
 from datetime import date
 
+from django.urls import reverse
+
 from ayrabo.utils.testing import BaseTestCase
 from coaches.tests import CoachFactory
 from divisions.tests import DivisionFactory
@@ -76,3 +78,84 @@ class UserDetailViewTests(BaseTestCase):
             'Timezone': 'UTC'
         })
         self.assertListEqual(list(sport_registration_data_by_sport.keys()), [baseball, ice_hockey])
+
+
+class UserUpdateViewTests(BaseTestCase):
+    url = 'users:update'
+
+    def setUp(self):
+        self.first_name = 'Stanley'
+        self.last_name = 'Hudson'
+        self.birthday = date(year=1997, month=3, day=10)
+        self.gender = 'male'
+        self.height = '6\' 7"'
+        self.weight = 255
+        self.timezone = 'US/Eastern'
+        self.user = UserFactory(first_name=self.first_name, last_name=self.last_name, userprofile=None)
+        self.user_profile = UserProfileFactory(user=self.user, height=self.height, weight=self.weight,
+                                               gender=self.gender, birthday=self.birthday, timezone=self.timezone)
+
+        self.data = {
+            'user-first_name': self.first_name,
+            'user-last_name': self.last_name,
+            'user_profile-gender': self.gender,
+            'user_profile-birthday': self.birthday,
+            'user_profile-height': self.height,
+            'user_profile-weight': self.weight,
+            'user_profile-timezone': self.timezone,
+        }
+        self.login(user=self.user)
+
+    # General
+    def test_login_required(self):
+        self.client.logout()
+        self.assertLoginRequired(self.format_url())
+
+    # GET
+    def test_get(self):
+        response = self.client.get(self.format_url())
+        context = response.context
+
+        self.assert_200(response)
+        self.assertTemplateUsed('users/user_update.html')
+
+        self.assertIsNotNone(context.get('user_form'))
+        self.assertIsNotNone(context.get('user_profile_form'))
+        self.assertEqual(context.get('active_tab'), 'information')
+
+        self.assertFalse(context.get('dynamic'))
+        self.assertEqual(context.get('user_obj'), self.user)
+
+    # POST
+    def test_valid_post(self):
+        self.data.update({
+            'user-first_name': 'Jim',
+            'user-last_name': 'Halpert',
+            'user_profile-weight': 125,
+        })
+        response = self.client.post(self.format_url(), data=self.data, follow=True)
+        self.user.refresh_from_db()
+        self.user_profile.refresh_from_db()
+
+        self.assertHasMessage(response, 'Your account information has been updated.')
+        self.assertRedirects(response, reverse('users:detail', kwargs={'pk': self.user.pk}))
+        self.assertEqual(self.user.first_name, 'Jim')
+        self.assertEqual(self.user.last_name, 'Halpert')
+        self.assertEqual(self.user.userprofile.weight, 125)
+
+    def test_valid_post_nothing_changed(self):
+        response = self.client.post(self.format_url(), data=self.data, follow=True)
+        self.assertNoMessage(response, 'Your account information has been updated.')
+        self.assertRedirects(response, reverse('users:detail', kwargs={'pk': self.user.pk}))
+
+    def test_invalid_post(self):
+        self.data.update({
+            'user-first_name': 'a' * 35,
+            'user_profile-height': "5' 5'"
+        })
+        response = self.client.post(self.format_url(), data=self.data)
+        self.assertTemplateUsed('users/user_update.html')
+        self.assertFormError(response, 'user_form', 'first_name',
+                             'Ensure this value has at most 30 characters (it has 35).')
+        self.assertFormError(response, 'user_profile_form', 'height',
+                             'Invalid format, please enter your height according to the format below.')

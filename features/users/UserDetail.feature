@@ -48,6 +48,7 @@ Feature: User profile
     And I should see "Scorekeeper"
     And "register_for_sport_btn" should not exist on the page
     And I should not see "Change Password"
+    And "user-edit-link" should not exist on the page
 
   Scenario: View another user's sports information, empty state
     Given I am on the "users:detail" page with kwargs "pk=1"
@@ -57,3 +58,4 @@ Feature: User profile
   Scenario: View own profile
     Given I am on the "users:detail" page with kwargs "pk=2"
     Then I should see "Change Password"
+    And "user-edit-link" should be visible
