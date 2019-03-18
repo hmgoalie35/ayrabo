@@ -55,7 +55,7 @@
             </a>
             <ul class="dropdown-menu">
               <li>
-                <a id="edit_account_link" href="{% url 'account_home' %}">
+                <a id="edit_account_link" href="{% url 'users:detail' pk=user.pk %}">
                   <span class="fa fa-fw fa-user"></span>{{ user.email }}
                 </a>
               </li>

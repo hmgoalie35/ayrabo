@@ -1,7 +1,6 @@
 Feature: User profiles
-  As a developer of the site,
-  So that I can better organize site users
-  I want to be able to collect extra information about users
+  As a user,
+  I want to be able to completely fill out my profile
 
   Background: User account exists
     Given The following confirmed user account exists
@@ -15,7 +14,7 @@ Feature: User profiles
     And I login with "user@ayrabo.com" and "myweakpassword"
 
   Scenario: Useful information displayed to user
-    Given I am on the "account_home" page
+    Given I am on the "account_complete_registration" page
     Then I should see "Complete Your Account Registration"
     And I should see "Players, coaches and managers will be granted team specific access by an organization admin."
 
@@ -32,24 +31,24 @@ Feature: User profiles
 
   Scenario: Submit invalid form
     Given I am on the "account_complete_registration" page
-    When I select "male" from "id_gender"
-    And I fill in "id_height" with "5' 7"
-    And I fill in "id_weight" with "130"
-    And I select "February" from "id_birthday_month"
-    And I select "31" from "id_birthday_day"
-    And I select "2000" from "id_birthday_year"
+    When I select "male" from "id_user_profile-gender"
+    And I fill in "id_user_profile-height" with "5' 7"
+    And I fill in "id_user_profile-weight" with "130"
+    And I select "February" from "id_user_profile-birthday_month"
+    And I select "31" from "id_user_profile-birthday_day"
+    And I select "2000" from "id_user_profile-birthday_year"
     And I press "create_userprofile_btn"
     Then I should see "Invalid format, please enter your height according to the format below."
-    And I should see "Enter a valid date."
+    And I should see "value has the correct format (YYYY-MM-DD) but it is an invalid date."
 
   Scenario: Submit valid form
     Given I am on the "account_complete_registration" page
-    When I select "male" from "id_gender"
-    And I select "April" from "id_birthday_month"
-    And I select "4" from "id_birthday_day"
-    And I select "1994" from "id_birthday_year"
-    And I fill in "id_height" with "5' 7""
-    And I fill in "id_weight" with "130"
+    When I select "male" from "id_user_profile-gender"
+    And I select "April" from "id_user_profile-birthday_month"
+    And I select "4" from "id_user_profile-birthday_day"
+    And I select "1994" from "id_user_profile-birthday_year"
+    And I fill in "id_user_profile-height" with "5' 7""
+    And I fill in "id_user_profile-weight" with "130"
     And I press "create_userprofile_btn"
     Then I should be on the "sports:register" page
 
