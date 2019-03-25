@@ -6,6 +6,7 @@ from django.views.generic.base import ContextMixin
 
 from ayrabo.utils.mixins import PreSelectedTabMixin
 from userprofiles.forms import UserProfileCreateUpdateForm
+from userprofiles.models import UserProfile
 from users.forms import UserUpdateForm
 from users.models import User
 from users.tabs import INFO_TAB_KEY, SPORTS_TAB_KEY
@@ -28,15 +29,18 @@ class UserDetailView(LoginRequiredMixin, PreSelectedTabMixin, generic.DetailView
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         user = self.object
-        user_profile = user.userprofile
-        user_information = {
-            'Gender': user_profile.get_gender_display(),
-            'Age': user_profile.age,
-            'Birthday': user_profile.birthday,
-            'Height': user_profile.height,
-            'Weight': user_profile.weight,
-            'Timezone': user_profile.timezone
-        }
+        try:
+            user_profile = user.userprofile
+            user_information = {
+                'Gender': user_profile.get_gender_display(),
+                'Age': user_profile.age,
+                'Birthday': user_profile.birthday,
+                'Height': user_profile.height,
+                'Weight': user_profile.weight,
+                'Timezone': user_profile.timezone
+            }
+        except UserProfile.DoesNotExist:
+            user_information = {}
         context.update({
             'user_information': user_information,
             'sport_registration_data_by_sport': user.sport_registration_data_by_sport()

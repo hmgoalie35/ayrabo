@@ -79,6 +79,13 @@ class UserDetailViewTests(BaseTestCase):
         })
         self.assertListEqual(list(sport_registration_data_by_sport.keys()), [baseball, ice_hockey])
 
+    def test_get_no_userprofile(self):
+        user = UserFactory(first_name='Jon', last_name='Doe', userprofile=None)
+        response = self.client.get(self.format_url(pk=user.pk))
+        context = response.context
+        self.assert_200(response)
+        self.assertDictEqual(context.get('user_information'), {})
+
 
 class UserUpdateViewTests(BaseTestCase):
     url = 'users:update'
