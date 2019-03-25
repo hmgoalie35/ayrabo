@@ -59,3 +59,10 @@ Feature: User profile
     Given I am on the "users:detail" page with kwargs "pk=2"
     Then I should see "Change Password"
     And "user-edit-link" should be visible
+
+  Scenario: View user without profile
+    Given The following users exist
+      | id | first_name | last_name | email           | password       | create_userprofile |
+      | 3  | Jane       | Doe       | jane@ayrabo.com | myweakpassword | false              |
+    And I am on the "users:detail" page with kwargs "pk=3"
+    Then I should see "Jane Doe has not completed their profile at this time."
