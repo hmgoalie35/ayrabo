@@ -39,7 +39,7 @@ Feature: User profiles
     And I select "2000" from "id_user_profile-birthday_year"
     And I press "create_userprofile_btn"
     Then I should see "Invalid format, please enter your height according to the format below."
-    And I should see "value has the correct format (YYYY-MM-DD) but it is an invalid date."
+    And I should see "Please choose a valid date."
 
   Scenario: Submit valid form
     Given I am on the "account_complete_registration" page
