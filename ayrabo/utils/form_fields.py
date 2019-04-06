@@ -52,8 +52,22 @@ class BirthdayField(forms.DateField):
         super().__init__(**kwargs)
 
     def clean(self, value):
+        # This should come before any other validation.
         if not value:
             raise forms.ValidationError('This field is required.')
+        # The models.DateField displays a non-user friendly error message for invalid dates. forms.DateField doesn't try
+        # to validate dates, it lets the model field handle that. I didn't think it was necessary to create a model date
+        # field subclass so I figured this is an ok solution for now (it is reusing some code defined in
+        # forms.BaseTemporalField).
+        valid_date = False
+        for fmt in self.input_formats:
+            try:
+                self.strptime(value, fmt)
+                valid_date = True
+            except (ValueError, TypeError):
+                continue
+        if not valid_date:
+            raise forms.ValidationError('Please choose a valid date.')
         return value
 
 
