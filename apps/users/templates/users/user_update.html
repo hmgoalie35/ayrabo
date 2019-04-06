@@ -1,0 +1,28 @@
+{% extends 'users/user_detail_base.html' %}
+{% load crispy from crispy_forms_tags %}
+{% load get_tab_active_class from utils %}
+
+{% block title %}Update Account Information{% endblock %}
+
+
+{% block tab_content %}
+  <div role="tabpanel" class="tab-pane {% get_tab_active_class info_tab_key %}" id="{{ info_tab_key }}">
+    <div class="row">
+      <div class="col-md-offset-4 col-md-4">
+        <form action="" method="post">
+          {% csrf_token %}
+          {% crispy user_form %}
+          {% crispy user_profile_form %}
+          <div class="text-center">
+            <a type="button" role="button" href="{% url 'users:detail' pk=user.pk %}" class="btn btn-back">Back</a>
+            <button type="submit" id="user-update-btn" class="btn btn-success">Update</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block extra_js %}
+  {% include 'userprofiles/userprofile_js.html' %}
+{% endblock %}

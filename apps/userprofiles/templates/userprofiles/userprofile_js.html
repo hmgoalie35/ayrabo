@@ -1,0 +1,7 @@
+{# This is an include to prevent the extra network request that would come with putting this in a .js file. #}
+<script>
+  $(function () {
+    $('#id_user_profile-gender').enableBootstrapSelect({ header: 'Select a gender' });
+    $('#id_user_profile-timezone').enableBootstrapSelect({ header: 'Select a timezone' });
+  });
+</script>

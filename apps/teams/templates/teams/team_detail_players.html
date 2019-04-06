@@ -24,7 +24,13 @@
         {% for player in players %}
           <tr>
             {% for column_name, column_value in player.table_fields.items %}
-              <td data-title="{{ column_name }}">{{ column_value }}</td>
+              <td data-title="{{ column_name }}">
+              {% if column_name|lower == 'name' %}
+                <a href="{% url 'users:detail' pk=player.user.pk %}">{{ column_value }}</a>
+              {% else %}
+                {{ column_value }}
+              {% endif %}
+              </td>
             {% endfor %}
           </tr>
         {% endfor %}

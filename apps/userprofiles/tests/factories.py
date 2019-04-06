@@ -12,7 +12,7 @@ def generate_height():
 
 
 def generate_birthday():
-    return '{}-{}-{}'.format(datetime.datetime.now().year, datetime.datetime.now().month, datetime.datetime.now().day)
+    return datetime.date.today().strftime('%Y-%m-%d')
 
 
 class UserProfileFactory(django.DjangoModelFactory):

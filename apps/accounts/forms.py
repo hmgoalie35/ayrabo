@@ -1,12 +1,14 @@
 from allauth.account import forms as allauth_forms
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Layout, Field, Submit, HTML, Div
+from crispy_forms.layout import Div, Field, HTML, Layout, Submit
 from django import forms
 from django.contrib.auth.password_validation import password_validators_help_texts
 
-from ayrabo.utils import remove_form_placeholders, add_autofocus_to_field
+from ayrabo.utils import add_autofocus_to_field, remove_form_placeholders
+from ayrabo.utils.form_fields import FirstNameLastNameField
 
-PASSWORD_GUIDLINES_HTML = """
+
+PASSWORD_GUIDELINES_HTML = """
 <span
     class="password-guidelines clickable pull-right"
     data-toggle="modal"
@@ -23,8 +25,8 @@ PASSWORD_GUIDLINES_HTML = """
 
 
 class SignupForm(allauth_forms.SignupForm):
-    first_name = forms.CharField(widget=forms.TextInput(attrs={'autofocus': 'true'}))
-    last_name = forms.CharField()
+    first_name = FirstNameLastNameField(widget=forms.TextInput(attrs={'autofocus': 'true'}))
+    last_name = FirstNameLastNameField()
 
     def __init__(self, *args, **kwargs):
         super(SignupForm, self).__init__(*args, **kwargs)
@@ -41,17 +43,16 @@ class SignupForm(allauth_forms.SignupForm):
         self.helper.disable_csrf = True
         self.helper.form_tag = False
         self.helper.layout = Layout(
-                Field('first_name'),
-                Field('last_name'),
-                Field('email'),
-                HTML(PASSWORD_GUIDLINES_HTML),
-                Field('password1'),
-                Field('password2'),
-                HTML('<br>'),
-                Div(Submit('id_submit', 'Register',
-                           css_class='btn btn-success', css_id="id_submit"),
-                    css_class='text-center'),
-                HTML('<br>'),
+            Field('first_name'),
+            Field('last_name'),
+            Field('email'),
+            HTML(PASSWORD_GUIDELINES_HTML),
+            Field('password1'),
+            Field('password2'),
+            HTML('<br>'),
+            Div(Submit('id_submit', 'Register', css_class='btn btn-success', css_id="id_submit"),
+                css_class='text-center'),
+            HTML('<br>'),
         )
 
     def clean(self):
@@ -73,13 +74,13 @@ class LoginForm(allauth_forms.LoginForm):
         self.helper.disable_csrf = True
         self.helper.form_tag = False
         self.helper.layout = Layout(
-                Field('login'),
-                HTML(PASSWORD_GUIDLINES_HTML),
-                Field('password'),
-                HTML('<br>'),
-                Div(Submit('login_main', 'Login',
-                           css_class='btn btn-success', css_id="login_main"),
-                    css_class='text-center'),
+            Field('login'),
+            HTML(PASSWORD_GUIDELINES_HTML),
+            Field('password'),
+            HTML('<br>'),
+            Div(Submit('login_main', 'Login',
+                       css_class='btn btn-success', css_id="login_main"),
+                css_class='text-center'),
         )
 
 
@@ -101,14 +102,14 @@ class PasswordResetFromKeyForm(allauth_forms.ResetPasswordKeyForm):
         self.helper.disable_csrf = True
         self.helper.form_tag = False
         self.helper.layout = Layout(
-                HTML(PASSWORD_GUIDLINES_HTML),
-                Field('password1'),
-                Field('password2'),
-                HTML('<br>'),
-                Div(Submit('reset_password_btn', 'Reset password',
-                           css_class='btn btn-success', css_id="reset_password_btn"),
-                    css_class='text-center'),
-                HTML('<br>'),
+            HTML(PASSWORD_GUIDELINES_HTML),
+            Field('password1'),
+            Field('password2'),
+            HTML('<br>'),
+            Div(Submit('reset_password_btn', 'Reset password',
+                       css_class='btn btn-success', css_id="reset_password_btn"),
+                css_class='text-center'),
+            HTML('<br>'),
         )
 
 
@@ -125,15 +126,15 @@ class ChangePasswordForm(allauth_forms.ChangePasswordForm):
         self.helper.disable_csrf = True
         self.helper.form_tag = False
         self.helper.layout = Layout(
-                Field('oldpassword'),
-                HTML(PASSWORD_GUIDLINES_HTML),
-                Field('password1'),
-                Field('password2'),
-                HTML('<br>'),
-                Div(Submit('change_password_btn', 'Change password',
-                           css_class='btn btn-success', css_id="change_password_btn"),
-                    css_class='text-center'),
-                HTML('<br>'),
+            Field('oldpassword'),
+            HTML(PASSWORD_GUIDELINES_HTML),
+            Field('password1'),
+            Field('password2'),
+            HTML('<br>'),
+            Div(Submit('change_password_btn', 'Change password',
+                       css_class='btn btn-success', css_id="change_password_btn"),
+                css_class='text-center'),
+            HTML('<br>'),
         )
 
 

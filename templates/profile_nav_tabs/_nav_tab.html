@@ -1,0 +1,20 @@
+{% load get_tab_active_class from utils %}
+
+{# Specify dynamic=True to allow toggling via the bootstrap javascript plugin #}
+{# Specify dynamic=False to allow toggling via separate pages with the same base design like the team profile pages #}
+<li role="presentation" class="list-item--pill {% get_tab_active_class key %}">
+  <a
+    id="tab-item-{{ text|slugify }}"
+    class="tab-link"
+    aria-controls="{{ text|slugify }}"
+    role="tab"
+    {% if dynamic %}
+    href="#{{ link }}"
+    data-toggle="tab"
+    data-tab="{{ key }}"
+    {% else %}
+    href="{{ link }}"
+    {% endif %}
+  >{{ text }}
+  </a>
+</li>
