@@ -15,10 +15,7 @@ const staticRoot = path.join(projectRoot, 'static');
 const jsRoot = path.join(staticRoot, 'js');
 const entryPointsRoot = path.join(jsRoot, 'entryPoints');
 const scssRoot = path.join(staticRoot, 'scss');
-
-const PATHS = {
-  dist: path.join(staticRoot, 'dist'),
-};
+const distRoot = path.join(staticRoot, 'dist');
 
 const generateEntryPoints = () => {
   var result = {};
@@ -49,7 +46,7 @@ module.exports = function (env, argv) {
     output: {
       filename: `js/${jsFileName}.js`,
       chunkFilename: `js/${jsFileName}.js`,
-      path: PATHS.dist,
+      path: distRoot,
       library: 'App',
       publicPath: '/static/dist/'
     },
@@ -154,7 +151,7 @@ module.exports = function (env, argv) {
     devtool: productionBuild ? '' : 'cheap-module-source-map',
     plugins: [
       // new BundleAnalyzerPlugin(),
-      new CleanWebpackPlugin([PATHS.dist]),
+      new CleanWebpackPlugin([distRoot]),
       new MiniCssExtractPlugin({
         filename: `css/${cssFileName}.css`
       }),
