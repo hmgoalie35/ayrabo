@@ -1,4 +1,4 @@
-import { mount } from 'enzyme/build';
+import { mount } from 'enzyme';
 import React from 'react';
 
 import GameRosterComponent from '../GameRosterComponent';
@@ -85,14 +85,12 @@ describe('render', () => {
 
   test('selectedPlayers empty', () => {
     const component = getComponent([], playersWithLabel);
-    expect(component.find('.list-group').find('.list-group-item').text()).
-    toEqual('There are no players on this roster.');
+    expect(component.find('.list-group').find('.list-group-item').text()).toEqual('There are no players on this roster.');
   });
 
   test('selectedPlayers exist, user can\'t update roster', () => {
     const component = getComponent(playersWithLabel.slice(0, 5), playersWithLabel, false);
-    expect(component.find('.list-group-item').text()).
-    toEqual('This game roster is currently unavailable.');
+    expect(component.find('.list-group-item').text()).toEqual('This game roster is currently unavailable.');
   });
 
   test('selectedPlayers exist, user can update roster', () => {

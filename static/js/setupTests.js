@@ -1,6 +1,6 @@
-import { configure } from 'enzyme/build';
+import { configure } from 'enzyme';
 import $ from 'jquery';
-import Adapter from 'enzyme-adapter-react-16/build';
+import Adapter from 'enzyme-adapter-react-16';
 
 // Setup enzyme
 configure({ adapter: new Adapter() });

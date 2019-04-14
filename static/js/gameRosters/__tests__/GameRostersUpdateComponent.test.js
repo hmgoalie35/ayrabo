@@ -1,5 +1,5 @@
 import React from 'react';
-import { mount } from 'enzyme/build';
+import { mount } from 'enzyme';
 
 import GameRostersUpdateComponent from '../GameRostersUpdateComponent';
 import homePlayers from './homePlayers.json';
