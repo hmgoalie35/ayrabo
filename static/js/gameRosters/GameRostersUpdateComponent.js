@@ -1,10 +1,10 @@
-import React from 'react';
-import PropTypes from 'prop-types';
 import { uniqBy } from 'lodash/array';
-
-import GameRosterComponent from './GameRosterComponent';
+import PropTypes from 'prop-types';
+import React from 'react';
 import APIClient from '../common/APIClient';
 import { createNotification, showAPIErrorMessage } from '../common/utils';
+
+import GameRosterComponent from './GameRosterComponent';
 
 
 export default class GameRostersUpdateComponent extends React.Component {
@@ -70,7 +70,8 @@ export default class GameRostersUpdateComponent extends React.Component {
   }
 
   getPlayers(teamId) {
-    return this.client.get(`teams/${teamId}/players`, { is_active: true }).then(data => data, this.onAPIFailure);
+    return this.client.get(`teams/${teamId}/players`, { is_active: true }).
+    then(data => data, this.onAPIFailure);
   }
 
   getRosters(homeTeamPlayers, awayTeamPlayers, sportId, gameId) {
@@ -151,7 +152,8 @@ export default class GameRostersUpdateComponent extends React.Component {
       this.setState({ disableUpdateButton: true });
       createNotification('Your updates have been saved.', 'success').show();
     };
-    this.client.patch(`sports/${sportId}/games/${gameId}/rosters`, data).then(onSuccess, this.onAPIFailure);
+    this.client.patch(`sports/${sportId}/games/${gameId}/rosters`, data).
+    then(onSuccess, this.onAPIFailure);
   }
 
   /**

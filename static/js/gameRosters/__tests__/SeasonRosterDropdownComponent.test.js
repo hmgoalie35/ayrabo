@@ -1,5 +1,5 @@
 import React from 'react';
-import { mount } from 'enzyme';
+import { mount } from 'enzyme/build';
 
 import SeasonRosterDropdownComponent from '../SeasonRosterDropdownComponent';
 import seasonRostersData from './seasonRosters.json';
