@@ -22,6 +22,7 @@ module.exports = {
     // React
     'react/jsx-wrap-multilines': 'off',
     'react/jsx-one-expression-per-line': 'off',
+    'react/jsx-filename-extension': 'off',
     // Import
     'import/no-extraneous-dependencies': 'off',
   },

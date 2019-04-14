@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import { noop } from 'lodash/util';
 
 import { seasonRosterPropType } from '../common/proptypes';
-import SeasonRosterModalComponent from '../gameRosters/SeasonRosterModalComponent';
+import SeasonRosterModalComponent from './SeasonRosterModalComponent';
 
 
 const SeasonRosterDropdownComponent = (props) => {
