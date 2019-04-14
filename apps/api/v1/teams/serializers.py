@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from api.utils.serializers import EasyThumbnailField
+from api.utils.serializer_fields import EasyThumbnailField
 from api.v1.divisions.serializers import DivisionSerializer
 from teams.models import Team
 
