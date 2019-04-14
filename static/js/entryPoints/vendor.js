@@ -5,4 +5,4 @@
 */
 import 'noty';
 import 'clipboard';
-import '../scss/vendor.scss';
+import '../../scss/vendor.scss';

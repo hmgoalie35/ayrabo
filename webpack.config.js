@@ -13,33 +13,18 @@ const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPl
 const projectRoot = path.resolve(__dirname);
 const staticRoot = path.join(projectRoot, 'static');
 const jsRoot = path.join(staticRoot, 'js');
-const jsxRoot = path.join(staticRoot, 'jsx');
+const entryPointsRoot = path.join(jsRoot, 'entryPoints');
 const scssRoot = path.join(staticRoot, 'scss');
-
-const PATHS = {
-  js: {
-    main: path.join(jsRoot, 'main.js'),
-  },
-  jsx: {
-    main: path.join(jsxRoot, 'main.jsx'),
-    vendor: path.join(jsxRoot, 'vendor.jsx')
-  },
-  dist: path.join(staticRoot, 'dist')
-};
+const distRoot = path.join(staticRoot, 'dist');
 
 const generateEntryPoints = () => {
-  const retVal = {
-    jqueryMain: PATHS.js.main,
-    main: PATHS.jsx.main,
-    vendor: PATHS.jsx.vendor,
-    polyfills: ['babel-polyfill', 'raf/polyfill'],
-  };
-  const entryPoints = glob.sync(path.join(jsxRoot, '**/entry.jsx'));
-  entryPoints.map((entry) => {
-    const entryName = path.basename(path.dirname(entry));
-    retVal[entryName] = entry;
+  var result = {};
+  const entryPoints = glob.sync(`${entryPointsRoot}/*`);
+  entryPoints.map(entryPoint => {
+    var fileName = path.basename(entryPoint, '.js');
+    result[fileName] = entryPoint;
   });
-  return retVal;
+  return result;
 };
 
 module.exports = function (env, argv) {
@@ -61,12 +46,12 @@ module.exports = function (env, argv) {
     output: {
       filename: `js/${jsFileName}.js`,
       chunkFilename: `js/${jsFileName}.js`,
-      path: PATHS.dist,
+      path: distRoot,
       library: 'App',
       publicPath: '/static/dist/'
     },
     resolve: {
-      extensions: ['.js', '.jsx', '.json'],
+      extensions: ['.js', '.json'],
       symlinks: false
     },
     stats: {
@@ -89,8 +74,8 @@ module.exports = function (env, argv) {
     module: {
       rules: [
         {
-          test: /\.jsx$/,
-          include: [jsxRoot],
+          test: /\.js$/,
+          include: [jsRoot],
           use: [
             'babel-loader',
             {
@@ -166,7 +151,7 @@ module.exports = function (env, argv) {
     devtool: productionBuild ? '' : 'cheap-module-source-map',
     plugins: [
       // new BundleAnalyzerPlugin(),
-      new CleanWebpackPlugin([PATHS.dist]),
+      new CleanWebpackPlugin([distRoot]),
       new MiniCssExtractPlugin({
         filename: `css/${cssFileName}.css`
       }),

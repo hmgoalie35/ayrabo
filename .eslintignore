@@ -1,3 +1,4 @@
 apps/
-static/js
+static/js/jQueryCommon.js
+static/js/manage_formset_forms.js
 webpack.config.js

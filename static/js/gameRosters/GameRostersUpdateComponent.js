@@ -2,9 +2,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { uniqBy } from 'lodash/array';
 
-import GameRosterComponent from './GameRosterComponent';
 import APIClient from '../common/APIClient';
 import { createNotification, showAPIErrorMessage } from '../common/utils';
+import GameRosterComponent from './GameRosterComponent';
 
 
 export default class GameRostersUpdateComponent extends React.Component {
