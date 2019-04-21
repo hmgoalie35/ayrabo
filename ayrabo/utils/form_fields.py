@@ -84,6 +84,6 @@ class FirstNameLastNameField(forms.CharField):
     def __init__(self, **kwargs):
         kwargs.update({
             'required': True,
-            'max_length': 30  # Taken from AbstractBaseUser
+            'max_length': 150  # Taken from AbstractBaseUser
         })
         super().__init__(**kwargs)
