@@ -22,7 +22,7 @@ urlpatterns = [
     url(r'^account/', include('accounts.urls')),  # Use our custom allauth views
     url(r'^account/', include('allauth.urls')),
     url(r'^api/', include('api.urls')),  # Don't add an `api` namespace here, drf login/logout views will break
-    url(r'^leagues/', include('leagues.urls', namespace='leagues')),
+    url(r'^leagues/', include('leagues.urls')),
     url(r'^locations/', include('locations.urls', namespace='locations')),
     url(r'^organizations/', include('organizations.urls', namespace='organizations')),
     url(r'^sports/', include('sports.urls', namespace='sports')),
