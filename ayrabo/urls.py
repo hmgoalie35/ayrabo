@@ -27,7 +27,7 @@ urlpatterns = [
     url(r'^organizations/', include('organizations.urls')),
     url(r'^sports/', include('sports.urls')),
     url(r'^teams/', include('teams.urls')),
-    url(r'^users/', include('users.urls', namespace='users')),
+    url(r'^users/', include('users.urls')),
 ]
 
 if settings.DEBUG:
