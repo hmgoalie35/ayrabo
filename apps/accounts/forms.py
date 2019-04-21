@@ -5,7 +5,7 @@ from django import forms
 from django.contrib.auth.password_validation import password_validators_help_texts
 
 from ayrabo.utils import add_autofocus_to_field, remove_form_placeholders
-from ayrabo.utils.form_fields import FirstNameLastNameField
+from ayrabo.utils.form_fields import FirstNameField, LastNameField
 
 
 PASSWORD_GUIDELINES_HTML = """
@@ -25,8 +25,8 @@ PASSWORD_GUIDELINES_HTML = """
 
 
 class SignupForm(allauth_forms.SignupForm):
-    first_name = FirstNameLastNameField(widget=forms.TextInput(attrs={'autofocus': 'true'}))
-    last_name = FirstNameLastNameField()
+    first_name = FirstNameField(widget=forms.TextInput(attrs={'autofocus': 'true'}))
+    last_name = LastNameField()
 
     def __init__(self, *args, **kwargs):
         super(SignupForm, self).__init__(*args, **kwargs)
