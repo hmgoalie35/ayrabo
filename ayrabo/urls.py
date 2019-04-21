@@ -26,7 +26,7 @@ urlpatterns = [
     url(r'^locations/', include('locations.urls')),
     url(r'^organizations/', include('organizations.urls')),
     url(r'^sports/', include('sports.urls')),
-    url(r'^teams/', include('teams.urls', namespace='teams')),
+    url(r'^teams/', include('teams.urls')),
     url(r'^users/', include('users.urls', namespace='users')),
 ]
 
