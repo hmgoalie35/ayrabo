@@ -21,9 +21,9 @@ class AbstractPlayer(TimestampedModel):
     MIN_JERSEY_NUMBER = 0
     MAX_JERSEY_NUMBER = 99
 
-    user = models.ForeignKey(User)
-    sport = models.ForeignKey(Sport)
-    team = models.ForeignKey(Team)
+    user = models.ForeignKey(User, on_delete=models.PROTECT)
+    sport = models.ForeignKey(Sport, on_delete=models.PROTECT)
+    team = models.ForeignKey(Team, on_delete=models.PROTECT)
     jersey_number = models.SmallIntegerField(verbose_name='Jersey Number',
                                              validators=[MinValueValidator(MIN_JERSEY_NUMBER),
                                                          MaxValueValidator(MAX_JERSEY_NUMBER)])

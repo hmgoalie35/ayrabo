@@ -19,9 +19,9 @@ class Coach(TimestampedModel):
         ('assistant_coach', ASSISTANT_COACH)
     )
 
-    user = models.ForeignKey('users.User', related_name='coaches')
+    user = models.ForeignKey('users.User', related_name='coaches', on_delete=models.PROTECT)
     position = models.CharField(max_length=255, verbose_name='Position', choices=POSITIONS)
-    team = models.ForeignKey(Team)
+    team = models.ForeignKey(Team, on_delete=models.PROTECT)
     is_active = models.BooleanField(default=True, verbose_name='Is Active')
 
     objects = managers.ActiveManager()

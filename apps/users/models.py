@@ -145,9 +145,10 @@ class Permission(TimestampedModel):
     PERMISSION_CHOICES = (
         ('admin', 'Admin'),
     )
-    user = models.ForeignKey('users.User', verbose_name='User', related_name='permissions')
+    user = models.ForeignKey('users.User', verbose_name='User', related_name='permissions', on_delete=models.PROTECT)
     name = models.CharField(max_length=255, choices=PERMISSION_CHOICES, verbose_name='Name', db_index=True)
-    content_type = models.ForeignKey(ContentType, verbose_name='Content Type', related_name='permissions')
+    content_type = models.ForeignKey(ContentType, verbose_name='Content Type', related_name='permissions',
+                                     on_delete=models.PROTECT)
     object_id = models.PositiveIntegerField(verbose_name='Object ID')
     content_object = GenericForeignKey()
 

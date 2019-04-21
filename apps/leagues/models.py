@@ -16,7 +16,7 @@ class League(TimestampedModel):
                             error_messages={'unique': 'League with this name already exists'})
     abbreviated_name = models.CharField(max_length=32, verbose_name='Abbreviated Name')
     slug = models.SlugField(max_length=255, verbose_name='Slug')
-    sport = models.ForeignKey(Sport, verbose_name='Sport')
+    sport = models.ForeignKey(Sport, verbose_name='Sport', on_delete=models.PROTECT)
     logo = ThumbnailerImageField(verbose_name='Logo', upload_to=UploadTo('leagues/logos/'), null=True, blank=True)
     website = WebsiteField()
 

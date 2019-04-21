@@ -26,7 +26,7 @@ class UserProfile(TimestampedModel):
     MIN_WEIGHT = 1
     MAX_WEIGHT = 400
 
-    user = models.OneToOneField(User)
+    user = models.OneToOneField(User, on_delete=models.PROTECT)
     gender = models.CharField(max_length=128, choices=GENDERS, verbose_name='Gender')
     birthday = models.DateField(verbose_name='Birthday')
     height = models.CharField(max_length=8, validators=[RegexValidator(regex=HEIGHT_REGEX, message=INVALID_HEIGHT_MSG)],
