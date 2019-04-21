@@ -24,7 +24,7 @@ urlpatterns = [
     url(r'^api/', include('api.urls')),  # Don't add an `api` namespace here, drf login/logout views will break
     url(r'^leagues/', include('leagues.urls')),
     url(r'^locations/', include('locations.urls')),
-    url(r'^organizations/', include('organizations.urls', namespace='organizations')),
+    url(r'^organizations/', include('organizations.urls')),
     url(r'^sports/', include('sports.urls', namespace='sports')),
     url(r'^teams/', include('teams.urls', namespace='teams')),
     url(r'^users/', include('users.urls', namespace='users')),
