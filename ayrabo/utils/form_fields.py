@@ -80,10 +80,19 @@ class WeightField(forms.IntegerField):
         super().__init__(**kwargs)
 
 
-class FirstNameLastNameField(forms.CharField):
+class FirstNameField(forms.CharField):
     def __init__(self, **kwargs):
         kwargs.update({
             'required': True,
             'max_length': 30  # Taken from AbstractBaseUser
+        })
+        super().__init__(**kwargs)
+
+
+class LastNameField(forms.CharField):
+    def __init__(self, **kwargs):
+        kwargs.update({
+            'required': True,
+            'max_length': 150  # Taken from AbstractBaseUser
         })
         super().__init__(**kwargs)

@@ -1,7 +1,8 @@
 from django.conf import settings
-from django.conf.urls import include, url
+from django.conf.urls import url
 from django.conf.urls.static import static
 from django.contrib import admin
+from django.urls import include
 
 from games.views import BulkUploadHockeyGamesView
 from home.views import AboutUsView, ContactUsView, HomePageView
@@ -21,12 +22,12 @@ urlpatterns = [
     url(r'^account/', include('accounts.urls')),  # Use our custom allauth views
     url(r'^account/', include('allauth.urls')),
     url(r'^api/', include('api.urls')),  # Don't add an `api` namespace here, drf login/logout views will break
-    url(r'^leagues/', include('leagues.urls', namespace='leagues')),
-    url(r'^locations/', include('locations.urls', namespace='locations')),
-    url(r'^organizations/', include('organizations.urls', namespace='organizations')),
-    url(r'^sports/', include('sports.urls', namespace='sports')),
-    url(r'^teams/', include('teams.urls', namespace='teams')),
-    url(r'^users/', include('users.urls', namespace='users')),
+    url(r'^leagues/', include('leagues.urls')),
+    url(r'^locations/', include('locations.urls')),
+    url(r'^organizations/', include('organizations.urls')),
+    url(r'^sports/', include('sports.urls')),
+    url(r'^teams/', include('teams.urls')),
+    url(r'^users/', include('users.urls')),
 ]
 
 if settings.DEBUG:

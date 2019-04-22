@@ -11,8 +11,8 @@ class Referee(TimestampedModel):
     object is for a different league.
     TLDR; A user can be a referee for multiple leagues and a new referee object is created for each league.
     """
-    user = models.ForeignKey('users.User', related_name='referees')
-    league = models.ForeignKey(League)
+    user = models.ForeignKey('users.User', related_name='referees', on_delete=models.PROTECT)
+    league = models.ForeignKey(League, on_delete=models.PROTECT)
     is_active = models.BooleanField(default=True, verbose_name='Is Active')
 
     objects = managers.ActiveManager()

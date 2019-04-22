@@ -21,7 +21,8 @@ class Season(TimestampedModel):
     Represents a season which is used to organize games, etc. under. A league has many seasons. A season has many teams
     and a team has many seasons.
     """
-    league = models.ForeignKey('leagues.League', unique_for_year='start_date', related_name='seasons')
+    league = models.ForeignKey('leagues.League', unique_for_year='start_date', related_name='seasons',
+                               on_delete=models.PROTECT)
     teams = models.ManyToManyField(Team, related_name='seasons')
     start_date = models.DateField(verbose_name='Start Date')
     end_date = models.DateField(verbose_name='End Date')
@@ -109,10 +110,11 @@ class AbstractSeasonRoster(TimestampedModel):
     Multiple season rosters can be created for a season/team.
     """
     name = models.CharField(verbose_name='Name', max_length=255)
-    season = models.ForeignKey(Season)
-    team = models.ForeignKey(Team, related_name='season_rosters')
+    season = models.ForeignKey(Season, on_delete=models.PROTECT)
+    team = models.ForeignKey(Team, related_name='season_rosters', on_delete=models.PROTECT)
     default = models.BooleanField(default=False, verbose_name='Default Season Roster')
-    created_by = models.ForeignKey(User, null=True, related_name='season_rosters', verbose_name='Created By')
+    created_by = models.ForeignKey(User, null=True, related_name='season_rosters', verbose_name='Created By',
+                                   on_delete=models.PROTECT)
 
     def can_update(self):
         return not self.season.expired

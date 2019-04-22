@@ -1,7 +1,7 @@
 from crispy_forms.helper import FormHelper
 from django import forms
 
-from ayrabo.utils.form_fields import FirstNameLastNameField
+from ayrabo.utils.form_fields import FirstNameField, LastNameField
 from users.models import User
 
 
@@ -15,8 +15,8 @@ class UserUpdateForm(forms.ModelForm):
         self.helper.form_tag = False
         self.helper.disable_csrf = True
 
-    first_name = FirstNameLastNameField()
-    last_name = FirstNameLastNameField()
+    first_name = FirstNameField()
+    last_name = LastNameField()
 
     class Meta:
         model = User

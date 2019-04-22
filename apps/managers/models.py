@@ -11,8 +11,8 @@ class Manager(TimestampedModel):
     object is for a different team.
     TLDR; A user can be a manager for multiple teams and a new manager object is created for each team.
     """
-    user = models.ForeignKey('users.User', related_name='managers')
-    team = models.ForeignKey(Team)
+    user = models.ForeignKey('users.User', related_name='managers', on_delete=models.PROTECT)
+    team = models.ForeignKey(Team, on_delete=models.PROTECT)
     is_active = models.BooleanField(default=True, verbose_name='Is Active')
 
     objects = managers.ActiveManager()

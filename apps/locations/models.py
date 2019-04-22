@@ -44,8 +44,8 @@ class TeamLocation(TimestampedModel):
     """
     Used as a through model for a Team's relation to Location (m2m)
     """
-    team = models.ForeignKey('teams.Team')
-    location = models.ForeignKey(Location)
+    team = models.ForeignKey('teams.Team', on_delete=models.PROTECT)
+    location = models.ForeignKey(Location, on_delete=models.PROTECT)
     primary = models.BooleanField(default=False, verbose_name='Primary Location')
 
     class Meta:
