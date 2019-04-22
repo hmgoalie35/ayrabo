@@ -10,5 +10,5 @@ roster_urls = [
 
 app_name = 'games'
 urlpatterns = [
-    url(r'^(?P<game_pk>\d+)/', include((roster_urls, 'rosters'), namespace='rosters')),
+    url(r'^(?P<game_pk>\d+)/', include((roster_urls, 'rosters'))),
 ]
