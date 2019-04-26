@@ -120,6 +120,6 @@ class PasswordChangeViewTests(BaseTestCase):
         self.assertHasMessage(response, 'Your password has been updated.')
 
     def test_post_invalid_form(self):
-        data = {'oldpassword': 'myweakpassword', 'password1': 'jjjjjjjj', 'password2': 'def'}
+        data = {'oldpassword': 'myweakpassword', 'password1': 'CtpfUE3XHE3y', 'password2': 'def'}
         response = self.client.post(self.format_url(), data=data)
         self.assertFormError(response, 'form', 'password2', 'You must type the same password each time.')

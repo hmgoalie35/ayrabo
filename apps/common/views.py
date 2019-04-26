@@ -1,5 +1,4 @@
 import csv
-from io import TextIOWrapper
 
 from django import forms
 from django.contrib import messages
@@ -41,8 +40,9 @@ class CsvBulkUploadView(LoginRequiredMixin, generic.FormView):
         return data
 
     def clean_data(self, uploaded_file):
-        csv_file = TextIOWrapper(uploaded_file)
-        reader = csv.DictReader(csv_file)
+        rows = [row.decode() for row in uploaded_file]
+        uploaded_file.seek(0)
+        reader = csv.DictReader(rows)
         cleaned_data = {}
         raw_data = []
         count = 0
