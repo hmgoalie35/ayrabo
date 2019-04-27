@@ -45,7 +45,7 @@ class CoachesUpdateViewTests(BaseTestCase):
 
     def test_coach_dne(self):
         response = self.client.get(self.format_url(slug='ice-hockey', coach_pk=99))
-        self.assertEqual(response.status_code, 404)
+        self.assert_404(response)
 
     def test_has_permission_false(self):
         self.client.logout()
