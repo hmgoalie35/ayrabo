@@ -8,15 +8,22 @@ from users.tests import UserFactory
 
 
 class NewConfirmationEmailViewTests(BaseTestCase):
+    url = 'account_new_email_confirmation'
+
     def post_to_account_new_email_confirmation(self, data):
-        return self.client.post(reverse('account_new_email_confirmation'), data, follow=True)
+        return self.client.post(self.format_url(), data, follow=True)
 
     def setUp(self):
         self.email = 'user@ayrabo.com'
         # In order to have an email confirmation generated, need to POST to the 'account_register' url/view
-        self.client.post(reverse('account_register'),
-                         {'email': self.email, 'username': self.email, 'first_name': 'John',
-                          'last_name': 'Doe', 'password1': 'myweakpassword', 'password2': 'myweakpassword'})
+        self.client.post(reverse('account_register'), {
+            'email': self.email,
+            'username': self.email,
+            'first_name': 'John',
+            'last_name': 'Doe',
+            'password1': 'myweakpassword',
+            'password2': 'myweakpassword'
+        })
         self.user = User.objects.first()
         self.confirmation = EmailConfirmationHMAC(EmailAddress.objects.get(user=self.user))
         # The path that should be redirected to on invalid requests
@@ -26,11 +33,11 @@ class NewConfirmationEmailViewTests(BaseTestCase):
 
     def test_no_request_path(self):
         response = self.post_to_account_new_email_confirmation({'email': self.user.email})
-        self.assertRedirects(response, '/')
+        self.assertRedirects(response, reverse('home'))
 
     def test_blank_request_path(self):
         response = self.post_to_account_new_email_confirmation({'email': self.user.email, 'request_path': ''})
-        self.assertRedirects(response, '/')
+        self.assertRedirects(response, reverse('home'))
 
     def test_no_email_address(self):
         response = self.post_to_account_new_email_confirmation({'request_path': self.invalid_request_path})
@@ -48,7 +55,7 @@ class NewConfirmationEmailViewTests(BaseTestCase):
         response = self.post_to_account_new_email_confirmation(
             {'email': invalid_email, 'request_path': self.invalid_request_path})
 
-        error_msg = '{email} is not a valid e-mail address or has already been confirmed.'.format(email=invalid_email)
+        error_msg = '{} is not a valid e-mail address or has already been confirmed.'.format(invalid_email)
         self.assertHasMessage(response, error_msg)
 
         # Make sure email wasn't sent.
@@ -64,7 +71,7 @@ class NewConfirmationEmailViewTests(BaseTestCase):
         self.assertTrue(EmailAddress.objects.get(user=self.user).verified)
         response = self.post_to_account_new_email_confirmation(
             {'email': self.user.email, 'request_path': self.invalid_request_path})
-        error_msg = '{email} is not a valid e-mail address or has already been confirmed.'.format(email=self.user.email)
+        error_msg = '{} is not a valid e-mail address or has already been confirmed.'.format(self.user.email)
         self.assertHasMessage(response, error_msg)
 
     def test_existent_email_address(self):
@@ -72,7 +79,7 @@ class NewConfirmationEmailViewTests(BaseTestCase):
         response = self.post_to_account_new_email_confirmation(
             {'email': self.user.email, 'request_path': self.valid_request_path})
 
-        success_msg = 'A new confirmation email has been sent to {email}.'.format(email=self.user.email)
+        success_msg = 'A new confirmation email has been sent to {}.'.format(self.user.email)
         self.assertHasMessage(response, success_msg)
         # Make sure email was actually sent.
         self.assertEqual(len(mail.outbox), 1)
