@@ -19,6 +19,14 @@ def get_user(username_or_email):
     return User.objects.get(Q(email=username_or_email) | Q(username=username_or_email))
 
 
+def _login(client, user, email, password):
+    if user:
+        return client.force_login(user)
+    if email and password:
+        return client.login(email=email, password=password)
+    raise Exception('You need to provide a user, or email and password')
+
+
 def string_to_kwargs_dict(string):
     """
     Given a string of the form "a=b, c=d" returns a dictionary of key-value pairs. i.e {'a': 'b', 'c': 'd'}
@@ -116,11 +124,7 @@ class BaseTestCase(TestCase):
         return self.client.session.get(key)
 
     def login(self, user=None, email=None, password=None):
-        if user:
-            return self.client.force_login(user)
-        if email and password:
-            return self.client.login(email=email, password=password)
-        return False
+        return _login(self.client, user, email, password)
 
     def create_past_current_future_seasons(self, league, teams=None):
         start_date = datetime.date.today()
@@ -199,6 +203,9 @@ class BaseAPITestCase(APITestCase):
         url = getattr(self, 'url', None)
         if url:
             return drf_reverse(url, kwargs=kwargs)
+
+    def login(self, user=None, email=None, password=None):
+        return _login(self.client, user, email, password)
 
     # Custom assertions
     def assertAPIError(self, response, status_name, error_message_overrides=None):
