@@ -91,4 +91,4 @@ class HealthCheckView(generic.View):
         site = get_current_site(request)
         # Actually hit the database to check for connectivity
         ContentType.objects.first()
-        return HttpResponse('{} is running'.format(site.domain))
+        return HttpResponse('{} is up'.format(site.domain))
