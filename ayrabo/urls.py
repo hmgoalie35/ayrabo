@@ -2,8 +2,9 @@ from django.conf import settings
 from django.conf.urls import url
 from django.conf.urls.static import static
 from django.contrib import admin
-from django.urls import include
+from django.urls import include, path
 
+from common.views import HealthCheckView
 from games.views import BulkUploadHockeyGamesView
 from home.views import AboutUsView, ContactUsView, HomePageView
 from locations.views import BulkUploadLocationsView
@@ -19,6 +20,7 @@ urlpatterns = [
     url(r'^$', HomePageView.as_view(), name='home'),
     url(r'^about-us/$', AboutUsView.as_view(), name='about_us'),
     url(r'^contact-us/$', ContactUsView.as_view(), name='contact_us'),
+    path('health-check/', HealthCheckView.as_view(), name='health-check'),
     url(r'^account/', include('accounts.urls')),  # Use our custom allauth views
     url(r'^account/', include('allauth.urls')),
     url(r'^api/', include('api.urls')),  # Don't add an `api` namespace here, drf login/logout views will break
