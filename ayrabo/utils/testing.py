@@ -1,6 +1,3 @@
-"""
-A module that contains useful methods for testing
-"""
 import datetime
 import re
 
@@ -141,17 +138,23 @@ class BaseTestCase(TestCase):
                                       end_date=future_start_date + datetime.timedelta(days=365), **kwargs)
         return past_season, current_season, future_season
 
+    def _get_messages(self, response):
+        return [msg.message for msg in response.context['messages']]
+
+    def _has_message(self, response, msg):
+        assert isinstance(msg, str)
+        messages = self._get_messages(response)
+        return messages, msg in messages
+
     # Custom assertions
     def assertHasMessage(self, response, msg):
-        assert isinstance(msg, str)
-        messages = [msg.message for msg in response.context['messages']]
-        if msg not in messages:
+        messages, has_message = self._has_message(response, msg)
+        if not has_message:
             self.fail(msg='{} not found in {}'.format(msg, messages))
 
     def assertNoMessage(self, response, msg):
-        assert isinstance(msg, str)
-        messages = [msg.message for msg in response.context['messages']]
-        if msg in messages:
+        _, has_message = self._has_message(response, msg)
+        if has_message:
             self.fail(msg='{} unexpectedly found in messages'.format(msg))
 
     def assertLoginRequired(self, url):
