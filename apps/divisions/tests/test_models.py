@@ -1,5 +1,4 @@
 from django.db.utils import IntegrityError
-from django.utils.text import slugify
 
 from ayrabo.utils.testing import BaseTestCase
 from divisions.models import Division
@@ -36,7 +35,7 @@ class DivisionModelTests(BaseTestCase):
         liahl = LeagueFactory(name='Long Island Amateur Hockey League')
         division_name = 'Midget Minor AA'
         midget_minor_aa = DivisionFactory(name=division_name, league=liahl)
-        self.assertEqual(midget_minor_aa.slug, slugify(division_name))
+        self.assertEqual(midget_minor_aa.slug, 'midget-minor-aa')
 
     def test_slug_unique_for_league(self):
         liahl = LeagueFactory(name='Long Island Amateur Hockey League')
