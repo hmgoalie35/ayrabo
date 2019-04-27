@@ -2,10 +2,9 @@ import datetime
 
 import pytz
 
-from users.tests import UserFactory
+from ayrabo.utils.testing import BaseAPITestCase
 from common.tests import GenericChoiceFactory
 from divisions.tests import DivisionFactory
-from ayrabo.utils.testing import BaseAPITestCase
 from games.tests import HockeyGameFactory
 from leagues.tests import LeagueFactory
 from managers.tests import ManagerFactory
@@ -14,6 +13,7 @@ from scorekeepers.tests import ScorekeeperFactory
 from seasons.tests import SeasonFactory
 from sports.tests import SportFactory, SportRegistrationFactory
 from teams.tests import TeamFactory
+from users.tests import UserFactory
 
 
 class GameRostersRetrieveUpdateAPIViewTests(BaseAPITestCase):
@@ -63,13 +63,13 @@ class GameRostersRetrieveUpdateAPIViewTests(BaseAPITestCase):
         self.assertAPIError(response, 'unauthenticated')
 
     def test_sport_dne(self):
-        self.client.force_login(self.user)
+        self.login(user=self.user)
 
         response = self.client.get(self.format_url(pk=1000, game_pk=1))
         self.assertAPIError(response, 'not_found')
 
     def test_sport_not_configured(self):
-        self.client.force_login(self.user)
+        self.login(user=self.user)
         SportFactory(id=2, name='Cricket')
 
         response = self.client.get(self.format_url(pk=2, game_pk=1))
@@ -77,7 +77,7 @@ class GameRostersRetrieveUpdateAPIViewTests(BaseAPITestCase):
                             error_message_overrides={'detail': 'Cricket is not currently configured.'})
 
     def test_home_team_manager_allowed(self):
-        self.client.force_login(self.user)
+        self.login(user=self.user)
 
         response = self.client.get(self.format_url(pk=1, game_pk=1))
         self.assert_200(response)
@@ -86,7 +86,7 @@ class GameRostersRetrieveUpdateAPIViewTests(BaseAPITestCase):
         user = UserFactory()
         SportRegistrationFactory(user=user, sport=self.ice_hockey, role='manager')
         ManagerFactory(user=user, team=self.away_team)
-        self.client.force_login(user)
+        self.login(user=user)
 
         response = self.client.get(self.format_url(pk=1, game_pk=1))
         self.assert_200(response)
@@ -94,7 +94,7 @@ class GameRostersRetrieveUpdateAPIViewTests(BaseAPITestCase):
     def test_inactive_manager_forbidden(self):
         self.manager.is_active = False
         self.manager.save()
-        self.client.force_login(self.user)
+        self.login(user=self.user)
 
         response = self.client.get(self.format_url(pk=1, game_pk=1))
         self.assertAPIError(response, 'permission_denied')
@@ -103,7 +103,7 @@ class GameRostersRetrieveUpdateAPIViewTests(BaseAPITestCase):
         user = UserFactory()
         SportRegistrationFactory(user=user, sport=self.ice_hockey, role='scorekeeper')
         ScorekeeperFactory(user=user, sport=self.ice_hockey)
-        self.client.force_login(user)
+        self.login(user=user)
 
         response = self.client.get(self.format_url(pk=1, game_pk=1))
         self.assert_200(response)
@@ -112,7 +112,7 @@ class GameRostersRetrieveUpdateAPIViewTests(BaseAPITestCase):
         user = UserFactory()
         SportRegistrationFactory(user=user, sport=self.ice_hockey, role='scorekeeper')
         ScorekeeperFactory(user=user, sport=self.ice_hockey, is_active=False)
-        self.client.force_login(user)
+        self.login(user=user)
 
         response = self.client.get(self.format_url(pk=1, game_pk=1))
         self.assertAPIError(response, 'permission_denied')
@@ -122,7 +122,7 @@ class GameRostersRetrieveUpdateAPIViewTests(BaseAPITestCase):
         sport = SportFactory()
         SportRegistrationFactory(user=user, sport=sport, role='scorekeeper')
         ScorekeeperFactory(user=user, sport=sport)
-        self.client.force_login(user)
+        self.login(user=user)
 
         response = self.client.get(self.format_url(pk=1, game_pk=1))
         self.assertAPIError(response, 'permission_denied')
@@ -131,7 +131,7 @@ class GameRostersRetrieveUpdateAPIViewTests(BaseAPITestCase):
     def test_retrieve(self):
         self.game.home_players.add(self.home_players[0], self.home_players[1])
         self.game.away_players.add(self.away_players[0], self.away_players[1])
-        self.client.force_login(user=self.user)
+        self.login(user=self.user)
 
         response = self.client.get(self.format_url(pk=1, game_pk=1))
         home_players = response.data.get('home_players')
@@ -143,7 +143,7 @@ class GameRostersRetrieveUpdateAPIViewTests(BaseAPITestCase):
     def test_patch(self):
         self.game.home_players.add(self.home_players[0], self.home_players[1])
         self.game.away_players.add(self.away_players[0], self.away_players[1])
-        self.client.force_login(self.user)
+        self.login(user=self.user)
 
         data = {
             'home_players': [1, 2, 3, 4],
@@ -160,7 +160,7 @@ class GameRostersRetrieveUpdateAPIViewTests(BaseAPITestCase):
         self.manager.is_active = False
         self.manager.save()
         ManagerFactory(user=self.user, team=self.away_team)
-        self.client.force_login(self.user)
+        self.login(user=self.user)
         data = {
             'home_players': [1, 2, 3, 4],
         }
@@ -170,7 +170,7 @@ class GameRostersRetrieveUpdateAPIViewTests(BaseAPITestCase):
         })
 
     def test_cant_update_away_roster(self):
-        self.client.force_login(self.user)
+        self.login(user=self.user)
         data = {
             'away_players': [6, 7],
         }
