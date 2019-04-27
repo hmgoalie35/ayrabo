@@ -4,6 +4,9 @@ from django import forms
 from django.contrib import messages
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.contenttypes.models import ContentType
+from django.contrib.sites.shortcuts import get_current_site
+from django.http import HttpResponse
 from django.shortcuts import render
 from django.utils.decorators import method_decorator
 from django.views import generic
@@ -80,3 +83,12 @@ class CsvBulkUploadView(LoginRequiredMixin, generic.FormView):
         msg = 'Successfully created {} {} object(s)'.format(len(instances), self.model.__name__.lower())
         messages.success(self.request, msg)
         return super().form_valid(form)
+
+
+class HealthCheckView(generic.View):
+    def get(self, request, *args, **kwargs):
+        # This call gets cached
+        site = get_current_site(request)
+        # Actually hit the database to check for connectivity
+        ContentType.objects.first()
+        return HttpResponse('{} is running'.format(site.domain))
