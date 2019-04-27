@@ -88,21 +88,21 @@ class HockeyGameCreateViewTests(BaseTestCase):
         self._create_user(self.ice_hockey, team, ['manager'], user={'email': email, 'password': self.password})
         self.login(email=email, password=self.password)
         response = self.client.get(self.format_url(team_pk=1))
-        self.assertEqual(response.status_code, 404)
+        self.assert_404(response)
 
     def test_inactive_team_manager(self):
         self.manager.is_active = False
         self.manager.save()
         self.login(email=self.email, password=self.password)
         response = self.client.get(self.format_url(team_pk=1))
-        self.assertEqual(response.status_code, 404)
+        self.assert_404(response)
 
     def test_get(self):
         self.login(email=self.email, password=self.password)
         response = self.client.get(self.format_url(team_pk=1))
         context = response.context
 
-        self.assertEqual(response.status_code, 200)
+        self.assert_200(response)
         self.assertTemplateUsed(response, 'games/game_create.html')
         self.assertEqual(context.get('team'), self.t1)
         self.assertEqual(context.get('team_display_name'), 'Green Machine IceCats - Midget Minor AA')
@@ -112,7 +112,7 @@ class HockeyGameCreateViewTests(BaseTestCase):
     def test_get_team_dne(self):
         self.login(email=self.email, password=self.password)
         response = self.client.get(self.format_url(team_pk=999))
-        self.assertEqual(response.status_code, 404)
+        self.assert_404(response)
 
     # Testing some generic functionality in this test...
     def test_get_sport_not_configured(self):

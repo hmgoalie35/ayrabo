@@ -39,7 +39,7 @@ class CsvBulkUploadViewTests(BaseTestCase):
     def test_get(self):
         self.client.login(email=self.email, password=self.password)
         response = self.client.get(self.url)
-        self.assertEqual(response.status_code, 200)
+        self.assert_200(response)
         self.assertTemplateUsed(response, 'common/admin_bulk_upload.html')
         self.assertIsNotNone(response.context['form'])
 
