@@ -36,7 +36,7 @@ class SportRegistrationCreateViewTests(BaseTestCase):
         }
 
         self.user = UserFactory(email=self.email, password=self.password)
-        self.client.login(email=self.email, password=self.password)
+        self.login(email=self.email, password=self.password)
 
     # General
     def test_login_required(self):

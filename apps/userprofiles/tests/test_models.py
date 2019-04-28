@@ -6,6 +6,7 @@ from django.core.exceptions import ValidationError
 from ayrabo.utils.testing import BaseTestCase
 from userprofiles.models import UserProfile
 from userprofiles.tests import UserProfileFactory
+from users.tests import UserFactory
 
 
 class UserProfileModelTests(BaseTestCase):
@@ -17,12 +18,12 @@ class UserProfileModelTests(BaseTestCase):
         invalid_heights = ['5 7', '5 7\"', '5\' 7', '5\' 12\"', '5\' 13\"', '5\'1\"']
         for invalid_height in invalid_heights:
             with self.assertRaisesMessage(ValidationError, UserProfile.INVALID_HEIGHT_MSG):
-                UserProfileFactory.create(height=invalid_height).full_clean()
+                UserProfileFactory(height=invalid_height).full_clean()
 
     def test_valid_height_format(self):
         valid_heights = ['5\' 7\"', '6\' 11\"', '6\' 10\"', '5\'']
         for valid_height in valid_heights:
-            up = UserProfileFactory.create(height=valid_height)
+            up = UserProfileFactory(height=valid_height)
             self.assertIsNone(up.full_clean())
 
     def test_min_weight(self):
@@ -46,8 +47,10 @@ class UserProfileModelTests(BaseTestCase):
         self.assertIsNone(up.full_clean())
 
     def test_to_string(self):
-        up = UserProfileFactory.create()
-        self.assertEqual(str(up), up.user.email)
+        email = 'test@ayrabo.com'
+        user = UserFactory(email=email, userprofile=None)
+        up = UserProfileFactory(user=user)
+        self.assertEqual(str(up), email)
 
     @mock.patch('django.utils.timezone.localdate')
     def test_age_birthday_passed(self, mock_localdate):

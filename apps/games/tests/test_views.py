@@ -569,14 +569,14 @@ class BulkUploadHockeyGamesViewTests(BaseTestCase):
         SeasonFactory(id=10, league=league, start_date=datetime.date(month=8, day=15, year=2017))
 
     def test_post_valid_csv(self):
-        self.client.login(email=self.email, password=self.password)
+        self.login(email=self.email, password=self.password)
         with open(os.path.join(self.test_file_path, 'bulk_upload_hockeygames_example.csv')) as f:
             response = self.client.post(self.format_url(), {'file': f}, follow=True)
             self.assertHasMessage(response, 'Successfully created 1 hockeygame object(s)')
             self.assertEqual(HockeyGame.objects.count(), 1)
 
     def test_post_invalid_csv(self):
-        self.client.login(email=self.email, password=self.password)
+        self.login(email=self.email, password=self.password)
         content = b'home_team,away_team,type,point_value,location,start,end,timezone,season\n\n35,31,2,7,11,12/26/2017,12/26/2017 09:00 PM,US/Eastern,5'  # noqa
         f = SimpleUploadedFile('test.csv', content)
         response = self.client.post(self.format_url(), {'file': f}, follow=True)
