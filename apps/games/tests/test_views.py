@@ -78,9 +78,7 @@ class HockeyGameCreateViewTests(BaseTestCase):
 
     # GET
     def test_login_required(self):
-        response = self.client.get(self.format_url(team_pk=1))
-        result_url = '{}?next={}'.format(reverse('account_login'), self.format_url(team_pk=1))
-        self.assertRedirects(response, result_url)
+        self.assertLoginRequired(self.format_url(team_pk=1))
 
     def test_not_team_manager(self):
         team = TeamFactory(division=self.mm_aa)
