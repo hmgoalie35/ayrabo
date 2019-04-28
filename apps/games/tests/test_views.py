@@ -286,8 +286,7 @@ class HockeyGameUpdateViewTests(BaseTestCase):
         return user, sport_registrations, manager
 
     def test_login_required(self):
-        response = self.client.get(self.formatted_url)
-        self.assertRedirects(response, self.get_login_required_url(self.formatted_url))
+        self.assertLoginRequired(self.formatted_url)
 
     def test_not_team_manager(self):
         user, _, _ = self._create_user(self.ice_hockey, self.t3, ['manager'],
@@ -461,9 +460,7 @@ class GameRostersUpdateViewTests(BaseTestCase):
     # General
     def test_login_required(self):
         self.client.logout()
-
-        response = self.client.get(self.formatted_url)
-        self.assertRedirects(response, self.get_login_required_url(self.formatted_url))
+        self.assertLoginRequired(self.formatted_url)
 
     def test_has_permission_home_team_manager(self):
         SportRegistrationFactory(user=self.user, sport=self.ice_hockey, role='manager')

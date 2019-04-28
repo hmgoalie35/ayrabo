@@ -42,8 +42,7 @@ class SportRegistrationCreateViewTests(BaseTestCase):
     def test_login_required(self):
         self.client.logout()
         url = self.format_url()
-        response = self.client.get(url)
-        self.assertRedirects(response, self.get_login_required_url(url))
+        self.assertLoginRequired(url)
 
     def test_has_permission_false(self):
         SportRegistrationFactory(sport=self.ice_hockey, user=self.user, role='player')
@@ -199,8 +198,7 @@ class SportDashboardViewTests(BaseTestCase):
     # General
     def test_login_required(self):
         url = self.format_url(slug='ice-hockey')
-        response = self.client.get(url)
-        self.assertRedirects(response, self.get_login_required_url(url))
+        self.assertLoginRequired(url)
 
     def test_sport_dne(self):
         self.login(user=self.user)

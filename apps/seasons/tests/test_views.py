@@ -39,8 +39,7 @@ class SeasonRosterCreateViewTests(BaseTestCase):
     # General
     def test_login_required(self):
         self.client.logout()
-        response = self.client.get(self.formatted_url)
-        self.assertRedirects(response, self.get_login_required_url(self.formatted_url))
+        self.assertLoginRequired(self.formatted_url)
 
     def test_sport_not_configured(self):
         team = TeamFactory()
@@ -150,8 +149,7 @@ class SeasonRosterUpdateViewTests(BaseTestCase):
     # General
     def test_login_required(self):
         self.client.logout()
-        response = self.client.get(self.formatted_url)
-        self.assertRedirects(response, self.get_login_required_url(self.formatted_url))
+        self.assertLoginRequired(self.formatted_url)
 
     def test_sport_not_configured(self):
         team = TeamFactory()

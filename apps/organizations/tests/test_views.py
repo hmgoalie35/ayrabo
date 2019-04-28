@@ -28,8 +28,7 @@ class OrganizationDetailViewTests(BaseTestCase):
     def test_login_required(self):
         self.client.logout()
         url = self.format_url(pk=self.organization.pk)
-        response = self.client.get(url)
-        self.assertRedirects(response, self.get_login_required_url(url))
+        self.assertLoginRequired(url)
 
     def test_has_permission(self):
         response = self.client.get(self.format_url(pk=self.organization.pk))
