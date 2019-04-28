@@ -78,9 +78,7 @@ class HockeyGameCreateViewTests(BaseTestCase):
 
     # GET
     def test_login_required(self):
-        response = self.client.get(self.format_url(team_pk=1))
-        result_url = '{}?next={}'.format(reverse('account_login'), self.format_url(team_pk=1))
-        self.assertRedirects(response, result_url)
+        self.assertLoginRequired(self.format_url(team_pk=1))
 
     def test_not_team_manager(self):
         team = TeamFactory(division=self.mm_aa)
@@ -88,21 +86,21 @@ class HockeyGameCreateViewTests(BaseTestCase):
         self._create_user(self.ice_hockey, team, ['manager'], user={'email': email, 'password': self.password})
         self.login(email=email, password=self.password)
         response = self.client.get(self.format_url(team_pk=1))
-        self.assertEqual(response.status_code, 404)
+        self.assert_404(response)
 
     def test_inactive_team_manager(self):
         self.manager.is_active = False
         self.manager.save()
         self.login(email=self.email, password=self.password)
         response = self.client.get(self.format_url(team_pk=1))
-        self.assertEqual(response.status_code, 404)
+        self.assert_404(response)
 
     def test_get(self):
         self.login(email=self.email, password=self.password)
         response = self.client.get(self.format_url(team_pk=1))
         context = response.context
 
-        self.assertEqual(response.status_code, 200)
+        self.assert_200(response)
         self.assertTemplateUsed(response, 'games/game_create.html')
         self.assertEqual(context.get('team'), self.t1)
         self.assertEqual(context.get('team_display_name'), 'Green Machine IceCats - Midget Minor AA')
@@ -112,7 +110,7 @@ class HockeyGameCreateViewTests(BaseTestCase):
     def test_get_team_dne(self):
         self.login(email=self.email, password=self.password)
         response = self.client.get(self.format_url(team_pk=999))
-        self.assertEqual(response.status_code, 404)
+        self.assert_404(response)
 
     # Testing some generic functionality in this test...
     def test_get_sport_not_configured(self):
@@ -288,8 +286,7 @@ class HockeyGameUpdateViewTests(BaseTestCase):
         return user, sport_registrations, manager
 
     def test_login_required(self):
-        response = self.client.get(self.formatted_url)
-        self.assertRedirects(response, self.get_login_required_url(self.formatted_url))
+        self.assertLoginRequired(self.formatted_url)
 
     def test_not_team_manager(self):
         user, _, _ = self._create_user(self.ice_hockey, self.t3, ['manager'],
@@ -463,9 +460,7 @@ class GameRostersUpdateViewTests(BaseTestCase):
     # General
     def test_login_required(self):
         self.client.logout()
-
-        response = self.client.get(self.formatted_url)
-        self.assertRedirects(response, self.get_login_required_url(self.formatted_url))
+        self.assertLoginRequired(self.formatted_url)
 
     def test_has_permission_home_team_manager(self):
         SportRegistrationFactory(user=self.user, sport=self.ice_hockey, role='manager')
@@ -574,14 +569,14 @@ class BulkUploadHockeyGamesViewTests(BaseTestCase):
         SeasonFactory(id=10, league=league, start_date=datetime.date(month=8, day=15, year=2017))
 
     def test_post_valid_csv(self):
-        self.client.login(email=self.email, password=self.password)
+        self.login(email=self.email, password=self.password)
         with open(os.path.join(self.test_file_path, 'bulk_upload_hockeygames_example.csv')) as f:
             response = self.client.post(self.format_url(), {'file': f}, follow=True)
             self.assertHasMessage(response, 'Successfully created 1 hockeygame object(s)')
             self.assertEqual(HockeyGame.objects.count(), 1)
 
     def test_post_invalid_csv(self):
-        self.client.login(email=self.email, password=self.password)
+        self.login(email=self.email, password=self.password)
         content = b'home_team,away_team,type,point_value,location,start,end,timezone,season\n\n35,31,2,7,11,12/26/2017,12/26/2017 09:00 PM,US/Eastern,5'  # noqa
         f = SimpleUploadedFile('test.csv', content)
         response = self.client.post(self.format_url(), {'file': f}, follow=True)

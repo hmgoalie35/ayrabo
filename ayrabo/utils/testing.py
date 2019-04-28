@@ -1,6 +1,3 @@
-"""
-A module that contains useful methods for testing
-"""
 import datetime
 import re
 
@@ -20,6 +17,14 @@ def get_user(username_or_email):
     This function is used in *_step.py files, so can't move it to the BaseTestCase class
     """
     return User.objects.get(Q(email=username_or_email) | Q(username=username_or_email))
+
+
+def _login(client, user, email, password):
+    if user:
+        return client.force_login(user)
+    if email and password:
+        return client.login(email=email, password=password)
+    raise Exception('You need to provide a user, or email and password')
 
 
 def string_to_kwargs_dict(string):
@@ -119,11 +124,7 @@ class BaseTestCase(TestCase):
         return self.client.session.get(key)
 
     def login(self, user=None, email=None, password=None):
-        if user:
-            return self.client.force_login(user)
-        if email and password:
-            return self.client.login(email=email, password=password)
-        return False
+        return _login(self.client, user, email, password)
 
     def create_past_current_future_seasons(self, league, teams=None):
         start_date = datetime.date.today()
@@ -141,17 +142,23 @@ class BaseTestCase(TestCase):
                                       end_date=future_start_date + datetime.timedelta(days=365), **kwargs)
         return past_season, current_season, future_season
 
+    def _get_messages(self, response):
+        return [msg.message for msg in response.context['messages']]
+
+    def _has_message(self, response, msg):
+        assert isinstance(msg, str)
+        messages = self._get_messages(response)
+        return messages, msg in messages
+
     # Custom assertions
     def assertHasMessage(self, response, msg):
-        assert isinstance(msg, str)
-        messages = [msg.message for msg in response.context['messages']]
-        if msg not in messages:
+        messages, has_message = self._has_message(response, msg)
+        if not has_message:
             self.fail(msg='{} not found in {}'.format(msg, messages))
 
     def assertNoMessage(self, response, msg):
-        assert isinstance(msg, str)
-        messages = [msg.message for msg in response.context['messages']]
-        if msg in messages:
+        _, has_message = self._has_message(response, msg)
+        if has_message:
             self.fail(msg='{} unexpectedly found in messages'.format(msg))
 
     def assertLoginRequired(self, url):
@@ -196,6 +203,9 @@ class BaseAPITestCase(APITestCase):
         url = getattr(self, 'url', None)
         if url:
             return drf_reverse(url, kwargs=kwargs)
+
+    def login(self, user=None, email=None, password=None):
+        return _login(self.client, user, email, password)
 
     # Custom assertions
     def assertAPIError(self, response, status_name, error_message_overrides=None):

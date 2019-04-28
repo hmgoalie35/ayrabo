@@ -8,12 +8,12 @@ from users.tests import UserFactory
 
 class RefereeModelTests(BaseTestCase):
     def setUp(self):
-        self.user = UserFactory()
+        self.user = UserFactory(first_name='Zebra', last_name='Stripes')
         self.league = LeagueFactory(name='Long Island Amateur Hockey League')
 
     def test_to_string(self):
-        referee = RefereeFactory()
-        self.assertEqual(str(referee), 'Referee {full_name}'.format(full_name=referee.user.get_full_name()))
+        referee = RefereeFactory(user=self.user)
+        self.assertEqual(str(referee), 'Referee Zebra Stripes')
 
     def test_referee_unique_to_league(self):
         RefereeFactory(user=self.user, league=self.league)

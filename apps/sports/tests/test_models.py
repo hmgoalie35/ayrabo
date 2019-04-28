@@ -1,6 +1,5 @@
 from django.core.exceptions import ValidationError
 from django.db.utils import IntegrityError
-from django.utils.text import slugify
 
 from ayrabo.utils.testing import BaseTestCase
 from sports.models import Sport
@@ -31,7 +30,7 @@ class SportModelTests(BaseTestCase):
 
     def test_slug_generation(self):
         ice_hockey = SportFactory.create(name='Ice hockey')
-        self.assertEqual(ice_hockey.slug, slugify(ice_hockey.name))
+        self.assertEqual(ice_hockey.slug, 'ice-hockey')
 
     def test_default_ordering(self):
         ice_hockey = SportFactory(name='Ice Hockey')

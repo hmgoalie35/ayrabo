@@ -43,7 +43,7 @@ class UserProfileCreateViewTests(BaseTestCase):
     def test_userprofile_already_created(self):
         self.client.logout()
         user_with_profile = UserFactory.create(password=self.password)
-        self.client.login(email=user_with_profile.email, password=self.password)
+        self.login(email=user_with_profile.email, password=self.password)
         response = self.client.get(self.format_url())
         self.assertRedirects(response, reverse('home'))
 

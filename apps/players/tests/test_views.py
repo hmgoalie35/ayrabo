@@ -47,8 +47,7 @@ class PlayerUpdateViewTests(BaseTestCase):
     def test_login_required(self):
         self.client.logout()
         url = self.format_url(slug='ice-hockey', player_pk=self.player.pk)
-        response = self.client.get(url)
-        self.assertRedirects(response, self.get_login_required_url(url))
+        self.assertLoginRequired(url)
 
     def test_sport_not_configured(self):
         SportFactory(name='Not Configured', slug='not-configured')

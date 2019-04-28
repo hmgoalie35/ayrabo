@@ -18,7 +18,8 @@ class AbstractPlayerModelTests(BaseTestCase):
     """
 
     def setUp(self):
-        self.player = HockeyPlayerFactory()
+        self.user = UserFactory(first_name='Robin', last_name='Lehner')
+        self.player = HockeyPlayerFactory(user=self.user)
 
     def test_league_property(self):
         self.assertEqual(self.player.league, self.player.team.division.league)
@@ -35,11 +36,11 @@ class AbstractPlayerModelTests(BaseTestCase):
             HockeyPlayerFactory(jersey_number=-1).full_clean()
 
     def test_to_string(self):
-        self.assertEqual(str(self.player), self.player.user.get_full_name())
+        self.assertEqual(str(self.player), 'Robin Lehner')
 
     def test_unique_with_team(self):
         with self.assertRaises(IntegrityError):
-            HockeyPlayerFactory(user=self.player.user, team=self.player.team)
+            HockeyPlayerFactory(user=self.user, team=self.player.team)
 
     def test_fields(self):
         t = TeamFactory()

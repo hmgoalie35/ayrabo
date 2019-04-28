@@ -8,8 +8,10 @@ from users.tests import UserFactory
 
 class ManagerModelTests(BaseTestCase):
     def test_to_string(self):
-        manager = ManagerFactory()
-        self.assertEqual(str(manager), 'Manager {last_name}'.format(last_name=manager.user.last_name))
+        last_name = 'Arbour'
+        user = UserFactory(first_name='Al', last_name=last_name)
+        manager = ManagerFactory(user=user)
+        self.assertEqual(str(manager), 'Manager {}'.format(last_name))
 
     def test_manager_unique_to_team(self):
         user = UserFactory()

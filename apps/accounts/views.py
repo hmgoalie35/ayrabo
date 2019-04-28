@@ -20,7 +20,7 @@ class NewConfirmationEmailView(View):
         request_path = self.request.POST.get('request_path', None)
 
         if request_path is None or request_path.strip() == '':
-            return redirect('/')
+            return redirect(reverse('home'))
 
         if email is None or email.strip() == '':
             messages.error(self.request, 'You must specify an email address.')

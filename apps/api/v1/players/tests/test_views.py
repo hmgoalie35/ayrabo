@@ -22,7 +22,7 @@ class PlayersListAPIViewTests(BaseAPITestCase):
         HockeyPlayerFactory(id=4, team=team, is_active=True)
         HockeyPlayerFactory(id=5, team=team, is_active=True)
         HockeyPlayerFactory(id=6, team=team, is_active=False)
-        self.client.force_login(self.user)
+        self.login(user=self.user)
 
     # General
     def test_login_required(self):

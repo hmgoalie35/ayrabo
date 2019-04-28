@@ -8,12 +8,15 @@ from users.tests import UserFactory
 
 class CoachModelTests(BaseTestCase):
     def test_to_string(self):
-        coach = CoachFactory.create()
-        self.assertEqual(str(coach), 'Coach {last_name}'.format(last_name=coach.user.last_name))
+        first_name = 'Herb'
+        last_name = 'Brooks'
+        user = UserFactory(first_name=first_name, last_name=last_name)
+        coach = CoachFactory(user=user)
+        self.assertEqual(str(coach), 'Coach {}'.format(last_name))
 
     def test_coach_unique_to_team(self):
-        user = UserFactory.create()
+        user = UserFactory()
         team = TeamFactory(name='Green Machine IceCats')
-        CoachFactory.create(user=user, team=team)
+        CoachFactory(user=user, team=team)
         with self.assertRaises(IntegrityError):
-            CoachFactory.create(user=user, team=team)
+            CoachFactory(user=user, team=team)

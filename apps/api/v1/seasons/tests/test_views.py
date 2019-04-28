@@ -32,28 +32,28 @@ class SeasonRostersListAPIViewTests(BaseAPITestCase):
     def test_manager_for_team_has_permission(self):
         SportRegistrationFactory(user=self.user, sport=self.sport, role='manager')
         ManagerFactory(user=self.user, team=self.team)
-        self.client.force_login(self.user)
+        self.login(user=self.user)
         response = self.client.get(self.formatted_url)
         self.assert_200(response)
 
     def test_scorekeeper_for_sport_has_permission(self):
         SportRegistrationFactory(user=self.user, sport=self.sport, role='scorekeeper')
         ScorekeeperFactory(user=self.user, sport=self.sport)
-        self.client.force_login(self.user)
+        self.login(user=self.user)
         response = self.client.get(self.formatted_url)
         self.assert_200(response)
 
     def test_manager_for_diff_team_permission_denied(self):
         SportRegistrationFactory(user=self.user, sport=self.sport, role='manager')
         ManagerFactory(user=self.user)
-        self.client.force_login(self.user)
+        self.login(user=self.user)
         response = self.client.get(self.formatted_url)
         self.assertAPIError(response, 'permission_denied')
 
     def test_team_dne(self):
         SportRegistrationFactory(user=self.user, sport=self.sport, role='manager')
         ManagerFactory(user=self.user, team=self.team)
-        self.client.force_login(self.user)
+        self.login(user=self.user)
         response = self.client.get(self.format_url(pk=1000))
         self.assertAPIError(response, 'not_found')
 
@@ -61,7 +61,7 @@ class SeasonRostersListAPIViewTests(BaseAPITestCase):
         team = TeamFactory(id=2, division__league__sport__name='Sport 1')
         SportRegistrationFactory(user=self.user, sport=self.sport, role='manager')
         ManagerFactory(user=self.user, team=team)
-        self.client.force_login(self.user)
+        self.login(user=self.user)
         response = self.client.get(self.format_url(pk=2))
         self.assertAPIError(response, 'sport_not_configured',
                             {'detail': 'Sport 1 is not currently configured.'})
@@ -70,7 +70,7 @@ class SeasonRostersListAPIViewTests(BaseAPITestCase):
     def test_get(self):
         SportRegistrationFactory(user=self.user, sport=self.sport, role='manager')
         ManagerFactory(user=self.user, team=self.team)
-        self.client.force_login(self.user)
+        self.login(user=self.user)
         HockeySeasonRosterFactory(id=1, name='Main Squad', season=self.season, team=self.team)
         HockeySeasonRosterFactory(id=2, name='Backup Squad', season=self.season, team=self.team)
         past_season = SeasonFactory(league=self.league, start_date=datetime.date(year=2016, month=9, day=23))
@@ -83,7 +83,7 @@ class SeasonRostersListAPIViewTests(BaseAPITestCase):
     def test_filter_by_season_id(self):
         SportRegistrationFactory(user=self.user, sport=self.sport, role='manager')
         ManagerFactory(user=self.user, team=self.team)
-        self.client.force_login(self.user)
+        self.login(user=self.user)
 
         HockeySeasonRosterFactory(id=1, name='Main Squad', season=self.season, team=self.team)
         HockeySeasonRosterFactory(id=2, name='Backup Squad', season=self.season, team=self.team)

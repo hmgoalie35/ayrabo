@@ -407,8 +407,6 @@ LOGIN_URL = reverse_lazy('account_login')
 LOGIN_REDIRECT_URL = reverse_lazy('home')
 LOGOUT_REDIRECT_URL = reverse_lazy('home')
 
-TEST_RUNNER = 'redgreenunittest.django.runner.RedGreenDiscoverRunner'
-
 FIXTURE_DIRS = [
     os.path.join(BASE_DIR, 'fixtures')
 ]

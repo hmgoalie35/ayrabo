@@ -30,21 +30,21 @@ class CsvBulkUploadViewTests(BaseTestCase):
         email = 'user1@ayrabo.com'
         password = 'myweakpassword'
         UserFactory(email=email, password=password, is_staff=False)
-        self.client.login(email=email, password=password)
+        self.login(email=email, password=password)
 
         response = self.client.get(self.url)
         result_url = '{}?next={}'.format(reverse('admin:login'), self.url)
         self.assertRedirects(response, result_url)
 
     def test_get(self):
-        self.client.login(email=self.email, password=self.password)
+        self.login(email=self.email, password=self.password)
         response = self.client.get(self.url)
-        self.assertEqual(response.status_code, 200)
+        self.assert_200(response)
         self.assertTemplateUsed(response, 'common/admin_bulk_upload.html')
         self.assertIsNotNone(response.context['form'])
 
     def test_post(self):
-        self.client.login(email=self.email, password=self.password)
+        self.login(email=self.email, password=self.password)
         f = SimpleUploadedFile('test.csv', b'hello world')
         response = self.client.post(self.url, {'file': f})
         self.assertRedirects(response, self.url)

@@ -36,8 +36,7 @@ class CoachesUpdateViewTests(BaseTestCase):
     # General
     def test_login_required(self):
         self.client.logout()
-        response = self.client.get(self.coach_url)
-        self.assertRedirects(response, self.get_login_required_url(self.coach_url))
+        self.assertLoginRequired(self.coach_url)
 
     def test_sport_dne(self):
         response = self.client.get(self.format_url(slug='non-existent', coach_pk=self.coach.pk))
@@ -45,7 +44,7 @@ class CoachesUpdateViewTests(BaseTestCase):
 
     def test_coach_dne(self):
         response = self.client.get(self.format_url(slug='ice-hockey', coach_pk=99))
-        self.assertEqual(response.status_code, 404)
+        self.assert_404(response)
 
     def test_has_permission_false(self):
         self.client.logout()

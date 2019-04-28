@@ -20,8 +20,10 @@ from users.tests import UserFactory
 
 
 class BulkUploadTeamsViewTests(BaseTestCase):
+    url = 'bulk_upload_teams'
+
     def setUp(self):
-        self.url = reverse('bulk_upload_teams')
+        self.url = self.format_url()
         self.email = 'user@ayrabo.com'
         self.password = 'myweakpassword'
         self.test_file_path = os.path.join(settings.BASE_DIR, 'static', 'csv_examples')
@@ -32,14 +34,14 @@ class BulkUploadTeamsViewTests(BaseTestCase):
         liahl = LeagueFactory(name='Long Island Amateur Hockey League', sport=ice_hockey)
         DivisionFactory(name='10U Milner', league=liahl)
         OrganizationFactory(name='Green Machine IceCats', sport=ice_hockey)
-        self.client.login(email=self.email, password=self.password)
+        self.login(email=self.email, password=self.password)
         with open(os.path.join(self.test_file_path, 'bulk_upload_teams_example.csv')) as f:
             response = self.client.post(self.url, {'file': f}, follow=True)
             self.assertHasMessage(response, 'Successfully created 1 team object(s)')
             self.assertEqual(Team.objects.count(), 1)
 
     def test_post_invalid_csv(self):
-        self.client.login(email=self.email, password=self.password)
+        self.login(email=self.email, password=self.password)
         content = b'name, website, division, organization\n\na,b,c,d'
         f = SimpleUploadedFile('test.csv', content)
         response = self.client.post(self.url, {'file': f}, follow=True)
