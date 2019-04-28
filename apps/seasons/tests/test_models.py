@@ -10,6 +10,7 @@ from divisions.tests import DivisionFactory
 from leagues.tests import LeagueFactory
 from players.tests import HockeyPlayerFactory
 from seasons.models import HockeySeasonRoster, Season
+from sports.tests import SportFactory
 from teams.tests import TeamFactory
 from . import HockeySeasonRosterFactory, SeasonFactory
 
@@ -17,8 +18,7 @@ from . import HockeySeasonRosterFactory, SeasonFactory
 class SeasonModelTests(BaseTestCase):
     def test_to_string(self):
         season = SeasonFactory()
-        self.assertEqual(str(season), '{start_year}-{end_year} Season'.format(start_year=season.start_date.year,
-                                                                              end_year=season.end_date.year))
+        self.assertEqual(str(season), '{}-{} Season'.format(season.start_date.year, season.end_date.year))
 
     def test_end_date_before_start_date(self):
         start_date = datetime.date(2016, 8, 15)
@@ -146,9 +146,13 @@ class AbstractSeasonRosterModelTests(BaseTestCase):
     """
 
     def test_to_string(self):
-        season_roster = HockeySeasonRosterFactory()
-        self.assertEqual(str(season_roster), '{}-{}: {}'.format(season_roster.team, season_roster.team.division,
-                                                                season_roster.season))
+        ice_hockey = SportFactory(name='Ice Hockey')
+        liahl = LeagueFactory(sport=ice_hockey, name='Long Island Amateur Hockey League')
+        mm_aa = DivisionFactory(league=liahl, name='Midget Minor AA')
+        icecats = TeamFactory(name='Green Machine IceCats', division=mm_aa)
+        season = SeasonFactory(league=liahl, teams=[icecats])
+        season_roster = HockeySeasonRosterFactory(team=icecats)
+        self.assertEqual(str(season_roster), '{}-{}: {}'.format('Green Machine IceCats', 'Midget Minor AA', season))
 
     def test_roster_default_false(self):
         season_roster = HockeySeasonRosterFactory()
