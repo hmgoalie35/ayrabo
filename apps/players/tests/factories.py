@@ -6,7 +6,7 @@ from teams.tests import TeamFactory
 from users.tests import UserFactory
 
 
-class PlayerFactory(django.DjangoModelFactory):
+class AbstractPlayerFactory(django.DjangoModelFactory):
     user = SubFactory(UserFactory)
     sport = SubFactory(SportFactory)
     team = SubFactory(TeamFactory)
@@ -18,7 +18,7 @@ class PlayerFactory(django.DjangoModelFactory):
         abstract = True
 
 
-class HockeyPlayerFactory(PlayerFactory):
+class HockeyPlayerFactory(AbstractPlayerFactory):
     sport = SubFactory(SportFactory)
     position = Faker('random_element', elements=[position[0] for position in models.HockeyPlayer.POSITIONS])
     handedness = Faker('random_element', elements=[handedness[0] for handedness in models.HockeyPlayer.HANDEDNESS])
@@ -27,7 +27,7 @@ class HockeyPlayerFactory(PlayerFactory):
         model = models.HockeyPlayer
 
 
-class BaseballPlayerFactory(PlayerFactory):
+class BaseballPlayerFactory(AbstractPlayerFactory):
     sport = SubFactory(SportFactory)
     position = Faker('random_element', elements=[position[0] for position in models.BaseballPlayer.POSITIONS])
     catches = Faker('random_element', elements=[catches[0] for catches in models.BaseballPlayer.CATCHES])
@@ -37,7 +37,7 @@ class BaseballPlayerFactory(PlayerFactory):
         model = models.BaseballPlayer
 
 
-class BasketballPlayerFactory(PlayerFactory):
+class BasketballPlayerFactory(AbstractPlayerFactory):
     sport = SubFactory(SportFactory)
     position = Faker('random_element', elements=[position[0] for position in models.BasketballPlayer.POSITIONS])
     shoots = Faker('random_element', elements=[shoots[0] for shoots in models.BasketballPlayer.SHOOTS])

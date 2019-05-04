@@ -1,10 +1,5 @@
 # Useful code snippets
 
-### Testing Related
-
-* `coverage run manage.py test --parallel && coverage combine && coverage html`
-    * Determines coverage for unit and functional tests
-
 ### Misc.
 * You can change the string displayed by an object in modelChoice & modelMultipleChoice select menus to any string you want (defaults to `__str__`) with the `label_from_instance` method
 
