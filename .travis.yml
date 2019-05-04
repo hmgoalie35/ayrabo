@@ -19,11 +19,17 @@ env:
   global:
     - TRAVIS_NODE_VERSION="8"
     - DOCKER_COMPOSE_VERSION="1.24.0"
+  - TEST_SUITE=unit
+  - TEST_SUITE=jest
+  - TEST_SUITE=accept
 
 before_install:
   - sudo service postgresql stop
   - sudo curl -L "https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
   - sudo chmod +x /usr/local/bin/docker-compose
+  - source $HOME/.nvm/nvm.sh
+  - nvm install $TRAVIS_NODE_VERSION
+  - nvm use $TRAVIS_NODE_VERSION
 
 install:
   - echo "POSTGRES_PASSWORD=myweakpassword" >> .env
@@ -32,15 +38,12 @@ install:
   - echo "POSTGRES_HOST=localhost" >> .env
   - echo "POSTGRES_PORT=5432" >> .env
   - docker-compose up --build --quiet-pull -d postgres
-  - source $HOME/.nvm/nvm.sh
-  - nvm install $TRAVIS_NODE_VERSION
-  - nvm use $TRAVIS_NODE_VERSION
   - pip install -r requirements.txt
   - npm install
   - npm run build
 
 script:
-  - bash run_tests.sh
+  - bash run_tests.sh $TEST_SUITE
 
 git:
   depth: 5
