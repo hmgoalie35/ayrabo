@@ -74,8 +74,8 @@ class LeagueDetailScheduleViewTests(AbstractLeagueDetailViewTestCase):
         # Game for another league (should be excluded)
         self.nhl_season = SeasonFactory(league=self.nhl)
         self._create_game(self.bruins, self.sabres, self.nhl_season)
-        self.games = [self.game1, self.game2, self.game3]
-        self.past_season_games = [self.game4, self.game5]
+        self.games = [self.game3, self.game2, self.game1]
+        self.past_season_games = [self.game5, self.game4]
         self.login(user=self.user)
 
     def test_login_required(self):

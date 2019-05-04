@@ -50,4 +50,4 @@ class OrganizationDetailViewTests(BaseTestCase):
 
         self.assertEqual(active_tab, 'teams')
         self.assertListEqual(list(teams), [self.team1, self.team2])
-        self.assertListEqual(list(organization_admins), [self.user, user2])
+        self.assertListEqual(list(organization_admins), [user2, self.user])
