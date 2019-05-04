@@ -25,10 +25,10 @@ class AbstractGameCreateFormTests(BaseTestCase):
         self.ice_hockey = SportFactory(name='Ice Hockey')
         self.liahl = LeagueFactory(name='Long Island Amateur Hockey League', sport=self.ice_hockey)
         self.mm_aa = DivisionFactory(name='Midget Minor AA', league=self.liahl)
-        self.t1 = TeamFactory(id=1, division=self.mm_aa)
-        self.t2 = TeamFactory(id=2, division=self.mm_aa)
-        self.t3 = TeamFactory(id=3, division=self.mm_aa)
-        self.t4 = TeamFactory(id=4, name='Green Machine IceCats', division=self.mm_aa)
+        self.t1 = TeamFactory(division=self.mm_aa)
+        self.t2 = TeamFactory(division=self.mm_aa)
+        self.t3 = TeamFactory(division=self.mm_aa)
+        self.t4 = TeamFactory(name='Green Machine IceCats', division=self.mm_aa)
 
         self.squirt = DivisionFactory(name='Squirt', league=self.liahl)
         self.squirt_teams = TeamFactory.create_batch(3, division=self.squirt)
@@ -42,8 +42,9 @@ class AbstractGameCreateFormTests(BaseTestCase):
         form = self.form_cls(team=self.t4)
         home_team_qs = form.fields['home_team'].queryset
         away_team_qs = form.fields['away_team'].queryset
-        self.assertListEqual(sorted(list(home_team_qs.values_list('id', flat=True))), [1, 2, 3, 4])
-        self.assertListEqual(sorted(list(away_team_qs.values_list('id', flat=True))), [1, 2, 3, 4])
+        expected = [self.t1.id, self.t2.id, self.t3.id, self.t4.id]
+        self.assertListEqual(sorted(list(home_team_qs.values_list('id', flat=True))), expected)
+        self.assertListEqual(sorted(list(away_team_qs.values_list('id', flat=True))), expected)
 
     def test_generic_choice_filtered_by_game_type(self):
         form = self.form_cls(team=self.t4)

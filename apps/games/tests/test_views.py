@@ -352,7 +352,7 @@ class HockeyGameUpdateViewTests(BaseTestCase):
     # GET
     def test_get(self):
         self.login(email=self.email, password=self.password)
-        response = self.client.get(self.format_url(team_pk=1, pk=1))
+        response = self.client.get(self.formatted_url)
         context = response.context
         self.assertTemplateUsed(response, 'games/game_update.html')
         self.assert_200(response)

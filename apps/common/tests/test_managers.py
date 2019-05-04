@@ -30,9 +30,9 @@ class GenericChoiceManagerTests(BaseTestCase):
     def test_get_choices_model_cls(self):
         # No choices for leagues should show up.
         choices = GenericChoice.objects.get_choices(model_cls=Sport)
-        self.assertListEqual(list(choices), [self.choice1, self.choice2, self.choice3, self.choice4, self.choice5])
+        self.assertListEqual(list(choices), [self.choice5, self.choice4, self.choice3, self.choice2, self.choice1])
 
     def test_get_choices_instance(self):
         # No choices for leagues, or sports with a different pk should show up.
         choices = GenericChoice.objects.get_choices(instance=self.sport)
-        self.assertListEqual(list(choices), [self.choice1, self.choice2])
+        self.assertListEqual(list(choices), [self.choice2, self.choice1])
