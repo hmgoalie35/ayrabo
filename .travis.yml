@@ -26,7 +26,7 @@ before_install:
   - sudo chmod +x /usr/local/bin/docker-compose
 
 install:
-  - echo "POSTGRES_PASSWORD=myweakpassword\nPOSTGRES_USER=ayrabo\nPOSTGRES_DB=ayrabo" > .env
+  - echo "POSTGRES_PASSWORD=myweakpassword\nPOSTGRES_USER=ayrabo\nPOSTGRES_DB=ayrabo\nPOSTGRES_HOST=localhost\nPOSTGRES_PORT=5432" > .env
   - docker-compose up --build --quiet-pull -d postgres
   - source $HOME/.nvm/nvm.sh
   - nvm install $TRAVIS_NODE_VERSION
