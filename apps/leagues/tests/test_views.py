@@ -74,8 +74,8 @@ class LeagueDetailScheduleViewTests(AbstractLeagueDetailViewTestCase):
         # Game for another league (should be excluded)
         self.nhl_season = SeasonFactory(league=self.nhl)
         self._create_game(self.bruins, self.sabres, self.nhl_season)
-        self.games = [self.game3, self.game2, self.game1]
-        self.past_season_games = [self.game5, self.game4]
+        self.games = [self.game1, self.game2, self.game3]
+        self.past_season_games = [self.game4, self.game5]
         self.login(user=self.user)
 
     def test_login_required(self):
@@ -105,7 +105,7 @@ class LeagueDetailScheduleViewTests(AbstractLeagueDetailViewTestCase):
         self.assertEqual(context.get('current_season_page_url'), reverse('leagues:schedule', kwargs=kwargs))
 
         self.assertEqual(context.get('active_tab'), 'schedule')
-        self.assertListEqual(list(context.get('games')), self.games)
+        self.assertListEqual(list(context.get('games').order_by('id')), self.games)
         self.assertTrue(context.get('has_games'))
 
         self.assertListEqual(list(context.get('team_ids_managed_by_user')), team_ids_managed_by_user)
@@ -131,7 +131,7 @@ class LeagueDetailScheduleViewTests(AbstractLeagueDetailViewTestCase):
                          reverse('leagues:schedule', kwargs={'slug': self.liahl.slug}))
 
         self.assertEqual(context.get('active_tab'), 'schedule')
-        self.assertListEqual(list(context.get('games')), self.past_season_games)
+        self.assertListEqual(list(context.get('games').order_by('id')), self.past_season_games)
         self.assertTrue(context.get('has_games'))
 
         self.assertListEqual(list(context.get('team_ids_managed_by_user')), team_ids_managed_by_user)
