@@ -12,18 +12,22 @@ addons:
   chrome: stable
   # firefox: latest
 
+services:
+  - docker
+
+env:
+  global:
+    - TRAVIS_NODE_VERSION="8"
+
 install:
+  - echo "POSTGRES_PASSWORD=myweakpassword\nPOSTGRES_USER=ayrabo\nPOSTGRES_DB=ayrabo" > .env
+  - docker-compose up --build --quiet-pull -d postgres
   - source $HOME/.nvm/nvm.sh
   - nvm install $TRAVIS_NODE_VERSION
   - nvm use $TRAVIS_NODE_VERSION
   - pip install -r requirements.txt
   - npm install
   - npm run build
-
-env:
-  global:
-    - DJANGO_SETTINGS_MODULE="ayrabo.settings.settings"
-    - TRAVIS_NODE_VERSION="8"
 
 script:
   - bash run_tests.sh
