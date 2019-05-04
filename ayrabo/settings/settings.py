@@ -189,7 +189,7 @@ WSGI_APPLICATION = 'ayrabo.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/1.9/ref/settings/#databases
-
+print(ENV_SETTINGS)
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
