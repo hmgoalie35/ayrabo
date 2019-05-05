@@ -29,7 +29,7 @@ before_install:
   - nvm use $TRAVIS_NODE_VERSION
 
 install:
-  - mv .env.testing .env
+  - mv .env.travis .env
   - docker-compose up --build --quiet-pull -d postgres
   - pip install -r requirements.txt
   - npm install
