@@ -151,7 +151,7 @@ module.exports = function (env, argv) {
     devtool: productionBuild ? '' : 'cheap-module-source-map',
     plugins: [
       // new BundleAnalyzerPlugin(),
-      new CleanWebpackPlugin([distRoot]),
+      new CleanWebpackPlugin(),
       new MiniCssExtractPlugin({
         filename: `css/${cssFileName}.css`
       }),
