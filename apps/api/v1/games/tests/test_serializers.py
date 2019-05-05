@@ -57,8 +57,8 @@ class AbstractGameRosterSerializerTests(BaseAPITestCase):
 
     def test_home_players_qs(self):
         qs = self.serializer.fields['home_players'].child_relation.queryset
-        self.assertListEqual(list(qs.values_list('id', flat=True)), [1, 2, 3, 4, 5])
+        self.assertListEqual(list(qs.values_list('id', flat=True)), [5, 4, 3, 2, 1])
 
     def test_away_players_qs(self):
         qs = self.serializer.fields['away_players'].child_relation.queryset
-        self.assertListEqual(list(qs.values_list('id', flat=True)), [6, 7, 8, 9, 10])
+        self.assertListEqual(list(qs.values_list('id', flat=True)), [10, 9, 8, 7, 6])

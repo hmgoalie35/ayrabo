@@ -136,7 +136,8 @@ class SeasonTeamM2MSignalTests(BaseTestCase):
         self.assertListEqual([s1, s2], list(team.seasons.all()))
 
     def test_invalid_pks(self):
-        self.liahl_season.teams.add(88)
+        team = TeamFactory()
+        self.liahl_season.teams.add(team.id)
         self.assertListEqual([], list(self.liahl_season.teams.all()))
 
 

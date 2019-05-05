@@ -44,7 +44,7 @@ class HockeySeasonRosterCreateUpdateFormTests(BaseTestCase):
 
         form = self.get_form()
         qs = form.fields['players'].queryset
-        self.assertListEqual(list(qs), players)
+        self.assertListEqual(list(qs.order_by('id')), players)
 
     def test_players_displayed_correctly(self):
         form = self.get_form()

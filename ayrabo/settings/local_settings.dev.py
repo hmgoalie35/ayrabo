@@ -1,4 +1,5 @@
-from .settings import DATABASES, CACHES, REST_FRAMEWORK
+from .settings import CACHES, DATABASES, REST_FRAMEWORK
+
 
 DEBUG = True
 
@@ -17,7 +18,6 @@ CACHES['default'] = {
 
 DEBUG_TOOLBAR_CONFIG = {
     'SHOW_COLLAPSED': True,
-    # Admin panel doesn't load jquery, so debug toolbar doesn't show...
 }
 
 # If INTERNAL_IPS becomes a problem, can override SHOW_TOOLBAR_CALLBACK function

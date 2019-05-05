@@ -1,22 +1,18 @@
 import logging
-import os
 
-from .settings import CACHES, DATABASES, BASE_DIR
+from .settings import CACHES
+
 
 # Django automatically sets DEBUG = False when running tests
 
 logging.disable(logging.CRITICAL)
 
+ALLOWED_HOSTS = '*'
 ACCOUNT_DEFAULT_HTTP_PROTOCOL = 'http'
 
 CSRF_COOKIE_SECURE = False
 SESSION_COOKIE_SECURE = False
 SECURE_SSL_REDIRECT = False
-
-DATABASES['default'] = {
-    'ENGINE': 'django.db.backends.sqlite3',
-    'NAME': os.path.join(BASE_DIR, 'testdb.sqlite3'),
-}
 
 CACHES['default'] = {
     'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
@@ -29,4 +25,3 @@ PASSWORD_HASHERS = [
 RUNNING_AUTOMATED_TESTS = True
 GOOGLE_MAPS_API_KEY = 'dummykey'
 SECRET_KEY = '6dlSWCSD5PHr9ygDEc9TRP0SpYpYCfegSD7Wx8nJFieCWOlDmY'
-ALLOWED_HOSTS = '*'

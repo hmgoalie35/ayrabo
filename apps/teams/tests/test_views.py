@@ -119,7 +119,7 @@ class TeamDetailScheduleViewTests(BaseTestCase):
         self.assertTrue(context.get('can_create_game'))
 
         self.assertEqual(context.get('active_tab'), 'schedule')
-        self.assertListEqual(list(context.get('games')), [self.game1, self.game2])
+        self.assertListEqual(list(context.get('games')), [self.game2, self.game1])
         self.assertTrue(context.get('has_games'))
 
         self.assertListEqual(list(context.get('team_ids_managed_by_user')), team_ids_managed_by_user)
@@ -279,7 +279,7 @@ class TeamDetailPlayersViewTests(BaseTestCase):
         self.assertIsNotNone(context.get('past_seasons'))
 
         self.assertListEqual(context.get('columns'), ['Jersey Number', 'Name', 'Position', 'Handedness'])
-        self.assertListEqual(list(context.get('players')), [self.p1, self.p2, self.p3, self.p4])
+        self.assertListEqual(list(context.get('players')), [self.p4, self.p3, self.p2, self.p1])
         self.assertTrue(context.get('has_players'))
         self.assertEqual(context.get('header_text'), 'All Players')
         self.assertEqual(context.get('sport'), self.ice_hockey)

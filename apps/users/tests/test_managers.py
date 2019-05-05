@@ -13,11 +13,11 @@ class PermissionManagerTests(BaseTestCase):
         perm2 = PermissionFactory(content_object=self.organization, name='admin')
         PermissionFactory(content_object=OrganizationFactory(), name='admin')
 
-        result = Permission.objects.get_permissions_for_object('admin', self.organization)
-        self.assertListEqual(list(result), [perm1, perm2])
+        qs = Permission.objects.get_permissions_for_object('admin', self.organization)
+        self.assertListEqual(list(qs.order_by('id')), [perm1, perm2])
 
         # Make sure the manager filters by permission name
         organization = OrganizationFactory()
         PermissionFactory(content_object=organization, name='my_permission')
-        result = Permission.objects.get_permissions_for_object('admin', organization)
-        self.assertListEqual(list(result), [])
+        qs = Permission.objects.get_permissions_for_object('admin', organization)
+        self.assertListEqual(list(qs.order_by('id')), [])
