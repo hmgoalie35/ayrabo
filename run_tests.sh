@@ -28,7 +28,7 @@ if [ ${TESTS} == 'all' ] || [ ${TESTS} == 'unit' ]; then
     print_step "Running unit/integration tests"
     coverage erase
     coverage run manage.py test --failfast
-    coverage combine && coverage report --fail-under=${COVERAGE_MIN}
+    coverage report --fail-under=${COVERAGE_MIN}
 fi
 
 if [ ${TESTS} == 'all' ] || [ ${TESTS} == 'jest' ]; then

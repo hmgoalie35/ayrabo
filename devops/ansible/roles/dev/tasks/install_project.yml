@@ -24,12 +24,6 @@
     chdir: "{{ project_root }}"
     executable: "/bin/bash"
 
-- name: Symlinking local settings file
-  file:
-    path: "{{ project_root }}/ayrabo/settings/local_settings.py"
-    src: "{{ project_root }}/ayrabo/settings/local_settings.dev.py"
-    state: link
-
 # If getting errors make sure have latest docker-py, docker-compose, PyYAML, docker for pip2 and pip3. Use -U
 - name: Build and start docker containers in detached mode (this may take a while)
   shell: "docker-compose up -d"

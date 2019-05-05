@@ -7,8 +7,8 @@ from selenium import webdriver
 
 use_step_matcher('re')
 
-CHROMEDRIVER_BINARY = os.path.join(settings.NODE_MODULES_ROOT, 'chromedriver/bin/chromedriver')
-FIREFOX_BINARY = os.path.join(settings.NODE_MODULES_ROOT, 'geckodriver/bin/geckodriver')
+CHROMEDRIVER_BINARY = os.path.join(settings.NODE_MODULES_DIR, 'chromedriver/bin/chromedriver')
+FIREFOX_BINARY = os.path.join(settings.NODE_MODULES_DIR, 'geckodriver/bin/geckodriver')
 
 
 def chrome():

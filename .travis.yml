@@ -29,11 +29,7 @@ before_install:
   - nvm use $TRAVIS_NODE_VERSION
 
 install:
-  - echo "POSTGRES_PASSWORD=myweakpassword" >> .env
-  - echo "POSTGRES_USER=ayrabo" >> .env
-  - echo "POSTGRES_DB=ayrabo" >> .env
-  - echo "POSTGRES_HOST=localhost" >> .env
-  - echo "POSTGRES_PORT=5432" >> .env
+  - mv .env.travis .env
   - docker-compose up --build --quiet-pull -d postgres
   - pip install -r requirements.txt
   - npm install
