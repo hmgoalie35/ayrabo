@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Typeahead } from 'react-bootstrap-typeahead';
-
+import { uniqueId } from 'lodash';
 
 import PlayerComponent from './PlayerComponent';
 import { playerPropType } from '../common/proptypes';
@@ -15,6 +15,7 @@ export default class GameRosterComponent extends React.Component {
   constructor(props) {
     super(props);
     this.client = new APIClient();
+    this.typeaheadId = uniqueId('typeahead_');
     this.state = {
       seasonRosters: null,
     };
@@ -126,6 +127,7 @@ export default class GameRosterComponent extends React.Component {
             emptyLabel="No players found."
             placeholder="Add players via search"
             paginationText="Display more players"
+            id={this.typeaheadId}
             ref={(typeahead) => {
               this.typeahead = typeahead;
             }}

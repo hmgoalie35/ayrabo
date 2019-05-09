@@ -10,6 +10,7 @@
     </HTMLCodeStyleSettings>
     <JSCodeStyleSettings version="1">
       <option name="FORCE_SEMICOLON_STYLE" value="true" />
+      <option name="REFORMAT_C_STYLE_COMMENTS" value="true" />
       <option name="USE_DOUBLE_QUOTES" value="false" />
       <option name="VAR_DECLARATION_WRAP" value="2" />
       <option name="OBJECT_LITERAL_WRAP" value="2" />
@@ -17,7 +18,6 @@
       <option name="SPACES_WITHIN_IMPORTS" value="true" />
       <option name="INDENT_CHAINED_CALLS" value="false" />
       <option name="CHAINED_CALL_DOT_ON_NEW_LINE" value="false" />
-      <option name="IMPORT_SORT_MODULE_NAME" value="true" />
       <option name="IMPORT_PREFER_ABSOLUTE_PATH" value="TRUE" />
     </JSCodeStyleSettings>
     <Python>
@@ -49,7 +49,6 @@
       <option name="RIGHT_MARGIN" value="100" />
       <option name="LINE_COMMENT_ADD_SPACE" value="false" />
       <option name="ALIGN_MULTILINE_PARAMETERS" value="false" />
-      <option name="METHOD_CALL_CHAIN_WRAP" value="1" />
       <option name="IF_BRACE_FORCE" value="1" />
       <option name="DOWHILE_BRACE_FORCE" value="1" />
       <option name="WHILE_BRACE_FORCE" value="1" />
