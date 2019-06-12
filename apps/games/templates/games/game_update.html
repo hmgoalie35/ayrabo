@@ -35,7 +35,7 @@
 
     <div class="row">
       <div class="col-md-offset-1 col-md-10">
-        <form action="" method="post">
+        <form action="" method="post" id="update_game_form">
           {% csrf_token %}
           <div class="row">
             {% crispy form %}
@@ -94,7 +94,7 @@
       var awayTeamRostersSet = {{ game.away_players.exists|booltojson }};
 
       $('.js-modal-continue').click(function () {
-        $('form').submit();
+        $('#update_game_form').submit();
       });
 
       $('#update_game_btn').click(function (e) {
