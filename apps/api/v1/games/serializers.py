@@ -14,11 +14,11 @@ class AbstractGameRosterSerializer(serializers.ModelSerializer):
         if self.player_model_cls is None:  # pragma: no cover
             raise exceptions.ImproperlyConfigured('You need to specify player_model_cls.')
 
-        # This prevents players from other teams, divisions, leagues from being added to the roster. If this serializer
-        # isn't used to add players, it is possible the player will be successfully added but the api endpoint won't
-        # include that player.
-        qs = self.player_model_cls.objects.active().select_related('user')
         if instance:
+            # This prevents players from other teams, divisions, leagues from being added to the roster. If this
+            # serializer isn't used to add players, it is possible the player will be successfully added but the api
+            # endpoint won't include that player.
+            qs = self.player_model_cls.objects.active().select_related('user')
             home_players = qs.filter(team=instance.home_team)
             away_players = qs.filter(team=instance.away_team)
         else:
