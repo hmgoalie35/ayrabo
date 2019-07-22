@@ -2,9 +2,9 @@ import datetime
 
 import pytz
 
+from ayrabo.utils.testing import BaseAPITestCase
 from common.tests import GenericChoiceFactory
 from divisions.tests import DivisionFactory
-from ayrabo.utils.testing import BaseAPITestCase
 from games.tests import HockeyGameFactory
 from leagues.tests import LeagueFactory
 from players.tests import HockeyPlayerFactory
@@ -62,3 +62,10 @@ class AbstractGameRosterSerializerTests(BaseAPITestCase):
     def test_away_players_qs(self):
         qs = self.serializer.fields['away_players'].child_relation.queryset
         self.assertListEqual(list(qs.values_list('id', flat=True)), [10, 9, 8, 7, 6])
+
+    def test_instance_not_included(self):
+        serializer = self.serializer_class()
+        home_players = serializer.fields['home_players'].child_relation.queryset
+        away_players = serializer.fields['away_players'].child_relation.queryset
+        self.assertListEqual(list(home_players), [])
+        self.assertListEqual(list(away_players), [])
