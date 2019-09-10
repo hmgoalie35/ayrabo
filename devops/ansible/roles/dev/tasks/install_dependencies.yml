@@ -42,4 +42,3 @@
   with_items:
     - docker-compose==1.21.2
     - PyYAML
-    - virtualenv
