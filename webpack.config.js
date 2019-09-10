@@ -4,7 +4,7 @@ const glob = require('glob');
 
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
-const CleanWebpackPlugin = require('clean-webpack-plugin');
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const BundleTracker = require('webpack-bundle-tracker');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
@@ -109,7 +109,9 @@ module.exports = function (env, argv) {
             {
               loader: 'sass-loader',
               options: {
-                precision: 8
+                sassOptions: {
+                  precision: 8
+                }
               }
             }
           ]
