@@ -47,7 +47,7 @@
     - name: Collect static
       django_manage:
         app_path: "{{ ongoing_deployment }}"
-        command: "collectstatic --noinput -i scss"
+        command: "collectstatic --noinput"
         virtualenv: "{{ venv_path }}"
 
     - name: Run migrations
