@@ -1,6 +1,20 @@
-version: '3.6'
+version: '3.7'
 
 services:
+  ayrabo:
+    build:
+      context: .
+      dockerfile: devops/docker/ayrabo/Dockerfile
+    image: ayrabo/ayrabo
+    env_file:
+      - .env
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/home/ayrabo/src/
+    command: python manage.py runserver 0.0.0.0:8000
+    depends_on:
+      - postgres
   postgres:
     build: devops/docker/postgres
     image: ayrabo/postgres
