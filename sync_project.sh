@@ -16,15 +16,13 @@ if [ ! -e venv ]; then
 fi
 
 print_step "Installing pip packages"
-source venv/bin/activate
-pip install -r requirements.txt
+source venv/bin/activate && pip install -U pip && pip install -r requirements.txt
 
 print_step "Installing npm packages"
 npm install
 
 print_step "Starting postgres service"
-
-docker-compose build --pull && docker-compose up -d
+docker-compose build --pull --parallel && docker-compose up -d
 
 print_step "Running migrations"
 python manage.py migrate

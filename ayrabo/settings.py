@@ -17,8 +17,7 @@ def create_dir(directory):
 
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-SETTINGS_DIR = os.path.dirname(os.path.abspath(__file__))
-BASE_DIR = os.path.dirname(os.path.dirname(SETTINGS_DIR))
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 NODE_MODULES_DIR = os.path.join(BASE_DIR, 'node_modules')
 APPS_DIR = os.path.join(BASE_DIR, 'apps')
 TEMPLATES_DIR = os.path.join(BASE_DIR, 'templates')

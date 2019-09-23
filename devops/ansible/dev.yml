@@ -1,6 +1,0 @@
-- name: Set up a local development environment
-  hosts: local
-  connection: local
-
-  roles:
-    - dev

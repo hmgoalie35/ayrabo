@@ -1,5 +1,0 @@
-- block:
-  - import_tasks: install_dependencies.yml
-    become: yes
-  - import_tasks: install_project.yml
-  when: "ansible_system == 'Linux'"
