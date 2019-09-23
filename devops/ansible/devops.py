@@ -5,12 +5,25 @@ import datetime
 import os
 import subprocess
 
+
 BASE_COMMAND = ['ansible-playbook']
 VAULT_PASSWORD_FILE = os.path.expanduser('~/ansible-vault.txt')
-SERVER_TYPES = ['dev', 'qa', 'staging', 'prod']
-MODES = ['deploy', 'maintenance', 'provision', 'rollback', 'db_backup', 'db_restore', 'dev']
 ANSIBLE_ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 HOSTS_DIR = os.path.join(ANSIBLE_ROOT_DIR, 'hosts')
+
+DEV = 'dev'
+QA = 'qa'
+STAGING = 'staging'
+PROD = 'prod'
+SERVER_TYPES = [DEV, QA, STAGING, PROD]
+
+DEPLOY = 'deploy'
+MAINTENANCE = 'maintenance'
+PROVISION = 'provision'
+ROLLBACK = 'rollback'
+DB_BACKUP = 'db_backup'
+DB_RESTORE = 'db_restore'
+MODES = [DEPLOY, MAINTENANCE, PROVISION, ROLLBACK, DB_BACKUP, DB_RESTORE]
 
 
 class Devops(object):
@@ -47,10 +60,10 @@ class Devops(object):
         command.append(self.inventory_file)
 
         # Require sudo
-        if self.mode in ['dev', 'provision', 'deploy']:
+        if self.mode in [PROVISION, DEPLOY]:
             command.append('-K')
 
-        if self.mode in ['provision', 'deploy', 'db_backup', 'db_restore']:
+        if self.mode in [PROVISION, DEPLOY, DB_BACKUP, DB_RESTORE]:
             command.append('--vault-password-file')
             command.append(VAULT_PASSWORD_FILE)
             command.append('--extra-vars')
