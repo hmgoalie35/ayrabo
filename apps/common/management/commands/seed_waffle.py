@@ -1,7 +1,7 @@
 from django.core.management import BaseCommand
 from waffle.models import Switch
 
-from common.management.commands.utils import create_object, get_object, print_status
+from common.management.commands._utils import get_or_create, print_status
 
 
 class Command(BaseCommand):
@@ -9,12 +9,8 @@ class Command(BaseCommand):
 
     def make_waffles(self, cls, waffles):
         for waffle in waffles:
-            created = False
             # We are going to use `name` as the unique identifier to make sure duplicates aren't created.
-            obj = get_object(cls, name=waffle.get('name'))
-            if obj is None:
-                obj = create_object(cls, **waffle)
-                created = True
+            obj, created = get_or_create(cls, get_kwargs={'name': waffle.get('name')}, create_kwargs=waffle)
             print_status(self.stdout, obj, created)
 
     def handle(self, *args, **options):

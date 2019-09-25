@@ -1,5 +1,4 @@
 from django.core.exceptions import ValidationError
-from django.db import IntegrityError
 
 
 def get_object(cls, **kwargs):
@@ -17,9 +16,27 @@ def create_object(cls, exclude=None, **kwargs):
         instance.full_clean(exclude=exclude)
         instance.save()
         created = True
-    except (IntegrityError, ValidationError):
-        instance = get_object(cls, **kwargs)
+    except ValidationError as e:
+        print(e)
+        instance = None
     return instance, created
+
+
+def get_or_create(cls, get_kwargs, create_kwargs, exclude=None):
+    exclude = exclude or []
+    created = False
+    try:
+        obj = cls.objects.get(**get_kwargs)
+    except cls.DoesNotExist:
+        obj = cls(**create_kwargs)
+        created = True
+
+    if created:
+        # This can throw ValidationError
+        obj.full_clean(exclude=exclude)
+        obj.save()
+
+    return obj, created
 
 
 def print_status(stdout, obj, created=False, updated=False):
@@ -29,4 +46,4 @@ def print_status(stdout, obj, created=False, updated=False):
         status = 'Updated'
     else:
         status = 'Skipped'
-    stdout.write('{} {}'.format(status, obj))
+    stdout.write(f'{status} {obj}')

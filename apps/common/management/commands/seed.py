@@ -1,21 +1,18 @@
+from django.contrib.contenttypes.models import ContentType
 from django.contrib.sites.models import Site
 from django.core.management import call_command
 from django.core.management.base import BaseCommand
-from django.db import IntegrityError
 from django.db.models import Q
 
+from common.management.commands._utils import get_or_create, print_status
 from common.management.seed_data.data import GENERIC_CHOICES, GENERIC_PENALTY_CHOICES, SPORTS
 from common.models import GenericChoice
 from penalties.models import GenericPenaltyChoice
 from sports.models import Sport
-from common.management.commands.utils import create_object
 
 
 class Command(BaseCommand):
     help = 'Top level seed command that calls other seed commands. Seeds initial data for the site.'
-
-    def print_status(self, obj, created):
-        self.stdout.write('{} {}'.format('Created' if created else 'Skipped', obj))
 
     def handle(self, *args, **options):
         site_domain = 'ayrabo.com'
@@ -33,38 +30,47 @@ class Command(BaseCommand):
 
         self.stdout.write('Seeding sports...')
         sports = []
-        for sport in SPORTS:
-            obj, created = create_object(Sport, exclude=['slug'], name=sport)
+        for sport_name in SPORTS:
+            kwargs = {'name': sport_name}
+            obj, created = get_or_create(Sport, get_kwargs=kwargs, create_kwargs=kwargs, exclude=['slug'])
             sports.append(obj)
-            self.print_status(obj, created)
+            print_status(self.stdout, obj, created)
         self.stdout.write('\n')
 
         self.stdout.write('Seeding generic sport choices...')
         for sport in sports:
             choices = GENERIC_CHOICES.get(sport.name, [])
             for choice in choices:
-                choice.update({'content_object': sport})
-                try:
-                    obj = GenericChoice.objects.create(**choice)
-                    created = True
-                except IntegrityError:
-                    obj = choice.get('long_value')
-                    created = False
-                self.print_status(obj, created)
+                create_kwargs = choice.copy()
+                create_kwargs.update({'content_object': sport})
+                obj, created = get_or_create(
+                    GenericChoice,
+                    get_kwargs={
+                        'short_value': choice.get('short_value'),
+                        'content_type': ContentType.objects.get_for_model(sport),
+                        'object_id': sport.id
+                    },
+                    create_kwargs=create_kwargs
+                )
+                print_status(self.stdout, obj, created)
         self.stdout.write('\n')
 
         self.stdout.write('Seeding generic penalty choices...')
         for sport in sports:
             choices = GENERIC_PENALTY_CHOICES.get(sport.name, [])
             for choice in choices:
-                choice.update({'content_object': sport})
-                try:
-                    obj = GenericPenaltyChoice.objects.create(**choice)
-                    created = True
-                except IntegrityError:
-                    obj = choice.get('name')
-                    created = False
-                self.print_status(obj, created)
+                create_kwargs = choice.copy()
+                create_kwargs.update({'content_object': sport})
+                obj, created = get_or_create(
+                    GenericPenaltyChoice,
+                    get_kwargs={
+                        'name': choice.get('name'),
+                        'content_type': ContentType.objects.get_for_model(sport),
+                        'object_id': sport.id
+                    },
+                    create_kwargs=create_kwargs
+                )
+                print_status(self.stdout, obj, created)
         self.stdout.write('\n')
 
         self.stdout.write('Seeding waffle switches, flags, samples...')
