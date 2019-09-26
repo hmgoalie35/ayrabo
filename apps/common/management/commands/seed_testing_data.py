@@ -221,6 +221,7 @@ class Command(BaseCommand):
         return games
 
     def create_game(self, **kwargs):
+        # Using get kwargs won't really work because start and end dates are randomly chosen
         game, _ = get_or_create(
             HockeyGame,
             get_kwargs={'home_team': None},  # Workaround to always create games since home team is never null
@@ -269,12 +270,10 @@ class Command(BaseCommand):
                 self.stdout.write(f'Creating data for {season}')
                 self.stdout.write(f'  Adding teams to {season}')
                 season.teams.add(*teams)
-                if season.hockeygames.exists():
-                    self.stdout.write(f'    Games already exist for {season}, skipping')
-                    continue
                 self.stdout.write(f'    Creating games for {season}')
                 # We could generate a new tz for each game but having one tz for all games in a season is fine also
                 tz = faker.random_element(settings.TIMEZONES)
+                # Creating of games is not idempotent, new games will be created on subsequent runs of this command
                 games = self.create_games(matchups, point_value, game_type, tz, season, locations)
                 self.stdout.write(f'      Created {len(games)} games')
 
