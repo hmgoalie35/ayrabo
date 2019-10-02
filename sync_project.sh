@@ -21,8 +21,11 @@ source venv/bin/activate && pip install -U pip && pip install -r requirements.tx
 print_step "Installing npm packages"
 npm install
 
-print_step "Starting postgres service"
+print_step "Starting postgres docker container"
 docker-compose build --pull --parallel && docker-compose up -d
+
+print_step "Waiting for postgres docker container to start"
+sleep 4
 
 print_step "Running migrations"
 python manage.py migrate
