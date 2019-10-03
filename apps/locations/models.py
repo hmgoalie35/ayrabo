@@ -9,6 +9,7 @@ from localflavor.us.us_states import US_STATES
 from ayrabo.utils.model_fields import WebsiteField
 from common.models import TimestampedModel
 
+
 PHONE_NUMBER_REGEX = re.compile(r'^\(?[2-9]\d{2}\)? \d{3}-\d{4}$')
 
 
@@ -21,10 +22,11 @@ class Location(TimestampedModel):
     # Didn't use localflavor's USStateField because only wanted the 50 U.S. states
     state = models.CharField(max_length=2, choices=US_STATES, verbose_name='State')
     zip_code = us_models.USZipCodeField(verbose_name='Zip Code')
-    phone_number = models.CharField(max_length=255, verbose_name='Phone Number',
-                                    validators=[
-                                        RegexValidator(regex=PHONE_NUMBER_REGEX, message='Enter a valid phone number.',
-                                                       code='invalid')])
+    phone_number = models.CharField(
+        max_length=255,
+        verbose_name='Phone Number',
+        validators=[RegexValidator(regex=PHONE_NUMBER_REGEX, message='Enter a valid phone number.', code='invalid')]
+    )
     website = WebsiteField()
 
     def clean(self):
