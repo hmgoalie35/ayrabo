@@ -2,6 +2,7 @@ from django.urls import reverse
 
 from ayrabo.utils.testing import BaseTestCase
 from ayrabo.utils.urls import url_with_query_string
+from coaches.models import Coach
 from coaches.tests import CoachFactory
 from common.tests import WaffleSwitchFactory
 from divisions.tests import DivisionFactory
@@ -26,7 +27,7 @@ class CoachesUpdateViewTests(BaseTestCase):
         SportRegistrationFactory(user=self.user, sport=self.ice_hockey, role='coach')
 
         self.post_data = {
-            'position': 'head_coach'
+            'position': Coach.HEAD_COACH
         }
         self.coach = CoachFactory(user=self.user, team=self.team, **self.post_data)
         self.coach_url = self.format_url(slug='ice-hockey', coach_pk=self.coach.pk)
@@ -70,11 +71,11 @@ class CoachesUpdateViewTests(BaseTestCase):
 
     # POST
     def test_post(self):
-        self.post_data.update({'position': 'assistant_coach'})
+        self.post_data.update({'position': Coach.ASSISTANT_COACH})
         response = self.client.post(self.coach_url, data=self.post_data, follow=True)
         self.assertHasMessage(response, 'Your coach information has been updated.')
         self.coach.refresh_from_db()
-        self.assertEqual(self.coach.position, 'assistant_coach')
+        self.assertEqual(self.coach.position, Coach.ASSISTANT_COACH)
         url = url_with_query_string(reverse('sports:dashboard', kwargs={'slug': self.ice_hockey.slug}), tab='coach')
         self.assertRedirects(response, url)
 
@@ -82,7 +83,7 @@ class CoachesUpdateViewTests(BaseTestCase):
         response = self.client.post(self.coach_url, data=self.post_data, follow=True)
         self.assertNoMessage(response, 'Your coach information has been updated.')
         self.coach.refresh_from_db()
-        self.assertEqual(self.coach.position, 'head_coach')
+        self.assertEqual(self.coach.position, Coach.HEAD_COACH)
         url = url_with_query_string(reverse('sports:dashboard', kwargs={'slug': self.ice_hockey.slug}), tab='coach')
         self.assertRedirects(response, url)
 

@@ -11,12 +11,12 @@ class Coach(TimestampedModel):
     is for a different team.
     TLDR; A user can be a coach for multiple teams and a new coach object is created for each team.
     """
-    HEAD_COACH = 'Head Coach'
-    ASSISTANT_COACH = 'Assistant Coach'
+    HEAD_COACH = 'head_coach'
+    ASSISTANT_COACH = 'assistant_coach'
 
     POSITIONS = (
-        ('head_coach', HEAD_COACH),
-        ('assistant_coach', ASSISTANT_COACH)
+        (HEAD_COACH, 'Head Coach'),
+        (ASSISTANT_COACH, 'Assistant Coach'),
     )
 
     user = models.ForeignKey('users.User', related_name='coaches', on_delete=models.PROTECT)
