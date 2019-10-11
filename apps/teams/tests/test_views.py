@@ -5,6 +5,7 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from django.urls import reverse
 
 from ayrabo.utils.testing import BaseTestCase
+from common.models import GenericChoice
 from common.tests import GenericChoiceFactory
 from divisions.tests import DivisionFactory
 from games.tests import HockeyGameFactory
@@ -81,9 +82,9 @@ class TeamDetailScheduleViewTests(BaseTestCase):
         self.past_season, self.current_season, self.future_season = self.create_past_current_future_seasons(
             league=self.liahl)
 
-        self.game_type = GenericChoiceFactory(short_value='exhibition', long_value='Exhibition', type='game_type',
-                                              content_object=self.ice_hockey)
-        self.point_value = GenericChoiceFactory(short_value='2', long_value='2', type='game_point_value',
+        self.game_type = GenericChoiceFactory(short_value='exhibition', long_value='Exhibition',
+                                              type=GenericChoice.GAME_TYPE, content_object=self.ice_hockey)
+        self.point_value = GenericChoiceFactory(short_value='2', long_value='2', type=GenericChoice.GAME_POINT_VALUE,
                                                 content_object=self.ice_hockey)
         self.game1 = self._create_game(self.icecats_mm_aa, self.edge_mm_aa, self.current_season)
         self.game2 = self._create_game(self.icecats_mm_aa, self.rebels_mm_aa, self.current_season)

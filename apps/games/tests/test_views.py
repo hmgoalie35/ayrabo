@@ -8,6 +8,7 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from django.urls import reverse
 
 from ayrabo.utils.testing import BaseTestCase
+from common.models import GenericChoice
 from common.tests import GenericChoiceFactory
 from divisions.tests import DivisionFactory
 from games.forms import DATETIME_INPUT_FORMAT
@@ -41,9 +42,9 @@ class HockeyGameCreateViewTests(BaseTestCase):
         self.t3 = TeamFactory(id=3, division=self.mm_aa)
         self.t4 = TeamFactory(id=4, division=self.mm_aa)
 
-        self.game_type = GenericChoiceFactory(id=1, short_value='exhibition', long_value='Exhibition', type='game_type',
-                                              content_object=self.ice_hockey)
-        self.point_value = GenericChoiceFactory(id=2, short_value='2', long_value='2', type='game_point_value',
+        self.game_type = GenericChoiceFactory(id=1, short_value='exhibition', long_value='Exhibition',
+                                              type=GenericChoice.GAME_TYPE, content_object=self.ice_hockey)
+        self.point_value = GenericChoiceFactory(id=2, short_value='2', long_value='2', type=GenericChoice.GAME_POINT_VALUE,
                                                 content_object=self.ice_hockey)
 
         self.user, self.sport_registrations, self.manager = self._create_user(self.ice_hockey, self.t1, ['manager'],
@@ -240,9 +241,9 @@ class HockeyGameUpdateViewTests(BaseTestCase):
         self.t2 = TeamFactory(id=2, division=self.mm_aa)
         self.t3 = TeamFactory(id=3, division=self.mm_aa)
 
-        self.game_type = GenericChoiceFactory(short_value='exhibition', long_value='Exhibition', type='game_type',
-                                              content_object=self.ice_hockey)
-        self.point_value = GenericChoiceFactory(short_value='2', long_value='2', type='game_point_value',
+        self.game_type = GenericChoiceFactory(short_value='exhibition', long_value='Exhibition',
+                                              type=GenericChoice.GAME_TYPE, content_object=self.ice_hockey)
+        self.point_value = GenericChoiceFactory(short_value='2', long_value='2', type=GenericChoice.GAME_POINT_VALUE,
                                                 content_object=self.ice_hockey)
 
         self.user, self.sport_registrations, self.manager = self._create_user(self.ice_hockey, self.t1, ['manager'],
@@ -434,9 +435,9 @@ class GameRostersUpdateViewTests(BaseTestCase):
         self.t1 = TeamFactory(id=1, name='Green Machine IceCats', division=self.mm_aa)
         self.t2 = TeamFactory(id=2, name='Aviator Gulls', division=self.mm_aa)
 
-        self.game_type = GenericChoiceFactory(short_value='exhibition', long_value='Exhibition', type='game_type',
-                                              content_object=self.ice_hockey)
-        self.point_value = GenericChoiceFactory(short_value='2', long_value='2', type='game_point_value',
+        self.game_type = GenericChoiceFactory(short_value='exhibition', long_value='Exhibition',
+                                              type=GenericChoice.GAME_TYPE, content_object=self.ice_hockey)
+        self.point_value = GenericChoiceFactory(short_value='2', long_value='2', type=GenericChoice.GAME_POINT_VALUE,
                                                 content_object=self.ice_hockey)
 
         timezone = 'US/Eastern'
@@ -563,8 +564,8 @@ class BulkUploadHockeyGamesViewTests(BaseTestCase):
         TeamFactory(id=35, division=division)
         TeamFactory(id=31, division=division)
         GenericChoiceFactory(id=2, content_object=sport, short_value='exhibition', long_value='Exhibition',
-                             type='game_type')
-        GenericChoiceFactory(id=7, content_object=sport, short_value='2', long_value='2', type='game_point_value')
+                             type=GenericChoice.GAME_TYPE)
+        GenericChoiceFactory(id=7, content_object=sport, short_value='2', long_value='2', type=GenericChoice.GAME_POINT_VALUE)
         LocationFactory(id=11)
         SeasonFactory(id=10, league=league, start_date=datetime.date(month=8, day=15, year=2017))
 

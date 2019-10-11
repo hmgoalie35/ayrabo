@@ -2,8 +2,9 @@ import datetime
 
 from django.db import IntegrityError
 
-from common.tests import GenericChoiceFactory
 from ayrabo.utils.testing import BaseTestCase
+from common.models import GenericChoice
+from common.tests import GenericChoiceFactory
 from games.tests import HockeyGameFactory
 from penalties.tests import GenericPenaltyChoiceFactory, HockeyPenaltyFactory
 from periods.tests import HockeyPeriodFactory
@@ -34,11 +35,11 @@ class HockeyPenaltyModelTests(BaseTestCase):
         point_value = GenericChoiceFactory(content_object=sport,
                                            short_value='1',
                                            long_value='1',
-                                           type='game_point_value')
+                                           type=GenericChoice.GAME_POINT_VALUE)
         game_type = GenericChoiceFactory(content_object=sport,
                                          short_value='exhibition',
                                          long_value='Exhibition',
-                                         type='game_type')
+                                         type=GenericChoice.GAME_TYPE)
         player = HockeyPlayerFactory(user__first_name='Michael', user__last_name='Scott')
         game = HockeyGameFactory(point_value=point_value, type=game_type)
         period = HockeyPeriodFactory(game=game, name='1')

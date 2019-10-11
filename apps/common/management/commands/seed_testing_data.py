@@ -258,8 +258,8 @@ class Command(BaseCommand):
                 self.create_players(users, sport, team)
 
         choices = GenericChoice.objects.get_choices(instance=sport)
-        point_value = choices.filter(short_value=2, type='game_point_value').first()
-        game_type = choices.filter(type='game_type').get(short_value='league')
+        point_value = choices.filter(short_value=2, type=GenericChoice.GAME_POINT_VALUE).first()
+        game_type = choices.filter(type=GenericChoice.GAME_TYPE).get(short_value='league')
 
         for division_name, config in liahl_divisions.items():
             division = Division.objects.prefetch_related('teams').get(name=division_name, league=league)

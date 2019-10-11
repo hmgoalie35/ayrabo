@@ -7,6 +7,7 @@ from easy_thumbnails.signals import saved_file
 
 from .managers import GenericChoiceManager
 
+
 saved_file.connect(generate_aliases_global)
 
 
@@ -31,9 +32,11 @@ class GenericChoice(TimestampedModel):
     normally have a CharField w/ choices should have a FK to `GenericChoice`.
 
     """
+    GAME_TYPE = 'game_type'
+    GAME_POINT_VALUE = 'game_point_value'
     TYPE_CHOICES = (
-        ('game_type', 'Game Type'),
-        ('game_point_value', 'Game Point Value'),
+        (GAME_TYPE, 'Game Type'),
+        (GAME_POINT_VALUE, 'Game Point Value'),
     )
     content_type = models.ForeignKey(ContentType, verbose_name='Content Type', on_delete=models.PROTECT)
     object_id = models.PositiveIntegerField(verbose_name='Object Id')

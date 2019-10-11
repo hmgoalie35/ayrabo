@@ -1,6 +1,6 @@
 from crispy_forms.bootstrap import PrependedText
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Layout, Div
+from crispy_forms.layout import Div, Layout
 from django import forms
 from django.core.exceptions import ValidationError
 from django.forms import widgets
@@ -8,9 +8,11 @@ from django.utils import timezone
 
 from ayrabo.utils.form_fields import SeasonModelChoiceField, TeamModelChoiceField
 from ayrabo.utils.mixins import DisableFormFieldsMixin
+from common.models import GenericChoice
 from games.models import HockeyGame
 from seasons.models import Season
 from teams.models import Team
+
 
 DATETIME_INPUT_FORMAT = '%m/%d/%Y %I:%M %p'
 
@@ -60,8 +62,8 @@ class AbstractGameCreateUpdateForm(forms.ModelForm):
 
         GenericChoiceModel = self.fields['type'].queryset.model
         choices = GenericChoiceModel.objects.get_choices(instance=sport).order_by('long_value')
-        self.fields['type'].queryset = choices.filter(type='game_type')
-        self.fields['point_value'].queryset = choices.filter(type='game_point_value')
+        self.fields['type'].queryset = choices.filter(type=GenericChoice.GAME_TYPE)
+        self.fields['point_value'].queryset = choices.filter(type=GenericChoice.GAME_POINT_VALUE)
 
         SeasonModel = self.fields['season'].queryset.model
         self.fields['season'].queryset = SeasonModel.objects.select_related('league').filter(league=league)

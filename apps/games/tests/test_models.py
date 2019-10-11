@@ -4,8 +4,9 @@ import pytz
 from django.core.exceptions import ValidationError
 from django.utils import timezone
 
-from common.tests import GenericChoiceFactory
 from ayrabo.utils.testing import BaseTestCase
+from common.models import GenericChoice
+from common.tests import GenericChoiceFactory
 from games.tests import HockeyGameFactory, HockeyGoalFactory
 from periods.models import HockeyPeriod
 from periods.tests import HockeyPeriodFactory
@@ -24,11 +25,11 @@ class AbstractGameModelTests(BaseTestCase):
         self.point_value = GenericChoiceFactory(content_object=self.sport,
                                                 short_value='1',
                                                 long_value='1',
-                                                type='game_point_value')
+                                                type=GenericChoice.GAME_POINT_VALUE)
         self.game_type = GenericChoiceFactory(content_object=self.sport,
                                               short_value='exhibition',
                                               long_value='Exhibition',
-                                              type='game_type')
+                                              type=GenericChoice.GAME_TYPE)
         self.tz_name = 'US/Eastern'
         self.home_team = TeamFactory(name='New York Islanders')
         self.away_team = TeamFactory(name='New York Rangers', division=self.home_team.division)
@@ -105,11 +106,11 @@ class HockeyGoalModelTests(BaseTestCase):
         self.point_value = GenericChoiceFactory(content_object=self.sport,
                                                 short_value='1',
                                                 long_value='1',
-                                                type='game_point_value')
+                                                type=GenericChoice.GAME_POINT_VALUE)
         self.game_type = GenericChoiceFactory(content_object=self.sport,
                                               short_value='exhibition',
                                               long_value='Exhibition',
-                                              type='game_type')
+                                              type=GenericChoice.GAME_TYPE)
         home_team = TeamFactory(name='New York Islanders')
         away_team = TeamFactory(name='New York Rangers', division=home_team.division)
         self.start = pytz.utc.localize(datetime.datetime(year=2017, month=12, day=16, hour=19))

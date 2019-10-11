@@ -3,9 +3,10 @@ import datetime
 import pytz
 from django.utils import timezone
 
+from ayrabo.utils.testing import BaseTestCase
+from common.models import GenericChoice
 from common.tests import GenericChoiceFactory
 from divisions.tests import DivisionFactory
-from ayrabo.utils.testing import BaseTestCase
 from games.forms import HockeyGameCreateForm
 from leagues.tests import LeagueFactory
 from seasons.tests import SeasonFactory
@@ -33,9 +34,9 @@ class AbstractGameCreateFormTests(BaseTestCase):
         self.squirt = DivisionFactory(name='Squirt', league=self.liahl)
         self.squirt_teams = TeamFactory.create_batch(3, division=self.squirt)
 
-        GenericChoiceFactory(id=1, short_value='exhibition', long_value='Exhibition', type='game_type',
-                             content_object=self.ice_hockey)
-        GenericChoiceFactory(id=2, short_value='2', long_value='2', type='game_point_value',
+        GenericChoiceFactory(id=1, short_value='exhibition', long_value='Exhibition',
+                             type=GenericChoice.GAME_TYPE, content_object=self.ice_hockey)
+        GenericChoiceFactory(id=2, short_value='2', long_value='2', type=GenericChoice.GAME_POINT_VALUE,
                              content_object=self.ice_hockey)
 
     def test_teams_filtered_by_division(self):
