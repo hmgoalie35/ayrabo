@@ -79,7 +79,7 @@ class User(AbstractUser):
         result = {}
         roles = [sr.role for sr in sport_registrations]
         content_type = ContentType.objects.get_for_model(Organization)
-        permissions = self.permissions.filter(name='admin', content_type=content_type)
+        permissions = self.permissions.filter(name=Permission.ADMIN, content_type=content_type)
         organizations = [perm.content_object for perm in permissions]
         organizations_for_sport = [o for o in organizations if o.sport_id == sport.id]
         if len(organizations_for_sport) > 0:

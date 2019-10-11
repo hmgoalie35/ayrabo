@@ -18,6 +18,7 @@ from scorekeepers.tests import ScorekeeperFactory
 from sports.models import SportRegistration
 from sports.tests import SportFactory, SportRegistrationFactory
 from teams.tests import TeamFactory
+from users.models import Permission
 from users.tests import PermissionFactory, UserFactory
 
 
@@ -25,11 +26,11 @@ class PermissionModelTests(BaseTestCase):
     def setUp(self):
         self.user = UserFactory(email='user@ayrabo.com')
         self.team = TeamFactory(name='Long Beach Sharks')
-        self.permission = PermissionFactory(user=self.user, name='admin', content_object=self.team)
+        self.permission = PermissionFactory(user=self.user, name=Permission.ADMIN, content_object=self.team)
 
     def test_unique_together(self):
         with self.assertRaises(IntegrityError):
-            PermissionFactory(user=self.user, name='admin', content_object=self.team)
+            PermissionFactory(user=self.user, name=Permission.ADMIN, content_object=self.team)
 
     def test_to_string(self):
         self.assertEqual(str(self.permission), '<user@ayrabo.com> team admin')
@@ -54,11 +55,11 @@ class UserModelTests(BaseTestCase):
         self.organization = OrganizationFactory(name='Long Beach Sharks', sport=self.ice_hockey)
 
     def test_has_object_permission_true(self):
-        PermissionFactory(user=self.user, name='admin', content_object=self.organization)
-        self.assertTrue(self.user.has_object_permission('admin', self.organization))
+        PermissionFactory(user=self.user, name=Permission.ADMIN, content_object=self.organization)
+        self.assertTrue(self.user.has_object_permission(Permission.ADMIN, self.organization))
 
     def test_has_object_permission_false(self):
-        self.assertFalse(self.user.has_object_permission('admin', self.organization))
+        self.assertFalse(self.user.has_object_permission(Permission.ADMIN, self.organization))
 
     def test_get_sport_registrations(self):
         # New type of sport registrations
@@ -112,7 +113,7 @@ class UserModelTests(BaseTestCase):
         sr3 = SportRegistrationFactory(user=self.user, sport=self.ice_hockey, role=SportRegistration.REFEREE)
         sr4 = SportRegistrationFactory(user=self.user, sport=self.ice_hockey, role=SportRegistration.MANAGER)
         sr5 = SportRegistrationFactory(user=self.user, sport=self.ice_hockey, role=SportRegistration.SCOREKEEPER)
-        PermissionFactory(user=self.user, name='admin', content_object=self.organization)
+        PermissionFactory(user=self.user, name=Permission.ADMIN, content_object=self.organization)
 
         result = self.user.get_roles(self.ice_hockey, [sr1, sr2, sr3, sr4, sr5])
 

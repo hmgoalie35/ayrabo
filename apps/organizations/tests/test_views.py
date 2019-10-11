@@ -4,6 +4,7 @@ from leagues.tests import LeagueFactory
 from organizations.tests import OrganizationFactory
 from sports.tests import SportFactory, SportRegistrationFactory
 from teams.tests import TeamFactory
+from users.models import Permission
 from users.tests import PermissionFactory, UserFactory
 
 
@@ -35,9 +36,9 @@ class OrganizationDetailViewTests(BaseTestCase):
         self.assert_404(response)
 
     def test_get(self):
-        PermissionFactory(user=self.user, name='admin', content_object=self.organization)
+        PermissionFactory(user=self.user, name=Permission.ADMIN, content_object=self.organization)
         user2 = UserFactory()
-        PermissionFactory(user=user2, name='admin', content_object=self.organization)
+        PermissionFactory(user=user2, name=Permission.ADMIN, content_object=self.organization)
         response = self.client.get(self.format_url(pk=self.organization.pk))
 
         self.assert_200(response)
