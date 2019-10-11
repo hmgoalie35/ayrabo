@@ -11,6 +11,7 @@ from managers.models import Manager
 from organizations.models import Organization
 from referees.models import Referee
 from scorekeepers.models import Scorekeeper
+from sports.models import SportRegistration
 from users.managers import PermissionManager
 
 
@@ -78,7 +79,7 @@ class User(AbstractUser):
         result = {}
         roles = [sr.role for sr in sport_registrations]
         content_type = ContentType.objects.get_for_model(Organization)
-        permissions = self.permissions.filter(name='admin', content_type=content_type)
+        permissions = self.permissions.filter(name=Permission.ADMIN, content_type=content_type)
         organizations = [perm.content_object for perm in permissions]
         organizations_for_sport = [o for o in organizations if o.sport_id == sport.id]
         if len(organizations_for_sport) > 0:
@@ -90,15 +91,15 @@ class User(AbstractUser):
         return result
 
     def get_objects_for_role(self, sport, role, qs=None):
-        if role == 'player':
+        if role == SportRegistration.PLAYER:
             return self.get_players(sport)
-        if role == 'coach':
+        if role == SportRegistration.COACH:
             return self.get_coaches(sport)
-        if role == 'referee':
+        if role == SportRegistration.REFEREE:
             return self.get_referees(sport)
-        if role == 'manager':
+        if role == SportRegistration.MANAGER:
             return self.get_managers(sport)
-        if role == 'scorekeeper':
+        if role == SportRegistration.SCOREKEEPER:
             return self.get_scorekeepers(sport)
         if role == 'organization':
             return self.get_organizations(sport, qs)
@@ -142,8 +143,9 @@ class User(AbstractUser):
 
 
 class Permission(TimestampedModel):
+    ADMIN = 'admin'
     PERMISSION_CHOICES = (
-        ('admin', 'Admin'),
+        (ADMIN, 'Admin'),
     )
     user = models.ForeignKey('users.User', verbose_name='User', related_name='permissions', on_delete=models.PROTECT)
     name = models.CharField(max_length=255, choices=PERMISSION_CHOICES, verbose_name='Name', db_index=True)

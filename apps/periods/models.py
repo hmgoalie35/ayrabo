@@ -19,21 +19,35 @@ class HockeyPeriod(AbstractPlayingPeriod):
     Represents a period for hockey.
     """
     # 10 overtimes is ridiculous, but ya never know...
+    ONE = '1'
+    TWO = '2'
+    THREE = '3'
+    OT1 = 'ot1'
+    OT2 = 'ot2'
+    OT3 = 'ot3'
+    OT4 = 'ot4'
+    OT5 = 'ot5'
+    OT6 = 'ot6'
+    OT7 = 'ot7'
+    OT8 = 'ot8'
+    OT9 = 'ot9'
+    OT10 = 'ot10'
+    SHOOTOUT = 'so'
     PERIOD_CHOICES = (
-        ('1', '1st'),
-        ('2', '2nd'),
-        ('3', '3rd'),
-        ('ot1', 'Overtime 1'),
-        ('ot2', 'Overtime 2'),
-        ('ot3', 'Overtime 3'),
-        ('ot4', 'Overtime 4'),
-        ('ot5', 'Overtime 5'),
-        ('ot6', 'Overtime 6'),
-        ('ot7', 'Overtime 7'),
-        ('ot8', 'Overtime 8'),
-        ('ot9', 'Overtime 9'),
-        ('ot10', 'Overtime 10'),
-        ('so', 'Shootout'),
+        (ONE, '1st'),
+        (TWO, '2nd'),
+        (THREE, '3rd'),
+        (OT1, 'Overtime 1'),
+        (OT2, 'Overtime 2'),
+        (OT3, 'Overtime 3'),
+        (OT4, 'Overtime 4'),
+        (OT5, 'Overtime 5'),
+        (OT6, 'Overtime 6'),
+        (OT7, 'Overtime 7'),
+        (OT8, 'Overtime 8'),
+        (OT9, 'Overtime 9'),
+        (OT10, 'Overtime 10'),
+        (SHOOTOUT, 'Shootout'),
     )
 
     game = models.ForeignKey('games.HockeyGame', verbose_name='Game', on_delete=models.PROTECT, related_name='periods')

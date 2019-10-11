@@ -20,7 +20,7 @@ class UserProfileCreateViewTests(BaseTestCase):
         self.ice_hockey = SportFactory(name='Ice Hockey')
         self.baseball = SportFactory(name='Baseball')
         self.post_data = {
-            'user_profile-gender': 'male',
+            'user_profile-gender': UserProfile.MALE,
             'user_profile-birthday': date(year=2012, month=2, day=2),
             'user_profile-height': '5\' 4"',
             'user_profile-weight': 100,

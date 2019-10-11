@@ -3,11 +3,13 @@ from django.contrib import admin
 from django.utils import timezone
 
 from ayrabo.utils.form_fields import SeasonModelChoiceField, TeamModelChoiceField
+from common.models import GenericChoice
 from games.models import HockeyGame
 from seasons.models import Season
 from sports.models import Sport
 from teams.models import Team
-from .models import HockeyGoal, HockeyAssist
+from .models import HockeyAssist, HockeyGoal
+
 
 COMMON_FIELDS = ['home_team', 'away_team', 'type', 'point_value', 'status', 'location', 'start', 'end', 'timezone',
                  'season']
@@ -40,8 +42,8 @@ class AbstractGameAdminForm(forms.ModelForm):
 
         GenericChoiceModel = self.fields['type'].queryset.model
         choices = GenericChoiceModel.objects.get_choices(instance=sport)
-        self.fields['type'].queryset = choices.filter(type='game_type')
-        self.fields['point_value'].queryset = choices.filter(type='game_point_value')
+        self.fields['type'].queryset = choices.filter(type=GenericChoice.GAME_TYPE)
+        self.fields['point_value'].queryset = choices.filter(type=GenericChoice.GAME_POINT_VALUE)
 
         SeasonModel = self.fields['season'].queryset.model
         self.fields['season'].queryset = SeasonModel.objects.select_related('league').filter(league__sport=sport)

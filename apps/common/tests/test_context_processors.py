@@ -1,4 +1,5 @@
 from ayrabo.utils.testing import BaseTestCase
+from sports.models import SportRegistration
 from sports.tests import SportFactory, SportRegistrationFactory
 from users.tests import UserFactory
 
@@ -23,11 +24,11 @@ class ContextProcessorTests(BaseTestCase):
         user = UserFactory()
         ice_hockey = SportFactory(name='Ice Hockey')
         baseball = SportFactory(name='Baseball')
-        SportRegistrationFactory(user=user, role='coach', sport=ice_hockey)
-        SportRegistrationFactory(user=user, role='player', sport=ice_hockey)
-        SportRegistrationFactory(user=user, role='manager', sport=ice_hockey)
-        SportRegistrationFactory(user=user, role='player', sport=baseball)
-        SportRegistrationFactory(user=user, role='referee', sport=baseball)
+        SportRegistrationFactory(user=user, role=SportRegistration.COACH, sport=ice_hockey)
+        SportRegistrationFactory(user=user, role=SportRegistration.PLAYER, sport=ice_hockey)
+        SportRegistrationFactory(user=user, role=SportRegistration.MANAGER, sport=ice_hockey)
+        SportRegistrationFactory(user=user, role=SportRegistration.PLAYER, sport=baseball)
+        SportRegistrationFactory(user=user, role=SportRegistration.REFEREE, sport=baseball)
         self.login(user=user)
         response = self.client.get(self.format_url())
         context = response.context

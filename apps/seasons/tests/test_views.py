@@ -8,6 +8,7 @@ from managers.tests import ManagerFactory
 from players.tests import HockeyPlayerFactory
 from seasons.models import HockeySeasonRoster
 from seasons.tests import HockeySeasonRosterFactory, SeasonFactory
+from sports.models import SportRegistration
 from sports.tests import SportFactory, SportRegistrationFactory
 from teams.tests import TeamFactory
 from users.tests import UserFactory
@@ -29,7 +30,7 @@ class SeasonRosterCreateViewTests(BaseTestCase):
         self.password = 'myweakpassword'
         self.user = UserFactory(email=self.email, password=self.password)
 
-        self.hockey_sr = SportRegistrationFactory(user=self.user, sport=self.ice_hockey, role='manager')
+        self.hockey_sr = SportRegistrationFactory(user=self.user, sport=self.ice_hockey, role=SportRegistration.MANAGER)
         self.hockey_manager = ManagerFactory(user=self.user, team=self.icecats)
 
         self.hockey_players = HockeyPlayerFactory.create_batch(5, sport=self.ice_hockey, team=self.icecats)
@@ -50,7 +51,7 @@ class SeasonRosterCreateViewTests(BaseTestCase):
     def test_has_permission_false(self):
         self.client.logout()
         user = UserFactory()
-        SportRegistrationFactory(user=user, sport=self.ice_hockey, role='coach')
+        SportRegistrationFactory(user=user, sport=self.ice_hockey, role=SportRegistration.COACH)
         CoachFactory(user=user, team__division__league__sport=self.ice_hockey)
         self.login(user=user)
         response = self.client.get(self.formatted_url)
@@ -135,7 +136,7 @@ class SeasonRosterUpdateViewTests(BaseTestCase):
         self.icecats = TeamFactory(name='Green Machine IceCats', division=self.mm_aa)
         self.past_season, self.current_season, _ = self.create_past_current_future_seasons(league=self.liahl)
 
-        self.hockey_sr = SportRegistrationFactory(user=self.user, sport=self.ice_hockey, role='manager')
+        self.hockey_sr = SportRegistrationFactory(user=self.user, sport=self.ice_hockey, role=SportRegistration.MANAGER)
         self.hockey_manager = ManagerFactory(user=self.user, team=self.icecats)
 
         self.hockey_players = HockeyPlayerFactory.create_batch(5, sport=self.ice_hockey, team=self.icecats)
@@ -160,7 +161,7 @@ class SeasonRosterUpdateViewTests(BaseTestCase):
     def test_has_permission_false_not_team_manager(self):
         self.client.logout()
         user = UserFactory()
-        SportRegistrationFactory(user=user, sport=self.ice_hockey, role='coach')
+        SportRegistrationFactory(user=user, sport=self.ice_hockey, role=SportRegistration.COACH)
         CoachFactory(user=user, team__division__league__sport=self.ice_hockey)
         ManagerFactory(user=user, team=TeamFactory(division=self.mm_aa))
         self.login(user=user)
@@ -226,7 +227,7 @@ class SeasonRosterUpdateViewTests(BaseTestCase):
 
     def test_post_created_by_doesnt_change(self):
         user = UserFactory(password=self.password)
-        SportRegistrationFactory(user=user, sport=self.ice_hockey, role='manager')
+        SportRegistrationFactory(user=user, sport=self.ice_hockey, role=SportRegistration.MANAGER)
         ManagerFactory(user=user, team=self.icecats)
         self.client.logout()
         self.login(user=user)

@@ -3,8 +3,10 @@ import datetime
 import pytz
 
 from ayrabo.utils.testing import BaseAPITestCase
+from common.models import GenericChoice
 from common.tests import GenericChoiceFactory
 from divisions.tests import DivisionFactory
+from games.models import AbstractGame
 from games.tests import HockeyGameFactory
 from leagues.tests import LeagueFactory
 from players.tests import HockeyPlayerFactory
@@ -36,9 +38,9 @@ class AbstractGameRosterSerializerTests(BaseAPITestCase):
         self.away_players = self._create_players([6, 7, 8, 9, 10], self.away_team, self.ice_hockey)
         HockeyPlayerFactory(id=15, team=self.away_team, is_active=False)
 
-        self.game_type = GenericChoiceFactory(short_value='exhibition', long_value='Exhibition', type='game_type',
-                                              content_object=self.ice_hockey)
-        self.point_value = GenericChoiceFactory(short_value='2', long_value='2', type='game_point_value',
+        self.game_type = GenericChoiceFactory(short_value='exhibition', long_value='Exhibition',
+                                              type=GenericChoice.GAME_TYPE, content_object=self.ice_hockey)
+        self.point_value = GenericChoiceFactory(short_value='2', long_value='2', type=GenericChoice.GAME_POINT_VALUE,
                                                 content_object=self.ice_hockey)
 
         timezone = 'US/Eastern'
@@ -52,7 +54,7 @@ class AbstractGameRosterSerializerTests(BaseAPITestCase):
         self.game = HockeyGameFactory(home_team=self.home_team, team=self.home_team, away_team=self.away_team,
                                       type=self.game_type, point_value=self.point_value,
                                       start=us_eastern.localize(self.start), end=us_eastern.localize(self.end),
-                                      timezone=timezone, season=self.season, status='scheduled')
+                                      timezone=timezone, season=self.season, status=AbstractGame.SCHEDULED)
         self.serializer = self.serializer_class(instance=self.game)
 
     def test_home_players_qs(self):

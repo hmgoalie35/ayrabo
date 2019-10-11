@@ -17,7 +17,7 @@ def generate_birthday():
 
 class UserProfileFactory(django.DjangoModelFactory):
     user = SubFactory('users.tests.UserFactory', userprofile=None)
-    gender = Faker('random_element', elements=['male', 'female'])
+    gender = Faker('random_element', elements=[gender[0] for gender in UserProfile.GENDERS])
     birthday = LazyFunction(generate_birthday)
     height = LazyFunction(generate_height)
     weight = Faker('random_int', min=UserProfile.MIN_WEIGHT, max=UserProfile.MAX_WEIGHT)

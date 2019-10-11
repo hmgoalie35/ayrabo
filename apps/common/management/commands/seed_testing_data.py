@@ -44,16 +44,16 @@ def generate_birthday(year):
 
 def get_position(i):
     if i in range(0, 4):
-        return 'C'
+        return HockeyPlayer.CENTER
     if i in range(4, 8):
-        return 'LW'
+        return HockeyPlayer.LEFT_WING
     if i in range(8, 12):
-        return 'RW'
+        return HockeyPlayer.RIGHT_WING
     if i in range(12, 16):
-        return 'LD'
+        return HockeyPlayer.LEFT_DEFENSE
     if i in range(16, 20):
-        return 'RD'
-    return 'G'
+        return HockeyPlayer.RIGHT_DEFENSE
+    return HockeyPlayer.GOALTENDER
 
 
 def get_friday(date):
@@ -134,7 +134,7 @@ class Command(BaseCommand):
         EmailAddress.objects.get_or_create(user=user, email=user.email, verified=True, primary=True)
         user_profile = UserProfile.objects.create(
             user=user,
-            gender='male',
+            gender=UserProfile.MALE,
             birthday=generate_birthday(birth_year),
             height=f'{random.randint(1, 8)}\' {random.randint(0, 11)}\"',
             weight=faker.random_int(min=UserProfile.MIN_WEIGHT, max=UserProfile.MAX_WEIGHT),
@@ -258,8 +258,8 @@ class Command(BaseCommand):
                 self.create_players(users, sport, team)
 
         choices = GenericChoice.objects.get_choices(instance=sport)
-        point_value = choices.filter(short_value=2, type='game_point_value').first()
-        game_type = choices.filter(type='game_type').get(short_value='league')
+        point_value = choices.filter(short_value=2, type=GenericChoice.GAME_POINT_VALUE).first()
+        game_type = choices.filter(type=GenericChoice.GAME_TYPE).get(short_value='league')
 
         for division_name, config in liahl_divisions.items():
             division = Division.objects.prefetch_related('teams').get(name=division_name, league=league)

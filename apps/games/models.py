@@ -8,6 +8,7 @@ from django.utils import timezone as timezone_util
 
 from common.models import TimestampedModel
 from periods.models import HockeyPeriod
+from userprofiles.models import UserProfile
 
 
 class AbstractGame(TimestampedModel):
@@ -122,14 +123,18 @@ class BaseballGame(AbstractGame):
 
 
 class HockeyGoal(TimestampedModel):
+    ONE = 1
     HOCKEY_GOAL_VALUES = (
-        (1, '1'),
+        (ONE, '1'),
     )
 
+    EVEN_STRENGTH = 'e'
+    POWER_PLAY = 'pp'
+    SHORTHANDED = 'sh'
     HOCKEY_GOAL_TYPES = (
-        ('e', 'Even Strength'),
-        ('pp', 'Power play'),
-        ('sh', 'Shorthanded'),
+        (EVEN_STRENGTH, 'Even Strength'),
+        (POWER_PLAY, 'Power play'),
+        (SHORTHANDED, 'Shorthanded'),
     )
 
     game = models.ForeignKey(HockeyGame, verbose_name='Game', on_delete=models.PROTECT, related_name='goals')
@@ -142,13 +147,12 @@ class HockeyGoal(TimestampedModel):
     penalty = models.ForeignKey('penalties.HockeyPenalty', verbose_name='Penalty', on_delete=models.PROTECT, null=True,
                                 blank=True)
     empty_net = models.BooleanField(verbose_name='Empty Net', default=False)
-    value = models.PositiveSmallIntegerField(verbose_name='Value', choices=HOCKEY_GOAL_VALUES,
-                                             default=HOCKEY_GOAL_VALUES[0][0])
+    value = models.PositiveSmallIntegerField(verbose_name='Value', choices=HOCKEY_GOAL_VALUES, default=ONE)
 
     def clean(self):
         super().clean()
         if hasattr(self, 'type'):
-            if self.type in ['pp', 'sh']:
+            if self.type in [self.POWER_PLAY, self.SHORTHANDED]:
                 msg = 'This field is required for {} goals.'.format(self.get_type_display().lower())
                 raise ValidationError({'penalty': msg})
 
@@ -166,7 +170,7 @@ class HockeyAssist(TimestampedModel):
         if hasattr(self, 'player') and hasattr(self, 'goal'):
             if self.player_id == self.goal.player_id:
                 user = self.player.user
-                gender = 'his' if user.userprofile.gender == 'male' else 'her'
+                gender = 'his' if user.userprofile.gender == UserProfile.MALE else 'her'
                 raise ValidationError(
                     {'player': '{} cannot have an assist on {} own goal.'.format(user.get_full_name(), gender)})
 

@@ -4,8 +4,10 @@ import pytz
 from django.core.exceptions import ValidationError
 from django.utils import timezone
 
-from common.tests import GenericChoiceFactory
 from ayrabo.utils.testing import BaseTestCase
+from common.models import GenericChoice
+from common.tests import GenericChoiceFactory
+from games.models import AbstractGame, HockeyGoal
 from games.tests import HockeyGameFactory, HockeyGoalFactory
 from periods.models import HockeyPeriod
 from periods.tests import HockeyPeriodFactory
@@ -24,11 +26,11 @@ class AbstractGameModelTests(BaseTestCase):
         self.point_value = GenericChoiceFactory(content_object=self.sport,
                                                 short_value='1',
                                                 long_value='1',
-                                                type='game_point_value')
+                                                type=GenericChoice.GAME_POINT_VALUE)
         self.game_type = GenericChoiceFactory(content_object=self.sport,
                                               short_value='exhibition',
                                               long_value='Exhibition',
-                                              type='game_type')
+                                              type=GenericChoice.GAME_TYPE)
         self.tz_name = 'US/Eastern'
         self.home_team = TeamFactory(name='New York Islanders')
         self.away_team = TeamFactory(name='New York Rangers', division=self.home_team.division)
@@ -82,19 +84,19 @@ class AbstractGameModelTests(BaseTestCase):
         self.assertEqual(game.end, expected_end)
 
     def test_can_update_true(self):
-        self.game.status = 'scheduled'
+        self.game.status = AbstractGame.SCHEDULED
         self.game.end = timezone.now() + datetime.timedelta(hours=24)
         self.game.save()
         self.assertTrue(self.game.can_update())
 
     def test_can_update_invalid_status(self):
-        self.game.status = 'completed'
+        self.game.status = AbstractGame.COMPLETED
         self.game.end = timezone.now() + datetime.timedelta(hours=24)
         self.game.save()
         self.assertFalse(self.game.can_update())
 
     def test_can_update_invalid_datetime(self):
-        self.game.status = 'scheduled'
+        self.game.status = AbstractGame.SCHEDULED
         self.game.save()
         self.assertFalse(self.game.can_update())
 
@@ -105,17 +107,17 @@ class HockeyGoalModelTests(BaseTestCase):
         self.point_value = GenericChoiceFactory(content_object=self.sport,
                                                 short_value='1',
                                                 long_value='1',
-                                                type='game_point_value')
+                                                type=GenericChoice.GAME_POINT_VALUE)
         self.game_type = GenericChoiceFactory(content_object=self.sport,
                                               short_value='exhibition',
                                               long_value='Exhibition',
-                                              type='game_type')
+                                              type=GenericChoice.GAME_TYPE)
         home_team = TeamFactory(name='New York Islanders')
         away_team = TeamFactory(name='New York Rangers', division=home_team.division)
         self.start = pytz.utc.localize(datetime.datetime(year=2017, month=12, day=16, hour=19))
         self.game = HockeyGameFactory(type=self.game_type, point_value=self.point_value, start=self.start,
                                       timezone='US/Eastern', home_team=home_team, away_team=away_team)
-        self.period = HockeyPeriodFactory(game=self.game, name='1')
+        self.period = HockeyPeriodFactory(game=self.game, name=HockeyPeriod.ONE)
         self.player = HockeyPlayerFactory(user__last_name='Tavares')
         self.time = datetime.timedelta(minutes=5, seconds=33)
 
@@ -126,12 +128,14 @@ class HockeyGoalModelTests(BaseTestCase):
 
     def test_clean_powerplay(self):
         with self.assertRaisesMessage(ValidationError, "{'penalty': ['This field is required for power play goals.']}"):
-            HockeyGoalFactory(game=self.game, period=self.period, player=self.player, time=self.time, type='pp')
+            HockeyGoalFactory(game=self.game, period=self.period, player=self.player, time=self.time,
+                              type=HockeyGoal.POWER_PLAY)
 
     def test_clean_shorthanded(self):
         msg = "{'penalty': ['This field is required for shorthanded goals.']}"
         with self.assertRaisesMessage(ValidationError, msg):
-            HockeyGoalFactory(game=self.game, period=self.period, player=self.player, time=self.time, type='sh')
+            HockeyGoalFactory(game=self.game, period=self.period, player=self.player, time=self.time,
+                              type=HockeyGoal.SHORTHANDED)
 
 
 class HockeyAssistModelTests(BaseTestCase):

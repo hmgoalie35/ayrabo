@@ -4,6 +4,7 @@ import pytz
 
 from ayrabo.utils.exceptions import SportNotConfiguredException
 from ayrabo.utils.testing import BaseTestCase
+from common.models import GenericChoice
 from common.tests import GenericChoiceFactory
 from divisions.tests import DivisionFactory
 from games import utils
@@ -31,9 +32,9 @@ class UtilsTests(BaseTestCase):
         team = TeamFactory(division=division, name='Green Machine IceCats')
         t2 = TeamFactory(division=division, name='Long Island Rebels')
         t3 = TeamFactory(division=division, name='Dix Hills Hawks')
-        game_type = GenericChoiceFactory(id=1, short_value='exhibition', long_value='Exhibition', type='game_type',
-                                         content_object=self.ice_hockey)
-        point_value = GenericChoiceFactory(id=2, short_value='2', long_value='2', type='game_point_value',
+        game_type = GenericChoiceFactory(id=1, short_value='exhibition', long_value='Exhibition',
+                                         type=GenericChoice.GAME_TYPE, content_object=self.ice_hockey)
+        point_value = GenericChoiceFactory(id=2, short_value='2', long_value='2', type=GenericChoice.GAME_POINT_VALUE,
                                            content_object=self.ice_hockey)
         tz = 'US/Eastern'
 

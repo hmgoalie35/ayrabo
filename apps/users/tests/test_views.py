@@ -9,8 +9,10 @@ from leagues.tests import LeagueFactory
 from managers.tests import ManagerFactory
 from referees.tests import RefereeFactory
 from scorekeepers.tests import ScorekeeperFactory
+from sports.models import SportRegistration
 from sports.tests import SportFactory, SportRegistrationFactory
 from teams.tests import TeamFactory
+from userprofiles.models import UserProfile
 from userprofiles.tests import UserProfileFactory
 from users.tests import UserFactory
 
@@ -21,11 +23,11 @@ class UserDetailViewTests(BaseTestCase):
     def setUp(self):
         self.user = UserFactory(first_name='Michael', last_name='Scarn', userprofile=None)
         self.birthday = date(year=1994, month=3, day=22)
-        self.user_profile = UserProfileFactory(user=self.user, height='5\' 7"', weight=155, gender='male',
+        self.user_profile = UserProfileFactory(user=self.user, height='5\' 7"', weight=155, gender=UserProfile.MALE,
                                                birthday=self.birthday, timezone='US/Eastern')
         self.user2 = UserFactory(first_name='Mose', last_name='Schrute', userprofile=None)
         self.birthday2 = date(year=1996, month=2, day=23)
-        self.user_profile2 = UserProfileFactory(user=self.user2, height='6\' 5"', weight=225, gender='male',
+        self.user_profile2 = UserProfileFactory(user=self.user2, height='6\' 5"', weight=225, gender=UserProfile.MALE,
                                                 birthday=self.birthday2, timezone='UTC')
         self.formatted_url = self.format_url(pk=self.user2.pk)
         self.login(user=self.user)
@@ -41,15 +43,15 @@ class UserDetailViewTests(BaseTestCase):
         liahl = LeagueFactory(sport=ice_hockey, name='Long Island Amateur Hockey League')
         mm_aa = DivisionFactory(league=liahl, name='Midget Minor AA')
         icecats = TeamFactory(name='Green Machine IceCats', division=mm_aa)
-        SportRegistrationFactory(user=self.user2, sport=ice_hockey, role='coach')
-        SportRegistrationFactory(user=self.user2, sport=ice_hockey, role='manager')
+        SportRegistrationFactory(user=self.user2, sport=ice_hockey, role=SportRegistration.COACH)
+        SportRegistrationFactory(user=self.user2, sport=ice_hockey, role=SportRegistration.MANAGER)
         CoachFactory(team=icecats, user=self.user2)
         ManagerFactory(team=icecats, user=self.user2)
 
         baseball = SportFactory(name='Baseball')
         mlb = LeagueFactory(name='Major League Baseball', sport=baseball)
-        SportRegistrationFactory(user=self.user2, sport=baseball, role='referee')
-        SportRegistrationFactory(user=self.user2, sport=baseball, role='scorekeeper')
+        SportRegistrationFactory(user=self.user2, sport=baseball, role=SportRegistration.REFEREE)
+        SportRegistrationFactory(user=self.user2, sport=baseball, role=SportRegistration.SCOREKEEPER)
         RefereeFactory(user=self.user2, league=mlb)
         ScorekeeperFactory(user=self.user2, sport=baseball)
 
@@ -94,7 +96,7 @@ class UserUpdateViewTests(BaseTestCase):
         self.first_name = 'Stanley'
         self.last_name = 'Hudson'
         self.birthday = date(year=1997, month=3, day=10)
-        self.gender = 'male'
+        self.gender = UserProfile.MALE
         self.height = '6\' 7"'
         self.weight = 255
         self.timezone = 'US/Eastern'
