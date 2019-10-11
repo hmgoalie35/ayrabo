@@ -6,6 +6,7 @@ from ayrabo.utils.testing import BaseAPITestCase
 from common.models import GenericChoice
 from common.tests import GenericChoiceFactory
 from divisions.tests import DivisionFactory
+from games.models import AbstractGame
 from games.tests import HockeyGameFactory
 from leagues.tests import LeagueFactory
 from players.tests import HockeyPlayerFactory
@@ -53,7 +54,7 @@ class AbstractGameRosterSerializerTests(BaseAPITestCase):
         self.game = HockeyGameFactory(home_team=self.home_team, team=self.home_team, away_team=self.away_team,
                                       type=self.game_type, point_value=self.point_value,
                                       start=us_eastern.localize(self.start), end=us_eastern.localize(self.end),
-                                      timezone=timezone, season=self.season, status='scheduled')
+                                      timezone=timezone, season=self.season, status=AbstractGame.SCHEDULED)
         self.serializer = self.serializer_class(instance=self.game)
 
     def test_home_players_qs(self):

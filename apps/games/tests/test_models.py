@@ -7,6 +7,7 @@ from django.utils import timezone
 from ayrabo.utils.testing import BaseTestCase
 from common.models import GenericChoice
 from common.tests import GenericChoiceFactory
+from games.models import AbstractGame
 from games.tests import HockeyGameFactory, HockeyGoalFactory
 from periods.models import HockeyPeriod
 from periods.tests import HockeyPeriodFactory
@@ -83,19 +84,19 @@ class AbstractGameModelTests(BaseTestCase):
         self.assertEqual(game.end, expected_end)
 
     def test_can_update_true(self):
-        self.game.status = 'scheduled'
+        self.game.status = AbstractGame.SCHEDULED
         self.game.end = timezone.now() + datetime.timedelta(hours=24)
         self.game.save()
         self.assertTrue(self.game.can_update())
 
     def test_can_update_invalid_status(self):
-        self.game.status = 'completed'
+        self.game.status = AbstractGame.COMPLETED
         self.game.end = timezone.now() + datetime.timedelta(hours=24)
         self.game.save()
         self.assertFalse(self.game.can_update())
 
     def test_can_update_invalid_datetime(self):
-        self.game.status = 'scheduled'
+        self.game.status = AbstractGame.SCHEDULED
         self.game.save()
         self.assertFalse(self.game.can_update())
 

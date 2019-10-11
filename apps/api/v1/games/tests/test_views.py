@@ -6,6 +6,7 @@ from ayrabo.utils.testing import BaseAPITestCase
 from common.models import GenericChoice
 from common.tests import GenericChoiceFactory
 from divisions.tests import DivisionFactory
+from games.models import HockeyGame
 from games.tests import HockeyGameFactory
 from leagues.tests import LeagueFactory
 from managers.tests import ManagerFactory
@@ -53,7 +54,7 @@ class GameRostersRetrieveUpdateAPIViewTests(BaseAPITestCase):
         self.game = HockeyGameFactory(id=1, home_team=self.home_team, team=self.home_team, away_team=self.away_team,
                                       type=self.game_type, point_value=self.point_value,
                                       start=us_eastern.localize(self.start), end=us_eastern.localize(self.end),
-                                      timezone=timezone, season=self.season, status='scheduled')
+                                      timezone=timezone, season=self.season, status=HockeyGame.SCHEDULED)
 
         self.user = UserFactory()
         SportRegistrationFactory(user=self.user, sport=self.ice_hockey, role='manager')
