@@ -7,7 +7,7 @@ from django.utils import timezone
 from ayrabo.utils.testing import BaseTestCase
 from common.models import GenericChoice
 from common.tests import GenericChoiceFactory
-from games.models import AbstractGame
+from games.models import AbstractGame, HockeyGoal
 from games.tests import HockeyGameFactory, HockeyGoalFactory
 from periods.models import HockeyPeriod
 from periods.tests import HockeyPeriodFactory
@@ -128,12 +128,14 @@ class HockeyGoalModelTests(BaseTestCase):
 
     def test_clean_powerplay(self):
         with self.assertRaisesMessage(ValidationError, "{'penalty': ['This field is required for power play goals.']}"):
-            HockeyGoalFactory(game=self.game, period=self.period, player=self.player, time=self.time, type='pp')
+            HockeyGoalFactory(game=self.game, period=self.period, player=self.player, time=self.time,
+                              type=HockeyGoal.POWER_PLAY)
 
     def test_clean_shorthanded(self):
         msg = "{'penalty': ['This field is required for shorthanded goals.']}"
         with self.assertRaisesMessage(ValidationError, msg):
-            HockeyGoalFactory(game=self.game, period=self.period, player=self.player, time=self.time, type='sh')
+            HockeyGoalFactory(game=self.game, period=self.period, player=self.player, time=self.time,
+                              type=HockeyGoal.SHORTHANDED)
 
 
 class HockeyAssistModelTests(BaseTestCase):

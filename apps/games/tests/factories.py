@@ -57,7 +57,7 @@ class HockeyGoalFactory(django.DjangoModelFactory):
     period = SubFactory('periods.tests.HockeyPeriodFactory')
     time = datetime.timedelta(minutes=5, seconds=23)
     player = SubFactory(HockeyPlayerFactory)
-    type = models.HockeyGoal.HOCKEY_GOAL_TYPES[0][0]
+    type = models.HockeyGoal.EVEN_STRENGTH
 
     class Meta:
         model = models.HockeyGoal
