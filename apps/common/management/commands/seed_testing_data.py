@@ -134,7 +134,7 @@ class Command(BaseCommand):
         EmailAddress.objects.get_or_create(user=user, email=user.email, verified=True, primary=True)
         user_profile = UserProfile.objects.create(
             user=user,
-            gender='male',
+            gender=UserProfile.MALE,
             birthday=generate_birthday(birth_year),
             height=f'{random.randint(1, 8)}\' {random.randint(0, 11)}\"',
             weight=faker.random_int(min=UserProfile.MIN_WEIGHT, max=UserProfile.MAX_WEIGHT),

@@ -143,8 +143,9 @@ class User(AbstractUser):
 
 
 class Permission(TimestampedModel):
+    ADMIN = 'admin'
     PERMISSION_CHOICES = (
-        ('admin', 'Admin'),
+        (ADMIN, 'Admin'),
     )
     user = models.ForeignKey('users.User', verbose_name='User', related_name='permissions', on_delete=models.PROTECT)
     name = models.CharField(max_length=255, choices=PERMISSION_CHOICES, verbose_name='Name', db_index=True)

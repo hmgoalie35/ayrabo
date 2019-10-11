@@ -8,6 +8,7 @@ from django.utils import timezone as timezone_util
 
 from common.models import TimestampedModel
 from periods.models import HockeyPeriod
+from userprofiles.models import UserProfile
 
 
 class AbstractGame(TimestampedModel):
@@ -169,7 +170,7 @@ class HockeyAssist(TimestampedModel):
         if hasattr(self, 'player') and hasattr(self, 'goal'):
             if self.player_id == self.goal.player_id:
                 user = self.player.user
-                gender = 'his' if user.userprofile.gender == 'male' else 'her'
+                gender = 'his' if user.userprofile.gender == UserProfile.MALE else 'her'
                 raise ValidationError(
                     {'player': '{} cannot have an assist on {} own goal.'.format(user.get_full_name(), gender)})
 

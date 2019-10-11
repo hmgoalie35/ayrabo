@@ -12,6 +12,7 @@ from scorekeepers.tests import ScorekeeperFactory
 from sports.models import SportRegistration
 from sports.tests import SportFactory, SportRegistrationFactory
 from teams.tests import TeamFactory
+from userprofiles.models import UserProfile
 from userprofiles.tests import UserProfileFactory
 from users.tests import UserFactory
 
@@ -22,11 +23,11 @@ class UserDetailViewTests(BaseTestCase):
     def setUp(self):
         self.user = UserFactory(first_name='Michael', last_name='Scarn', userprofile=None)
         self.birthday = date(year=1994, month=3, day=22)
-        self.user_profile = UserProfileFactory(user=self.user, height='5\' 7"', weight=155, gender='male',
+        self.user_profile = UserProfileFactory(user=self.user, height='5\' 7"', weight=155, gender=UserProfile.MALE,
                                                birthday=self.birthday, timezone='US/Eastern')
         self.user2 = UserFactory(first_name='Mose', last_name='Schrute', userprofile=None)
         self.birthday2 = date(year=1996, month=2, day=23)
-        self.user_profile2 = UserProfileFactory(user=self.user2, height='6\' 5"', weight=225, gender='male',
+        self.user_profile2 = UserProfileFactory(user=self.user2, height='6\' 5"', weight=225, gender=UserProfile.MALE,
                                                 birthday=self.birthday2, timezone='UTC')
         self.formatted_url = self.format_url(pk=self.user2.pk)
         self.login(user=self.user)
@@ -95,7 +96,7 @@ class UserUpdateViewTests(BaseTestCase):
         self.first_name = 'Stanley'
         self.last_name = 'Hudson'
         self.birthday = date(year=1997, month=3, day=10)
-        self.gender = 'male'
+        self.gender = UserProfile.MALE
         self.height = '6\' 7"'
         self.weight = 255
         self.timezone = 'US/Eastern'

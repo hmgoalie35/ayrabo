@@ -21,7 +21,12 @@ class UserProfile(TimestampedModel):
     HEIGHT_REGEX = re.compile('''^[1-9]'( ([0-9]|1[0-1])")?$''')
     INVALID_HEIGHT_MSG = 'Invalid format, please enter your height according to the format below.'
 
-    GENDERS = [('male', 'Male'), ('female', 'Female')]
+    MALE = 'male'
+    FEMALE = 'female'
+    GENDERS = [
+        (MALE, 'Male'),
+        (FEMALE, 'Female')
+    ]
 
     MIN_WEIGHT = 1
     MAX_WEIGHT = 400
