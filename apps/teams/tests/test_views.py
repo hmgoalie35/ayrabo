@@ -14,6 +14,7 @@ from managers.tests import ManagerFactory
 from organizations.tests import OrganizationFactory
 from players.tests import HockeyPlayerFactory
 from seasons.tests import HockeySeasonRosterFactory
+from sports.models import SportRegistration
 from sports.tests import SportFactory, SportRegistrationFactory
 from teams.models import Team
 from teams.tests import TeamFactory
@@ -159,7 +160,7 @@ class TeamDetailSeasonRostersViewTests(BaseTestCase):
         self.icecats = TeamFactory(name='Green Machine IceCats', division=self.mm_aa)
         self.past_season, self.current_season, self.future_season = self.create_past_current_future_seasons(self.liahl)
 
-        self.hockey_sr = SportRegistrationFactory(user=self.user, sport=self.ice_hockey, role='manager')
+        self.hockey_sr = SportRegistrationFactory(user=self.user, sport=self.ice_hockey, role=SportRegistration.MANAGER)
         self.hockey_manager = ManagerFactory(user=self.user, team=self.icecats)
 
         self.hockey_players = HockeyPlayerFactory.create_batch(5, sport=self.ice_hockey, team=self.icecats)

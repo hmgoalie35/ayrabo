@@ -113,7 +113,7 @@ class SportRegistrationCreateView(LoginRequiredMixin,
                 sport = form.cleaned_data.get('sport')
                 roles = form.cleaned_data.get('roles')
                 SportRegistration.objects.create_for_user_and_sport(user, sport, roles)
-                if 'scorekeeper' in roles:
+                if SportRegistration.SCOREKEEPER in roles:
                     self.handle_scorekeeper_role(user, sport)
                 sport_names.append(sport.name)
             messages.success(request, 'You have been registered for {}.'.format(', '.join(sport_names)))

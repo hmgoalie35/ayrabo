@@ -9,6 +9,7 @@ from leagues.tests import LeagueFactory
 from managers.tests import ManagerFactory
 from referees.tests import RefereeFactory
 from scorekeepers.tests import ScorekeeperFactory
+from sports.models import SportRegistration
 from sports.tests import SportFactory, SportRegistrationFactory
 from teams.tests import TeamFactory
 from userprofiles.tests import UserProfileFactory
@@ -41,15 +42,15 @@ class UserDetailViewTests(BaseTestCase):
         liahl = LeagueFactory(sport=ice_hockey, name='Long Island Amateur Hockey League')
         mm_aa = DivisionFactory(league=liahl, name='Midget Minor AA')
         icecats = TeamFactory(name='Green Machine IceCats', division=mm_aa)
-        SportRegistrationFactory(user=self.user2, sport=ice_hockey, role='coach')
-        SportRegistrationFactory(user=self.user2, sport=ice_hockey, role='manager')
+        SportRegistrationFactory(user=self.user2, sport=ice_hockey, role=SportRegistration.COACH)
+        SportRegistrationFactory(user=self.user2, sport=ice_hockey, role=SportRegistration.MANAGER)
         CoachFactory(team=icecats, user=self.user2)
         ManagerFactory(team=icecats, user=self.user2)
 
         baseball = SportFactory(name='Baseball')
         mlb = LeagueFactory(name='Major League Baseball', sport=baseball)
-        SportRegistrationFactory(user=self.user2, sport=baseball, role='referee')
-        SportRegistrationFactory(user=self.user2, sport=baseball, role='scorekeeper')
+        SportRegistrationFactory(user=self.user2, sport=baseball, role=SportRegistration.REFEREE)
+        SportRegistrationFactory(user=self.user2, sport=baseball, role=SportRegistration.SCOREKEEPER)
         RefereeFactory(user=self.user2, league=mlb)
         ScorekeeperFactory(user=self.user2, sport=baseball)
 

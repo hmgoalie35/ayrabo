@@ -7,6 +7,7 @@ from divisions.tests import DivisionFactory
 from leagues.tests import LeagueFactory
 from players.models import HockeyPlayer
 from players.tests import BaseballPlayerFactory, HockeyPlayerFactory
+from sports.models import SportRegistration
 from sports.tests import SportFactory, SportRegistrationFactory
 from teams.tests import TeamFactory
 from users.tests import UserFactory
@@ -34,7 +35,7 @@ class PlayerUpdateViewTests(BaseTestCase):
         self.division = DivisionFactory(name='Midget Minor AA', league=self.league)
         self.team = TeamFactory(name='Green Machine IceCats', division=self.division)
         self.player = HockeyPlayerFactory(user=self.user, sport=self.ice_hockey, team=self.team, **self.post_data)
-        SportRegistrationFactory(user=self.user, sport=self.ice_hockey, role='player')
+        SportRegistrationFactory(user=self.user, sport=self.ice_hockey, role=SportRegistration.PLAYER)
 
         self.baseball_league = LeagueFactory(name='Major League Baseball', sport=self.baseball)
         self.baseball_division = DivisionFactory(name='American League East', league=self.baseball_league)

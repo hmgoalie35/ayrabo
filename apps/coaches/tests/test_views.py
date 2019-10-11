@@ -7,6 +7,7 @@ from coaches.tests import CoachFactory
 from common.tests import WaffleSwitchFactory
 from divisions.tests import DivisionFactory
 from leagues.tests import LeagueFactory
+from sports.models import SportRegistration
 from sports.tests import SportFactory, SportRegistrationFactory
 from teams.tests import TeamFactory
 from users.tests import UserFactory
@@ -24,7 +25,7 @@ class CoachesUpdateViewTests(BaseTestCase):
         self.league = LeagueFactory(name='Long Island Amateur Hockey League', sport=self.ice_hockey)
         self.division = DivisionFactory(name='Midget Minor AA', league=self.league)
         self.team = TeamFactory(name='Green Machine IceCats', division=self.division)
-        SportRegistrationFactory(user=self.user, sport=self.ice_hockey, role='coach')
+        SportRegistrationFactory(user=self.user, sport=self.ice_hockey, role=SportRegistration.COACH)
 
         self.post_data = {
             'position': Coach.HEAD_COACH

@@ -1,14 +1,15 @@
 import datetime
 
-from users.tests import UserFactory
-from divisions.tests import DivisionFactory
 from ayrabo.utils.testing import BaseAPITestCase
+from divisions.tests import DivisionFactory
 from leagues.tests import LeagueFactory
 from managers.tests import ManagerFactory
 from scorekeepers.tests import ScorekeeperFactory
-from seasons.tests import SeasonFactory, HockeySeasonRosterFactory
+from seasons.tests import HockeySeasonRosterFactory, SeasonFactory
+from sports.models import SportRegistration
 from sports.tests import SportFactory, SportRegistrationFactory
 from teams.tests import TeamFactory
+from users.tests import UserFactory
 
 
 class SeasonRostersListAPIViewTests(BaseAPITestCase):
@@ -30,28 +31,28 @@ class SeasonRostersListAPIViewTests(BaseAPITestCase):
         self.assertAPIError(response, 'unauthenticated')
 
     def test_manager_for_team_has_permission(self):
-        SportRegistrationFactory(user=self.user, sport=self.sport, role='manager')
+        SportRegistrationFactory(user=self.user, sport=self.sport, role=SportRegistration.MANAGER)
         ManagerFactory(user=self.user, team=self.team)
         self.login(user=self.user)
         response = self.client.get(self.formatted_url)
         self.assert_200(response)
 
     def test_scorekeeper_for_sport_has_permission(self):
-        SportRegistrationFactory(user=self.user, sport=self.sport, role='scorekeeper')
+        SportRegistrationFactory(user=self.user, sport=self.sport, role=SportRegistration.SCOREKEEPER)
         ScorekeeperFactory(user=self.user, sport=self.sport)
         self.login(user=self.user)
         response = self.client.get(self.formatted_url)
         self.assert_200(response)
 
     def test_manager_for_diff_team_permission_denied(self):
-        SportRegistrationFactory(user=self.user, sport=self.sport, role='manager')
+        SportRegistrationFactory(user=self.user, sport=self.sport, role=SportRegistration.MANAGER)
         ManagerFactory(user=self.user)
         self.login(user=self.user)
         response = self.client.get(self.formatted_url)
         self.assertAPIError(response, 'permission_denied')
 
     def test_team_dne(self):
-        SportRegistrationFactory(user=self.user, sport=self.sport, role='manager')
+        SportRegistrationFactory(user=self.user, sport=self.sport, role=SportRegistration.MANAGER)
         ManagerFactory(user=self.user, team=self.team)
         self.login(user=self.user)
         response = self.client.get(self.format_url(pk=1000))
@@ -59,7 +60,7 @@ class SeasonRostersListAPIViewTests(BaseAPITestCase):
 
     def test_sport_not_configured(self):
         team = TeamFactory(id=2, division__league__sport__name='Sport 1')
-        SportRegistrationFactory(user=self.user, sport=self.sport, role='manager')
+        SportRegistrationFactory(user=self.user, sport=self.sport, role=SportRegistration.MANAGER)
         ManagerFactory(user=self.user, team=team)
         self.login(user=self.user)
         response = self.client.get(self.format_url(pk=2))
@@ -68,7 +69,7 @@ class SeasonRostersListAPIViewTests(BaseAPITestCase):
 
     # List
     def test_get(self):
-        SportRegistrationFactory(user=self.user, sport=self.sport, role='manager')
+        SportRegistrationFactory(user=self.user, sport=self.sport, role=SportRegistration.MANAGER)
         ManagerFactory(user=self.user, team=self.team)
         self.login(user=self.user)
         HockeySeasonRosterFactory(id=1, name='Main Squad', season=self.season, team=self.team)
@@ -81,7 +82,7 @@ class SeasonRostersListAPIViewTests(BaseAPITestCase):
         self.assertListEqual(data, [1, 2, 3])
 
     def test_filter_by_season_id(self):
-        SportRegistrationFactory(user=self.user, sport=self.sport, role='manager')
+        SportRegistrationFactory(user=self.user, sport=self.sport, role=SportRegistration.MANAGER)
         ManagerFactory(user=self.user, team=self.team)
         self.login(user=self.user)
 

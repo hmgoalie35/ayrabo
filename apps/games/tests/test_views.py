@@ -47,10 +47,16 @@ class HockeyGameCreateViewTests(BaseTestCase):
         self.point_value = GenericChoiceFactory(id=2, short_value='2', long_value='2',
                                                 type=GenericChoice.GAME_POINT_VALUE, content_object=self.ice_hockey)
 
-        self.user, self.sport_registrations, self.manager = self._create_user(self.ice_hockey, self.t1, ['manager'],
-                                                                              user={'email': self.email,
-                                                                                    'password': self.password,
-                                                                                    'userprofile': None})
+        self.user, self.sport_registrations, self.manager = self._create_user(
+            self.ice_hockey,
+            self.t1,
+            [SportRegistration.MANAGER],
+            user={
+                'email': self.email,
+                'password': self.password,
+                'userprofile': None
+            }
+        )
         UserProfileFactory(user=self.user, timezone='US/Eastern')
 
         self.season_start = datetime.date(month=12, day=27, year=2017)
@@ -84,7 +90,15 @@ class HockeyGameCreateViewTests(BaseTestCase):
     def test_not_team_manager(self):
         team = TeamFactory(division=self.mm_aa)
         email = 'user2@ayrabo.com'
-        self._create_user(self.ice_hockey, team, ['manager'], user={'email': email, 'password': self.password})
+        self._create_user(
+            self.ice_hockey,
+            team,
+            [SportRegistration.MANAGER],
+            user={
+                'email': email,
+                'password': self.password
+            }
+        )
         self.login(email=email, password=self.password)
         response = self.client.get(self.format_url(team_pk=1))
         self.assert_404(response)
@@ -118,7 +132,7 @@ class HockeyGameCreateViewTests(BaseTestCase):
         baseball = SportFactory(name='Baseball')
         email = 'user2@ayrabo.com'
         team = TeamFactory(id=5, name='New York Yankees', division__league__sport=baseball)
-        self._create_user(baseball, team, ['manager'], user={'email': email, 'password': self.password})
+        self._create_user(baseball, team, [SportRegistration.MANAGER], user={'email': email, 'password': self.password})
         self.login(email=email, password=self.password)
         response = self.client.get(self.format_url(team_pk=5))
         self.assertTemplateUsed(response, 'sport_not_configured_msg.html')
@@ -246,10 +260,16 @@ class HockeyGameUpdateViewTests(BaseTestCase):
         self.point_value = GenericChoiceFactory(short_value='2', long_value='2', type=GenericChoice.GAME_POINT_VALUE,
                                                 content_object=self.ice_hockey)
 
-        self.user, self.sport_registrations, self.manager = self._create_user(self.ice_hockey, self.t1, ['manager'],
-                                                                              user={'email': self.email,
-                                                                                    'password': self.password,
-                                                                                    'userprofile': None})
+        self.user, self.sport_registrations, self.manager = self._create_user(
+            self.ice_hockey,
+            self.t1,
+            [SportRegistration.MANAGER],
+            user={
+                'email': self.email,
+                'password': self.password,
+                'userprofile': None
+            }
+        )
         timezone = 'US/Eastern'
         us_eastern = pytz.timezone(timezone)
         UserProfileFactory(user=self.user, timezone=timezone)
@@ -290,7 +310,7 @@ class HockeyGameUpdateViewTests(BaseTestCase):
         self.assertLoginRequired(self.formatted_url)
 
     def test_not_team_manager(self):
-        user, _, _ = self._create_user(self.ice_hockey, self.t3, ['manager'],
+        user, _, _ = self._create_user(self.ice_hockey, self.t3, [SportRegistration.MANAGER],
                                        user={'email': 'user1@ayrabo.com', 'password': self.password})
         self.login(user=user)
         response = self.client.get(self.formatted_url)
@@ -311,7 +331,7 @@ class HockeyGameUpdateViewTests(BaseTestCase):
         It's pretty hard to test this separately for the model and form class.
         """
         team = TeamFactory()
-        SportRegistrationFactory(user=self.user, sport=team.division.league.sport, role='manager')
+        SportRegistrationFactory(user=self.user, sport=team.division.league.sport, role=SportRegistration.MANAGER)
         ManagerFactory(user=self.user, team=team)
         self.login(email=self.email, password=self.password)
         response = self.client.get(self.format_url(team_pk=team.pk, pk=self.game.id))
@@ -464,29 +484,29 @@ class GameRostersUpdateViewTests(BaseTestCase):
         self.assertLoginRequired(self.formatted_url)
 
     def test_has_permission_home_team_manager(self):
-        SportRegistrationFactory(user=self.user, sport=self.ice_hockey, role='manager')
+        SportRegistrationFactory(user=self.user, sport=self.ice_hockey, role=SportRegistration.MANAGER)
         ManagerFactory(user=self.user, team=self.t1)
 
         response = self.client.get(self.formatted_url)
         self.assert_200(response)
 
     def test_has_permission_away_team_manager(self):
-        SportRegistrationFactory(user=self.user, sport=self.ice_hockey, role='manager')
+        SportRegistrationFactory(user=self.user, sport=self.ice_hockey, role=SportRegistration.MANAGER)
         ManagerFactory(user=self.user, team=self.t2)
 
         response = self.client.get(self.formatted_url)
         self.assert_200(response)
 
     def test_has_permission_scorekeeper(self):
-        SportRegistrationFactory(user=self.user, sport=self.ice_hockey, role='scorekeeper')
+        SportRegistrationFactory(user=self.user, sport=self.ice_hockey, role=SportRegistration.SCOREKEEPER)
         ScorekeeperFactory(user=self.user, sport=self.ice_hockey)
 
         response = self.client.get(self.formatted_url)
         self.assert_200(response)
 
     def test_has_permission_inactive_roles(self):
-        SportRegistrationFactory(user=self.user, sport=self.ice_hockey, role='manager')
-        SportRegistrationFactory(user=self.user, sport=self.ice_hockey, role='scorekeeper')
+        SportRegistrationFactory(user=self.user, sport=self.ice_hockey, role=SportRegistration.MANAGER)
+        SportRegistrationFactory(user=self.user, sport=self.ice_hockey, role=SportRegistration.SCOREKEEPER)
         ManagerFactory(user=self.user, team=self.t1, is_active=False)
         ScorekeeperFactory(user=self.user, sport=self.ice_hockey, is_active=False)
 
@@ -496,7 +516,7 @@ class GameRostersUpdateViewTests(BaseTestCase):
     def test_has_permission_false(self):
         self.client.logout()
         user = UserFactory()
-        SportRegistrationFactory(user=user, sport=self.ice_hockey, role='manager')
+        SportRegistrationFactory(user=user, sport=self.ice_hockey, role=SportRegistration.MANAGER)
         # This user is a manager for some random team.
         ManagerFactory(user=user)
         self.login(user=user)
@@ -505,7 +525,7 @@ class GameRostersUpdateViewTests(BaseTestCase):
         self.assert_404(response)
 
     def test_game_dne(self):
-        SportRegistrationFactory(user=self.user, sport=self.ice_hockey, role='manager')
+        SportRegistrationFactory(user=self.user, sport=self.ice_hockey, role=SportRegistration.MANAGER)
         ManagerFactory(user=self.user, team=self.t1)
 
         response = self.client.get(self.format_url(slug='ice-hockey', game_pk=1000))
@@ -513,7 +533,7 @@ class GameRostersUpdateViewTests(BaseTestCase):
 
     def test_sport_not_configured(self):
         sport = SportFactory()
-        SportRegistrationFactory(user=self.user, sport=self.ice_hockey, role='manager')
+        SportRegistrationFactory(user=self.user, sport=self.ice_hockey, role=SportRegistration.MANAGER)
         ManagerFactory(user=self.user, team=self.t1)
 
         response = self.client.get(self.format_url(slug=sport.slug, game_pk=1))
@@ -521,7 +541,7 @@ class GameRostersUpdateViewTests(BaseTestCase):
         self.assertTemplateUsed(response, 'sport_not_configured_msg.html')
 
     def test_sport_dne(self):
-        SportRegistrationFactory(user=self.user, sport=self.ice_hockey, role='manager')
+        SportRegistrationFactory(user=self.user, sport=self.ice_hockey, role=SportRegistration.MANAGER)
         ManagerFactory(user=self.user, team=self.t1)
 
         response = self.client.get(self.format_url(slug='i-dont-exist', game_pk=1))
@@ -532,7 +552,7 @@ class GameRostersUpdateViewTests(BaseTestCase):
     @mock.patch('django.utils.timezone.now')
     def test_get(self, mock_now):
         mock_now.return_value = pytz.utc.localize(datetime.datetime(month=12, day=26, year=2017, hour=19, minute=0))
-        SportRegistrationFactory(user=self.user, sport=self.ice_hockey, role='manager')
+        SportRegistrationFactory(user=self.user, sport=self.ice_hockey, role=SportRegistration.MANAGER)
         ManagerFactory(user=self.user, team=self.t1)
 
         response = self.client.get(self.formatted_url)

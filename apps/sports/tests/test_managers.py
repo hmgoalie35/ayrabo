@@ -17,7 +17,7 @@ class SportRegistrationManagerTests(BaseTestCase):
         self.assertEqual(SportRegistration.objects.count(), 0)
 
     def test_roles_non_empty(self):
-        roles = ['player', 'coach', 'referee']
+        roles = [SportRegistration.PLAYER, SportRegistration.COACH, SportRegistration.REFEREE]
         SportRegistration.objects.create_for_user_and_sport(self.user, self.ice_hockey, roles)
         sr = SportRegistration.objects.first()
         self.assertEqual(SportRegistration.objects.count(), 3)
@@ -26,6 +26,7 @@ class SportRegistrationManagerTests(BaseTestCase):
         self.assertEqual(sr.sport, self.ice_hockey)
 
     def test_role_already_exists(self):
-        SportRegistrationFactory(user=self.user, sport=self.ice_hockey, role='player')
+        SportRegistrationFactory(user=self.user, sport=self.ice_hockey, role=SportRegistration.PLAYER)
         with self.assertRaises(IntegrityError):
-            SportRegistration.objects.create_for_user_and_sport(self.user, self.ice_hockey, roles=['player'])
+            SportRegistration.objects.create_for_user_and_sport(self.user, self.ice_hockey,
+                                                                roles=[SportRegistration.PLAYER])

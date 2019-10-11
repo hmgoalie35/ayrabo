@@ -13,6 +13,7 @@ from managers.tests import ManagerFactory
 from players.tests import HockeyPlayerFactory
 from scorekeepers.tests import ScorekeeperFactory
 from seasons.tests import SeasonFactory
+from sports.models import SportRegistration
 from sports.tests import SportFactory, SportRegistrationFactory
 from teams.tests import TeamFactory
 from users.tests import UserFactory
@@ -57,7 +58,7 @@ class GameRostersRetrieveUpdateAPIViewTests(BaseAPITestCase):
                                       timezone=timezone, season=self.season, status=HockeyGame.SCHEDULED)
 
         self.user = UserFactory()
-        SportRegistrationFactory(user=self.user, sport=self.ice_hockey, role='manager')
+        SportRegistrationFactory(user=self.user, sport=self.ice_hockey, role=SportRegistration.MANAGER)
         self.manager = ManagerFactory(user=self.user, team=self.home_team)
 
     def test_login_required(self):
@@ -86,7 +87,7 @@ class GameRostersRetrieveUpdateAPIViewTests(BaseAPITestCase):
 
     def test_away_team_manager_allowed(self):
         user = UserFactory()
-        SportRegistrationFactory(user=user, sport=self.ice_hockey, role='manager')
+        SportRegistrationFactory(user=user, sport=self.ice_hockey, role=SportRegistration.MANAGER)
         ManagerFactory(user=user, team=self.away_team)
         self.login(user=user)
 
@@ -103,7 +104,7 @@ class GameRostersRetrieveUpdateAPIViewTests(BaseAPITestCase):
 
     def test_scorekeeper_allowed(self):
         user = UserFactory()
-        SportRegistrationFactory(user=user, sport=self.ice_hockey, role='scorekeeper')
+        SportRegistrationFactory(user=user, sport=self.ice_hockey, role=SportRegistration.SCOREKEEPER)
         ScorekeeperFactory(user=user, sport=self.ice_hockey)
         self.login(user=user)
 
@@ -112,7 +113,7 @@ class GameRostersRetrieveUpdateAPIViewTests(BaseAPITestCase):
 
     def test_inactive_scorekeeper_forbidden(self):
         user = UserFactory()
-        SportRegistrationFactory(user=user, sport=self.ice_hockey, role='scorekeeper')
+        SportRegistrationFactory(user=user, sport=self.ice_hockey, role=SportRegistration.SCOREKEEPER)
         ScorekeeperFactory(user=user, sport=self.ice_hockey, is_active=False)
         self.login(user=user)
 
@@ -122,7 +123,7 @@ class GameRostersRetrieveUpdateAPIViewTests(BaseAPITestCase):
     def test_scorekeeper_for_sport(self):
         user = UserFactory()
         sport = SportFactory()
-        SportRegistrationFactory(user=user, sport=sport, role='scorekeeper')
+        SportRegistrationFactory(user=user, sport=sport, role=SportRegistration.SCOREKEEPER)
         ScorekeeperFactory(user=user, sport=sport)
         self.login(user=user)
 

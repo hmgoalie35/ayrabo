@@ -11,6 +11,7 @@ from managers.models import Manager
 from organizations.models import Organization
 from referees.models import Referee
 from scorekeepers.models import Scorekeeper
+from sports.models import SportRegistration
 from users.managers import PermissionManager
 
 
@@ -90,15 +91,15 @@ class User(AbstractUser):
         return result
 
     def get_objects_for_role(self, sport, role, qs=None):
-        if role == 'player':
+        if role == SportRegistration.PLAYER:
             return self.get_players(sport)
-        if role == 'coach':
+        if role == SportRegistration.COACH:
             return self.get_coaches(sport)
-        if role == 'referee':
+        if role == SportRegistration.REFEREE:
             return self.get_referees(sport)
-        if role == 'manager':
+        if role == SportRegistration.MANAGER:
             return self.get_managers(sport)
-        if role == 'scorekeeper':
+        if role == SportRegistration.SCOREKEEPER:
             return self.get_scorekeepers(sport)
         if role == 'organization':
             return self.get_organizations(sport, qs)

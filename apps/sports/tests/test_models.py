@@ -2,7 +2,7 @@ from django.core.exceptions import ValidationError
 from django.db.utils import IntegrityError
 
 from ayrabo.utils.testing import BaseTestCase
-from sports.models import Sport
+from sports.models import Sport, SportRegistration
 from sports.tests import SportFactory, SportRegistrationFactory
 from users.tests import UserFactory
 
@@ -53,14 +53,14 @@ class SportRegistrationModelTests(BaseTestCase):
         email = 'test@ayrabo.com'
         sport = SportFactory(name='Ice Hockey')
         user = UserFactory(email=email)
-        sr = SportRegistrationFactory(user=user, sport=sport, role='player')
+        sr = SportRegistrationFactory(user=user, sport=sport, role=SportRegistration.PLAYER)
 
         self.assertEqual(str(sr), '{}: {} - {}'.format(email, 'Player', 'Ice Hockey'))
 
     def test_unique_together(self):
         user = UserFactory(email='testing@ayrabo.com')
         sport = SportFactory(name='Ice Hockey')
-        SportRegistrationFactory(user=user, sport=sport, role='player')
+        SportRegistrationFactory(user=user, sport=sport, role=SportRegistration.PLAYER)
 
         with self.assertRaises(IntegrityError):
-            SportRegistrationFactory(user=user, sport=sport, role='player')
+            SportRegistrationFactory(user=user, sport=sport, role=SportRegistration.PLAYER)

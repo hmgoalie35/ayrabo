@@ -15,6 +15,7 @@ from referees.models import Referee
 from referees.tests import RefereeFactory
 from scorekeepers.models import Scorekeeper
 from scorekeepers.tests import ScorekeeperFactory
+from sports.models import SportRegistration
 from sports.tests import SportFactory, SportRegistrationFactory
 from teams.tests import TeamFactory
 from users.tests import PermissionFactory, UserFactory
@@ -61,24 +62,24 @@ class UserModelTests(BaseTestCase):
 
     def test_get_sport_registrations(self):
         # New type of sport registrations
-        sr1 = SportRegistrationFactory(user=self.user, sport=self.ice_hockey, role='player')
-        sr2 = SportRegistrationFactory(user=self.user, sport=self.ice_hockey, role='coach')
-        sr3 = SportRegistrationFactory(user=self.user, sport=self.baseball, role='referee')
+        sr1 = SportRegistrationFactory(user=self.user, sport=self.ice_hockey, role=SportRegistration.PLAYER)
+        sr2 = SportRegistrationFactory(user=self.user, sport=self.ice_hockey, role=SportRegistration.COACH)
+        sr3 = SportRegistrationFactory(user=self.user, sport=self.baseball, role=SportRegistration.REFEREE)
         registrations = list(self.user.get_sport_registrations())
         # Sport registrations should be sorted by sport and then role
         self.assertListEqual(registrations, [sr3, sr2, sr1])
 
     def test_get_sport_registrations_filter_by_sport(self):
-        sr1 = SportRegistrationFactory(user=self.user, sport=self.ice_hockey, role='player')
-        sr2 = SportRegistrationFactory(user=self.user, sport=self.ice_hockey, role='coach')
-        SportRegistrationFactory(user=self.user, sport=self.baseball, role='referee')
+        sr1 = SportRegistrationFactory(user=self.user, sport=self.ice_hockey, role=SportRegistration.PLAYER)
+        sr2 = SportRegistrationFactory(user=self.user, sport=self.ice_hockey, role=SportRegistration.COACH)
+        SportRegistrationFactory(user=self.user, sport=self.baseball, role=SportRegistration.REFEREE)
         registrations = list(self.user.get_sport_registrations(sports=[self.ice_hockey]))
         self.assertListEqual(registrations, [sr2, sr1])
 
     def test_sport_registration_data_by_sport(self):
-        sr1 = SportRegistrationFactory(user=self.user, sport=self.ice_hockey, role='coach')
-        sr2 = SportRegistrationFactory(user=self.user, sport=self.ice_hockey, role='player')
-        sr3 = SportRegistrationFactory(user=self.user, sport=self.baseball, role='manager')
+        sr1 = SportRegistrationFactory(user=self.user, sport=self.ice_hockey, role=SportRegistration.COACH)
+        sr2 = SportRegistrationFactory(user=self.user, sport=self.ice_hockey, role=SportRegistration.PLAYER)
+        sr3 = SportRegistrationFactory(user=self.user, sport=self.baseball, role=SportRegistration.MANAGER)
 
         result = self.user.sport_registration_data_by_sport()
         ice_hockey_data = result.get(self.ice_hockey)
@@ -96,7 +97,7 @@ class UserModelTests(BaseTestCase):
 
     def test_sport_registration_data_by_sport_no_role_objects(self):
         Coach.objects.all().delete()
-        sr1 = SportRegistrationFactory(user=self.user, sport=self.ice_hockey, role='coach')
+        sr1 = SportRegistrationFactory(user=self.user, sport=self.ice_hockey, role=SportRegistration.COACH)
 
         result = self.user.sport_registration_data_by_sport()
         ice_hockey_data = result.get(self.ice_hockey)
@@ -106,11 +107,11 @@ class UserModelTests(BaseTestCase):
         self.assertListEqual(list(ice_hockey_data.get('roles').get('coach')), [])
 
     def test_get_roles(self):
-        sr1 = SportRegistrationFactory(user=self.user, sport=self.ice_hockey, role='coach')
-        sr2 = SportRegistrationFactory(user=self.user, sport=self.ice_hockey, role='player')
-        sr3 = SportRegistrationFactory(user=self.user, sport=self.ice_hockey, role='referee')
-        sr4 = SportRegistrationFactory(user=self.user, sport=self.ice_hockey, role='manager')
-        sr5 = SportRegistrationFactory(user=self.user, sport=self.ice_hockey, role='scorekeeper')
+        sr1 = SportRegistrationFactory(user=self.user, sport=self.ice_hockey, role=SportRegistration.COACH)
+        sr2 = SportRegistrationFactory(user=self.user, sport=self.ice_hockey, role=SportRegistration.PLAYER)
+        sr3 = SportRegistrationFactory(user=self.user, sport=self.ice_hockey, role=SportRegistration.REFEREE)
+        sr4 = SportRegistrationFactory(user=self.user, sport=self.ice_hockey, role=SportRegistration.MANAGER)
+        sr5 = SportRegistrationFactory(user=self.user, sport=self.ice_hockey, role=SportRegistration.SCOREKEEPER)
         PermissionFactory(user=self.user, name='admin', content_object=self.organization)
 
         result = self.user.get_roles(self.ice_hockey, [sr1, sr2, sr3, sr4, sr5])

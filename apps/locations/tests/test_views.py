@@ -8,6 +8,7 @@ from ayrabo.utils.testing import BaseTestCase
 from locations.models import Location
 from locations.tests import LocationFactory
 from managers.tests import ManagerFactory
+from sports.models import SportRegistration
 from sports.tests import SportFactory, SportRegistrationFactory
 from teams.tests import TeamFactory
 from users.tests import UserFactory
@@ -21,7 +22,7 @@ class LocationDetailViewTests(BaseTestCase):
         self.password = 'myweakpassword'
         self.user = UserFactory(email=self.email, password=self.password)
         sport = SportFactory(name='Ice Hockey')
-        SportRegistrationFactory(user=self.user, sport=sport, role='manager')
+        SportRegistrationFactory(user=self.user, sport=sport, role=SportRegistration.MANAGER)
         ManagerFactory(user=self.user, team=TeamFactory(name='Icecats', division__league__sport=sport))
         self.location = LocationFactory(id=1, name='Iceland', street_number=3345, street='Hillside Ave',
                                         city='New Hyde Park', state='NY', zip_code='11040')

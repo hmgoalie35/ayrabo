@@ -1,6 +1,7 @@
 from ayrabo.utils.testing import BaseAPITestCase
 from managers.tests import ManagerFactory
 from players.tests import HockeyPlayerFactory
+from sports.models import SportRegistration
 from sports.tests import SportFactory, SportRegistrationFactory
 from teams.tests import TeamFactory
 from users.tests import UserFactory
@@ -13,7 +14,7 @@ class PlayersListAPIViewTests(BaseAPITestCase):
         self.user = UserFactory()
         self.sport = SportFactory(name='Ice Hockey')
         self.team = TeamFactory(name='Green Machine IceCats', division__league__sport=self.sport)
-        SportRegistrationFactory(user=self.user, sport=self.sport, role='manager')
+        SportRegistrationFactory(user=self.user, sport=self.sport, role=SportRegistration.MANAGER)
         ManagerFactory(user=self.user, team=self.team)
 
         self.p1 = HockeyPlayerFactory(team=self.team, is_active=True)
