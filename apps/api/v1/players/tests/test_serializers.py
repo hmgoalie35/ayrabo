@@ -1,8 +1,9 @@
-from users.tests import UserFactory
 from ayrabo.utils.testing import BaseAPITestCase
+from players.models import HockeyPlayer
 from players.tests import HockeyPlayerFactory
 from sports.tests import SportFactory
 from teams.tests import TeamFactory
+from users.tests import UserFactory
 from ..serializers import HockeyPlayerSerializer
 
 
@@ -14,7 +15,7 @@ class HockeyPlayerSerializerTests(BaseAPITestCase):
         sport = SportFactory(id=1)
         team = TeamFactory(id=1, division__league__sport=sport)
         player = HockeyPlayerFactory(id=1, user=user, sport=sport, team=team, jersey_number=23, is_active=True,
-                                     position='C', handedness='Left')
+                                     position=HockeyPlayer.CENTER, handedness=HockeyPlayer.LEFT)
 
         data = self.serializer_cls(instance=player).data
         self.assertDictEqual(data, {

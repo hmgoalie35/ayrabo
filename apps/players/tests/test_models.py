@@ -2,6 +2,7 @@ from django.core.exceptions import ValidationError
 from django.db.utils import IntegrityError
 
 from ayrabo.utils.testing import BaseTestCase
+from players.models import BaseballPlayer, BasketballPlayer, HockeyPlayer
 from players.tests import BaseballPlayerFactory, BasketballPlayerFactory, HockeyPlayerFactory
 from teams.tests import TeamFactory
 from users.tests import UserFactory
@@ -59,7 +60,8 @@ class AbstractPlayerModelTests(BaseTestCase):
     def test_table_fields(self):
         t = TeamFactory()
         user = UserFactory(first_name='Michael', last_name='Scott')
-        player = HockeyPlayerFactory(team=t, jersey_number=1, user=user, handedness='Left', position='G')
+        player = HockeyPlayerFactory(team=t, jersey_number=1, user=user, handedness=HockeyPlayer.LEFT,
+                                     position=HockeyPlayer.GOALTENDER)
         fields = player.table_fields
         del fields['Position']
         del fields['Handedness']
@@ -73,8 +75,8 @@ class HockeyPlayerModelTests(BaseTestCase):
     def setUp(self):
         self.jersey_number = 35
         user = UserFactory(first_name='Michael', last_name='Scott')
-        self.hockey_player = HockeyPlayerFactory(jersey_number=self.jersey_number, user=user, handedness='Left',
-                                                 position='G')
+        self.hockey_player = HockeyPlayerFactory(jersey_number=self.jersey_number, user=user,
+                                                 handedness=HockeyPlayer.LEFT, position=HockeyPlayer.GOALTENDER)
 
     def test_duplicate_jersey_number(self):
         validation_msg = 'Please choose another number, {jersey_number} is currently unavailable for {team}'.format(
@@ -148,8 +150,9 @@ class BaseballPlayerModelTests(BaseTestCase):
 
     def test_table_fields(self):
         user = UserFactory(first_name='Dwight', last_name='Schrute')
-        player = BaseballPlayerFactory(user=user, jersey_number=self.jersey_number, position='C', catches='Left',
-                                       bats='Left')
+        player = BaseballPlayerFactory(user=user, jersey_number=self.jersey_number,
+                                       position=BaseballPlayer.CATCHER, catches=BaseballPlayer.LEFT,
+                                       bats=BaseballPlayer.LEFT)
         self.assertDictEqual(player.table_fields, {
             'Jersey Number': 35,
             'Name': 'Dwight Schrute',
@@ -194,7 +197,8 @@ class BasketballPlayerModelTests(BaseTestCase):
 
     def test_table_fields(self):
         user = UserFactory(first_name='Ryan', last_name='Howard')
-        player = BasketballPlayerFactory(user=user, jersey_number=self.jersey_number, position='PG', shoots='Left')
+        player = BasketballPlayerFactory(user=user, jersey_number=self.jersey_number,
+                                         position=BasketballPlayer.POINT_GUARD, shoots=BasketballPlayer.LEFT)
         self.assertDictEqual(player.table_fields, {
             'Jersey Number': 35,
             'Name': 'Ryan Howard',

@@ -5,6 +5,7 @@ from ayrabo.utils.urls import url_with_query_string
 from common.tests import WaffleSwitchFactory
 from divisions.tests import DivisionFactory
 from leagues.tests import LeagueFactory
+from players.models import HockeyPlayer
 from players.tests import BaseballPlayerFactory, HockeyPlayerFactory
 from sports.tests import SportFactory, SportRegistrationFactory
 from teams.tests import TeamFactory
@@ -22,8 +23,8 @@ class PlayerUpdateViewTests(BaseTestCase):
 
         self.post_data = {
             'jersey_number': 23,
-            'position': 'LW',
-            'handedness': 'Left'
+            'position': HockeyPlayer.LEFT_WING,
+            'handedness': HockeyPlayer.LEFT,
         }
 
         self.ice_hockey = SportFactory(name='Ice Hockey')

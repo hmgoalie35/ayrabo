@@ -86,18 +86,26 @@ class HockeyPlayer(AbstractPlayer):
     A model representing a hockey player.
     """
 
+    CENTER = 'C'
+    LEFT_WING = 'LW'
+    RIGHT_WING = 'RW'
+    LEFT_DEFENSE = 'LD'
+    RIGHT_DEFENSE = 'RD'
+    GOALTENDER = 'G'
     POSITIONS = (
-        ('C', 'Center'),
-        ('LW', 'Left Wing'),
-        ('RW', 'Right Wing'),
-        ('LD', 'Left Defense'),
-        ('RD', 'Right Defense'),
-        ('G', 'Goaltender'),
+        (CENTER, 'Center'),
+        (LEFT_WING, 'Left Wing'),
+        (RIGHT_WING, 'Right Wing'),
+        (LEFT_DEFENSE, 'Left Defense'),
+        (RIGHT_DEFENSE, 'Right Defense'),
+        (GOALTENDER, 'Goaltender'),
     )
 
+    LEFT = 'Left'
+    RIGHT = 'Right'
     HANDEDNESS = (
-        ('Left', 'Left'),
-        ('Right', 'Right'),
+        (LEFT, 'Left'),
+        (RIGHT, 'Right'),
     )
 
     position = models.CharField(max_length=255, choices=POSITIONS, verbose_name='Position')
@@ -137,26 +145,36 @@ class BaseballPlayer(AbstractPlayer):
     A model representing a baseball player
     """
 
+    CATCHER = 'C'
+    PITCHER = 'P'
+    FIRST_BASE = '1B'
+    SECOND_BASE = '2B'
+    SHORTSTOP = 'SS'
+    THIRD_BASE = '3B'
+    LEFT_FIELD = 'LF'
+    CENTER_FIELD = 'CF'
+    RIGHT_FIELD = 'RF'
     POSITIONS = (
-        ('C', 'Catcher'),
-        ('P', 'Pitcher'),
-        ('1B', 'First Base'),
-        ('2B', 'Second Base'),
-        ('SS', 'Shortstop'),
-        ('3B', 'Third Base'),
-        ('LF', 'Left Field'),
-        ('CF', 'Center Field'),
-        ('RF', 'Right Field'),
+        (CATCHER, 'Catcher'),
+        (PITCHER, 'Pitcher'),
+        (FIRST_BASE, 'First Base'),
+        (SECOND_BASE, 'Second Base'),
+        (SHORTSTOP, 'Shortstop'),
+        (THIRD_BASE, 'Third Base'),
+        (LEFT_FIELD, 'Left Field'),
+        (CENTER_FIELD, 'Center Field'),
+        (RIGHT_FIELD, 'Right Field'),
     )
 
+    LEFT = 'Left'
+    RIGHT = 'Right'
     CATCHES = (
-        ('Left', 'Left'),
-        ('Right', 'Right'),
+        (LEFT, 'Left'),
+        (RIGHT, 'Right'),
     )
-
     BATS = (
-        ('Left', 'Left'),
-        ('Right', 'Right'),
+        (LEFT, 'Left'),
+        (RIGHT, 'Right'),
     )
 
     position = models.CharField(max_length=255, choices=POSITIONS, verbose_name='Position')
@@ -195,17 +213,24 @@ class BaseballPlayer(AbstractPlayer):
 
 
 class BasketballPlayer(AbstractPlayer):
+    POINT_GUARD = 'PG'
+    SHOOTING_GUARD = 'SG'
+    SMALL_FORWARD = 'SF'
+    POWER_FORWARD = 'PF'
+    CENTER = 'C'
     POSITIONS = (
-        ('PG', 'Point Guard'),
-        ('SG', 'Shooting Guard'),
-        ('SF', 'Small Forward'),
-        ('PF', 'Power Forward'),
-        ('C', 'Center'),
+        (POINT_GUARD, 'Point Guard'),
+        (SHOOTING_GUARD, 'Shooting Guard'),
+        (SMALL_FORWARD, 'Small Forward'),
+        (POWER_FORWARD, 'Power Forward'),
+        (CENTER, 'Center'),
     )
 
+    LEFT = 'Left'
+    RIGHT = 'Right'
     SHOOTS = (
-        ('Left', 'Left'),
-        ('Right', 'Right'),
+        (LEFT, 'Left'),
+        (RIGHT, 'Right'),
     )
 
     position = models.CharField(max_length=255, choices=POSITIONS, verbose_name='Position')

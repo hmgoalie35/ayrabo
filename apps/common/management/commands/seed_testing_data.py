@@ -44,16 +44,16 @@ def generate_birthday(year):
 
 def get_position(i):
     if i in range(0, 4):
-        return 'C'
+        return HockeyPlayer.CENTER
     if i in range(4, 8):
-        return 'LW'
+        return HockeyPlayer.LEFT_WING
     if i in range(8, 12):
-        return 'RW'
+        return HockeyPlayer.RIGHT_WING
     if i in range(12, 16):
-        return 'LD'
+        return HockeyPlayer.LEFT_DEFENSE
     if i in range(16, 20):
-        return 'RD'
-    return 'G'
+        return HockeyPlayer.RIGHT_DEFENSE
+    return HockeyPlayer.GOALTENDER
 
 
 def get_friday(date):
