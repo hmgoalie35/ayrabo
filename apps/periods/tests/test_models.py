@@ -4,6 +4,7 @@ from ayrabo.utils.testing import BaseTestCase
 from common.models import GenericChoice
 from common.tests import GenericChoiceFactory
 from games.tests import HockeyGameFactory
+from periods.models import HockeyPeriod
 from periods.tests import HockeyPeriodFactory
 from sports.tests import SportFactory
 
@@ -18,9 +19,9 @@ class HockeyPeriodModelTests(BaseTestCase):
         self.game = HockeyGameFactory(point_value=self.point_value, type=self.type)
 
     def test_name_game_unique_together(self):
-        HockeyPeriodFactory(game=self.game, name='1')
+        HockeyPeriodFactory(game=self.game, name=HockeyPeriod.ONE)
         with self.assertRaises(IntegrityError):
-            HockeyPeriodFactory(game=self.game, name='1')
+            HockeyPeriodFactory(game=self.game, name=HockeyPeriod.ONE)
 
     def test_to_str(self):
-        self.assertEqual(str(HockeyPeriodFactory(game=self.game, name='1')), '1st')
+        self.assertEqual(str(HockeyPeriodFactory(game=self.game, name=HockeyPeriod.ONE)), '1st')

@@ -117,7 +117,7 @@ class HockeyGoalModelTests(BaseTestCase):
         self.start = pytz.utc.localize(datetime.datetime(year=2017, month=12, day=16, hour=19))
         self.game = HockeyGameFactory(type=self.game_type, point_value=self.point_value, start=self.start,
                                       timezone='US/Eastern', home_team=home_team, away_team=away_team)
-        self.period = HockeyPeriodFactory(game=self.game, name='1')
+        self.period = HockeyPeriodFactory(game=self.game, name=HockeyPeriod.ONE)
         self.player = HockeyPlayerFactory(user__last_name='Tavares')
         self.time = datetime.timedelta(minutes=5, seconds=33)
 

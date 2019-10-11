@@ -7,6 +7,7 @@ from common.models import GenericChoice
 from common.tests import GenericChoiceFactory
 from games.tests import HockeyGameFactory
 from penalties.tests import GenericPenaltyChoiceFactory, HockeyPenaltyFactory
+from periods.models import HockeyPeriod
 from periods.tests import HockeyPeriodFactory
 from players.tests import HockeyPlayerFactory
 from sports.tests import SportFactory
@@ -42,7 +43,7 @@ class HockeyPenaltyModelTests(BaseTestCase):
                                          type=GenericChoice.GAME_TYPE)
         player = HockeyPlayerFactory(user__first_name='Michael', user__last_name='Scott')
         game = HockeyGameFactory(point_value=point_value, type=game_type)
-        period = HockeyPeriodFactory(game=game, name='1')
+        period = HockeyPeriodFactory(game=game, name=HockeyPeriod.ONE)
         penalty = HockeyPenaltyFactory(game=game,
                                        player=player,
                                        duration=datetime.timedelta(minutes=2),

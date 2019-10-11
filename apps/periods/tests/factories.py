@@ -16,7 +16,7 @@ class AbstractPlayingPeriodFactory(django.DjangoModelFactory):
 
 class HockeyPeriodFactory(AbstractPlayingPeriodFactory):
     game = SubFactory(HockeyGameFactory)
-    name = models.HockeyPeriod.PERIOD_CHOICES[0][0]
+    name = models.HockeyPeriod.ONE
 
     class Meta:
         model = models.HockeyPeriod
