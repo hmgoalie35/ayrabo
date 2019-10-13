@@ -7,7 +7,7 @@ from django.conf import settings
 from django.core import mail
 
 from accounts.tests import EmailAddressFactory
-from ayrabo.utils.testing import get_user, to_bool
+from ayrabo.utils.testing import get_user
 from userprofiles.tests import UserProfileFactory
 from users.tests import UserFactory
 
@@ -107,16 +107,6 @@ def step_impl(context, account_type):
         create_unconfirmed_account(user_data, create_userprofile)
         if account_type == 'confirmed':
             confirm_account(context, username_or_email)
-
-
-@step("The following users exist")
-def step_impl(context):
-    for row in context.table:
-        data = row.as_dict()
-        data.update({
-            'is_active': to_bool(data.pop('is_active', True))
-        })
-        UserFactory(**data)
 
 
 @when('I confirm "(?P<username_or_email>.*)" via "(?P<method>.*)"')

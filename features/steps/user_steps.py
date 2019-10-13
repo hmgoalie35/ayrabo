@@ -14,25 +14,18 @@ def step_impl(context, username_or_email, name, model, kwargs):
     PermissionFactory(name=name, user=user, content_object=content_object)
 
 
-@step(r"The following users? exist")
+@step(r"The following users exist")
 def step_impl(context):
     for row in context.table:
         data = row.as_dict()
-        email = data.get('email')
-        create_userprofile = to_bool(data.get('create_userprofile', True))
-        kwargs = {
-            'id': data.get('id'),
-            'first_name': data.get('first_name'),
-            'last_name': data.get('last_name'),
-            'email': email,
-            'username': data.get('username', email),
-            'password': data.get('password')
-        }
-        kwargs = clean_kwargs(kwargs)
-        # This needs to be after we clean the kwargs.
+        create_userprofile = to_bool(data.pop('create_userprofile', True))
+        data.update({
+            'username': data.get('username') or data.get('email'),
+            'is_active': to_bool(data.pop('is_active', True))
+        })
         if not create_userprofile:
-            kwargs.update({'userprofile': None})
-        UserFactory(**kwargs)
+            data.update({'userprofile': None})
+        UserFactory(**data)
 
 
 @step(r"The following userprofiles? exist")
