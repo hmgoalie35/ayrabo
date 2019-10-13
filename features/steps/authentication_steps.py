@@ -109,7 +109,7 @@ def step_impl(context, account_type):
             confirm_account(context, username_or_email)
 
 
-@step("The following users? exist?")
+@step("The following users exist")
 def step_impl(context):
     for row in context.table:
         data = row.as_dict()
