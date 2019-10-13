@@ -38,3 +38,12 @@ Feature: Login to my existing account
     And I should be on the "account_email_verification_sent" page
     And I should see "Verify Your E-mail Address"
     And I should see "An email with a confirmation link has been sent to your email address. Please follow the"
+
+  Scenario: Login with inactive account
+    Given The following users exist
+      | first_name | last_name | username          | email             | is_active | password       |
+      | Michael    | Scarn     | mscarn@ayrabo.com | mscarn@ayrabo.com | false     | myweakpassword |
+    When I login with "mscarn@ayrabo.com" and "myweakpassword" via "login_page"
+    Then I should be on the "account_inactive" page
+    And I should see "Account Inactive"
+    And I should see "Please contact us at"

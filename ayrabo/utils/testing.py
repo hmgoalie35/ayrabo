@@ -45,7 +45,7 @@ def string_to_kwargs_dict(string):
 
 
 def clean_kwargs(kwargs):
-    return {k: v for k, v in kwargs.items() if v}
+    return {k: v for k, v in kwargs.items() if v is not None}
 
 
 def to_bool(value):
