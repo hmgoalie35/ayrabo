@@ -11,7 +11,6 @@ urlpatterns = [
     url(r'^complete-registration/$', UserProfileCreateView.as_view(), name='account_complete_registration'),
     url(r'^email-confirmation/new/$', views.NewConfirmationEmailView.as_view(), name='account_new_email_confirmation'),
     url(r'^email/$', generic.RedirectView.as_view(url=reverse_lazy('home')), name='account_email'),
-    url(r'^inactive/$', generic.RedirectView.as_view(url=reverse_lazy('home')), name='account_inactive'),
     url(r'^register/$', signup, name='account_register'),
     url(r'^signup/$', generic.RedirectView.as_view(url=reverse_lazy('account_register')), name='account_signup'),
     url(r'^password/change/$', views.PasswordChangeView.as_view(), name='account_change_password'),
