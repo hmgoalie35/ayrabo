@@ -39,8 +39,8 @@ Feature: Update game rosters
       | id | league                            | start_date | end_date   | teams                 |
       | 1  | Long Island Amateur Hockey League | 2017-09-14 | 2018-09-14 | Green Machine IceCats |
     And The following game objects exist
-      | id | home_team             | away_team        | type   | point_value | location | start | end   | timezone   | season |
-      | 1  | Green Machine IceCats | Long Island Edge | league | 2           | Iceland  | today | today | US/Eastern | 1      |
+      | id | home_team             | away_team        | type   | point_value | location | start               | end                 | timezone   | season |
+      | 1  | Green Machine IceCats | Long Island Edge | league | 2           | Iceland  | 10/25/2017 07:00 PM | 10/25/2017 09:00 PM | US/Eastern | 1      |
 
   Scenario: Navigate to game roster update page as home team manager
     Given I login with "user@ayrabo.com" and "myweakpassword"
@@ -48,6 +48,9 @@ Feature: Update game rosters
     When I press "actions-dropdown-1"
     And I press "update-game-rosters-1"
     Then I should be on the "sports:games:rosters:update" page with kwargs "slug=ice-hockey, game_pk=1"
+    And I should see "Update Game Rosters"
+    And I should see "Game #1"
+    And I should see "10/25/2017 07:00 PM EDT at Iceland"
 
   Scenario: Navigate to game roster update page as away team manager
     Given I login with "user1@ayrabo.com" and "myweakpassword"
