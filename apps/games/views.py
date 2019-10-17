@@ -205,10 +205,13 @@ class GameRostersUpdateView(LoginRequiredMixin,
             raise SportNotConfiguredException(self.sport)
 
         self.game = get_object_or_404(
-            model_cls.objects.select_related('home_team', 'home_team__division', 'away_team',
-                                             'away_team__division', 'team', 'team__division',
-                                             'team__division__league',
-                                             'team__division__league__sport', 'season'),
+            model_cls.objects.select_related(
+                'home_team__division',
+                'away_team__division',
+                'team__division__league__sport',
+                'season',
+                'location',
+            ),
             pk=self.kwargs.get('game_pk')
         )
         return self.game
@@ -220,16 +223,18 @@ class GameRostersUpdateView(LoginRequiredMixin,
         is_scorekeeper = self.scorekeepers.exists()
         can_update_game = self.game.can_update()
 
-        context['game'] = self.game
-        context['home_team'] = home_team
-        context['away_team'] = away_team
-        context['home_team_name'] = '{} {}'.format(home_team.name, home_team.division.name)
-        context['away_team_name'] = '{} {}'.format(away_team.name, away_team.division.name)
-        context['can_update_home_team_roster'] = can_update_game and (
-            self.managers.filter(team=home_team).exists() or is_scorekeeper)
-        context['can_update_away_team_roster'] = can_update_game and (
-            self.managers.filter(team=away_team).exists() or is_scorekeeper)
-        context['sport'] = self.sport
+        context.update({
+            'game': self.game,
+            'home_team': home_team,
+            'home_team_name': f'{home_team.name} {home_team.division.name}',
+            'away_team': away_team,
+            'away_team_name': f'{away_team.name} {away_team.division.name}',
+            'can_update_home_team_roster': can_update_game and (
+                self.managers.filter(team=home_team).exists() or is_scorekeeper),
+            'can_update_away_team_roster': can_update_game and (
+                self.managers.filter(team=away_team).exists() or is_scorekeeper),
+            'sport': self.sport,
+        })
         return context
 
 
