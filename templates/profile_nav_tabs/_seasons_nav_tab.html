@@ -1,0 +1,28 @@
+{% load get_seasons_nav_tab_url from utils %}
+
+<li role="presentation" class="list-item--pill dropdown">
+  <a
+    id="tab-item-seasons"
+    class="tab-link dropdown-toggle"
+    data-toggle="dropdown"
+    href="#"
+    aria-controls=seasons
+    aria-haspopup="true"
+    aria-expanded="false"
+    role="tab"
+  >Seasons<i class="fa fa-fw fa-caret-down"></i>
+  </a>
+  <ul class="dropdown-menu">
+    {% for season_dropdown_obj in seasons %}
+      <li>
+        <a
+          id="season-{{ season_dropdown_obj.pk }}"
+          href="{% get_seasons_nav_tab_url profile_type %}"
+        >{{ season_dropdown_obj }}
+        </a>
+      </li>
+    {% empty %}
+      <li><a>There are no other seasons at this time.</a></li>
+    {% endfor %}
+  </ul>
+</li>
