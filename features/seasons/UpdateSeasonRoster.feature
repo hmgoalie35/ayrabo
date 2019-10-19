@@ -63,7 +63,7 @@ Feature: Update season roster
     # in the view tests. Not really worth it to duplicate the test here also. The test in CreateSeasonRoster is being
     # kept solely for reference
 
-  Scenario: Form disabled for expired seasons
+  Scenario: Form disabled for past seasons
     Given The following manager object exists
       | username_or_email | team                  |
       | user@ayrabo.com   | Green Machine IceCats |

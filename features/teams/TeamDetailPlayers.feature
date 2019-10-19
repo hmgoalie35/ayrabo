@@ -55,4 +55,4 @@ Feature: View players for a team
     And I am on the "teams:seasons:schedule" page with kwargs "team_pk=1, season_pk=2"
     And I press "tab-item-players"
     Then I should be on the "teams:seasons:schedule" page with kwargs "team_pk=1, season_pk=2"
-    And I should see "This functionality is not currently available for expired seasons."
+    And I should see "This functionality is not currently available for past seasons."

@@ -8,7 +8,7 @@ def get_team_detail_view_context(team, season_pk=None):
     division = team.division
     league = division.league
     season = get_current_season_or_from_pk(league, season_pk)
-    is_season_expired = season and season.expired
+    is_season_expired = season and season.is_past
     schedule_link = reverse('teams:schedule', kwargs={'team_pk': team.pk})
     players_link = reverse('teams:players', kwargs={'team_pk': team.pk})
     season_rosters_link = reverse('teams:season_rosters:list', kwargs={'team_pk': team.pk})

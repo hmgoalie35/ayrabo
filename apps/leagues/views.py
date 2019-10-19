@@ -27,7 +27,7 @@ class AbstractLeagueDetailView(LoginRequiredMixin, HandleSportNotConfiguredMixin
         season = get_current_season_or_from_pk(league, self.kwargs.get('season_pk'))
         schedule_link = reverse('leagues:schedule', kwargs={'slug': league.slug})
         divisions_link = reverse('leagues:divisions', kwargs={'slug': league.slug})
-        if season is not None and season.expired:
+        if season is not None and season.is_past:
             url_kwargs = {'slug': league.slug, 'season_pk': season.pk}
             schedule_link = reverse('leagues:seasons:schedule', kwargs=url_kwargs)
             divisions_link = reverse('leagues:seasons:divisions', kwargs=url_kwargs)
@@ -62,7 +62,7 @@ class LeagueDetailDivisionsView(AbstractLeagueDetailView):
     queryset = AbstractLeagueDetailView.queryset.prefetch_related('divisions', 'divisions__teams')
 
     def _get_divisions(self, league, season):
-        if season is not None and season.expired:
+        if season is not None and season.is_past:
             teams = season.teams.all()
             division_ids = teams.values_list('division', flat=True)
             return Division.objects.prefetch_related('teams').filter(id__in=division_ids)
@@ -73,7 +73,7 @@ class LeagueDetailDivisionsView(AbstractLeagueDetailView):
         league = context.get('league')
         season = context.get('season')
         header_text = 'All Divisions'
-        if season is not None and season.expired:
+        if season is not None and season.is_past:
             header_text = '{} Divisions'.format(season)
         divisions = self._get_divisions(league, season)
         chunked_divisions = get_chunked_divisions(divisions)
