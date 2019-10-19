@@ -1,9 +1,10 @@
-import datetime
 import re
+from datetime import datetime, timedelta
 
 from django.db.models import Q, QuerySet
 from django.test import TestCase
 from django.urls import reverse
+from django.utils import timezone
 from rest_framework import status
 from rest_framework.reverse import reverse as drf_reverse
 from rest_framework.test import APITestCase
@@ -76,7 +77,7 @@ def handle_date(value):
     :param value: String adhering to the mini DSL this function expects.
     :return: A string representing a date, or a date instance
     """
-    today = datetime.date.today()
+    today = timezone.now().date()
     if value in ['today', '', None]:
         return today
     re_match = re.fullmatch(r'^(?P<negate>-)?(?P<amount>\d+)(?P<amount_type>[dy])$', value, re.IGNORECASE)
@@ -89,7 +90,7 @@ def handle_date(value):
     if amount_type == 'y':
         # Convert to days
         amount *= 365
-    return today + datetime.timedelta(days=amount)
+    return today + timedelta(days=amount)
 
 
 def handle_time(value):
@@ -100,8 +101,8 @@ def handle_time(value):
     :param value: A time in string format
     :return: Time instance
     """
-    time_offset = datetime.datetime.strptime(value, '%I:%M %p').time()
-    now = datetime.datetime.now().timetz()
+    time_offset = datetime.strptime(value, '%I:%M %p').time()
+    now = timezone.now().timetz()
     if time_offset is not None:
         return now.replace(hour=time_offset.hour, minute=time_offset.minute)
     return now
@@ -118,7 +119,7 @@ class BaseTestCase(TestCase):
             return reverse(url, kwargs=kwargs)
 
     def get_login_required_url(self, url):
-        return '{}?next={}'.format(reverse('account_login'), url)
+        return f'{reverse("account_login")}?next={url}'
 
     def get_session_value(self, key):
         return self.client.session.get(key)
@@ -127,19 +128,26 @@ class BaseTestCase(TestCase):
         return _login(self.client, user, email, password)
 
     def create_past_current_future_seasons(self, league, teams=None):
-        start_date = datetime.date.today()
+        start_date = timezone.now().date()
         kwargs = {
             'league': league
         }
         if teams is not None:
             kwargs.update({'teams': teams})
-        past_start_date = start_date - datetime.timedelta(days=365)
-        future_start_date = start_date + datetime.timedelta(days=365)
-        past_season = SeasonFactory(start_date=past_start_date, end_date=start_date - datetime.timedelta(days=2),
-                                    **kwargs)
+
+        past_start_date = start_date - timedelta(days=365)
+        future_start_date = start_date + timedelta(days=365)
+        past_season = SeasonFactory(
+            start_date=past_start_date,
+            end_date=start_date - timedelta(days=1),
+            **kwargs
+        )
         current_season = SeasonFactory(start_date=start_date, end_date=future_start_date, **kwargs)
-        future_season = SeasonFactory(start_date=future_start_date,
-                                      end_date=future_start_date + datetime.timedelta(days=365), **kwargs)
+        future_season = SeasonFactory(
+            start_date=future_start_date + timedelta(days=1),
+            end_date=future_start_date + timedelta(days=365),
+            **kwargs
+        )
         return past_season, current_season, future_season
 
     def _get_messages(self, response):
@@ -154,12 +162,12 @@ class BaseTestCase(TestCase):
     def assertHasMessage(self, response, msg):
         messages, has_message = self._has_message(response, msg)
         if not has_message:
-            self.fail(msg='{} not found in {}'.format(msg, messages))
+            self.fail(msg=f'{msg} not found in {messages}')
 
     def assertNoMessage(self, response, msg):
         _, has_message = self._has_message(response, msg)
         if has_message:
-            self.fail(msg='{} unexpectedly found in messages'.format(msg))
+            self.fail(msg=f'{msg} unexpectedly found in messages')
 
     def assertLoginRequired(self, url):
         response = self.client.get(url)
