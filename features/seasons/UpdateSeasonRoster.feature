@@ -10,7 +10,7 @@ Feature: Update season roster
     And The following team object exists
       | id | name                  | division        | league                            | sport      |
       | 1  | Green Machine IceCats | Midget Minor AA | Long Island Amateur Hockey League | Ice Hockey |
-    And The following season object exists
+    And The following seasons exist
       | id | league                            | teams                 |
       | 1  | Long Island Amateur Hockey League | Green Machine IceCats |
     And The following season rosters for "Ice Hockey" exist
@@ -67,7 +67,7 @@ Feature: Update season roster
     Given The following manager object exists
       | username_or_email | team                  |
       | user@ayrabo.com   | Green Machine IceCats |
-    And The following season object exists
+    And The following seasons exist
       | id | league                            | teams                 | start_date | end_date |
       | 2  | Long Island Amateur Hockey League | Green Machine IceCats | -1y        | -5d      |
     And The following season rosters for "Ice Hockey" exist

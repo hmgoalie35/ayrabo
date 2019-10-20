@@ -26,7 +26,7 @@ Feature: Create game
     And The following location object exists
       | name    |
       | Iceland |
-    And The following season object exists
+    And The following seasons exist
       | id | league                            | start_date | end_date | teams                 |
       | 1  | Long Island Amateur Hockey League | today      | 1y       | Green Machine IceCats |
     And I login with "user@ayrabo.com" and "myweakpassword"

@@ -27,7 +27,7 @@ Feature: Update a game
       | name     |
       | Iceland  |
       | IceWorks |
-    And The following season object exists
+    And The following seasons exist
       | id | league                            | start_date | end_date | teams                 |
       | 1  | Long Island Amateur Hockey League | -30d       | 1y       | Green Machine IceCats |
     And The following game objects exist

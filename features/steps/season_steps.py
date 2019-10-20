@@ -7,25 +7,17 @@ from seasons.tests import SeasonFactory
 from teams.models import Team
 
 
-@step('The following season objects? exists?')
+@step('The following seasons exist')
 def step_impl(context):
     for row in context.table:
         data = row.as_dict()
         league_name = data.get('league')
         league = League.objects.get(Q(name=league_name) | Q(abbreviated_name=league_name))
 
-        start_date = data.get('start_date')
-        # If start_date or end_date aren't specified, default to today.
-        if start_date is None:
-            start_date = handle_date('today')
-        else:
-            start_date = handle_date(start_date)
-
-        end_date = data.get('end_date')
-        if end_date is None:
-            end_date = handle_date('1y')
-        else:
-            end_date = handle_date(end_date)
+        start_date = data.get('start_date', 'today')
+        start_date = handle_date(start_date)
+        end_date = data.get('end_date', '1y')
+        end_date = handle_date(end_date)
 
         kwargs = {'league': league, 'start_date': start_date, 'end_date': end_date}
         obj_id = data.get('id', None)
