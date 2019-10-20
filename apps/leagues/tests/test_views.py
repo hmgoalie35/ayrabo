@@ -102,7 +102,7 @@ class LeagueDetailScheduleViewTests(AbstractLeagueDetailViewTestCase):
         kwargs = {'slug': self.liahl.slug}
         self.assertEqual(context.get('schedule_link'), reverse('leagues:schedule', kwargs=kwargs))
         self.assertEqual(context.get('divisions_link'), reverse('leagues:divisions', kwargs=kwargs))
-        self.assertIsNotNone(context.get('past_seasons'))
+        self.assertIsNotNone(context.get('seasons'))
         self.assertEqual(context.get('current_season_page_url'), reverse('leagues:schedule', kwargs=kwargs))
 
         self.assertEqual(context.get('active_tab'), 'schedule')
@@ -127,7 +127,7 @@ class LeagueDetailScheduleViewTests(AbstractLeagueDetailViewTestCase):
         kwargs = {'slug': self.liahl.slug, 'season_pk': self.past_season.pk}
         self.assertEqual(context.get('schedule_link'), reverse('leagues:seasons:schedule', kwargs=kwargs))
         self.assertEqual(context.get('divisions_link'), reverse('leagues:seasons:divisions', kwargs=kwargs))
-        self.assertIsNotNone(context.get('past_seasons'))
+        self.assertIsNotNone(context.get('seasons'))
         self.assertEqual(context.get('current_season_page_url'),
                          reverse('leagues:schedule', kwargs={'slug': self.liahl.slug}))
 
@@ -167,7 +167,7 @@ class LeagueDetailDivisionsViewTests(AbstractLeagueDetailViewTestCase):
         kwargs = {'slug': self.liahl.slug}
         self.assertEqual(context.get('schedule_link'), reverse('leagues:schedule', kwargs=kwargs))
         self.assertEqual(context.get('divisions_link'), reverse('leagues:divisions', kwargs=kwargs))
-        self.assertIsNotNone(context.get('past_seasons'))
+        self.assertIsNotNone(context.get('seasons'))
 
         self.assertEqual(context.get('active_tab'), 'divisions')
         expected = [
@@ -188,7 +188,7 @@ class LeagueDetailDivisionsViewTests(AbstractLeagueDetailViewTestCase):
         kwargs = {'slug': self.liahl.slug, 'season_pk': self.past_season.pk}
         self.assertEqual(context.get('schedule_link'), reverse('leagues:seasons:schedule', kwargs=kwargs))
         self.assertEqual(context.get('divisions_link'), reverse('leagues:seasons:divisions', kwargs=kwargs))
-        self.assertIsNotNone(context.get('past_seasons'))
+        self.assertIsNotNone(context.get('seasons'))
 
         self.assertEqual(context.get('active_tab'), 'divisions')
         expected = [

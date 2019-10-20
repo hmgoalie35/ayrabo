@@ -78,7 +78,7 @@ class SeasonRosterCreateViewTests(BaseTestCase):
         self.assertTemplateUsed(response, 'seasons/season_roster_create.html')
         self.assertEqual(context['team'].pk, self.icecats.pk)
         self.assertEqual(context.get('team_display_name'), 'Green Machine IceCats - Midget Minor AA')
-        self.assertIsNotNone(context.get('past_seasons'))
+        self.assertIsNotNone(context.get('seasons'))
         self.assertEqual(context.get('active_tab'), 'season_rosters')
 
     # POST
@@ -210,7 +210,7 @@ class SeasonRosterUpdateViewTests(BaseTestCase):
         self.assertEqual(context['team'].pk, self.icecats.pk)
         self.assertEqual(context['form'].instance.pk, self.season_roster.pk)
         self.assertEqual(context.get('team_display_name'), 'Green Machine IceCats - Midget Minor AA')
-        self.assertIsNotNone(context.get('past_seasons'))
+        self.assertIsNotNone(context.get('seasons'))
         self.assertEqual(context.get('active_tab'), 'season_rosters')
 
     # POST

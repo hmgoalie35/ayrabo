@@ -120,7 +120,7 @@ class HockeyGameCreateViewTests(BaseTestCase):
         self.assertEqual(context.get('team'), self.t1)
         self.assertEqual(context.get('team_display_name'), 'Green Machine IceCats - Midget Minor AA')
         self.assertEqual(context.get('active_tab'), 'schedule')
-        self.assertIsNotNone(context.get('past_seasons'))
+        self.assertIsNotNone(context.get('seasons'))
 
     def test_get_team_dne(self):
         self.login(email=self.email, password=self.password)
@@ -381,7 +381,7 @@ class HockeyGameUpdateViewTests(BaseTestCase):
         self.assertEqual(context.get('team'), self.t1)
         self.assertEqual(context.get('team_display_name'), 'Green Machine IceCats - Midget Minor AA')
         self.assertEqual(context.get('active_tab'), 'schedule')
-        self.assertIsNotNone(context.get('past_seasons'))
+        self.assertIsNotNone(context.get('seasons'))
 
     # POST
     def test_has_changed_custom_logic(self):

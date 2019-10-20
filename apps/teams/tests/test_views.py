@@ -116,7 +116,7 @@ class TeamDetailScheduleViewTests(BaseTestCase):
         self.assertEqual(context.get('schedule_link'), self.formatted_url)
         self.assertEqual(context.get('season_rosters_link'), reverse('teams:season_rosters:list',
                                                                      kwargs={'team_pk': self.icecats_mm_aa.pk}))
-        self.assertIsNotNone(context.get('past_seasons'))
+        self.assertIsNotNone(context.get('seasons'))
         self.assertEqual(context.get('current_season_page_url'), self.formatted_url)
         self.assertTrue(context.get('can_create_game'))
 
@@ -141,7 +141,7 @@ class TeamDetailScheduleViewTests(BaseTestCase):
         self.assertEqual(context.get('schedule_link'), url)
         self.assertEqual(context.get('season_rosters_link'),
                          reverse('teams:seasons:season_rosters-list', kwargs=kwargs))
-        self.assertIsNotNone(context.get('past_seasons'))
+        self.assertIsNotNone(context.get('seasons'))
 
         # The user is a manager for this team, but the season is expired.
         self.assertFalse(context.get('can_create_game'))
@@ -208,7 +208,7 @@ class TeamDetailSeasonRostersViewTests(BaseTestCase):
 
         self.assertEqual(context.get('team_display_name'), 'Green Machine IceCats - Midget Minor AA')
         self.assertEqual(context.get('season'), self.current_season)
-        self.assertIsNotNone(context.get('past_seasons'))
+        self.assertIsNotNone(context.get('seasons'))
 
         # Only includes season rosters for the current season.
         self.assertListEqual(list(context.get('season_rosters')), [self.sr1, self.sr2, self.sr3, self.sr4])
@@ -228,7 +228,7 @@ class TeamDetailSeasonRostersViewTests(BaseTestCase):
         self.assertTemplateUsed('teams/team_detail_season_rosters.html')
 
         self.assertEqual(context.get('season'), self.past_season)
-        self.assertIsNotNone(context.get('past_seasons'))
+        self.assertIsNotNone(context.get('seasons'))
 
         self.assertListEqual(list(context.get('season_rosters')), [self.sr5])
         self.assertTrue(context.get('has_season_rosters'))
@@ -278,7 +278,7 @@ class TeamDetailPlayersViewTests(BaseTestCase):
         # Don't need to go crazy and test that everything from get_team_detail_view_context is here.
         self.assertEqual(context.get('team_display_name'), 'Green Machine IceCats - Midget Minor AA')
         self.assertEqual(context.get('season'), self.current_season)
-        self.assertIsNotNone(context.get('past_seasons'))
+        self.assertIsNotNone(context.get('seasons'))
 
         self.assertListEqual(context.get('columns'), ['Jersey Number', 'Name', 'Position', 'Handedness'])
         self.assertListEqual(list(context.get('players')), [self.p4, self.p3, self.p2, self.p1])
