@@ -11,16 +11,22 @@
       </div>
     </div>
 
-    {% if season and season.is_past %}
-      <div class="row">
-        <div class="col-md-offset-3 col-md-6">
-          <div class="alert alert-warning text-center" role="alert">
-            This season has been archived.
-            <br>
-            {% block current_season_page_text %}{% endblock %} <a class="alert-link" href="{{ current_season_page_url }}">here</a>.
+    {% if season %}
+      {% if season.is_past or season.is_future %}
+        <div class="row">
+          <div class="col-md-offset-3 col-md-6">
+            <div class="alert alert-warning text-center" role="alert">
+              {% if season.is_past %}
+                This season has been archived.
+              {% elif season.is_future %}
+                This season has not started yet.
+              {% endif %}
+              <br>
+              {% block current_season_page_text %}{% endblock %} <a class="alert-link" href="{{ current_season_page_url }}">here</a>.
+            </div>
           </div>
         </div>
-      </div>
+      {% endif %}
     {% endif %}
 
     <div class="row">
