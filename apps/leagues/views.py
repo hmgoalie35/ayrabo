@@ -60,19 +60,23 @@ class LeagueDetailDivisionsView(AbstractLeagueDetailView):
     queryset = AbstractLeagueDetailView.queryset.prefetch_related('divisions', 'divisions__teams')
 
     def _get_divisions(self, league, season):
-        if season is not None and season.is_past:
-            teams = season.teams.all()
-            division_ids = teams.values_list('division', flat=True)
-            return Division.objects.prefetch_related('teams').filter(id__in=division_ids)
-        return league.divisions.all()
+        # This is a little confusing, but all we're doing is showing all divisions when viewing the current season
+        # because we don't have a general list view, and only showing the divisions for the current season here would
+        # mean we never actually show all divisions for the league
+        if season.is_current:
+            return league.divisions.all()
+        teams = season.teams.all()
+        division_ids = teams.values_list('division', flat=True)
+        return Division.objects.prefetch_related('teams').filter(id__in=division_ids)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         league = context.get('league')
         season = context.get('season')
-        header_text = 'All Divisions'
-        if season is not None and season.is_past:
-            header_text = '{} Divisions'.format(season)
+        if season.is_current:
+            header_text = 'All Divisions'
+        else:
+            header_text = f'{season} Divisions'
         divisions = self._get_divisions(league, season)
         chunked_divisions = get_chunked_divisions(divisions)
         context.update({
