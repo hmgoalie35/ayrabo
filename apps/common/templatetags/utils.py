@@ -52,13 +52,24 @@ def copy_to_clipboard_btn(text, title='Copy'):
 @register.simple_tag(takes_context=True)
 def get_seasons_nav_tab_url(context, profile_type):
     # Pulling `season` from context will give us the season the view chucks into the context which isn't what we want
-    # here, need to name it something unique
+    # here, needed to name it something unique
     season = context.get('season_dropdown_obj')
+    # Don't return `None`, None will be used as the url
+    url = ''
     if profile_type == 'league':
         league = context.get('league')
-        return reverse('leagues:seasons:schedule', kwargs={'slug': league.slug, 'season_pk': season.pk})
+        kwargs = {'slug': league.slug}
+        if season.is_current:
+            url = reverse('leagues:schedule', kwargs=kwargs)
+        else:
+            kwargs.update({'season_pk': season.pk})
+            url = reverse('leagues:seasons:schedule', kwargs=kwargs)
     elif profile_type == 'team':
         team = context.get('team')
-        return reverse('teams:seasons:schedule', kwargs={'team_pk': team.pk, 'season_pk': season.pk})
-    # Don't return `None`, None will be used as the url.
-    return ''
+        kwargs = {'team_pk': team.pk}
+        if season.is_current:
+            url = reverse('teams:schedule', kwargs=kwargs)
+        else:
+            kwargs.update({'season_pk': season.pk})
+            url = reverse('teams:seasons:schedule', kwargs=kwargs)
+    return url
