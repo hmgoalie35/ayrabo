@@ -6,7 +6,7 @@
     class="tab-link dropdown-toggle"
     data-toggle="dropdown"
     href="#"
-    aria-controls=seasons
+    aria-controls="seasons"
     aria-haspopup="true"
     aria-expanded="false"
     role="tab"
@@ -19,6 +19,13 @@
           id="season-{{ season_dropdown_obj.pk }}"
           href="{% get_seasons_nav_tab_url profile_type %}"
         >{{ season_dropdown_obj }}
+          {% if season_dropdown_obj.is_past %}
+            <span class="label label-warning">past</span>
+          {% elif season_dropdown_obj.is_current %}
+            <span class="label label-success">current</span>
+          {% else %}
+            <span class="label label-primary">future</span>
+          {% endif %}
         </a>
       </li>
     {% empty %}

@@ -36,7 +36,7 @@ class AbstractLeagueDetailView(LoginRequiredMixin, HandleSportNotConfiguredMixin
             'season': season,
             'schedule_link': schedule_link,
             'divisions_link': divisions_link,
-            'past_seasons': Season.objects.get_past(league=league)
+            'seasons': Season.objects.get_for_league(league=league)
         })
         return context
 

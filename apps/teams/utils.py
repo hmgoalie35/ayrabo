@@ -23,5 +23,5 @@ def get_team_detail_view_context(team, season_pk=None):
         'schedule_link': schedule_link,
         'players_link': players_link,
         'season_rosters_link': season_rosters_link,
-        'past_seasons': Season.objects.get_past(league=league)
+        'seasons': Season.objects.get_for_league(league=league)
     }
