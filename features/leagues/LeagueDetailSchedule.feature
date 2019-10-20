@@ -1,7 +1,4 @@
-Feature: League detail
-  As an authenticated user,
-  I want to be able to view details, standings and other info about a league
-  So that I can have all of this info in a central place
+Feature: League schedule
 
   Background:
     Given The following confirmed user account exists
@@ -27,23 +24,26 @@ Feature: League detail
     And The following location object exists
       | name    |
       | Iceland |
-    And The following season object exists
+    And The following seasons exist
       | id | league                            | start_date | end_date | teams                 |
       | 1  | Long Island Amateur Hockey League | today      | 1y       | Green Machine IceCats |
       | 2  | Long Island Amateur Hockey League | -1y        | -5d      | Green Machine IceCats |
+      | 3  | Long Island Amateur Hockey League | 1y         | 2y       | Green Machine IceCats |
     And The following game objects exist
       | home_team             | away_team        | type   | point_value | location | start | end   | timezone   | season |
       | Green Machine IceCats | Long Island Edge | league | 2           | Iceland  | today | today | US/Eastern | 1      |
       | Long Island Rebels    | Aviator Gulls    | league | 2           | Iceland  | today | today | US/Eastern | 1      |
     And I login with "user@ayrabo.com" and "myweakpassword"
 
-  Scenario: Basic info displayed to user
+  # N/A because this wouldn't actually test anything, it would test the default
+#  Scenario: Navigate to league schedule page for current season
+#    Given I am on the "leagues:schedule" page with kwargs "slug=liahl"
+#    Then I should be on the "leagues:schedule" page with kwargs "slug=liahl"
+
+  Scenario: View current season
     Given I am on the "leagues:schedule" page with kwargs "slug=liahl"
     Then I should see "Long Island Amateur Hockey League"
     And I should see season "today" "1y"
-
-  Scenario: Games exist
-    Given I am on the "leagues:schedule" page with kwargs "slug=liahl"
     Then I should see "Green Machine IceCats"
     And I should see "Long Island Edge"
     And I should see "League"
@@ -53,12 +53,16 @@ Feature: League detail
     And I should see "Iceland"
     And I should see "Long Island Rebels"
     And I should see "Aviator Gulls"
-    And I should see season "today" "1y"
 
-  Scenario: Navigate to league detail schedule page for a past season
+  Scenario: View current season, press schedule nav tab again
     Given I am on the "leagues:schedule" page with kwargs "slug=liahl"
-    And I press "tab-item-past-seasons"
-    And I press "past-season-2"
+    And I press "tab-item-schedule"
+    Then I should be on the "leagues:schedule" page with kwargs "slug=liahl"
+
+  Scenario: Navigate to league schedule page for past season
+    Given I am on the "leagues:schedule" page with kwargs "slug=liahl"
+    And I press "tab-item-seasons"
+    And I press "season-2"
     Then I should be on the "leagues:seasons:schedule" page with kwargs "slug=liahl, season_pk=2"
 
   Scenario: View past season
@@ -67,3 +71,26 @@ Feature: League detail
     And I should see "The current season's schedule is available"
     And I should see season "-1y" "-5d"
     And I should see "There are no games for Long Island Amateur Hockey League at this time."
+
+  Scenario: View past season, press schedule nav tab again
+    Given I am on the "leagues:seasons:schedule" page with kwargs "slug=liahl, season_pk=2"
+    And I press "tab-item-schedule"
+    Then I should be on the "leagues:seasons:schedule" page with kwargs "slug=liahl, season_pk=2"
+
+  Scenario: Navigate to league schedule page for future season
+    Given I am on the "leagues:schedule" page with kwargs "slug=liahl"
+    And I press "tab-item-seasons"
+    And I press "season-3"
+    Then I should be on the "leagues:seasons:schedule" page with kwargs "slug=liahl, season_pk=3"
+
+  Scenario: View future season
+    Given I am on the "leagues:seasons:schedule" page with kwargs "slug=liahl, season_pk=3"
+    Then I should see "This season has not started yet."
+    And I should see "The current season's schedule is available"
+    And I should see season "1y" "2y"
+    And I should see "There are no games for Long Island Amateur Hockey League at this time."
+
+  Scenario: View future season, press schedule nav tab again
+    Given I am on the "leagues:seasons:schedule" page with kwargs "slug=liahl, season_pk=3"
+    And I press "tab-item-schedule"
+    Then I should be on the "leagues:seasons:schedule" page with kwargs "slug=liahl, season_pk=3"

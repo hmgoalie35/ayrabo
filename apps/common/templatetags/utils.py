@@ -57,13 +57,7 @@ def get_seasons_nav_tab_url(context, profile_type):
     # Don't return `None`, None will be used as the url
     url = ''
     if profile_type == 'league':
-        league = context.get('league')
-        kwargs = {'slug': league.slug}
-        if season.is_current:
-            url = reverse('leagues:schedule', kwargs=kwargs)
-        else:
-            kwargs.update({'season_pk': season.pk})
-            url = reverse('leagues:seasons:schedule', kwargs=kwargs)
+        url = season.league_detail_schedule_url
     elif profile_type == 'team':
         team = context.get('team')
         kwargs = {'team_pk': team.pk}

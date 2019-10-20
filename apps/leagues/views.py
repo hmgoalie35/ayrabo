@@ -25,13 +25,11 @@ class AbstractLeagueDetailView(LoginRequiredMixin, HandleSportNotConfiguredMixin
         context = super().get_context_data(**kwargs)
         league = self.get_object()
         season = get_current_season_or_from_pk(league, self.kwargs.get('season_pk'))
-        schedule_link = reverse('leagues:schedule', kwargs={'slug': league.slug})
-        divisions_link = reverse('leagues:divisions', kwargs={'slug': league.slug})
-        if season is not None and season.is_past:
-            url_kwargs = {'slug': league.slug, 'season_pk': season.pk}
-            schedule_link = reverse('leagues:seasons:schedule', kwargs=url_kwargs)
-            divisions_link = reverse('leagues:seasons:divisions', kwargs=url_kwargs)
-
+        schedule_link = ''
+        divisions_link = ''
+        if season:
+            schedule_link = season.league_detail_schedule_url
+            divisions_link = season.league_detail_divisions_url
         context.update({
             'season': season,
             'schedule_link': schedule_link,

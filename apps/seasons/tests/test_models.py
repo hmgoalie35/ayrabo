@@ -95,6 +95,46 @@ class SeasonModelTests(BaseTestCase):
         self.assertFalse(self.current_season.is_future)
         self.assertTrue(self.future_season.is_future)
 
+    def test_league_detail_schedule_url(self):
+        self.assertEqual(
+            self.past_season.league_detail_schedule_url,
+            reverse('leagues:seasons:schedule', kwargs={
+                'slug': self.league.slug,
+                'season_pk': self.past_season.pk,
+            })
+        )
+        self.assertEqual(
+            self.current_season.league_detail_schedule_url,
+            reverse('leagues:schedule', kwargs={'slug': self.league.slug})
+        )
+        self.assertEqual(
+            self.future_season.league_detail_schedule_url,
+            reverse('leagues:seasons:schedule', kwargs={
+                'slug': self.league.slug,
+                'season_pk': self.future_season.pk,
+            })
+        )
+
+    def test_league_detail_divisions_url(self):
+        self.assertEqual(
+            self.past_season.league_detail_divisions_url,
+            reverse('leagues:seasons:divisions', kwargs={
+                'slug': self.league.slug,
+                'season_pk': self.past_season.pk,
+            })
+        )
+        self.assertEqual(
+            self.current_season.league_detail_divisions_url,
+            reverse('leagues:divisions', kwargs={'slug': self.league.slug})
+        )
+        self.assertEqual(
+            self.future_season.league_detail_divisions_url,
+            reverse('leagues:seasons:divisions', kwargs={
+                'slug': self.league.slug,
+                'season_pk': self.future_season.pk,
+            })
+        )
+
 
 class SeasonTeamM2MSignalTests(BaseTestCase):
     def setUp(self):

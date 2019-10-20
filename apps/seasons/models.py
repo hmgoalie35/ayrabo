@@ -47,6 +47,22 @@ class Season(TimestampedModel):
     def is_future(self):
         return timezone.now().date() < self.start_date
 
+    @property
+    def league_detail_schedule_url(self):
+        kwargs = {'slug': self.league.slug}
+        if self.is_current:
+            return reverse('leagues:schedule', kwargs=kwargs)
+        kwargs.update({'season_pk': self.pk})
+        return reverse('leagues:seasons:schedule', kwargs=kwargs)
+
+    @property
+    def league_detail_divisions_url(self):
+        kwargs = {'slug': self.league.slug}
+        if self.is_current:
+            return reverse('leagues:divisions', kwargs=kwargs)
+        kwargs.update({'season_pk': self.pk})
+        return reverse('leagues:seasons:divisions', kwargs=kwargs)
+
     def __str__(self):
         return f'{self.start_date.year}-{self.end_date.year} Season'
 
