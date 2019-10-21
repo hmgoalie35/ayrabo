@@ -1,7 +1,8 @@
 import json
 
 from django import template
-from django.urls import reverse
+
+from teams.utils import get_team_detail_schedule_url
 
 
 register = template.Library()
@@ -60,10 +61,5 @@ def get_seasons_nav_tab_url(context, profile_type):
         url = season.league_detail_schedule_url
     elif profile_type == 'team':
         team = context.get('team')
-        kwargs = {'team_pk': team.pk}
-        if season.is_current:
-            url = reverse('teams:schedule', kwargs=kwargs)
-        else:
-            kwargs.update({'season_pk': season.pk})
-            url = reverse('teams:seasons:schedule', kwargs=kwargs)
+        url = get_team_detail_schedule_url(team, season)
     return url

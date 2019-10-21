@@ -6,6 +6,7 @@ from leagues.tests import LeagueFactory
 from sports.tests import SportFactory
 from teams import utils
 from teams.tests import TeamFactory
+from teams.utils import get_team_detail_players_url, get_team_detail_schedule_url, get_team_detail_season_rosters_url
 
 
 class UtilsTests(BaseTestCase):
@@ -27,6 +28,52 @@ class UtilsTests(BaseTestCase):
             'seasons': [self.future_season, self.current_season, self.past_season]
         }
 
+    def test_get_team_detail_schedule_url(self):
+        self.assertEqual(
+            get_team_detail_schedule_url(self.icecats, self.past_season),
+            reverse('teams:seasons:schedule', kwargs={
+                'team_pk': self.icecats.pk,
+                'season_pk': self.past_season.pk
+            })
+        )
+        self.assertEqual(
+            get_team_detail_schedule_url(self.icecats, self.current_season),
+            reverse('teams:schedule', kwargs={'team_pk': self.icecats.pk})
+        )
+        self.assertEqual(
+            get_team_detail_schedule_url(self.icecats, self.future_season),
+            reverse('teams:seasons:schedule', kwargs={
+                'team_pk': self.icecats.pk,
+                'season_pk': self.future_season.pk
+            })
+        )
+
+    def test_get_team_detail_players_url(self):
+        self.assertEqual(
+            get_team_detail_players_url(self.icecats),
+            reverse('teams:players', kwargs={'team_pk': self.icecats.pk})
+        )
+
+    def test_get_team_detail_season_rosters_url(self):
+        self.assertEqual(
+            get_team_detail_season_rosters_url(self.icecats, self.past_season),
+            reverse('teams:seasons:season_rosters-list', kwargs={
+                'team_pk': self.icecats.pk,
+                'season_pk': self.past_season.pk
+            })
+        )
+        self.assertEqual(
+            get_team_detail_season_rosters_url(self.icecats, self.current_season),
+            reverse('teams:season_rosters:list', kwargs={'team_pk': self.icecats.pk})
+        )
+        self.assertEqual(
+            get_team_detail_season_rosters_url(self.icecats, self.future_season),
+            reverse('teams:seasons:season_rosters-list', kwargs={
+                'team_pk': self.icecats.pk,
+                'season_pk': self.future_season.pk
+            })
+        )
+
     def test_get_team_detail_view_context_current_season(self):
         result = utils.get_team_detail_view_context(self.icecats)
         kwargs = {'team_pk': self.icecats.pk}
@@ -44,6 +91,17 @@ class UtilsTests(BaseTestCase):
         self.expected_team_detail_view_context.update({
             'season': self.past_season,
             'is_season_expired': True,
+            'schedule_link': reverse('teams:seasons:schedule', kwargs=kwargs),
+            'season_rosters_link': reverse('teams:seasons:season_rosters-list', kwargs=kwargs)
+        })
+        self.assertDictWithQuerySetEqual(result, self.expected_team_detail_view_context)
+
+    def test_get_team_detail_view_context_future_season(self):
+        kwargs = {'team_pk': self.icecats.pk, 'season_pk': self.future_season.pk}
+        result = utils.get_team_detail_view_context(self.icecats, season_pk=self.future_season.pk)
+        self.expected_team_detail_view_context.update({
+            'season': self.future_season,
+            'is_season_expired': False,
             'schedule_link': reverse('teams:seasons:schedule', kwargs=kwargs),
             'season_rosters_link': reverse('teams:seasons:season_rosters-list', kwargs=kwargs)
         })
