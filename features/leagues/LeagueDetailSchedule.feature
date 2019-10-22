@@ -35,11 +35,6 @@ Feature: League schedule
       | Long Island Rebels    | Aviator Gulls    | league | 2           | Iceland  | today | today | US/Eastern | 1      |
     And I login with "user@ayrabo.com" and "myweakpassword"
 
-  # N/A because this wouldn't actually test anything, it would test the default
-#  Scenario: Navigate to league schedule page for current season
-#    Given I am on the "leagues:schedule" page with kwargs "slug=liahl"
-#    Then I should be on the "leagues:schedule" page with kwargs "slug=liahl"
-
   Scenario: View current season
     Given I am on the "leagues:schedule" page with kwargs "slug=liahl"
     Then I should see "Long Island Amateur Hockey League"
