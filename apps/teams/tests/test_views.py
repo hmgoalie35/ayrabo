@@ -58,8 +58,14 @@ class TeamDetailScheduleViewTests(BaseTestCase):
     url = 'teams:schedule'
 
     def _create_game(self, home_team, away_team, season):
-        return HockeyGameFactory(home_team=home_team, away_team=away_team, team=home_team, season=season,
-                                 type=self.game_type, point_value=self.point_value)
+        return HockeyGameFactory(
+            home_team=home_team,
+            away_team=away_team,
+            team=home_team,
+            season=season,
+            type=self.game_type,
+            point_value=self.point_value
+        )
 
     def setUp(self):
         self.user = UserFactory()
@@ -72,21 +78,39 @@ class TeamDetailScheduleViewTests(BaseTestCase):
         self.rebels_organization = OrganizationFactory(name='Long Island Rebels', sport=self.ice_hockey)
 
         # Teams
-        self.icecats_mm_aa = TeamFactory(name='Green Machine IceCats', division=self.mm_aa,
-                                         organization=self.icecats_organization)
+        self.icecats_mm_aa = TeamFactory(
+            name='Green Machine IceCats',
+            division=self.mm_aa,
+            organization=self.icecats_organization
+        )
         self.managers = [ManagerFactory(user=self.user, team=self.icecats_mm_aa)]
-        self.edge_mm_aa = TeamFactory(name='Long Island Edge', division=self.mm_aa,
-                                      organization=self.edge_organization)
-        self.rebels_mm_aa = TeamFactory(name='Long Island Rebels', division=self.mm_aa,
-                                        organization=self.rebels_organization)
+        self.edge_mm_aa = TeamFactory(
+            name='Long Island Edge',
+            division=self.mm_aa,
+            organization=self.edge_organization
+        )
+        self.rebels_mm_aa = TeamFactory(
+            name='Long Island Rebels',
+            division=self.mm_aa,
+            organization=self.rebels_organization
+        )
 
         self.past_season, self.current_season, self.future_season = self.create_past_current_future_seasons(
-            league=self.liahl)
+            league=self.liahl
+        )
 
-        self.game_type = GenericChoiceFactory(short_value='exhibition', long_value='Exhibition',
-                                              type=GenericChoice.GAME_TYPE, content_object=self.ice_hockey)
-        self.point_value = GenericChoiceFactory(short_value='2', long_value='2', type=GenericChoice.GAME_POINT_VALUE,
-                                                content_object=self.ice_hockey)
+        self.game_type = GenericChoiceFactory(
+            short_value='exhibition',
+            long_value='Exhibition',
+            type=GenericChoice.GAME_TYPE,
+            content_object=self.ice_hockey
+        )
+        self.point_value = GenericChoiceFactory(
+            short_value='2',
+            long_value='2',
+            type=GenericChoice.GAME_POINT_VALUE,
+            content_object=self.ice_hockey
+        )
         self.game1 = self._create_game(self.icecats_mm_aa, self.edge_mm_aa, self.current_season)
         self.game2 = self._create_game(self.icecats_mm_aa, self.rebels_mm_aa, self.current_season)
 
@@ -114,8 +138,10 @@ class TeamDetailScheduleViewTests(BaseTestCase):
         self.assertEqual(context.get('team_display_name'), 'Green Machine IceCats - Midget Minor AA')
         self.assertEqual(context.get('season'), self.current_season)
         self.assertEqual(context.get('schedule_link'), self.formatted_url)
-        self.assertEqual(context.get('season_rosters_link'), reverse('teams:season_rosters:list',
-                                                                     kwargs={'team_pk': self.icecats_mm_aa.pk}))
+        self.assertEqual(
+            context.get('season_rosters_link'),
+            reverse('teams:season_rosters:list', kwargs={'team_pk': self.icecats_mm_aa.pk})
+        )
         self.assertIsNotNone(context.get('seasons'))
         self.assertEqual(context.get('current_season_page_url'), self.formatted_url)
         self.assertTrue(context.get('can_create_game'))
@@ -139,13 +165,25 @@ class TeamDetailScheduleViewTests(BaseTestCase):
 
         self.assertEqual(context.get('season'), self.past_season)
         self.assertEqual(context.get('schedule_link'), url)
-        self.assertEqual(context.get('season_rosters_link'),
-                         reverse('teams:seasons:season_rosters-list', kwargs=kwargs))
+        self.assertEqual(
+            context.get('season_rosters_link'),
+            reverse('teams:seasons:season_rosters-list', kwargs=kwargs)
+        )
         self.assertIsNotNone(context.get('seasons'))
 
         # The user is a manager for this team, but the season is expired.
         self.assertFalse(context.get('can_create_game'))
         self.assertFalse(context.get('has_games'))
+
+    def test_get_future_season(self):
+        response = self.client.get('teams:seasons:schedule', kwargs={
+            'team_pk': self.icecats_mm_aa.pk,
+            'season_pk': self.future_season.pk
+        })
+
+        context = response.context
+        self.assertEqual(context.get('season'), self.future_season)
+        self.assertTrue(context.get('can_create_game'))
 
 
 class TeamDetailSeasonRostersViewTests(BaseTestCase):

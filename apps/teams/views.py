@@ -64,16 +64,15 @@ class TeamDetailScheduleView(AbstractTeamDetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        is_season_expired = context.get('is_season_expired')
         user = self.request.user
         team = self.get_object()
         season = context.get('season')
         game_list_context = get_game_list_view_context(user, self.sport, season, team=team)
         team_ids_managed_by_user = game_list_context.get('team_ids_managed_by_user')
         is_manager = team.id in team_ids_managed_by_user
-        can_create_game = is_manager and not is_season_expired
         context.update({
-            'can_create_game': can_create_game,
+            # Game create form displays all seasons, might as well display the button as long as the user is a manager
+            'can_create_game': is_manager,
             'current_season_page_url': reverse('teams:schedule', kwargs={'team_pk': team.pk})
         })
         context.update(game_list_context)
