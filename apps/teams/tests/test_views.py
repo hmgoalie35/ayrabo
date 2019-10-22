@@ -274,6 +274,9 @@ class TeamDetailSeasonRostersViewTests(BaseTestCase):
         self.assertEqual(context.get('season_rosters_link'), url)
         self.assertFalse(context.get('can_create_season_roster'))
 
+    def test_get_future_season(self):
+        pass
+
 
 class TeamDetailPlayersViewTests(BaseTestCase):
     url = 'teams:players'

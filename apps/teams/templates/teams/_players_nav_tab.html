@@ -1,16 +1,16 @@
 {% load get_tab_active_class from utils %}
 
-<li role="presentation" class="list-item--pill {% get_tab_active_class 'players' %} {% if is_season_expired %}disabled{% endif %}">
+<li role="presentation" class="list-item--pill {% get_tab_active_class 'players' %} {% if not season.is_current %}disabled{% endif %}">
   <a
     id="tab-item-players"
     class="tab-link"
     aria-controls="players"
     role="tab"
-    {% if is_season_expired %}
+    {% if not season.is_current %}
     disabled
     data-toggle="tooltip"
     data-placement="top"
-    title="This functionality is not currently available for past seasons."
+    title="This functionality is not currently available for {% if season.is_past %}past{% elif season.is_future%}future{% endif %} seasons."
     {% else %}
     href="{{ players_link }}"
     {% endif %}
