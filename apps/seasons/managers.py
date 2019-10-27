@@ -1,9 +1,17 @@
-from datetime import date
-
 from django.db import models
+from django.utils import timezone
 
 
 class SeasonManager(models.Manager):
+    def get_for_league(self, league):
+        """
+        Fetches all seasons for the league, ordering by end date desc
+
+        :param league: League instance to fetch seasons for
+        :return: Seasons for the league, ordered by end date desc
+        """
+        return self.filter(league=league).order_by('-end_date')
+
     def get_current(self, league):
         """
         This function takes into account the `copy_expiring_seasons` management command running (the season for next
@@ -17,8 +25,8 @@ class SeasonManager(models.Manager):
         :param league: The league to get the current season for
         :return: The currently active season for the given league if exists, else None
         """
-        today = date.today()
-        qs = self.filter(league=league, start_date__lte=today, end_date__gt=today)
+        now = timezone.now().date()
+        qs = self.filter(league=league, start_date__lte=now, end_date__gt=now)
         return qs.first()
 
     def get_past(self, league):
@@ -30,6 +38,6 @@ class SeasonManager(models.Manager):
         :param league: The league to get past seasons for
         :return: Past seasons for the league
         """
-        today = date.today()
+        now = timezone.now().date()
         # Order matters, we want to display recently finished seasons first.
-        return self.filter(league=league, end_date__lt=today).order_by('-end_date')
+        return self.filter(league=league, end_date__lt=now).order_by('-end_date')

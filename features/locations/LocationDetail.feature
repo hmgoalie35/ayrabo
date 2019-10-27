@@ -22,7 +22,7 @@ Feature: Location details
     And The following location object exists
       | name    | street_number | street       | city          | state | zip_code | phone_number   | website                            |
       | Iceland | 3345          | Hillside Ave | New Hyde Park | NY    | 11040    | (516) 746-1100 | https://www.icelandlongisland.com/ |
-    And The following season object exists
+    And The following seasons exist
       | id | league                            | start_date | end_date   | teams                 |
       | 1  | Long Island Amateur Hockey League | 2017-09-14 | 2018-09-14 | Green Machine IceCats |
     And The following game object exists

@@ -11,7 +11,7 @@ Feature: Create season rosters
       | id | name                  | division             | league                            | sport      |
       | 1  | Green Machine IceCats | Midget Minor AA      | Long Island Amateur Hockey League | Ice Hockey |
       | 2  | New York Yankees      | American League East | Major League Baseball             | Baseball   |
-    And The following season object exists
+    And The following seasons exist
       | id | league                            | start_date | end_date | teams                 |
       | 1  | Long Island Amateur Hockey League | today      | 1y       | Green Machine IceCats |
     And I login with "user@ayrabo.com" and "myweakpassword"

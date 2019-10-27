@@ -1,4 +1,3 @@
-import datetime
 import logging
 
 from django.core.validators import ValidationError
@@ -6,6 +5,7 @@ from django.db import models
 from django.db.models.signals import m2m_changed
 from django.dispatch import receiver
 from django.urls import reverse
+from django.utils import timezone
 
 from common.models import TimestampedModel
 from seasons.managers import SeasonManager
@@ -29,13 +29,6 @@ class Season(TimestampedModel):
 
     objects = SeasonManager()
 
-    class Meta:
-        ordering = ['-end_date', '-start_date']
-        unique_together = (
-            ('start_date', 'league'),
-            ('end_date', 'league'),
-        )
-
     def clean(self):
         if self.end_date and self.start_date and self.end_date <= self.start_date:
             raise ValidationError({
@@ -43,11 +36,42 @@ class Season(TimestampedModel):
             })
 
     @property
-    def expired(self):
-        return datetime.date.today() > self.end_date
+    def is_past(self):
+        return timezone.now().date() > self.end_date
+
+    @property
+    def is_current(self):
+        return self.start_date <= timezone.now().date() <= self.end_date
+
+    @property
+    def is_future(self):
+        return timezone.now().date() < self.start_date
+
+    @property
+    def league_detail_schedule_url(self):
+        kwargs = {'slug': self.league.slug}
+        if self.is_current:
+            return reverse('leagues:schedule', kwargs=kwargs)
+        kwargs.update({'season_pk': self.pk})
+        return reverse('leagues:seasons:schedule', kwargs=kwargs)
+
+    @property
+    def league_detail_divisions_url(self):
+        kwargs = {'slug': self.league.slug}
+        if self.is_current:
+            return reverse('leagues:divisions', kwargs=kwargs)
+        kwargs.update({'season_pk': self.pk})
+        return reverse('leagues:seasons:divisions', kwargs=kwargs)
 
     def __str__(self):
-        return '{start_year}-{end_year} Season'.format(start_year=self.start_date.year, end_year=self.end_date.year)
+        return f'{self.start_date.year}-{self.end_date.year} Season'
+
+    class Meta:
+        ordering = ['-end_date', '-start_date']
+        unique_together = (
+            ('start_date', 'league'),
+            ('end_date', 'league'),
+        )
 
 
 @receiver(m2m_changed, sender=Season.teams.through)
@@ -117,7 +141,7 @@ class AbstractSeasonRoster(TimestampedModel):
                                    on_delete=models.PROTECT)
 
     def can_update(self):
-        return not self.season.expired
+        return not self.season.is_past
 
     def clean(self):
         if hasattr(self, 'name') and hasattr(self, 'team') and hasattr(self, 'season'):

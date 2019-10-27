@@ -1,14 +1,21 @@
-Feature: View players for a team
-  As a user,
-  I want to be able to view players registered for a team.
+Feature: Team players
 
-  Background: User exists
+  Background:
     Given The following confirmed user account exists
       | first_name | last_name | email           | password       |
       | John       | Doe       | user@ayrabo.com | myweakpassword |
+    And The following league objects exist
+      | name                              | sport      |
+      | Long Island Amateur Hockey League | Ice Hockey |
     And The following team object exists
       | id | name                  | division        | league                            | sport      |
       | 1  | Green Machine IceCats | Midget Minor AA | Long Island Amateur Hockey League | Ice Hockey |
+      | 2  | Long Island Edge      | Midget Minor AA | Long Island Amateur Hockey League | Ice Hockey |
+    And The following seasons exist
+      | id | league                            | teams                                   | start_date | end_date |
+      | 1  | Long Island Amateur Hockey League | Long Island Edge                        | -1y        | -2y      |
+      | 2  | Long Island Amateur Hockey League | Green Machine IceCats, Long Island Edge | today      | 1y       |
+      | 3  | Long Island Amateur Hockey League | Green Machine IceCats                   | 1y         | 2y       |
     And I login with "user@ayrabo.com" and "myweakpassword"
 
   Scenario: Navigate to players page
@@ -48,11 +55,14 @@ Feature: View players for a team
     And I should see "Goaltender"
     And I should see "Left"
 
-  Scenario: View team detail players page for a past season
-    Given The following season object exists
-      | id | league                            | start_date | end_date | teams                 |
-      | 2  | Long Island Amateur Hockey League | -1y        | -5d      | Green Machine IceCats |
-    And I am on the "teams:seasons:schedule" page with kwargs "team_pk=1, season_pk=2"
+  Scenario: View team detail players page for past season
+    Given I am on the "teams:seasons:schedule" page with kwargs "team_pk=1, season_pk=1"
     And I press "tab-item-players"
-    Then I should be on the "teams:seasons:schedule" page with kwargs "team_pk=1, season_pk=2"
-    And I should see "This functionality is not currently available for expired seasons."
+    Then I should be on the "teams:seasons:schedule" page with kwargs "team_pk=1, season_pk=1"
+    And I should see "This functionality is not currently available for past seasons."
+
+  Scenario: View team detail players page for future season
+    Given I am on the "teams:seasons:schedule" page with kwargs "team_pk=1, season_pk=3"
+    And I press "tab-item-players"
+    Then I should be on the "teams:seasons:schedule" page with kwargs "team_pk=1, season_pk=3"
+    And I should see "This functionality is not currently available for future seasons."

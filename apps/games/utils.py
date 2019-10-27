@@ -18,7 +18,8 @@ def get_game_list_context(user, sport):
     # It's more efficient to compute this once and use `in` rather than query to see if a manager exists for the user
     # and some team.
     team_ids_managed_by_user = manager_objects_for_user.filter(team__division__league__sport=sport).values_list(
-        'team_id', flat=True)
+        'team_id', flat=True
+    )
     is_scorekeeper = Scorekeeper.objects.active().filter(user=user, sport=sport).exists()
     return {
         'team_ids_managed_by_user': team_ids_managed_by_user,

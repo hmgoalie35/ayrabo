@@ -1,4 +1,4 @@
-import datetime
+from datetime import date, timedelta
 
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError
@@ -16,67 +16,124 @@ from . import HockeySeasonRosterFactory, SeasonFactory
 
 
 class SeasonModelTests(BaseTestCase):
+    def setUp(self):
+        self.league = LeagueFactory()
+        self.past_season, self.current_season, self.future_season = self.create_past_current_future_seasons(
+            league=self.league
+        )
+
     def test_to_string(self):
         season = SeasonFactory()
-        self.assertEqual(str(season), '{}-{} Season'.format(season.start_date.year, season.end_date.year))
+        self.assertEqual(str(season), f'{season.start_date.year}-{season.end_date.year} Season')
 
     def test_end_date_before_start_date(self):
-        start_date = datetime.date(2016, 8, 15)
-        end_date = start_date + datetime.timedelta(days=-365)
+        start_date = date(2016, 8, 15)
+        end_date = start_date + timedelta(days=-365)
         with self.assertRaisesMessage(ValidationError, "The season's end date must be after the season's start date."):
             SeasonFactory(start_date=start_date, end_date=end_date).full_clean()
 
     def test_end_date_equal_to_start_date(self):
-        start_date = datetime.date(2016, 8, 15)
+        start_date = date(2016, 8, 15)
         end_date = start_date
         with self.assertRaisesMessage(ValidationError, "The season's end date must be after the season's start date."):
             SeasonFactory(start_date=start_date, end_date=end_date).full_clean()
 
     def test_unique_together_start_date_league(self):
         league = LeagueFactory(name='Long Island Amateur Hockey League')
-        start_date = datetime.date(2016, 8, 15)
-        SeasonFactory(start_date=start_date, end_date=start_date + datetime.timedelta(days=365), league=league)
+        start_date = date(2016, 8, 15)
+        SeasonFactory(start_date=start_date, end_date=start_date + timedelta(days=365), league=league)
         with self.assertRaises(IntegrityError):
-            SeasonFactory(start_date=start_date, end_date=start_date + datetime.timedelta(days=360), league=league)
+            SeasonFactory(start_date=start_date, end_date=start_date + timedelta(days=360), league=league)
 
     def test_unique_together_end_date_league(self):
         league = LeagueFactory(name='Long Island Amateur Hockey League')
-        end_date = datetime.date(2016, 8, 15)
-        SeasonFactory(start_date=datetime.date(2016, 8, 15), end_date=end_date, league=league)
+        end_date = date(2016, 8, 15)
+        SeasonFactory(start_date=date(2016, 8, 15), end_date=end_date, league=league)
         with self.assertRaises(IntegrityError):
-            SeasonFactory(start_date=datetime.date(2016, 9, 23), end_date=end_date, league=league)
+            SeasonFactory(start_date=date(2016, 9, 23), end_date=end_date, league=league)
 
     def test_unique_for_year(self):
-        start_date = datetime.date(2016, 8, 15)
+        start_date = date(2016, 8, 15)
         league = LeagueFactory(name='Long Island Amateur Hockey League')
         SeasonFactory(start_date=start_date, league=league)
-        with self.assertRaisesMessage(ValidationError,
-                                      "{'league': ['League must be unique for Start Date year.']}"):
-            SeasonFactory(start_date=start_date + datetime.timedelta(days=30), league=league).full_clean()
+        with self.assertRaisesMessage(ValidationError, "{'league': ['League must be unique for Start Date year.']}"):
+            SeasonFactory(start_date=start_date + timedelta(days=30), league=league).full_clean()
 
     def test_default_ordering(self):
-        start_date = datetime.date(2014, 8, 15)
-        end_date = datetime.date(2015, 8, 15)
-        league = LeagueFactory(name='Long Island Amateur Hockey League')
-        seasons = []
-        for i in range(3):
-            start = start_date + datetime.timedelta(days=i * 365)
-            end = end_date + datetime.timedelta(days=i * 365)
-            season = SeasonFactory(start_date=start, end_date=end, league=league)
-            seasons.append(season)
-        self.assertListEqual(list(reversed(seasons)), list(Season.objects.all()))
+        # If end dates are the same, should then sort by start date desc
+        s = SeasonFactory(
+            start_date=self.future_season.end_date + timedelta(days=30),
+            end_date=self.future_season.end_date
+        )
+        self.assertListEqual(list(Season.objects.all()), [s, self.future_season, self.current_season, self.past_season])
 
-    def test_expired_true(self):
-        start_date = datetime.date(2014, 8, 15)
-        end_date = datetime.date(2015, 8, 15)
-        s = SeasonFactory(start_date=start_date, end_date=end_date)
-        self.assertTrue(s.expired)
+    def test_is_past(self):
+        self.assertTrue(self.past_season.is_past)
+        self.assertFalse(self.current_season.is_past)
+        self.assertFalse(self.future_season.is_past)
+        # Test when end date == now
+        now = timezone.now().date()
+        s = SeasonFactory(league=self.league, start_date=now - timedelta(days=30), end_date=now)
+        self.assertFalse(s.is_past)
 
-    def test_expired_false(self):
-        start_date = datetime.date.today()
-        end_date = start_date + datetime.timedelta(days=365)
-        s = SeasonFactory(start_date=start_date, end_date=end_date)
-        self.assertFalse(s.expired)
+    def test_is_current(self):
+        self.assertFalse(self.past_season.is_current)
+        # start_date == now for the current season, which tests <=
+        self.assertTrue(self.current_season.is_current)
+        self.assertFalse(self.future_season.is_current)
+        now = timezone.now().date()
+        # Test when now is b/w start and end (not equal to)
+        s = SeasonFactory(league=self.league, start_date=now - timedelta(days=60), end_date=now + timedelta(days=60))
+        self.assertTrue(s.is_current)
+        # Test when end date ==  now
+        s = SeasonFactory(league=self.league, start_date=now - timedelta(days=30), end_date=now)
+        self.assertTrue(s.is_current)
+
+    def test_is_future(self):
+        self.assertFalse(self.past_season.is_future)
+        # start_date == now for the current season, which tests <=
+        self.assertFalse(self.current_season.is_future)
+        self.assertTrue(self.future_season.is_future)
+
+    def test_league_detail_schedule_url(self):
+        self.assertEqual(
+            self.past_season.league_detail_schedule_url,
+            reverse('leagues:seasons:schedule', kwargs={
+                'slug': self.league.slug,
+                'season_pk': self.past_season.pk,
+            })
+        )
+        self.assertEqual(
+            self.current_season.league_detail_schedule_url,
+            reverse('leagues:schedule', kwargs={'slug': self.league.slug})
+        )
+        self.assertEqual(
+            self.future_season.league_detail_schedule_url,
+            reverse('leagues:seasons:schedule', kwargs={
+                'slug': self.league.slug,
+                'season_pk': self.future_season.pk,
+            })
+        )
+
+    def test_league_detail_divisions_url(self):
+        self.assertEqual(
+            self.past_season.league_detail_divisions_url,
+            reverse('leagues:seasons:divisions', kwargs={
+                'slug': self.league.slug,
+                'season_pk': self.past_season.pk,
+            })
+        )
+        self.assertEqual(
+            self.current_season.league_detail_divisions_url,
+            reverse('leagues:divisions', kwargs={'slug': self.league.slug})
+        )
+        self.assertEqual(
+            self.future_season.league_detail_divisions_url,
+            reverse('leagues:seasons:divisions', kwargs={
+                'slug': self.league.slug,
+                'season_pk': self.future_season.pk,
+            })
+        )
 
 
 class SeasonTeamM2MSignalTests(BaseTestCase):
@@ -125,12 +182,12 @@ class SeasonTeamM2MSignalTests(BaseTestCase):
         """
         reverse, i.e. team_obj.seasons.add(season_obj), so pk_set contains pks for season objects
         """
-        start_date = datetime.date(2016, 8, 15)
-        end_date = start_date + datetime.timedelta(days=365)
+        start_date = date(2016, 8, 15)
+        end_date = start_date + timedelta(days=365)
         team = TeamFactory(division=self.mites, name='IceCats')
         s1 = SeasonFactory(league=self.liahl, start_date=start_date, end_date=end_date)
-        s2 = SeasonFactory(league=self.liahl, start_date=start_date - datetime.timedelta(days=365),
-                           end_date=end_date - datetime.timedelta(days=365))
+        s2 = SeasonFactory(league=self.liahl, start_date=start_date - timedelta(days=365),
+                           end_date=end_date - timedelta(days=365))
         self.assertListEqual([], list(team.seasons.all()))
         team.seasons.add(s1, s2)
         self.assertListEqual([s1, s2], list(team.seasons.all()))
@@ -163,7 +220,7 @@ class AbstractSeasonRosterModelTests(BaseTestCase):
         rosters = []
         start_time = timezone.now()
         for i in range(5):
-            rosters.append(HockeySeasonRosterFactory(created=start_time + datetime.timedelta(hours=i * 10)))
+            rosters.append(HockeySeasonRosterFactory(created=start_time + timedelta(hours=i * 10)))
 
         self.assertListEqual(rosters, list(HockeySeasonRoster.objects.all()))
 
@@ -171,7 +228,7 @@ class AbstractSeasonRosterModelTests(BaseTestCase):
         rosters = []
         start_time = timezone.now()
         for i in range(5):
-            rosters.append(HockeySeasonRosterFactory(created=start_time + datetime.timedelta(hours=i * 10)))
+            rosters.append(HockeySeasonRosterFactory(created=start_time + timedelta(hours=i * 10)))
 
         latest_obj = rosters[len(rosters) - 1]
         self.assertEqual(latest_obj.pk, HockeySeasonRoster.objects.latest().pk)

@@ -31,42 +31,80 @@ class AbstractLeagueDetailViewTestCase(BaseTestCase):
         self.sabres_organization = OrganizationFactory(name='Buffalo Sabres', sport=self.ice_hockey)
 
         # Teams
-        self.icecats_mm_aa = TeamFactory(name='Green Machine IceCats', division=self.mm_aa,
-                                         organization=self.icecats_organization)
-        self.icecats_peewee = TeamFactory(name='Green Machine IceCats', division=self.peewee,
-                                          organization=self.icecats_organization)
+        self.icecats_mm_aa = TeamFactory(
+            name='Green Machine IceCats',
+            division=self.mm_aa,
+            organization=self.icecats_organization
+        )
+        self.icecats_peewee = TeamFactory(
+            name='Green Machine IceCats',
+            division=self.peewee,
+            organization=self.icecats_organization
+        )
         self.managers = [ManagerFactory(user=self.user, team=self.icecats_mm_aa)]
-        self.edge_mm_aa = TeamFactory(name='Long Island Edge', division=self.mm_aa,
-                                      organization=self.edge_organization)
-        self.edge_peewee = TeamFactory(name='Long Island Edge', division=self.peewee,
-                                       organization=self.edge_organization)
+        self.edge_mm_aa = TeamFactory(
+            name='Long Island Edge',
+            division=self.mm_aa,
+            organization=self.edge_organization
+        )
+        self.edge_peewee = TeamFactory(
+            name='Long Island Edge',
+            division=self.peewee,
+            organization=self.edge_organization
+        )
 
-        self.rebels_mm_aa = TeamFactory(name='Long Island Rebels', division=self.mm_aa,
-                                        organization=self.rebels_organization)
-        self.rebels_peewee = TeamFactory(name='Long Island Rebels', division=self.peewee,
-                                         organization=self.rebels_organization)
+        self.rebels_mm_aa = TeamFactory(
+            name='Long Island Rebels',
+            division=self.mm_aa,
+            organization=self.rebels_organization
+        )
+        self.rebels_peewee = TeamFactory(
+            name='Long Island Rebels',
+            division=self.peewee,
+            organization=self.rebels_organization
+        )
         self.bruins = TeamFactory(name='Boston Bruins', division=self.atlantic, organization=self.bruins_organization)
         self.sabres = TeamFactory(name='Buffalo Sabres', division=self.atlantic, organization=self.sabres_organization)
 
-        self.teams = [self.icecats_mm_aa, self.icecats_peewee, self.edge_mm_aa, self.edge_peewee, self.rebels_mm_aa,
-                      self.rebels_peewee]
+        self.teams = [
+            self.icecats_mm_aa, self.icecats_peewee, self.edge_mm_aa, self.edge_peewee, self.rebels_mm_aa,
+            self.rebels_peewee
+        ]
         self.past_season, self.current_season, self.future_season = self.create_past_current_future_seasons(
-            league=self.liahl, teams=self.teams)
+            league=self.liahl,
+            teams=self.teams
+        )
+        self.future_season.teams.clear()
+        self.future_season.teams.add(self.icecats_mm_aa)
 
 
 class LeagueDetailScheduleViewTests(AbstractLeagueDetailViewTestCase):
     url = 'leagues:schedule'
 
     def _create_game(self, home_team, away_team, season):
-        return HockeyGameFactory(home_team=home_team, away_team=away_team, team=home_team, season=season,
-                                 type=self.game_type, point_value=self.point_value)
+        return HockeyGameFactory(
+            home_team=home_team,
+            away_team=away_team,
+            team=home_team,
+            season=season,
+            type=self.game_type,
+            point_value=self.point_value
+        )
 
     def setUp(self):
         super().setUp()
-        self.game_type = GenericChoiceFactory(short_value='exhibition', long_value='Exhibition',
-                                              type=GenericChoice.GAME_TYPE, content_object=self.ice_hockey)
-        self.point_value = GenericChoiceFactory(short_value='2', long_value='2', type=GenericChoice.GAME_POINT_VALUE,
-                                                content_object=self.ice_hockey)
+        self.game_type = GenericChoiceFactory(
+            short_value='exhibition',
+            long_value='Exhibition',
+            type=GenericChoice.GAME_TYPE,
+            content_object=self.ice_hockey
+        )
+        self.point_value = GenericChoiceFactory(
+            short_value='2',
+            long_value='2',
+            type=GenericChoice.GAME_POINT_VALUE,
+            content_object=self.ice_hockey
+        )
         self.game1 = self._create_game(self.icecats_mm_aa, self.edge_mm_aa, self.current_season)
         self.game2 = self._create_game(self.icecats_mm_aa, self.rebels_mm_aa, self.current_season)
         self.game3 = self._create_game(self.icecats_peewee, self.edge_peewee, self.current_season)
@@ -102,7 +140,7 @@ class LeagueDetailScheduleViewTests(AbstractLeagueDetailViewTestCase):
         kwargs = {'slug': self.liahl.slug}
         self.assertEqual(context.get('schedule_link'), reverse('leagues:schedule', kwargs=kwargs))
         self.assertEqual(context.get('divisions_link'), reverse('leagues:divisions', kwargs=kwargs))
-        self.assertIsNotNone(context.get('past_seasons'))
+        self.assertIsNotNone(context.get('seasons'))
         self.assertEqual(context.get('current_season_page_url'), reverse('leagues:schedule', kwargs=kwargs))
 
         self.assertEqual(context.get('active_tab'), 'schedule')
@@ -127,9 +165,11 @@ class LeagueDetailScheduleViewTests(AbstractLeagueDetailViewTestCase):
         kwargs = {'slug': self.liahl.slug, 'season_pk': self.past_season.pk}
         self.assertEqual(context.get('schedule_link'), reverse('leagues:seasons:schedule', kwargs=kwargs))
         self.assertEqual(context.get('divisions_link'), reverse('leagues:seasons:divisions', kwargs=kwargs))
-        self.assertIsNotNone(context.get('past_seasons'))
-        self.assertEqual(context.get('current_season_page_url'),
-                         reverse('leagues:schedule', kwargs={'slug': self.liahl.slug}))
+        self.assertIsNotNone(context.get('seasons'))
+        self.assertEqual(
+            context.get('current_season_page_url'),
+            reverse('leagues:schedule', kwargs={'slug': self.liahl.slug})
+        )
 
         self.assertEqual(context.get('active_tab'), 'schedule')
         self.assertListEqual(list(context.get('games').order_by('id')), self.past_season_games)
@@ -138,6 +178,13 @@ class LeagueDetailScheduleViewTests(AbstractLeagueDetailViewTestCase):
         self.assertListEqual(list(context.get('team_ids_managed_by_user')), team_ids_managed_by_user)
         self.assertFalse(context.get('is_scorekeeper'))
         self.assertEqual(context.get('sport'), self.ice_hockey)
+
+    def test_get_future_season(self):
+        url = reverse('leagues:seasons:schedule', kwargs={'slug': self.liahl.slug, 'season_pk': self.future_season.pk})
+        response = self.client.get(url)
+        context = response.context
+        self.assert_200(response)
+        self.assertEqual(context.get('season'), self.future_season)
 
 
 class LeagueDetailDivisionsViewTests(AbstractLeagueDetailViewTestCase):
@@ -167,14 +214,14 @@ class LeagueDetailDivisionsViewTests(AbstractLeagueDetailViewTestCase):
         kwargs = {'slug': self.liahl.slug}
         self.assertEqual(context.get('schedule_link'), reverse('leagues:schedule', kwargs=kwargs))
         self.assertEqual(context.get('divisions_link'), reverse('leagues:divisions', kwargs=kwargs))
-        self.assertIsNotNone(context.get('past_seasons'))
+        self.assertIsNotNone(context.get('seasons'))
 
         self.assertEqual(context.get('active_tab'), 'divisions')
         expected = [
             [self.d1, self.d2, self.d3, self.mm_aa],
             [self.peewee]
         ]
-        self.assertListEqual(list(context.get('chunked_divisions')), expected)
+        self.assertListEqual(context.get('chunked_divisions'), expected)
         self.assertEqual(context.get('current_season_page_url'), reverse('leagues:divisions', kwargs=kwargs))
         self.assertEqual(context.get('header_text'), 'All Divisions')
 
@@ -188,13 +235,30 @@ class LeagueDetailDivisionsViewTests(AbstractLeagueDetailViewTestCase):
         kwargs = {'slug': self.liahl.slug, 'season_pk': self.past_season.pk}
         self.assertEqual(context.get('schedule_link'), reverse('leagues:seasons:schedule', kwargs=kwargs))
         self.assertEqual(context.get('divisions_link'), reverse('leagues:seasons:divisions', kwargs=kwargs))
-        self.assertIsNotNone(context.get('past_seasons'))
+        self.assertIsNotNone(context.get('seasons'))
 
         self.assertEqual(context.get('active_tab'), 'divisions')
-        expected = [
-            [self.mm_aa, self.peewee],
-        ]
-        self.assertListEqual(list(context.get('chunked_divisions')), expected)
-        self.assertEqual(context.get('current_season_page_url'),
-                         reverse('leagues:divisions', kwargs={'slug': self.liahl.slug}))
-        self.assertEqual(context.get('header_text'), '{} Divisions'.format(self.past_season))
+        self.assertListEqual(
+            context.get('chunked_divisions'),
+            [
+                [self.mm_aa, self.peewee],
+            ]
+        )
+        self.assertEqual(
+            context.get('current_season_page_url'),
+            reverse('leagues:divisions', kwargs={'slug': self.liahl.slug})
+        )
+        self.assertEqual(context.get('header_text'), f'{self.past_season} Divisions')
+
+    def test_get_future_season(self):
+        url = reverse('leagues:seasons:divisions', kwargs={'slug': self.liahl.slug, 'season_pk': self.future_season.pk})
+        response = self.client.get(url)
+        context = response.context
+        self.assertEqual(context.get('season'), self.future_season)
+        self.assertEqual(context.get('header_text'), f'{self.future_season} Divisions')
+        self.assertListEqual(
+            context.get('chunked_divisions'),
+            [
+                [self.mm_aa],
+            ]
+        )

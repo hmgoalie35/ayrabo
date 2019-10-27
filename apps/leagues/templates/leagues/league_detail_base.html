@@ -11,16 +11,22 @@
       </div>
     </div>
 
-    {% if season and season.expired %}
-      <div class="row">
-        <div class="col-md-offset-3 col-md-6">
-          <div class="alert alert-warning text-center" role="alert">
-            This season has been archived.
-            <br>
-            {% block current_season_page_text %}{% endblock %} <a class="alert-link" href="{{ current_season_page_url }}">here</a>.
+    {% if season %}
+      {% if season.is_past or season.is_future %}
+        <div class="row">
+          <div class="col-md-offset-3 col-md-6">
+            <div class="alert alert-warning text-center" role="alert">
+              {% if season.is_past %}
+                This season has been archived.
+              {% elif season.is_future %}
+                This season has not started yet.
+              {% endif %}
+              <br>
+              {% block current_season_page_text %}{% endblock %} <a class="alert-link" href="{{ current_season_page_url }}">here</a>.
+            </div>
           </div>
         </div>
-      </div>
+      {% endif %}
     {% endif %}
 
     <div class="row">
@@ -30,7 +36,7 @@
           <ul class="nav nav-pills nav-justified nav-bordered" role="tablist">
             {% include 'profile_nav_tabs/_schedule_nav_tab.html' %}
             {% include 'leagues/_divisions_nav_tab.html' %}
-            {% include 'profile_nav_tabs/_past_seasons_nav_tab.html' with profile_type='league' %}
+            {% include 'profile_nav_tabs/_seasons_nav_tab.html' with profile_type='league' %}
           </ul>
         </div>
 
