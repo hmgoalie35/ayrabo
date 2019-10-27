@@ -59,8 +59,15 @@ class HockeyGameCreateViewTests(BaseTestCase):
         )
         UserProfileFactory(user=self.user, timezone='US/Eastern')
 
+        self.create_past_current_future_seasons(league=self.liahl)
+
         self.season_start = datetime.date(month=12, day=27, year=2017)
-        self.season = SeasonFactory(id=1, league=self.liahl, start_date=self.season_start)
+        self.season = SeasonFactory(
+            id=1,
+            league=self.liahl,
+            start_date=self.season_start,
+            teams=[self.t1, self.t2, self.t3, self.t4]
+        )
 
         self.start = datetime.datetime(month=12, day=27, year=2017, hour=19, minute=0)
         self.end = self.start + datetime.timedelta(hours=3)
@@ -220,8 +227,17 @@ class HockeyGameCreateViewTests(BaseTestCase):
         tz = pytz.timezone('US/Eastern')
         start = tz.localize(self.start)
         end = tz.localize(self.end)
-        HockeyGameFactory(home_team=self.t1, away_team=self.t2, type=self.game_type, point_value=self.point_value,
-                          location=LocationFactory(), start=start, end=end, timezone='US/Pacific', season=self.season)
+        HockeyGameFactory(
+            home_team=self.t1,
+            away_team=self.t2,
+            type=self.game_type,
+            point_value=self.point_value,
+            location=LocationFactory(),
+            start=start,
+            end=end,
+            timezone='US/Pacific',
+            season=self.season
+        )
         response = self.client.post(self.format_url(team_pk=1), data=self.post_data)
         msg = 'This team already has a game for the selected game start and timezone.'
         self.assertFormError(response, 'form', 'home_team', [msg])
@@ -273,6 +289,8 @@ class HockeyGameUpdateViewTests(BaseTestCase):
         timezone = 'US/Eastern'
         us_eastern = pytz.timezone(timezone)
         UserProfileFactory(user=self.user, timezone=timezone)
+
+        self.create_past_current_future_seasons(league=self.liahl)
 
         self.season_start = datetime.date(month=12, day=27, year=2017)
         self.season = SeasonFactory(league=self.liahl, start_date=self.season_start)

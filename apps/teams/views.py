@@ -100,7 +100,6 @@ class TeamDetailSeasonRostersView(AbstractTeamDetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        is_season_expired = context.get('is_season_expired')
         team = self.get_object()
         season = context.get('season')
         can_user_list = self.can_user_list_season_rosters()
@@ -110,7 +109,7 @@ class TeamDetailSeasonRostersView(AbstractTeamDetailView):
             'has_season_rosters': season_rosters.exists(),
             'active_tab': 'season_rosters',
             'can_user_list': can_user_list,
-            'can_create_season_roster': not is_season_expired,
+            'can_create_season_roster': can_user_list,
             'current_season_page_url': reverse('teams:season_rosters:list', kwargs={'team_pk': team.pk})
         })
         return context

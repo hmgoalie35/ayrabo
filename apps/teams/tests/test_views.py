@@ -13,7 +13,7 @@ from leagues.tests import LeagueFactory
 from managers.tests import ManagerFactory
 from organizations.tests import OrganizationFactory
 from players.tests import HockeyPlayerFactory
-from seasons.tests import HockeySeasonRosterFactory
+from seasons.tests import HockeySeasonRosterFactory, SeasonFactory
 from sports.models import SportRegistration
 from sports.tests import SportFactory, SportRegistrationFactory
 from teams.models import Team
@@ -122,8 +122,8 @@ class TeamDetailScheduleViewTests(BaseTestCase):
         self.assertLoginRequired(self.formatted_url)
 
     def test_sport_not_configured(self):
-        # Note no season has been configured for this team's league, so the current season will be None.
         team = TeamFactory()
+        SeasonFactory(league=team.division.league)
         self.assertSportNotConfigured(self.format_url(team_pk=team.pk))
 
     # GET
@@ -170,18 +170,18 @@ class TeamDetailScheduleViewTests(BaseTestCase):
             reverse('teams:seasons:season_rosters-list', kwargs=kwargs)
         )
         self.assertIsNotNone(context.get('seasons'))
-
-        # The user is a manager for this team, but the season is expired.
-        self.assertFalse(context.get('can_create_game'))
+        self.assertTrue(context.get('can_create_game'))
         self.assertFalse(context.get('has_games'))
 
     def test_get_future_season(self):
-        response = self.client.get('teams:seasons:schedule', kwargs={
+        url = reverse('teams:seasons:schedule', kwargs={
             'team_pk': self.icecats_mm_aa.pk,
             'season_pk': self.future_season.pk
         })
+        response = self.client.get(url)
 
         context = response.context
+        self.assert_200(response)
         self.assertEqual(context.get('season'), self.future_season)
         self.assertTrue(context.get('can_create_game'))
 
@@ -219,6 +219,7 @@ class TeamDetailSeasonRostersViewTests(BaseTestCase):
 
     def test_sport_not_configured(self):
         team = TeamFactory()
+        SeasonFactory(league=team.division.league)
         self.assertSportNotConfigured(self.format_url(team_pk=team.pk))
 
     def test_can_user_list_season_rosters_not_manager(self):
@@ -272,10 +273,25 @@ class TeamDetailSeasonRostersViewTests(BaseTestCase):
         self.assertTrue(context.get('has_season_rosters'))
         self.assertEqual(context.get('schedule_link'), reverse('teams:seasons:schedule', kwargs=kwargs))
         self.assertEqual(context.get('season_rosters_link'), url)
-        self.assertFalse(context.get('can_create_season_roster'))
+        self.assertTrue(context.get('can_create_season_roster'))
 
     def test_get_future_season(self):
-        pass
+        kwargs = {'team_pk': self.icecats.pk, 'season_pk': self.future_season.pk}
+        url = reverse('teams:seasons:season_rosters-list', kwargs=kwargs)
+        response = self.client.get(url)
+        context = response.context
+
+        self.assert_200(response)
+        self.assertTemplateUsed('teams/team_detail_season_rosters.html')
+
+        self.assertEqual(context.get('season'), self.future_season)
+        self.assertIsNotNone(context.get('seasons'))
+
+        self.assertListEqual(list(context.get('season_rosters')), [])
+        self.assertFalse(context.get('has_season_rosters'))
+        self.assertEqual(context.get('schedule_link'), reverse('teams:seasons:schedule', kwargs=kwargs))
+        self.assertEqual(context.get('season_rosters_link'), url)
+        self.assertTrue(context.get('can_create_season_roster'))
 
 
 class TeamDetailPlayersViewTests(BaseTestCase):
@@ -306,6 +322,7 @@ class TeamDetailPlayersViewTests(BaseTestCase):
 
     def test_sport_not_configured(self):
         team = TeamFactory()
+        SeasonFactory(league=team.division.league)
         self.assertSportNotConfigured(self.format_url(team_pk=team.pk))
 
     # GET
