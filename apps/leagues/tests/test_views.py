@@ -124,6 +124,7 @@ class LeagueDetailScheduleViewTests(AbstractLeagueDetailViewTestCase):
     def test_sport_not_configured(self):
         sport = SportFactory()
         league = LeagueFactory(sport=sport)
+        self.create_past_current_future_seasons(league=league)
         self.assertSportNotConfigured(self.format_url(slug=league.slug))
 
     # GET
