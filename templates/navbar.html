@@ -41,6 +41,7 @@
               </ul>
             </li>
           {% endif %}
+
           {# Account dropdown #}
           <li class="vertical-line-left">
             <a
@@ -74,51 +75,11 @@
             </ul>
           </li>
         {% else %}
-          <div class="hidden-xs">
-            <form action="{% url 'account_login' %}" method="post" class="navbar-form">
-              {% csrf_token %}
-
-              <div class="form-group">
-                <div class="input-group">
-                  <div class="input-group-addon">
-                    <span class="fa fa-envelope"></span>
-                  </div>
-                  <input
-                    id="id_login_navbar"
-                    name="login"
-                    type="text"
-                    class="form-control input-sm"
-                    placeholder="E-mail"
-                    required
-                  >
-                </div>
-              </div>
-
-              <div class="form-group">
-                <div class="input-group">
-                  <div class="input-group-addon">
-                    <span class="fa fa-lock"></span>
-                  </div>
-                  <input
-                    id="id_password_navbar"
-                    name="password"
-                    type="password"
-                    class="form-control input-sm"
-                    placeholder="Password"
-                    required
-                  >
-                </div>
-              </div>
-              <button id="login_navbar" role="button" type="submit" class="btn btn-default btn-sm">Login</button>
-            </form>
-          </div>
-
           <div class="visible-xs">
             <div class="text-center">
               <a class="btn btn-success" href="{% url 'account_login' %}">Login</a>
             </div>
           </div>
-
         {% endif %}
       </ul>
     </div>
