@@ -47,56 +47,6 @@ def confirm_account(context, username_or_email, method='manual'):
         email_address_obj.save()
 
 
-def login(context, username_or_email, password, login_method=None):
-    # If no login method is specified, force authenticate the user so don't need to do extra behave steps.
-    if login_method:
-        # Defaults are for logging in via login page, not the navbar
-        login_path = 'account_login'
-        username_email_field = 'id_login'
-        password_field = 'id_password'
-        login_btn = 'login_main'
-        if login_method == 'navbar':
-            login_path = 'home'
-            username_email_field = 'id_login_navbar'
-            password_field = 'id_password_navbar'
-            login_btn = 'login_navbar'
-
-        step1 = 'when I fill in "{}" with "{}"'.format(username_email_field, username_or_email)
-        step2 = 'when I fill in "{}" with "{}"'.format(password_field, password)
-        step3 = 'and I press "{}"'.format(login_btn)
-        steps = '{}\n{}\n{}'.format(step1, step2, step3)
-
-        context.driver.get(context.get_url(login_path))
-        context.execute_steps(steps)
-    else:
-        # The 404 page should be pretty lightweight and fast to load
-        context.driver.get(context.get_url('/fourohfour'))
-        context.test.client.login(username=username_or_email, password=password)
-        session_id = context.test.client.cookies[settings.SESSION_COOKIE_NAME]
-        context.driver.add_cookie({'name': settings.SESSION_COOKIE_NAME, 'value': session_id.value, 'path': '/'})
-
-
-def logout(context):
-    """
-    Logs a user out via the dropdown menu and logout menu item only if a user is logged in
-    """
-    if 'Logout' in context.driver.page_source:
-        steps = '''when I press "account_menu"
-               when I press "logout_btn_acct_menu"
-        '''
-        context.execute_steps(steps)
-    context.driver.get(context.get_url('home'))
-    context.test.assertIn('Login', context.driver.page_source)
-    context.test.assertNotIn('Logout', context.driver.page_source)
-
-
-"""
-
-Account management
-
-"""
-
-
 @step("The following (?P<account_type>confirmed|unconfirmed) user accounts? exists?")
 def step_impl(context, account_type):
     for row in context.table:
@@ -109,14 +59,14 @@ def step_impl(context, account_type):
             confirm_account(context, username_or_email)
 
 
-@when('I confirm "(?P<username_or_email>.*)" via "(?P<method>.*)"')
+@step('I confirm "(?P<username_or_email>.*)" via "(?P<method>.*)"')
 def step_impl(context, username_or_email, method):
     confirm_account(context, username_or_email, method)
     # Not a fan of this, but it seems to work better than the wait for a page refresh step
     time.sleep(3)
 
 
-@when("I follow an invalid email link")
+@step("I follow an invalid email link")
 def step_impl(context):
     invalid_url = context.get_url('account_email_verification_sent') + 'myinvalidconfirmationkey'
     context.driver.get(invalid_url)
@@ -130,51 +80,37 @@ def step_impl(context, username_or_email):
         UserProfileFactory(user=user, **userprofile_data)
 
 
-"""
-
-Logging in / out
-
-"""
-
-
-@given("I am not logged in")
+@step("I am logged out")
 def step_impl(context):
-    logout(context)
+    context.driver.delete_cookie(settings.SESSION_COOKIE_NAME)
+    context.driver.get(context.get_url('home'))
+    page_source = context.driver.page_source
+    context.test.assertIn('Login', page_source)
+    context.test.assertNotIn('Logout', page_source)
 
 
-@step('I login with "(?P<username_or_email>[^"]*)" and "(?P<password>[^"]*)"')  # noqa
+@step('I login with "(?P<username_or_email>[^"]*)" and "(?P<password>[^"]*)"')
 def step_impl(context, username_or_email, password):
-    login(context, username_or_email, password, None)
+    # The 404 page should be pretty lightweight and fast to load
+    context.driver.get(context.get_url('/fourohfour'))
+    context.test.client.login(username=username_or_email, password=password)
+    session_id = context.test.client.cookies[settings.SESSION_COOKIE_NAME]
+    context.driver.add_cookie({'name': settings.SESSION_COOKIE_NAME, 'value': session_id.value, 'path': '/'})
 
 
-@step('I login with "(?P<username_or_email>[^"]*)" and "(?P<password>[^"]*)" via "(?P<login_method>[^"]*)"')
-def step_impl(context, username_or_email, password, login_method):
-    login(context, username_or_email, password, login_method)
-
-
-@then("I should be logged in")
+@step("I should be logged in")
 def step_impl(context):
-    context.test.assertIn('Account', context.driver.page_source)
-    context.test.assertIn('Logout', context.driver.page_source)
-    context.test.assertNotIn('Login', context.driver.page_source)
+    page_source = context.driver.page_source
+    context.test.assertIn('Account', page_source)
+    context.test.assertIn('Logout', page_source)
+    context.test.assertNotIn('Login', page_source)
 
 
-@then("I should not be logged in")
+@step("I should be logged out")
 def step_impl(context):
-    context.test.assertIn('Login', context.driver.page_source)
-    context.test.assertNotIn('Logout', context.driver.page_source)
-
-
-@when("I logout")
-def step_impl(context):
-    logout(context)
-
-
-"""
-
-Permission handling
-
-"""
+    page_source = context.driver.page_source
+    context.test.assertIn('Login', page_source)
+    context.test.assertNotIn('Logout', page_source)
 
 
 @step('"(?P<username_or_email>[^"]*)" has the following permissions? "(?P<permissions>[^"]*)"')

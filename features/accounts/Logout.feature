@@ -1,15 +1,16 @@
 Feature: Logout
-  As a user of the site
-  So that I can prevent my account from unauthorized use
-  I want to be able to logout of my account
 
-  Scenario: Logout after logging in
+  Scenario: Logout
     Given The following confirmed user accounts exist
       | first_name | last_name | email           | password       |
       | John       | Doe       | user@ayrabo.com | myweakpassword |
-    And The following sport exists "Ice Hockey"
-    And I login with "user@ayrabo.com" and "myweakpassword"
-    And I am on the "home" page
+    And I am on the "account_login" page
+    And I fill in "id_login" with "user@ayrabo.com"
+    And I fill in "id_password" with "myweakpassword"
+    And I press "login_main"
+
+  Scenario: Logout (not logged in)
     When I press "account_menu"
     And I press "logout_btn_acct_menu"
-    Then I should not be logged in
+    And I should be logged out
+    And "logout_btn_acct_menu" should not exist on the page

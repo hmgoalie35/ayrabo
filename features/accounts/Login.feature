@@ -1,40 +1,56 @@
-Feature: Login to my existing account
-  As a user of the site
-  So that I can use the site
-  I want to be able to login to my account
+Feature: Login
 
-  Background: Not logged in
+  Background:
     Given I am on the "home" page
-    And I am not logged in
+    And I am logged out
     And The following confirmed user accounts exist
-      | first_name | last_name | email           | password       |
-      | John       | Doe       | user@ayrabo.com | myweakpassword |
-    And The following unconfirmed user accounts exist
-      | first_name | last_name | email        | password       |
-      | Jane       | Doe       | jane@doe.com | myweakpassword |
-    And The following sport exists "Ice Hockey"
+      | first_name | last_name | email           | username        | password       |
+      | John       | Doe       | user@ayrabo.com | user@ayrabo.com | myweakpassword |
+    And I am on the "account_login" page
 
-  Scenario: Login successfully via navbar
-    Given I login with "user@ayrabo.com" and "myweakpassword" via "navbar"
-    Then I should be logged in
-
-  Scenario: Login successfully via login page
-    Given I login with "user@ayrabo.com" and "myweakpassword" via "login_page"
+  Scenario: Login with valid email
+    When I fill in "id_login" with "user@ayrabo.com"
+    And I fill in "id_password" with "myweakpassword"
+    And I press "login_main"
     Then I should be logged in
 
   Scenario: Login with invalid email
-    Given I login with "myincorrectemail@testing.com" and "myweakpassword" via "login_page"
-    Then I should not be logged in
+    When I fill in "id_login" with "testing@ayrabo.com"
+    And I fill in "id_password" with "myweakpassword"
+    And I press "login_main"
+    Then I should be logged out
     And I should see "The e-mail address and/or password you specified are not correct."
+
+#  Uncomment when switch to usernames
+#  Scenario: Login with valid username
+#    When I fill in "id_login" with "theboss"
+#    And I fill in "id_password" with "myweakpassword"
+#    And I press "login_main"
+#    Then I should be logged in
+
+#  TODO Form input is of type email so the error doesn't happen bcz form doesn't get submitted
+#  Scenario: Login with invalid username
+#    When I fill in "id_login" with "invalidusername"
+#    And I fill in "id_password" with "myweakpassword"
+#    And I press "login_main"
+#    Then I should be logged out
+#    And I should see "The e-mail address and/or password you specified are not correct."
 
   Scenario: Login with invalid password
-    When I login with "user@ayrabo.com" and "myincorrectpassword" via "login_page"
-    Then I should not be logged in
+    When I fill in "id_login" with "user@ayrabo.com"
+    And I fill in "id_password" with "myincorrectpassword"
+    And I press "login_main"
+    Then I should be logged out
     And I should see "The e-mail address and/or password you specified are not correct."
 
-  Scenario: Login with unconfirmed account
-    Given I login with "jane@doe.com" and "myweakpassword" via "login_page"
-    Then I should not be logged in
+  Scenario: Login with unconfirmed email
+    Given The following unconfirmed user accounts exist
+      | first_name | last_name | email                  | password       |
+      | Jane       | Doe       | unconfirmed@ayrabo.com | myweakpassword |
+    When I fill in "id_login" with "unconfirmed@ayrabo.com"
+    And I fill in "id_password" with "myweakpassword"
+    And I press "login_main"
+    Then I should be logged out
     And I should be on the "account_email_verification_sent" page
     And I should see "Verify Your E-mail Address"
     And I should see "An email with a confirmation link has been sent to your email address. Please follow the"
@@ -43,7 +59,9 @@ Feature: Login to my existing account
     Given The following users exist
       | first_name | last_name | username          | email             | is_active | password       |
       | Michael    | Scarn     | mscarn@ayrabo.com | mscarn@ayrabo.com | false     | myweakpassword |
-    When I login with "mscarn@ayrabo.com" and "myweakpassword" via "login_page"
+    When I fill in "id_login" with "mscarn@ayrabo.com"
+    And I fill in "id_password" with "myweakpassword"
+    And I press "login_main"
     Then I should be on the "account_inactive" page
     And I should see "Account Inactive"
     And I should see "Please contact us at"
