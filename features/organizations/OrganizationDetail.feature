@@ -11,7 +11,9 @@ Feature: Organization profile
     And The following organization object exists
       | id | name                  | sport      |
       | 1  | Green Machine IceCats | Ice Hockey |
-    And "user@ayrabo.com" has the "admin" permission for "organizations.Organization" with kwargs "name=Green Machine IceCats"
+    And The following permissions exist
+      | username_or_email | name  | model                      | object_id |
+      | user@ayrabo.com   | admin | organizations.Organization | 1         |
     And I login with "user@ayrabo.com" and "myweakpassword"
 
   Scenario: Basic info displayed
