@@ -4,14 +4,16 @@ Feature: Organization profile
   So that I can effectively administrate my organization
 
   Background: User exists
-    Given The following confirmed user account exists
+    Given The following users exist
       | first_name | last_name | email           | password       |
       | John       | Doe       | user@ayrabo.com | myweakpassword |
     And "user@ayrabo.com" is completely registered for "Ice Hockey" with role "Manager"
     And The following organization object exists
       | id | name                  | sport      |
       | 1  | Green Machine IceCats | Ice Hockey |
-    And "user@ayrabo.com" has the "admin" permission for "organizations.Organization" with kwargs "name=Green Machine IceCats"
+    And The following permissions exist
+      | username_or_email | name  | model                      | object_id |
+      | user@ayrabo.com   | admin | organizations.Organization | 1         |
     And I login with "user@ayrabo.com" and "myweakpassword"
 
   Scenario: Basic info displayed

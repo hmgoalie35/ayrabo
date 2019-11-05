@@ -4,18 +4,19 @@ Feature: Sport dashboard
   So that I can have a single place linking me to other parts of the site
 
   Background: User exists
-    Given The following confirmed user accounts exists
+    Given The following users exist
       | first_name | last_name | email           | password       |
       | John       | Doe       | user@ayrabo.com | myweakpassword |
     And The following sport registrations exist
       | username_or_email | sport      | roles                           | complete |
       | user@ayrabo.com   | Ice Hockey | Player, Coach, Referee, Manager | true     |
     And The following organization object exists
-      | id | name             | sport      |
-      | 1  | Long Island Edge | Ice Hockey |
+      | id | name                  | sport      |
+      | 1  | Long Island Edge      | Ice Hockey |
+      | 2  | Green Machine IceCats | Ice Hockey |
     And The following team objects exist
       | id | name                  | division        | league                            | sport      | organization |
-      | 1  | Green Machine IceCats | Midget Minor AA | Long Island Amateur Hockey League | Ice Hockey |              |
+      | 1  | Green Machine IceCats | Midget Minor AA | Long Island Amateur Hockey League | Ice Hockey | 2            |
       | 2  | Long Island Edge      | Midget Minor AA | Long Island Amateur Hockey League | Ice Hockey | 1            |
     And I login with "user@ayrabo.com" and "myweakpassword"
 
@@ -75,7 +76,9 @@ Feature: Sport dashboard
     Then I should be on the "teams:schedule" page with kwargs "team_pk=2"
 
   Scenario: Organizations tab
-    Given "user@ayrabo.com" has the "admin" permission for "organizations.Organization" with kwargs "name=Long Island Edge"
+    Given The following permissions exist
+      | username_or_email | name  | model                      | object_id |
+      | user@ayrabo.com   | admin | organizations.Organization | 1         |
     And I am on the "sports:dashboard" page with kwargs "slug=ice-hockey"
     And I press "organization-tab"
     Then I should see "Long Island Edge"

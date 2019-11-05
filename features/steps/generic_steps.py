@@ -12,7 +12,7 @@ from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.select import Select
 from selenium.webdriver.support.ui import WebDriverWait
 
-from ayrabo.utils.testing import string_to_kwargs_dict, get_user, handle_date, handle_time
+from ayrabo.utils.testing import get_user, handle_date, handle_time, string_to_kwargs_dict
 from users.models import User
 
 
@@ -91,6 +91,12 @@ def step_impl(context, url, url_kwargs):
 @step('I go to the "(?P<url>[^"]*)" page')
 def step_impl(context, url):
     navigate_to_page(context, url)
+
+
+@step('I go to the "(?P<url>[^"]*)" page with kwargs "(?P<url_kwargs>[^"]*)"')
+def step_impl(context, url, url_kwargs):
+    kwargs = string_to_kwargs_dict(url_kwargs)
+    navigate_to_page(context, url, kwargs)
 
 
 @step('I should be on the "(?P<url>.*)" page')

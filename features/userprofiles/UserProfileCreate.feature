@@ -3,7 +3,7 @@ Feature: User profiles
   I want to be able to completely fill out my profile
 
   Background: User account exists
-    Given The following confirmed user account exists
+    Given The following users exist
       | first_name | last_name | email           | password       | create_userprofile |
       | John       | Doe       | user@ayrabo.com | myweakpassword | false              |
     And The following sport exists "Ice Hockey"

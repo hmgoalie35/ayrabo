@@ -1,7 +1,7 @@
 Feature: Team schedule
 
   Background:
-    Given The following confirmed user account exists
+    Given The following users exist
       | first_name | last_name | email            | password       |
       | John       | Doe       | user@ayrabo.com  | myweakpassword |
       | Jane       | Doe       | user1@ayrabo.com | myweakpassword |

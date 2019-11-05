@@ -3,13 +3,13 @@ Feature: User profile
   I want to be able to view another user's profile
 
   Background: Users exist
-    Given The following confirmed user account exists
+    Given The following users exist
       | id | first_name | last_name | email              | password       | create_userprofile |
       | 1  | John       | Doe       | user@ayrabo.com    | myweakpassword | false              |
       | 2  | Michael    | Scott     | michael@ayrabo.com | myweakpassword | true               |
-    And The following userprofile exists for "user@ayrabo.com"
-      | gender | birthday   | height | weight | timezone   |
-      | male   | 1996-02-12 | 5' 7"  | 150    | US/Eastern |
+    And The following userprofiles exist
+      | username_or_email | gender | birthday   | height | weight | timezone   |
+      | user@ayrabo.com   | male   | 1996-02-12 | 5' 7"  | 150    | US/Eastern |
     And The following waffle switch exists
       | name                | active |
       | sport_registrations | True   |
