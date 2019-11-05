@@ -4,9 +4,9 @@ Feature: Resend account confirmation
   I want to be able to confirm my account in the event I didn't receive an email or the confirmation email link expired
 
   Background: Users exist
-    Given The following unconfirmed user account exists
-      | first_name | last_name | email           | password       |
-      | John       | Doe       | user@ayrabo.com | myweakpassword |
+    Given The following users exist
+      | first_name | last_name | email           | password       | account_type |
+      | John       | Doe       | user@ayrabo.com | myweakpassword | unconfirmed  |
     And An empty inbox
 
   Scenario: Navigate to resend confirmation page
@@ -33,7 +33,7 @@ Feature: Resend account confirmation
 
 
   Scenario: Request email confirmation when already logged in
-    Given The following confirmed user account exists
+    Given The following users exist
       | first_name | last_name | email              | password       |
       | Jane       | Doe       | testing@ayrabo.com | myweakpassword |
     And "testing@ayrabo.com" is completely registered for "Ice Hockey" with roles "Coach, Referee"

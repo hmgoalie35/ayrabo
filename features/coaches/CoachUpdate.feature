@@ -3,7 +3,7 @@ Feature: Update coach information
   I want to be able to update my coach information for a given team
 
   Background: Coach obj exists
-    Given The following confirmed user account exists
+    Given The following users exist
       | first_name | last_name | email           | password       |
       | John       | Doe       | user@ayrabo.com | myweakpassword |
     And The following team object exists

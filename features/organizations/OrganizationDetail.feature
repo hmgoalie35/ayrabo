@@ -4,7 +4,7 @@ Feature: Organization profile
   So that I can effectively administrate my organization
 
   Background: User exists
-    Given The following confirmed user account exists
+    Given The following users exist
       | first_name | last_name | email           | password       |
       | John       | Doe       | user@ayrabo.com | myweakpassword |
     And "user@ayrabo.com" is completely registered for "Ice Hockey" with role "Manager"

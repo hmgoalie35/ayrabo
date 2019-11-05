@@ -3,9 +3,9 @@ Feature: Change password when logged in
   I want to be able to change my password when I already know it.
 
   Background: User account exists
-    Given The following confirmed user accounts exists
-      | id | first_name | last_name | email           | password       |
-      | 1  | John       | Doe       | user@ayrabo.com | myweakpassword |
+    Given The following users exist
+      | id | first_name | last_name | email           | username        | password       |
+      | 1  | John       | Doe       | user@ayrabo.com | user@ayrabo.com | myweakpassword |
 
   Scenario: Login required
     Given I am on the "home" page

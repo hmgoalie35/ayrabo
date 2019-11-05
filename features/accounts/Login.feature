@@ -3,7 +3,7 @@ Feature: Login
   Background:
     Given I am on the "home" page
     And I am logged out
-    And The following confirmed user accounts exist
+    And The following users exist
       | first_name | last_name | email           | username        | password       |
       | John       | Doe       | user@ayrabo.com | user@ayrabo.com | myweakpassword |
     And I am on the "account_login" page
@@ -44,9 +44,9 @@ Feature: Login
     And I should see "The e-mail address and/or password you specified are not correct."
 
   Scenario: Login with unconfirmed email
-    Given The following unconfirmed user accounts exist
-      | first_name | last_name | email                  | password       |
-      | Jane       | Doe       | unconfirmed@ayrabo.com | myweakpassword |
+    Given The following users exist
+      | first_name | last_name | email                  | password       | account_type |
+      | Jane       | Doe       | unconfirmed@ayrabo.com | myweakpassword | unconfirmed  |
     When I fill in "id_login" with "unconfirmed@ayrabo.com"
     And I fill in "id_password" with "myweakpassword"
     And I press "login_main"

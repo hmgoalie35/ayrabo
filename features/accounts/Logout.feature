@@ -1,7 +1,7 @@
 Feature: Logout
 
   Scenario: Logout
-    Given The following confirmed user accounts exist
+    Given The following users exist
       | first_name | last_name | email           | password       |
       | John       | Doe       | user@ayrabo.com | myweakpassword |
     And I am on the "account_login" page

@@ -3,7 +3,7 @@ Feature: Update player information
   I want to be able to update my player information for a given team
 
   Background: Player obj exists
-    Given The following confirmed user account exists
+    Given The following users exist
       | first_name | last_name | email           | password       |
       | John       | Doe       | user@ayrabo.com | myweakpassword |
     And The following team object exists

@@ -4,7 +4,7 @@ Feature: Create game
   so the system can keep track of my team's games, display games to users, etc.
 
   Background: User exists
-    Given The following confirmed user account exists
+    Given The following users exist
       | first_name | last_name | email           | password       |
       | John       | Doe       | user@ayrabo.com | myweakpassword |
     And The following team object exists

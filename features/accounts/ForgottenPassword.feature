@@ -4,9 +4,9 @@ Feature: Forgotten password
   I want to be able to reset my password
 
   Background: Confirmed user account exists
-    Given The following confirmed user account exists
-      | first_name | last_name | email           | password       |
-      | John       | Doe       | user@ayrabo.com | myweakpassword |
+    Given The following users exist
+      | first_name | last_name | email           | username        | password       |
+      | John       | Doe       | user@ayrabo.com | user@ayrabo.com | myweakpassword |
 
   Scenario: Navigate to password reset page
     Given I am on the "account_login" page

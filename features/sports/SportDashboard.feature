@@ -4,7 +4,7 @@ Feature: Sport dashboard
   So that I can have a single place linking me to other parts of the site
 
   Background: User exists
-    Given The following confirmed user accounts exists
+    Given The following users exist
       | first_name | last_name | email           | password       |
       | John       | Doe       | user@ayrabo.com | myweakpassword |
     And The following sport registrations exist

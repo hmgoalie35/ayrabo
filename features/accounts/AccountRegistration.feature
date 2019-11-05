@@ -29,17 +29,17 @@ Feature: Register for an account
     And I should be on the "account_register" page
 
   Scenario: Confirm email address with a valid link
-    Given The following unconfirmed user accounts exist
-      | first_name | last_name | email           | password       |
-      | John       | Doe       | user@ayrabo.com | myweakpassword |
-    When I confirm "user@ayrabo.com" via "email_link"
+    Given The following users exist
+      | first_name | last_name | email           | username        | password       | account_type |
+      | John       | Doe       | user@ayrabo.com | user@ayrabo.com | myweakpassword | unconfirmed  |
+    When I press the email confirmation link
     Then I should be on the "account_login" page
     And I should see "You have confirmed user@ayrabo.com"
 
   Scenario: Attempt to confirm email address with an invalid link
-    Given The following unconfirmed user accounts exist
-      | first_name | last_name | email           | password       |
-      | John       | Doe       | user@ayrabo.com | myweakpassword |
-    When I follow an invalid email link
+    Given The following users exist
+      | first_name | last_name | email           | username        | password       | account_type |
+      | John       | Doe       | user@ayrabo.com | user@ayrabo.com | myweakpassword | unconfirmed  |
+    When I go to the "account_confirm_email" page with kwargs "key=invalidconfirmationkey"
     Then I should see "This confirmation link is invalid or has expired."
     And I should see "Enter your email below to request a new link."

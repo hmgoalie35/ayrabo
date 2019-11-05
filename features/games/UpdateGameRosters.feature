@@ -4,7 +4,7 @@ Feature: Update game rosters
   So that it is known what players are partaking in the game
 
   Background: User exists
-    Given The following confirmed user account exists
+    Given The following users exist
       | first_name | last_name | email              | password       |
       | John       | Doe       | user@ayrabo.com    | myweakpassword |
       | Jane       | Doe       | user1@ayrabo.com   | myweakpassword |

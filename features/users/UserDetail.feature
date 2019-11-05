@@ -3,7 +3,7 @@ Feature: User profile
   I want to be able to view another user's profile
 
   Background: Users exist
-    Given The following confirmed user account exists
+    Given The following users exist
       | id | first_name | last_name | email              | password       | create_userprofile |
       | 1  | John       | Doe       | user@ayrabo.com    | myweakpassword | false              |
       | 2  | Michael    | Scott     | michael@ayrabo.com | myweakpassword | true               |

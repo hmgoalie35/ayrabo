@@ -4,7 +4,7 @@ Feature: Create season rosters
   So that I can group, organize and keep track of players on a per season basis
 
   Background: User exists
-    Given The following confirmed user account exists
+    Given The following users exist
       | first_name | last_name | email           | password       |
       | John       | Doe       | user@ayrabo.com | myweakpassword |
     And The following team objects exist
