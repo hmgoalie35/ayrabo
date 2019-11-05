@@ -72,14 +72,6 @@ def step_impl(context):
     context.driver.get(invalid_url)
 
 
-@step('The following userprofile exists for "(?P<username_or_email>.*)"')
-def step_impl(context, username_or_email):
-    user = get_user(username_or_email)
-    for row in context.table:
-        userprofile_data = row.as_dict()
-        UserProfileFactory(user=user, **userprofile_data)
-
-
 @step("I am logged out")
 def step_impl(context):
     context.driver.delete_cookie(settings.SESSION_COOKIE_NAME)
@@ -111,17 +103,3 @@ def step_impl(context):
     page_source = context.driver.page_source
     context.test.assertIn('Login', page_source)
     context.test.assertNotIn('Logout', page_source)
-
-
-@step('"(?P<username_or_email>[^"]*)" has the following permissions? "(?P<permissions>[^"]*)"')
-def step_impl(context, username_or_email, permissions):
-    valid_permissions = ['is_staff', 'is_superuser']
-    permissions = permissions.split(' ')
-    user = get_user(username_or_email)
-    for permission in permissions:
-        if permission in valid_permissions:
-            setattr(user, permission, True)
-        else:
-            raise Exception(
-                '{} is not a valid permission. Choose from {}'.format(permission, valid_permissions))
-        user.save()
