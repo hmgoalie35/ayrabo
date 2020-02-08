@@ -19,7 +19,7 @@
 - name: Copy over gunicorn configuration
   template:
     src: "gunicorn.conf.j2"
-    dest: "{{ sites_dir }}/gunicorn.conf"
+    dest: "{{ sites_dir }}/gunicorn.conf.py"
 
 - name: Copy over gunicorn supervisor config
   become: yes
