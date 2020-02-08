@@ -16,3 +16,17 @@
   file:
     path: /etc/nginx/sites-enabled/default
     state: absent
+
+- name: Override default systemd service
+  become: yes
+  template:
+    src: "nginx.service.j2"
+    dest: "/lib/systemd/system/nginx.service"
+
+- name: Reload the systemd daemon
+  become: yes
+  shell: systemctl daemon-reload
+
+- name: Restart nginx
+  become: yes
+  shell: systemctl restart nginx
