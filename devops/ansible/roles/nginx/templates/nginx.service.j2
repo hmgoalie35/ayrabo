@@ -11,7 +11,7 @@ ExecStartPre=/usr/sbin/nginx -t
 ExecStart=/usr/sbin/nginx
 ExecReload=/usr/sbin/nginx -s reload
 ExecStop=/bin/kill -s QUIT $MAINPID
-# This line prevents nginx from seeing the gunicorn pid, causing a 502 bad gateway
+# This line prevents nginx from seeing the gunicorn socket, causing a 502 bad gateway
 # PrivateTmp=true
 Restart=always
 
