@@ -9,6 +9,6 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - ayrabopgdata:/var/lib/postgresql/data
+      - pgdata:/var/lib/postgresql/data
 volumes:
-  ayrabopgdata:
+  pgdata:
