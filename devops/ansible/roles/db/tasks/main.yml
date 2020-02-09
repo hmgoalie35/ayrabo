@@ -6,37 +6,37 @@
     name: "{{ item }}"
     state: present
   with_items:
-    - postgresql-9.6
+    - postgresql-11
     - libpq-dev
 
 - name: Install psycopg2 for ansible
   pip:
     name: psycopg2
-    state: present
+    state: latest
 
 - name: Remove default postgres timezone setting
   lineinfile:
-    path: "/etc/postgresql/9.6/main/postgresql.conf"
-    regexp: "^timezone = 'localtime'$"
+    path: "/etc/postgresql/11/main/postgresql.conf"
+    regexp: "^timezone = 'America/New_York'$"
     state: absent
 
 - name: Configure timezone for postgres
   lineinfile:
-    path: "/etc/postgresql/9.6/main/postgresql.conf"
+    path: "/etc/postgresql/11/main/postgresql.conf"
     insertafter: EOF
     line: "timezone = 'UTC'"
     state: present
 
 - name: Configure listen addresses for postgres
   lineinfile:
-    path: "/etc/postgresql/9.6/main/postgresql.conf"
+    path: "/etc/postgresql/11/main/postgresql.conf"
     insertafter: EOF
     line: "listen_addresses = '0.0.0.0, ::'"
     state: present
 
 - name: Allow {{ db_user }} to connect to postgres
   lineinfile:
-    path: "/etc/postgresql/9.6/main/pg_hba.conf"
+    path: "/etc/postgresql/11/main/pg_hba.conf"
     insertafter: EOF
     line: "host  {{ db_name }}  {{ db_user }} {{ item }}  md5"
     state: present
