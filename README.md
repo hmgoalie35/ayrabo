@@ -18,4 +18,4 @@ A license has been intentionally excluded. See http://choosealicense.com/no-lice
 
 
 # Development
-  * Instructions are available [here](https://github.com/hmgoalie35/ayrabo/wiki/Development)
+  * Instructions are available [here](https://github.com/hmgoalie35/ayrabo/wiki/Setting-up-the-project-for-local-development)
