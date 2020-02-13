@@ -1,8 +1,30 @@
 import Noty from 'noty';
 
+/**
+ * Toggle the api error banner
+ * @param state The state to toggle the error banner to. Choose from `show` or `hide`
+ */
+export const toggleAPIErrorMessage = (state) => {
+  let animateClass = null;
+  // true means class is added, false means class is removed
+  let classState = null;
+  if (state === 'show') {
+    animateClass = 'fadeIn';
+    classState = false;
+  } else if (state === 'hide') {
+    animateClass = 'fadeOut';
+    classState = true;
+  }
+  $('.js-api-error').animateCss(animateClass).toggleClass('hidden', classState);
+};
 
-export const showAPIErrorMessage = () => {
-  $('.js-api-error').animateCss('fadeIn').removeClass('hidden');
+
+export const handleAPIError = (jqXHR) => {
+  // This may be null if a 500 error occurs (html is returned instead of json and we'd want to use
+  // responseText). I'd rather not log the html to the console even though it's still visible in
+  // the network tab.
+  const error = jqXHR.responseJSON;
+  console.log(jqXHR.status, error);
 };
 
 export const isMobileDevice = () => /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(navigator.userAgent.toLowerCase());
