@@ -6,7 +6,7 @@ import { uniqueId } from 'lodash';
 import PlayerComponent from './PlayerComponent';
 import { playerPropType } from '../common/proptypes';
 import Loading from '../common/Loading';
-import { pluralize, showAPIErrorMessage } from '../common/utils';
+import { handleAPIError, pluralize } from '../common/utils';
 import SeasonRosterDropdownComponent from './SeasonRosterDropdownComponent';
 import APIClient from '../common/APIClient';
 
@@ -33,16 +33,15 @@ export default class GameRosterComponent extends React.Component {
   }
 
   onAPIFailure(jqXHR) {
-    if (jqXHR.status === 400) {
-      console.info(jqXHR.responseJSON);
-    } else {
-      showAPIErrorMessage();
-    }
+    handleAPIError(jqXHR);
   }
 
   getSeasonRosters() {
     const { teamId, seasonId } = this.props;
-    this.client.get(`teams/${teamId}/season-rosters`, { season: seasonId }).then(data => this.setState({ seasonRosters: data }), this.onAPIFailure);
+    this.client.get(
+      `teams/${teamId}/season-rosters`,
+      { season: seasonId }
+    ).then(data => this.setState({ seasonRosters: data }), this.onAPIFailure);
   }
 
   getOptions(selectedPlayers, allPlayers) {
