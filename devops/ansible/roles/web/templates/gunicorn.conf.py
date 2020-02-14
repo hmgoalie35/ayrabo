@@ -1,6 +1,7 @@
 import multiprocessing
 import os
 
+
 formula_result = (multiprocessing.cpu_count() * 2) + 1
 gunicorn_logs_dir = '{{ gunicorn_logs_dir }}'
 

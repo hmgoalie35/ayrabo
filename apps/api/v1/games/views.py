@@ -10,6 +10,7 @@ from sports.models import Sport
 from . import serializers
 from .permissions import GameRostersRetrieveUpdatePermission
 
+
 SPORT_SERIALIZER_CLASS_MAPPINGS = {
     'Ice Hockey': serializers.HockeyGameRosterSerializer
 }
@@ -56,6 +57,15 @@ class GameRostersRetrieveUpdateAPIView(generics.RetrieveUpdateAPIView):
 
         # FYI This view deals w/ the various game models
         return model_cls.objects.all().select_related(
-            'home_team', 'away_team', 'team', 'team__division', 'team__division__league',
-            'team__division__league__sport').prefetch_related('home_players', 'home_players__user', 'away_players',
-                                                              'away_players__user')
+            'home_team',
+            'away_team',
+            'team',
+            'team__division',
+            'team__division__league',
+            'team__division__league__sport'
+        ).prefetch_related(
+            'home_players',
+            'home_players__user',
+            'away_players',
+            'away_players__user'
+        )
