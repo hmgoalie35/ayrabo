@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { uniqBy } from 'lodash/array';
 
 import APIClient from '../common/APIClient';
-import { createNotification, showAPIErrorMessage } from '../common/utils';
+import { createNotification, handleAPIError, toggleAPIErrorMessage } from '../common/utils';
 import GameRosterComponent from './GameRosterComponent';
 
 
@@ -15,7 +15,6 @@ export default class GameRostersUpdateComponent extends React.Component {
 
     this.getPlayers = this.getPlayers.bind(this);
     this.getRosters = this.getRosters.bind(this);
-    this.onAPIFailure = this.onAPIFailure.bind(this);
     this.handleAddHomeTeamPlayers = this.handleAddHomeTeamPlayers.bind(this);
     this.handleAddAwayTeamPlayers = this.handleAddAwayTeamPlayers.bind(this);
     this.handleRemoveHomeTeamPlayer = this.handleRemoveHomeTeamPlayer.bind(this);
@@ -61,20 +60,17 @@ export default class GameRostersUpdateComponent extends React.Component {
     $('[data-toggle="tooltip"]').tooltip();
   }
 
-  onAPIFailure(jqXHR) {
-    if (jqXHR.status === 400) {
-      console.info(jqXHR.responseJSON);
-    } else {
-      showAPIErrorMessage();
-    }
-  }
-
   getPlayers(teamId) {
-    return this.client.get(`teams/${teamId}/players`, { is_active: true }).then(data => data, this.onAPIFailure);
+    return this.client.get(
+      `teams/${teamId}/players`,
+      { is_active: true }
+    ).then(data => data, jqXHR => handleAPIError(jqXHR));
   }
 
   getRosters(homeTeamPlayers, awayTeamPlayers, sportId, gameId) {
-    return this.client.get(`sports/${sportId}/games/${gameId}/rosters`).then((data) => {
+    return this.client.get(
+      `sports/${sportId}/games/${gameId}/rosters`
+    ).then((data) => {
       const { home_players: homeTeamPlayerIds, away_players: awayTeamPlayerIds } = data;
       const homePlayers = this.addTypeaheadLabel(homeTeamPlayers);
       const awayPlayers = this.addTypeaheadLabel(awayTeamPlayers);
@@ -84,7 +80,7 @@ export default class GameRostersUpdateComponent extends React.Component {
         selectedHomeTeamPlayers: this.cleanPlayers(homeTeamPlayerIds, homePlayers),
         selectedAwayTeamPlayers: this.cleanPlayers(awayTeamPlayerIds, awayPlayers),
       });
-    }, this.onAPIFailure);
+    }, jqXHR => handleAPIError(jqXHR));
   }
 
   addPlayers(currentPlayers, newPlayers) {
@@ -147,11 +143,20 @@ export default class GameRostersUpdateComponent extends React.Component {
       data.away_players = selectedAwayTeamPlayers.map(player => player.id);
     }
 
-    const onSuccess = () => {
-      this.setState({ disableUpdateButton: true });
-      createNotification('Your updates have been saved.', 'success').show();
-    };
-    this.client.patch(`sports/${sportId}/games/${gameId}/rosters`, data).then(onSuccess, this.onAPIFailure);
+    this.client.patch(
+      `sports/${sportId}/games/${gameId}/rosters`,
+      data
+    ).then(
+      () => {
+        toggleAPIErrorMessage('hide');
+        this.setState({ disableUpdateButton: true });
+        createNotification('Your updates have been saved.', 'success').show();
+      },
+      (jqXHR) => {
+        toggleAPIErrorMessage('show');
+        handleAPIError(jqXHR);
+      }
+    );
   }
 
   /**
