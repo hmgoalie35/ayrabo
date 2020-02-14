@@ -24,6 +24,8 @@ export const handleAPIError = (jqXHR) => {
   // responseText). I'd rather not log the html to the console even though it's still visible in
   // the network tab.
   const error = jqXHR.responseJSON;
+  // This isn't really doing much since ajax errors already get logged to the console. This hook
+  // is mainly here for when we eventually push to sentry
   console.log(jqXHR.status, error);
 };
 
