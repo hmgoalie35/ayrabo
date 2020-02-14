@@ -21,7 +21,6 @@ export default class GameRosterComponent extends React.Component {
     };
     this.getOptions = this.getOptions.bind(this);
     this.handleTypeaheadChange = this.handleTypeaheadChange.bind(this);
-    this.onAPIFailure = this.onAPIFailure.bind(this);
     this.getSeasonRosters = this.getSeasonRosters.bind(this);
   }
 
@@ -32,16 +31,15 @@ export default class GameRosterComponent extends React.Component {
     }
   }
 
-  onAPIFailure(jqXHR) {
-    handleAPIError(jqXHR);
-  }
-
   getSeasonRosters() {
     const { teamId, seasonId } = this.props;
     this.client.get(
       `teams/${teamId}/season-rosters`,
       { season: seasonId }
-    ).then(data => this.setState({ seasonRosters: data }), this.onAPIFailure);
+    ).then(
+      data => this.setState({ seasonRosters: data }),
+      jqXHR => handleAPIError(jqXHR)
+    );
   }
 
   getOptions(selectedPlayers, allPlayers) {
