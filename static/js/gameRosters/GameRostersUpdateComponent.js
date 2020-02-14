@@ -148,8 +148,8 @@ export default class GameRostersUpdateComponent extends React.Component {
       data
     ).then(
       () => {
-        toggleAPIErrorMessage('hide');
         this.setState({ disableUpdateButton: true });
+        toggleAPIErrorMessage('hide');
         createNotification('Your updates have been saved.', 'success').show();
       },
       (jqXHR) => {
