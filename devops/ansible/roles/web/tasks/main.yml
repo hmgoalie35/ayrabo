@@ -1,7 +1,4 @@
 - import_role:
-    name: nodejs
-
-- import_role:
     name: nginx
 
 - name: Copy global nginx config
