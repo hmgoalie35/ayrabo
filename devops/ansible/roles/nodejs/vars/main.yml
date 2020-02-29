@@ -1,0 +1,2 @@
+nvm_dir: "{{ ansible_env.HOME }}/.nvm"
+nvm_script: "{{ nvm_dir }}/nvm.sh"
