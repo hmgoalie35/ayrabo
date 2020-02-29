@@ -2,6 +2,7 @@ import React from 'react';
 import { mount } from 'enzyme';
 
 import GameRostersUpdateComponent from '../GameRostersUpdateComponent';
+import GameRosterComponent from '../GameRosterComponent';
 import homePlayers from './homePlayers.json';
 import awayPlayers from './awayPlayers.json';
 
@@ -50,6 +51,10 @@ const sportId = 1;
 const gameId = 100;
 const seasonId = 5;
 
+beforeEach(() => {
+  GameRosterComponent.prototype.getSeasonRosters = jest.fn();
+});
+
 const getComponent = (canUpdateHomeTeamRoster = true, canUpdateAwayTeamRoster = false) => {
   const props = {
     sportId,
@@ -62,31 +67,31 @@ const getComponent = (canUpdateHomeTeamRoster = true, canUpdateAwayTeamRoster = 
     canUpdateHomeTeamRoster,
     canUpdateAwayTeamRoster,
   };
-  return mount(<GameRostersUpdateComponent{...props} />);
+  return mount(<GameRostersUpdateComponent {...props} />);
 };
 
-const addTypeaheadLabel = players =>
-  players.map(p => ({
-    ...p,
-    label: `#${p.jersey_number} ${p.user.first_name} ${p.user.last_name}`,
-  }));
+const addTypeaheadLabel = players => players.map(p => ({
+  ...p,
+  label: `#${p.jersey_number} ${p.user.first_name} ${p.user.last_name}`,
+}));
 
 describe('componentDidMount', () => {
   test('fetch players for the home and away teams', () => {
-    const spy = jest.spyOn(GameRostersUpdateComponent.prototype, 'getPlayers');
+    const mockGetPlayers = jest.fn();
+    GameRostersUpdateComponent.prototype.getPlayers = mockGetPlayers;
     getComponent();
-    expect(spy).toHaveBeenCalledWith(homeTeam.id);
-    expect(spy).toHaveBeenCalledWith(awayTeam.id);
-    spy.mockClear();
+    expect(mockGetPlayers).toHaveBeenCalledWith(homeTeam.id);
+    expect(mockGetPlayers).toHaveBeenCalledWith(awayTeam.id);
   });
 
   test('fetch game rosters after the players have been fetched', () => {
-    const spy = jest.spyOn(GameRostersUpdateComponent.prototype, 'getRosters');
-    GameRostersUpdateComponent.prototype.getPlayers = jest.fn()
-      .mockReturnValueOnce(homePlayers).mockReturnValueOnce(awayPlayers);
+    const mockGetPlayers = jest.fn();
+    mockGetPlayers.mockReturnValueOnce(homePlayers).mockReturnValueOnce(awayPlayers);
+    const mockGetRosters = jest.fn();
+    GameRostersUpdateComponent.prototype.getRosters = mockGetRosters;
+    GameRostersUpdateComponent.prototype.getPlayers = mockGetPlayers;
     getComponent();
-    expect(spy).toHaveBeenCalledWith(homePlayers, awayPlayers, sportId, gameId);
-    spy.mockClear();
+    expect(mockGetRosters).toHaveBeenCalledWith(homePlayers, awayPlayers, sportId, gameId);
   });
 });
 
@@ -178,7 +183,9 @@ describe('handleSubmit', () => {
   test('Disables update button and creates notification', async () => {
     const component = getComponent(true, true);
     // We have the function resolve some dummy value, we could add the correct api response.
-    const clientSpy = jest.spyOn(component.instance().client, 'patch').mockImplementation(() => Promise.resolve(true));
+    const mockClientPatch = jest.fn();
+    mockClientPatch.mockReturnValueOnce(Promise.resolve(true));
+    component.instance().client.patch = mockClientPatch;
 
     // Prevents tooltip() not being defined error
     component.instance().componentDidUpdate = jest.fn();
@@ -191,9 +198,12 @@ describe('handleSubmit', () => {
     component.instance().handleAddAwayTeamPlayers([awayPlayers[0]]);
     component.find('form').simulate('submit');
 
-    await expect(clientSpy).toHaveBeenCalledWith(
+    await expect(mockClientPatch).toHaveBeenCalledWith(
       `sports/${sportId}/games/${gameId}/rosters`,
-      { home_players: [3061, 3062], away_players: [3215] },
+      {
+        home_players: [3061, 3062],
+        away_players: [3215],
+      },
     );
     expect(component.state('disableUpdateButton')).toBe(true);
     // I can't figure out how to mock createNotification
