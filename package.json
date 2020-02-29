@@ -56,14 +56,14 @@
     "sass-loader": "8.0.0",
     "style-loader": "1.1.2",
     "tar": "5.0.5",
-    "webpack": "4.41.5",
+    "webpack": "4.41.6",
     "webpack-bundle-analyzer": "3.6.0",
     "webpack-bundle-tracker": "0.4.3",
-    "webpack-cli": "3.3.10"
+    "webpack-cli": "3.3.11"
   },
   "devDependencies": {
     "babel-jest": "23.6.0",
-    "chromedriver": "79.0.0",
+    "chromedriver": "80.0.1",
     "enzyme": "3.9.0",
     "enzyme-adapter-react-16": "1.12.1",
     "geckodriver": "1.19.1",
