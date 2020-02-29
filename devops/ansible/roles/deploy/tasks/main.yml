@@ -26,15 +26,18 @@
         state: present
         requirements: "requirements.txt"
 
+    - import_role:
+        name: nodejs
+
     # The npm module was only working w/ state: latest after the node v8 update. It doesn't seem like it was actually
     # updating the packages to the latest versions but I don't want to take a chance.
     - name: Install npm packages
-      shell: npm install --production
+      shell: bash -ic "npm install --production"
       args:
         chdir: "{{ ongoing_deployment }}"
 
     - name: Run production webpack build
-      command: npm run build
+      shell: bash -ic "npm run build"
       args:
         chdir: "{{ ongoing_deployment }}"
 
