@@ -1,7 +1,9 @@
 {
   "presets": [
-    "react",
-    ["env", {
+    "@babel/preset-react",
+    [
+      "@babel/preset-env",
+      {
         "targets": {
           "browsers": [
             "Android 2.3",
@@ -18,7 +20,6 @@
     ]
   ],
   "plugins": [
-    "transform-object-rest-spread",
-    "syntax-object-rest-spread"
+    "@babel/plugin-proposal-object-rest-spread"
   ]
 }
