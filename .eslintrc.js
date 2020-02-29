@@ -19,10 +19,14 @@ module.exports = {
       functions: 'only-multiline',
     }],
     'operator-linebreak': 'off',
+    'arrow-parens': ['error', 'as-needed', { 'requireForBlockBody': true }],
     // React
     'react/jsx-wrap-multilines': 'off',
     'react/jsx-one-expression-per-line': 'off',
     'react/jsx-filename-extension': 'off',
+    'react/jsx-props-no-spreading': 'off',
+    'react/jsx-fragments': ['error', 'element'],
+    'react/jsx-curly-newline': 'off',
     // Import
     'import/no-extraneous-dependencies': 'off',
   },
