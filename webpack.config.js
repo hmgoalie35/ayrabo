@@ -1,64 +1,56 @@
 const path = require('path');
-const webpack = require('webpack');
 const glob = require('glob');
 
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const BundleTracker = require('webpack-bundle-tracker');
-const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 
 
 // Paths
-const projectRoot = path.resolve(__dirname);
-const staticRoot = path.join(projectRoot, 'static');
-const jsRoot = path.join(staticRoot, 'js');
-const entryPointsRoot = path.join(jsRoot, 'entryPoints');
-const scssRoot = path.join(staticRoot, 'scss');
-const distRoot = path.join(staticRoot, 'dist');
+const projectDir = path.resolve(__dirname);
+const staticDir = path.join(projectDir, 'static');
+const jsDir = path.join(staticDir, 'js');
+const entryPointsDir = path.join(jsDir, 'entryPoints');
+const scssDir = path.join(staticDir, 'scss');
+const buildDir = path.join(staticDir, 'build');
+const djangoStaticUrl = '/static/';
+const publicPath = `${djangoStaticUrl}${path.basename(buildDir)}/`;
 
 const generateEntryPoints = () => {
-  var result = {};
-  const entryPoints = glob.sync(`${entryPointsRoot}/*`);
-  entryPoints.map(entryPoint => {
-    var fileName = path.basename(entryPoint, '.js');
-    result[fileName] = entryPoint;
+  const entryPoints = {};
+  const rawEntryPoints = glob.sync(`${entryPointsDir}/*`);
+  rawEntryPoints.map(entryPoint => {
+    const fileName = path.basename(entryPoint, '.js');
+    entryPoints[fileName] = entryPoint;
   });
-  return result;
+  return entryPoints;
 };
 
 module.exports = function (env, argv) {
-  // PyCharm's webpack feature wasn't working because `argv` was undefined.
-  const mode = argv ? argv.mode : 'development';
-  const productionBuild = mode === 'production';
-
-  let cssFileName = '[name]';
-  let jsFileName = '[name]';
-  if (productionBuild) {
-    cssFileName = '[name].[contenthash]';
-    jsFileName = '[name].[contenthash]';
-  }
-
-  const entryPoints = generateEntryPoints();
+  const { mode } = argv;
+  const isProduction = mode === 'production';
+  const fileName = isProduction ? '[name].[contenthash]' : '[name]';
+  const entry = generateEntryPoints();
 
   return {
-    entry: entryPoints,
+    mode,
+    entry,
     output: {
-      filename: `js/${jsFileName}.js`,
-      chunkFilename: `js/${jsFileName}.js`,
-      path: distRoot,
+      filename: `js/${fileName}.js`,
+      chunkFilename: `js/${fileName}.js`,
+      path: buildDir,
       library: 'App',
-      publicPath: '/static/dist/'
-    },
-    resolve: {
-      extensions: ['.js', '.json'],
-      symlinks: false
+      publicPath,
     },
     stats: {
       // Don't show CopyWebpackPlugin output
       excludeAssets: [/^vendor/]
     },
     optimization: {
+      runtimeChunk: 'single',
+      moduleIds: isProduction ? 'hashed' : 'named',
       splitChunks: {
         cacheGroups: {
           globals: {
@@ -69,13 +61,12 @@ module.exports = function (env, argv) {
           }
         }
       },
-      runtimeChunk: 'single'
     },
     module: {
       rules: [
         {
           test: /\.js$/,
-          include: [jsRoot],
+          include: [jsDir],
           use: [
             'babel-loader',
             {
@@ -88,7 +79,7 @@ module.exports = function (env, argv) {
         },
         {
           test: /\.scss$/,
-          include: [scssRoot],
+          include: [scssDir],
           use: [
             MiniCssExtractPlugin.loader,
             {
@@ -150,15 +141,14 @@ module.exports = function (env, argv) {
         }
       ],
     },
-    devtool: productionBuild ? '' : 'cheap-module-source-map',
+    watch: !isProduction,
     plugins: [
       // new BundleAnalyzerPlugin(),
       new CleanWebpackPlugin(),
       new MiniCssExtractPlugin({
-        filename: `css/${cssFileName}.css`
+        filename: `css/${fileName}.css`
       }),
       new BundleTracker({ filename: './webpack-stats.json' }),
-      new webpack.HashedModuleIdsPlugin(),
       new CopyWebpackPlugin([
         {
           from: 'jquery/dist/jquery.min.js',

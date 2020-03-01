@@ -337,22 +337,13 @@ EMAIL_PORT = env.int('EMAIL_PORT')
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.9/howto/static-files/
 
-# Http requests to STATIC_URL should be mapped to STATIC_ROOT
-
-# The actual uri staticfiles are served from (localhost:8000/static/)
 STATIC_URL = '/static/'
-# The folder on the filesystem staticfiles are stored
-STATIC_ROOT = os.path.join(BASE_DIR, 'build')
-# Location to find extra static files (Django automatically looks in static/ subdirectories of all apps)
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
-STATICFILES_FINDERS = [
-    'django.contrib.staticfiles.finders.FileSystemFinder',
-    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
-]
 
 WEBPACK_LOADER = {
     'DEFAULT': {
-        'BUNDLE_DIR_NAME': 'dist/',  # must end with slash
+        'BUNDLE_DIR_NAME': 'build/',  # must end with slash
         'STATS_FILE': os.path.join(BASE_DIR, 'webpack-stats.json'),
     }
 }

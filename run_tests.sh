@@ -38,7 +38,7 @@ fi
 
 if [ ${TESTS} == 'all' ] || [ ${TESTS} == 'accept' ]; then
 
-    if [ ! -d "static/dist" ]; then
+    if [ ! -d "static/build" ]; then
         printf "\n\nYou need to run 'npm run dev' or 'npm run build' before running acceptance tests\n"
         exit 1
     fi

@@ -74,8 +74,8 @@
     "react-test-renderer": "16.13.0"
   },
   "scripts": {
-    "dev": "webpack --debug --watch --progress --display-error-details --mode=development",
-    "build": "webpack --optimize-minimize --mode=production",
+    "dev": "webpack -d --mode=development",
+    "build": "webpack -p --mode=production",
     "test": "jest --watch",
     "test-ci": "jest --ci"
   }
