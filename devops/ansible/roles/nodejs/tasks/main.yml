@@ -5,7 +5,7 @@
 
 - name: Install node
   # Installs version from .nvmrc
-  shell: bash -ic "nvm install"
+  shell: bash -ic "nvm install --latest-npm"
   args:
     chdir: "{{ ongoing_deployment }}"
 
