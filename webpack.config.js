@@ -50,7 +50,7 @@ module.exports = function (env, argv) {
     },
     optimization: {
       runtimeChunk: 'single',
-      moduleIds: 'hashed',
+      moduleIds: isProduction ? 'hashed' : 'named',
       splitChunks: {
         cacheGroups: {
           globals: {
