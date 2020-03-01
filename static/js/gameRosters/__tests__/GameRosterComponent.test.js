@@ -5,15 +5,19 @@ import GameRosterComponent from '../GameRosterComponent';
 import homePlayers from './homePlayers.json';
 
 
-const addTypeaheadLabel = players =>
-  players.map(p => ({
-    ...p,
-    label: `#${p.jersey_number} ${p.user.first_name} ${p.user.last_name}`,
-  }));
+const addTypeaheadLabel = players => players.map(p => ({
+  ...p,
+  label: `#${p.jersey_number} ${p.user.first_name} ${p.user.last_name}`,
+}));
 
 const playersWithLabel = addTypeaheadLabel(homePlayers);
 
-const getComponent = (selectedPlayers, allPlayers, canUpdate = true, handleAddPlayers = jest.fn()) => {
+const getComponent = (
+  selectedPlayers,
+  allPlayers,
+  canUpdate = true,
+  handleAddPlayers = jest.fn()
+) => {
   const props = {
     teamName: 'Green Machine IceCats Midget Minor AA',
     teamId: 3,
@@ -31,17 +35,17 @@ const getComponent = (selectedPlayers, allPlayers, canUpdate = true, handleAddPl
 
 describe('componentDidMount', () => {
   test('fetches season rosters if user can update', () => {
-    const spy = jest.spyOn(GameRosterComponent.prototype, 'getSeasonRosters');
+    const mock = jest.fn();
+    GameRosterComponent.prototype.getSeasonRosters = mock;
     getComponent(playersWithLabel.slice(0, 2), playersWithLabel, true);
-    expect(spy).toHaveBeenCalled();
-    spy.mockClear();
+    expect(mock).toHaveBeenCalled();
   });
 
   test('does not fetch season rosters if user can\'t update', () => {
-    const spy = jest.spyOn(GameRosterComponent.prototype, 'getSeasonRosters');
+    const mock = jest.fn();
+    GameRosterComponent.prototype.getSeasonRosters = mock;
     getComponent(playersWithLabel.slice(0, 2), playersWithLabel, false);
-    expect(spy).not.toHaveBeenCalled();
-    spy.mockClear();
+    expect(mock).not.toHaveBeenCalled();
   });
 });
 
