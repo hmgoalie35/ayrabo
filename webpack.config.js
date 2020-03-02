@@ -2,7 +2,6 @@ const path = require('path');
 const glob = require('glob');
 
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const CopyWebpackPlugin = require('copy-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const BundleTracker = require('webpack-bundle-tracker');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
@@ -43,10 +42,6 @@ module.exports = function (env, argv) {
       path: buildDir,
       library: 'App',
       publicPath,
-    },
-    stats: {
-      // Don't show CopyWebpackPlugin output
-      excludeAssets: [/^vendor/]
     },
     optimization: {
       runtimeChunk: 'single',
@@ -138,6 +133,19 @@ module.exports = function (env, argv) {
               options: 'ClipboardJS'
             }
           ]
+        },
+        {
+          test: require.resolve('jquery'),
+          use: [
+            {
+              loader: 'expose-loader',
+              options: 'jQuery'
+            },
+            {
+              loader: 'expose-loader',
+              options: '$'
+            }
+          ]
         }
       ],
     },
@@ -148,64 +156,7 @@ module.exports = function (env, argv) {
       new MiniCssExtractPlugin({
         filename: `css/${fileName}.css`
       }),
-      new BundleTracker({ filename: './webpack-stats.json' }),
-      new CopyWebpackPlugin([
-        {
-          from: 'jquery/dist/jquery.min.js',
-          to: 'vendor',
-          context: 'node_modules'
-        },
-        {
-          from: 'bootstrap-sass/assets/javascripts/bootstrap.min.js',
-          to: 'vendor',
-          context: 'node_modules'
-        },
-        {
-          from: 'bootstrap-select/dist',
-          to: 'vendor/bootstrap-select',
-          context: 'node_modules'
-        },
-        {
-          from: 'eonasdan-bootstrap-datetimepicker/build/js',
-          to: 'vendor/bootstrap-datetimepicker/js',
-          context: 'node_modules'
-        },
-        {
-          from: 'eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.min.css',
-          to: 'vendor/bootstrap-datetimepicker/css',
-          context: 'node_modules'
-        },
-        {
-          from: 'moment/min/moment.min.js',
-          to: 'vendor',
-          context: 'node_modules'
-        },
-        {
-          from: 'moment/min/locales.min.js',
-          to: 'vendor',
-          context: 'node_modules'
-        },
-        {
-          from: 'moment-timezone/builds/moment-timezone.min.js',
-          to: 'vendor',
-          context: 'node_modules'
-        },
-        {
-          from: 'datatables.net/js',
-          to: 'vendor/datatables',
-          context: 'node_modules'
-        },
-        {
-          from: 'datatables.net-bs/css',
-          to: 'vendor/datatables',
-          context: 'node_modules'
-        },
-        {
-          from: 'datatables.net-bs/js',
-          to: 'vendor/datatables',
-          context: 'node_modules'
-        }
-      ])
+      new BundleTracker({ filename: './webpack-stats.json' })
     ]
   };
 };
