@@ -11,6 +11,10 @@ from locations.views import BulkUploadLocationsView
 from teams.views import BulkUploadTeamsView
 
 
+project_name = 'ayrabo'
+admin.site.site_header = project_name
+admin.site.site_title = project_name
+
 urlpatterns = [
     url(r'^admin/teams/bulk-upload$', BulkUploadTeamsView.as_view(), name='bulk_upload_teams'),
     url(r'^admin/locations/bulk-upload$', BulkUploadLocationsView.as_view(), name='bulk_upload_locations'),
