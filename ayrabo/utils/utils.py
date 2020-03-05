@@ -110,3 +110,7 @@ def chunk(l, n):
     """
     for i in range(0, len(l), n):
         yield l[i:i + n]
+
+
+def pluralize(text, count, suffix):
+    return text if count == 1 else f'{text}{suffix}'
