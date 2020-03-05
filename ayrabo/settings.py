@@ -96,6 +96,7 @@ INSTALLED_APPS = [
     'debug_toolbar',
     'django_extensions',
     'django_filters',
+    'django_object_actions',
     'easy_thumbnails',
     'localflavor',
     'rest_framework',
