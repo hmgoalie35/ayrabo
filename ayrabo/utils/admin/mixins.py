@@ -14,6 +14,10 @@ class AdminBulkUploadMixin(DjangoObjectActions):
     bulk_upload_view_class = AdminBulkUploadView
     changelist_actions = ('bulk_upload', 'download_sample_bulk_upload_csv')
 
+    def get_url_name(self):
+        _meta = self.model._meta
+        return f'{_meta.app_label}_{_meta.model_name}_bulk_upload'
+
     def bulk_upload_view(self):
         _meta = self.model._meta
         return self.bulk_upload_view_class.as_view(
@@ -32,12 +36,12 @@ class AdminBulkUploadMixin(DjangoObjectActions):
     def get_urls(self):
         urls = super().get_urls()
         new_urls = [
-            path('bulk-upload/', self.admin_site.admin_view(self.bulk_upload_view()), name='bulk_upload')
+            path('bulk-upload/', self.admin_site.admin_view(self.bulk_upload_view()), name=self.get_url_name())
         ]
         return new_urls + urls
 
     def bulk_upload(self, *args, **kwargs):
-        return redirect('admin:bulk_upload')
+        return redirect(f'admin:{self.get_url_name()}')
 
     def download_sample_bulk_upload_csv(self, request, *args, **kwargs):
         if self.bulk_upload_sample_csv:
