@@ -1,6 +1,0 @@
-{% extends 'admin/bulk_upload_base.html' %}
-{% load static %}
-
-{% block bulk_upload_url %}{% url 'bulk_upload_locations' %}{% endblock %}
-{% block object_type_plural %}Locations{% endblock %}
-{% block example_file_path %}{% static 'csv_examples/bulk_upload_locations_example.csv' %}{% endblock %}
