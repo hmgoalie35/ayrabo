@@ -5,10 +5,7 @@ from django.contrib import admin
 from django.urls import include, path
 
 from common.views import HealthCheckView
-from games.views import BulkUploadHockeyGamesView
 from home.views import AboutUsView, ContactUsView, HomePageView
-from locations.views import BulkUploadLocationsView
-from teams.views import BulkUploadTeamsView
 
 
 project_name = 'ayrabo'
@@ -16,9 +13,6 @@ admin.site.site_header = project_name
 admin.site.site_title = project_name
 
 urlpatterns = [
-    url(r'^admin/teams/bulk-upload$', BulkUploadTeamsView.as_view(), name='bulk_upload_teams'),
-    url(r'^admin/locations/bulk-upload$', BulkUploadLocationsView.as_view(), name='bulk_upload_locations'),
-    url(r'^admin/hockey-games/bulk-upload$', BulkUploadHockeyGamesView.as_view(), name='bulk_upload_hockeygames'),
     url(r'^admin/', admin.site.urls),
 
     url(r'^$', HomePageView.as_view(), name='home'),
