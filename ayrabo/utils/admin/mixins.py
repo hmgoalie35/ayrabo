@@ -11,6 +11,7 @@ class AdminBulkUploadMixin(DjangoObjectActions):
     bulk_upload_sample_csv = None
     bulk_upload_form_fields = None
     bulk_upload_model_form_class = None
+    bulk_upload_model_formset_class = None
     bulk_upload_view_class = AdminBulkUploadView
     changelist_actions = ('bulk_upload', 'download_sample_bulk_upload_csv')
 
@@ -24,12 +25,13 @@ class AdminBulkUploadMixin(DjangoObjectActions):
             success_url=reverse_lazy(f'admin:{_meta.app_label}_{_meta.model_name}_changelist'),
             model=self.model,
             model_form_class=self.bulk_upload_model_form_class,
+            model_formset_class=self.bulk_upload_model_formset_class,
             fields=self.bulk_upload_form_fields,
             extra_context={
                 'site_title': self.admin_site.site_title,
                 'site_header': self.admin_site.site_header,
                 'title': f'Bulk upload {_meta.verbose_name_plural}',
-                'opts': _meta,
+                'opts': _meta,  # Django's base admin template expects this variable in the context
             }
         )
 

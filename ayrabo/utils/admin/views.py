@@ -10,12 +10,14 @@ from ayrabo.utils.admin.forms import AdminBulkUploadForm
 
 
 class AdminBulkUploadView(generic.FormView):
-    form_class = AdminBulkUploadForm
     template_name = 'admin/bulk_upload.html'
     success_url = None
     model = None
     fields = None
+    form_class = AdminBulkUploadForm
+    # Custom variables
     model_form_class = None
+    model_formset_class = None
 
     def get_form_value(self, key, value, row):
         func_name = key.replace(' ', '_').lower()
@@ -55,6 +57,8 @@ class AdminBulkUploadView(generic.FormView):
             kwargs['fields'] = self.fields
         if self.model_form_class:
             kwargs['form'] = self.model_form_class
+        if self.model_formset_class:
+            kwargs['formset'] = self.model_formset_class
         return forms.modelformset_factory(self.model, **kwargs)
 
     def get_model_form_kwargs(self, data, raw_data):
@@ -67,8 +71,7 @@ class AdminBulkUploadView(generic.FormView):
         formset = FormSetClass(cleaned_data, form_kwargs=self.get_model_form_kwargs(cleaned_data, raw_data))
         if not formset.is_valid():
             context = self.get_context_data()
-            context['formset'] = formset
-            context['file'] = uploaded_file
+            context.update({'formset': formset})
             return render(self.request, self.template_name, context)
         instances = formset.save()
         num_instances = len(instances)
