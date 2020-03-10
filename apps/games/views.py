@@ -2,14 +2,11 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
 from django.db.models import Q
 from django.shortcuts import get_object_or_404, redirect, reverse
-from django.urls import reverse_lazy
 from django.views import generic
 
 from ayrabo.utils.exceptions import SportNotConfiguredException
 from ayrabo.utils.mixins import HandleSportNotConfiguredMixin, HasPermissionMixin
-from common.views import CsvBulkUploadView
-from games.forms import DATETIME_INPUT_FORMAT, HockeyGameCreateForm
-from games.models import HockeyGame
+from games.forms import DATETIME_INPUT_FORMAT
 from managers.models import Manager
 from scorekeepers.models import Scorekeeper
 from sports.models import Sport
@@ -203,7 +200,6 @@ class GameRostersUpdateView(LoginRequiredMixin,
         model_cls = mappings.SPORT_GAME_MODEL_MAPPINGS.get(self.sport.name)
         if model_cls is None:
             raise SportNotConfiguredException(self.sport)
-
         self.game = get_object_or_404(
             model_cls.objects.select_related(
                 'home_team__division',
@@ -235,24 +231,4 @@ class GameRostersUpdateView(LoginRequiredMixin,
                 self.managers.filter(team=away_team).exists() or is_scorekeeper),
             'sport': self.sport,
         })
-        return context
-
-
-class BulkUploadHockeyGamesView(CsvBulkUploadView):
-    success_url = reverse_lazy('bulk_upload_hockeygames')
-    model = HockeyGame
-    model_form_class = HockeyGameCreateForm
-
-    def get_model_form_kwargs(self, cleaned_data, raw_data):
-        form_kwargs = super().get_model_form_kwargs(cleaned_data, raw_data)
-        try:
-            form_kwargs['team'] = Team.objects.get(pk=raw_data[0].get('home_team'))
-        except (Team.DoesNotExist, IndexError):
-            pass
-        return form_kwargs
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['model_cls'] = 'HockeyGame'
-        context['url'] = reverse_lazy('admin:games_hockeygame_changelist')
         return context
