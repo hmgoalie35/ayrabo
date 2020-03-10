@@ -18,6 +18,7 @@ class AdminBulkUploadView(generic.FormView):
     # Custom variables
     model_form_class = None
     model_formset_class = None
+    admin_site = None
 
     def get_form_value(self, key, value, row):
         func_name = key.replace(' ', '_').lower()
@@ -63,6 +64,11 @@ class AdminBulkUploadView(generic.FormView):
 
     def get_model_form_kwargs(self, data, raw_data):
         return {}
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.update(self.admin_site.each_context(self.request))
+        return context
 
     def form_valid(self, form):
         uploaded_file = form.cleaned_data.get('file')

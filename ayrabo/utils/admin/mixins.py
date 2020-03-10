@@ -27,9 +27,8 @@ class AdminBulkUploadMixin(DjangoObjectActions):
             model_form_class=self.bulk_upload_model_form_class,
             model_formset_class=self.bulk_upload_model_formset_class,
             fields=self.bulk_upload_form_fields,
+            admin_site=self.admin_site,
             extra_context={
-                'site_title': self.admin_site.site_title,
-                'site_header': self.admin_site.site_header,
                 'title': f'Bulk upload {_meta.verbose_name_plural}',
                 'opts': _meta,  # Django's base admin template expects this variable in the context
             }
