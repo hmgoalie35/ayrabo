@@ -1,13 +1,16 @@
 from django import forms
 from django.contrib import admin
+from django.forms import BaseModelFormSet
 from django.utils import timezone
 
+from ayrabo.utils.admin.mixins import AdminBulkUploadMixin
 from ayrabo.utils.form_fields import SeasonModelChoiceField, TeamModelChoiceField
 from common.models import GenericChoice
 from games.models import HockeyGame
 from seasons.models import Season
 from sports.models import Sport
 from teams.models import Team
+from .forms import HockeyGameCreateForm
 from .models import HockeyAssist, HockeyGoal
 
 
@@ -94,9 +97,30 @@ class AbstractGameAdmin(admin.ModelAdmin):
     filter_horizontal = ['home_players', 'away_players']
 
 
+class HockeyGameAdminModelFormSet(BaseModelFormSet):
+
+    def get_form_kwargs(self, index):
+        kwargs = super().get_form_kwargs(index)
+        team_pk = self.data.get(f'form-{index}-team')
+        try:
+            team = Team.objects.get(pk=team_pk)
+        except Team.DoesNotExist:
+            raise
+        kwargs.update({'team': team})
+        return kwargs
+
+
+class HockeyGameAdminCreateForm(HockeyGameCreateForm):
+    class Meta(HockeyGameCreateForm.Meta):
+        fields = HockeyGameCreateForm.Meta.fields + ['team', 'created_by']
+
+
 @admin.register(HockeyGame)
-class HockeyGameAdmin(AbstractGameAdmin):
+class HockeyGameAdmin(AdminBulkUploadMixin, AbstractGameAdmin):
     form = HockeyGameAdminForm
+    bulk_upload_sample_csv = 'bulk_upload_hockeygames_example.csv'
+    bulk_upload_model_form_class = HockeyGameAdminCreateForm
+    bulk_upload_model_formset_class = HockeyGameAdminModelFormSet
 
 
 @admin.register(HockeyGoal)
