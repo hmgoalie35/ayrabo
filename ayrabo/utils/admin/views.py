@@ -5,7 +5,6 @@ from django.contrib import messages
 from django.shortcuts import render
 from django.views import generic
 
-from ayrabo.utils import pluralize
 from ayrabo.utils.admin.forms import AdminBulkUploadForm
 
 
@@ -82,6 +81,13 @@ class AdminBulkUploadView(generic.FormView):
         instances = formset.save()
         num_instances = len(instances)
         opts = self.model._meta
-        msg = f'Successfully created {num_instances} {pluralize(opts.verbose_name, num_instances, "s")}'
-        messages.success(self.request, msg)
+        verbose_name = opts.verbose_name
+        verbose_name_plural = opts.verbose_name_plural
+        base_msg = f'Successfully created {num_instances}'
+        if num_instances == 0:
+            messages.warning(self.request, f'{num_instances} {verbose_name_plural} created. Is the csv empty?')
+        elif num_instances == 1:
+            messages.success(self.request, f'{base_msg} {verbose_name}')
+        else:
+            messages.success(self.request, f'{base_msg} {verbose_name_plural}')
         return super().form_valid(form)
