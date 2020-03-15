@@ -74,10 +74,16 @@ class AbstractGameCreateUpdateForm(forms.ModelForm):
     season = SeasonModelChoiceField(queryset=Season.objects.all())
     home_team = TeamModelChoiceField(queryset=Team.objects.all(), label='Home Team')
     away_team = TeamModelChoiceField(queryset=Team.objects.all(), label='Away Team')
-    start = forms.DateTimeField(input_formats=[DATETIME_INPUT_FORMAT], label='Game Start',
-                                widget=widgets.DateTimeInput(format=DATETIME_INPUT_FORMAT))
-    end = forms.DateTimeField(input_formats=[DATETIME_INPUT_FORMAT], label='Game End',
-                              widget=widgets.DateTimeInput(format=DATETIME_INPUT_FORMAT))
+    start = forms.DateTimeField(
+        input_formats=[DATETIME_INPUT_FORMAT],
+        label='Game Start',
+        widget=widgets.DateTimeInput(format=DATETIME_INPUT_FORMAT)
+    )
+    end = forms.DateTimeField(
+        input_formats=[DATETIME_INPUT_FORMAT],
+        label='Game End',
+        widget=widgets.DateTimeInput(format=DATETIME_INPUT_FORMAT)
+    )
 
     class Meta:
         fields = ['home_team', 'away_team', 'type', 'point_value', 'location', 'start', 'end', 'timezone', 'season']

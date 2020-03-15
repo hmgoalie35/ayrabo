@@ -588,39 +588,56 @@ class GameRostersUpdateViewTests(BaseTestCase):
         self.assertEqual(context.get('sport'), self.ice_hockey)
 
 
-class BulkUploadHockeyGamesViewTests(BaseTestCase):
-    url = 'bulk_upload_hockeygames'
+class HockeyGameAdminBulkUploadViewTests(BaseTestCase):
+    url = 'admin:games_hockeygame_bulk_upload'
 
     def setUp(self):
         self.email = 'user@ayrabo.com'
         self.password = 'myweakpassword'
-        self.test_file_path = os.path.join(settings.BASE_DIR, 'static', 'csv_examples')
-        self.user = UserFactory(email=self.email, password=self.password, is_staff=True)
+        self.user = UserFactory(id=1, email=self.email, password=self.password, is_staff=True, is_superuser=True)
         sport = SportFactory(name='Ice Hockey')
         league = LeagueFactory(sport=sport, name='Long Island Amateur Hockey League')
         division = DivisionFactory(league=league, name='Midget Minor AA')
         TeamFactory(id=35, division=division)
         TeamFactory(id=31, division=division)
-        GenericChoiceFactory(id=2, content_object=sport, short_value='exhibition', long_value='Exhibition',
-                             type=GenericChoice.GAME_TYPE)
-        GenericChoiceFactory(id=7, content_object=sport, short_value='2', long_value='2',
-                             type=GenericChoice.GAME_POINT_VALUE)
+        GenericChoiceFactory(
+            id=2,
+            content_object=sport,
+            short_value='exhibition',
+            long_value='Exhibition',
+            type=GenericChoice.GAME_TYPE
+        )
+        GenericChoiceFactory(
+            id=7,
+            content_object=sport,
+            short_value='2',
+            long_value='2',
+            type=GenericChoice.GAME_POINT_VALUE
+        )
         LocationFactory(id=11)
         SeasonFactory(id=10, league=league, start_date=datetime.date(month=8, day=15, year=2017))
 
     def test_post_valid_csv(self):
         self.login(email=self.email, password=self.password)
-        with open(os.path.join(self.test_file_path, 'bulk_upload_hockeygames_example.csv')) as f:
+        with open(os.path.join(settings.STATIC_DIR, 'csv_examples', 'bulk_upload_hockeygames_example.csv')) as f:
             response = self.client.post(self.format_url(), {'file': f}, follow=True)
-            self.assertHasMessage(response, 'Successfully created 1 hockeygame object(s)')
+            self.assertHasMessage(response, 'Successfully created 1 hockey game')
             self.assertEqual(HockeyGame.objects.count(), 1)
 
     def test_post_invalid_csv(self):
         self.login(email=self.email, password=self.password)
-        content = b'home_team,away_team,type,point_value,location,start,end,timezone,season\n\n35,31,2,7,11,12/26/2017,12/26/2017 09:00 PM,US/Eastern,5'  # noqa
+        header = ['home_team', 'away_team', 'team', 'type', 'point_value', 'location', 'start', 'end', 'timezone',
+                  'season', 'created_by']
+        row = ['35', '31', '35', '2', '7', '11', '12/26/2017', '12/26/2017 09:00 PM', 'US/Eastern', '5', '1']
+        content = f'{",".join(header)}\n\n{",".join(row)}'.encode()
         f = SimpleUploadedFile('test.csv', content)
         response = self.client.post(self.format_url(), {'file': f}, follow=True)
         self.assertEqual(HockeyGame.objects.count(), 0)
         self.assertFormsetError(response, 'formset', 0, 'start', ['Enter a valid date/time.'])
-        self.assertFormsetError(response, 'formset', 0, 'season',
-                                ['Select a valid choice. That choice is not one of the available choices.'])
+        self.assertFormsetError(
+            response,
+            'formset',
+            0,
+            'season',
+            ['Select a valid choice. That choice is not one of the available choices.']
+        )

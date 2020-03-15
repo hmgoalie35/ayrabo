@@ -3,6 +3,7 @@ from easy_thumbnails.fields import ThumbnailerImageField
 from easy_thumbnails.widgets import ImageClearableFileInput
 
 from ayrabo.utils.admin import format_website_link
+from ayrabo.utils.admin.mixins import AdminBulkUploadMixin
 from locations.models import TeamLocation
 from .models import Team
 
@@ -12,7 +13,7 @@ class TeamLocationInline(admin.TabularInline):
 
 
 @admin.register(Team)
-class TeamAdmin(admin.ModelAdmin):
+class TeamAdmin(AdminBulkUploadMixin, admin.ModelAdmin):
     list_display = ['id', 'slug', 'name', 'get_logo', 'organization', 'division', 'league', 'sport', 'website_link']
     search_fields = ['name', 'division__name', 'division__league__abbreviated_name', 'division__league__sport__name']
     prepopulated_fields = {'slug': ('name',)}
@@ -21,10 +22,8 @@ class TeamAdmin(admin.ModelAdmin):
     formfield_overrides = {
         ThumbnailerImageField: {'widget': ImageClearableFileInput},
     }
-
-    def get_queryset(self, request):
-        return Team.objects.all().select_related('division', 'division__league', 'division__league__sport',
-                                                 'organization')
+    bulk_upload_sample_csv = 'bulk_upload_teams_example.csv'
+    bulk_upload_form_fields = ('name', 'website', 'division', 'organization')
 
     # WARNING: Do not add in an inline for Season.teams.through. With inlines, there is no way to validate the season's
     # division and the team's division. A staff member could accidentally add a team for basketball to a season

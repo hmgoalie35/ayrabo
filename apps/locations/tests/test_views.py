@@ -51,19 +51,18 @@ class LocationDetailViewTests(BaseTestCase):
         self.assertTrue(context.get('RUNNING_AUTOMATED_TESTS'))
 
 
-class BulkUploadLocationsViewTests(BaseTestCase):
+class LocationAdminBulkUploadViewTests(BaseTestCase):
     def setUp(self):
-        self.url = reverse('bulk_upload_locations')
+        self.url = reverse('admin:locations_location_bulk_upload')
         self.email = 'user@ayrabo.com'
         self.password = 'myweakpassword'
-        self.test_file_path = os.path.join(settings.BASE_DIR, 'static', 'csv_examples')
-        self.user = UserFactory(email=self.email, password=self.password, is_staff=True)
+        self.user = UserFactory(email=self.email, password=self.password, is_staff=True, is_superuser=True)
 
     def test_post_valid_csv(self):
         self.login(email=self.email, password=self.password)
-        with open(os.path.join(self.test_file_path, 'bulk_upload_locations_example.csv')) as f:
+        with open(os.path.join(settings.STATIC_DIR, 'csv_examples', 'bulk_upload_locations_example.csv')) as f:
             response = self.client.post(self.url, {'file': f}, follow=True)
-            self.assertHasMessage(response, 'Successfully created 2 location object(s)')
+            self.assertHasMessage(response, 'Successfully created 2 locations')
             self.assertEqual(Location.objects.count(), 2)
 
     def test_post_invalid_csv(self):

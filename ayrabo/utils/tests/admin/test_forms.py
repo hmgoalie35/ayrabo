@@ -1,12 +1,12 @@
 from django.core.files.uploadedfile import SimpleUploadedFile
 
-from common.forms import CsvBulkUploadForm
+from ayrabo.utils.admin.forms import AdminBulkUploadForm
 from ayrabo.utils.testing import BaseTestCase
 
 
-class CsvBulkUploadFormTests(BaseTestCase):
+class AdminBulkUploadFormTests(BaseTestCase):
     def setUp(self):
-        self.form_cls = CsvBulkUploadForm
+        self.form_cls = AdminBulkUploadForm
 
     def test_invalid_file_extension(self):
         f = SimpleUploadedFile('test.txt', b'hello world')

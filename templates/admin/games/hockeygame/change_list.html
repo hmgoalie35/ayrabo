@@ -1,6 +1,0 @@
-{% extends 'admin/bulk_upload_base.html' %}
-{% load static %}
-
-{% block bulk_upload_url %}{% url 'bulk_upload_hockeygames' %}{% endblock %}
-{% block object_type_plural %}Hockey Games{% endblock %}
-{% block example_file_path %}{% static 'csv_examples/bulk_upload_hockeygames_example.csv' %}{% endblock %}

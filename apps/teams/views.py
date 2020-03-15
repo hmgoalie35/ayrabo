@@ -1,41 +1,14 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.urls import reverse, reverse_lazy
+from django.urls import reverse
 from django.views.generic import DetailView
 
 from ayrabo.utils.mixins import HandleSportNotConfiguredMixin
-from common.views import CsvBulkUploadView
-from divisions.models import Division
 from games.utils import get_game_list_view_context
 from managers.models import Manager
-from organizations.models import Organization
 from players.mappings import get_player_model_cls
 from seasons.mappings import get_season_roster_model_cls
 from teams.utils import get_team_detail_view_context
 from .models import Team
-
-
-class BulkUploadTeamsView(CsvBulkUploadView):
-    success_url = reverse_lazy('bulk_upload_teams')
-    model = Team
-    fields = ('name', 'website', 'division', 'organization')
-
-    def get_division(self, value, row):
-        divisions = Division.objects.filter(name=value)
-        if divisions.exists():
-            return divisions.first().id
-        return value
-
-    def get_organization(self, value, row):
-        organizations = Organization.objects.filter(name=value)
-        if organizations.exists():
-            return organizations.first().id
-        return value
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['model_cls'] = 'Team'
-        context['url'] = reverse_lazy('admin:teams_team_changelist')
-        return context
 
 
 class AbstractTeamDetailView(LoginRequiredMixin, HandleSportNotConfiguredMixin, DetailView):

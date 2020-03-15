@@ -1,5 +1,10 @@
+import os
 from datetime import date
 
+from allauth.account.models import EmailAddress
+from django.conf import settings
+from django.core import mail
+from django.core.files.uploadedfile import SimpleUploadedFile
 from django.urls import reverse
 
 from ayrabo.utils.testing import BaseTestCase
@@ -14,6 +19,7 @@ from sports.tests import SportFactory, SportRegistrationFactory
 from teams.tests import TeamFactory
 from userprofiles.models import UserProfile
 from userprofiles.tests import UserProfileFactory
+from users.models import User
 from users.tests import UserFactory
 
 
@@ -168,3 +174,45 @@ class UserUpdateViewTests(BaseTestCase):
                              'Ensure this value has at most 30 characters (it has 35).')
         self.assertFormError(response, 'user_profile_form', 'height',
                              'Invalid format, please enter your height according to the format below.')
+
+
+class UserAdminBulkUploadViewTests(BaseTestCase):
+    url = 'admin:users_user_bulk_upload'
+
+    def setUp(self):
+        self.url = self.format_url()
+        self.email = 'user@ayrabo.com'
+        self.password = 'myweakpassword'
+        self.user = UserFactory(email=self.email, password=self.password, is_staff=True, is_superuser=True)
+
+    def test_post_valid_csv(self):
+        self.login(email=self.email, password=self.password)
+        with open(os.path.join(settings.STATIC_DIR, 'csv_examples', 'bulk_upload_users_example.csv')) as f:
+            response = self.client.post(self.url, {'file': f}, follow=True)
+            u = User.objects.get(email='test@ayrabo.com')
+            email_address = EmailAddress.objects.get(user=u)
+
+            self.assertHasMessage(response, 'Successfully created 1 user')
+            self.assertEqual(u.username, 'test@ayrabo.com')
+            self.assertEqual(u.first_name, 'Test')
+            self.assertEqual(u.last_name, 'User')
+            self.assertEqual(email_address.email, 'test@ayrabo.com')
+            self.assertTrue(email_address.primary)
+            self.assertFalse(email_address.verified)
+            self.assertIn('Please Confirm Your E-mail Address', mail.outbox[0].subject)
+
+    def test_post_invalid_csv(self):
+        self.login(email=self.email, password=self.password)
+        header = ['email', 'first_name', 'last_name']
+        row = ['', 'Test', 'User']
+        content = f'{",".join(header)}\n{",".join(row)}'.encode()
+        f = SimpleUploadedFile('test.csv', content)
+        response = self.client.post(self.url, {'file': f}, follow=True)
+        self.assertListEqual(list(User.objects.values_list('email', flat=True)), [self.email])
+        self.assertFormsetError(
+            response,
+            'formset',
+            0,
+            'email',
+            ['This field is required.']
+        )

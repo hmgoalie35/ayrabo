@@ -4,7 +4,7 @@ from django.core.exceptions import ValidationError
 from django.core.validators import FileExtensionValidator
 
 
-class CsvBulkUploadForm(forms.Form):
+class AdminBulkUploadForm(forms.Form):
     file = forms.FileField(label='CSV File', validators=[FileExtensionValidator(allowed_extensions=['csv'])])
 
     def is_valid_mime_type(self, mime_type):

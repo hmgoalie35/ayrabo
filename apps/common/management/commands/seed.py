@@ -1,8 +1,6 @@
 from django.contrib.contenttypes.models import ContentType
-from django.contrib.sites.models import Site
 from django.core.management import call_command
 from django.core.management.base import BaseCommand
-from django.db.models import Q
 
 from common.management.commands._utils import get_or_create, print_status
 from common.management.seed_data.data import GENERIC_CHOICES, GENERIC_PENALTY_CHOICES, SPORTS
@@ -15,19 +13,6 @@ class Command(BaseCommand):
     help = 'Top level seed command that calls other seed commands. Seeds initial data for the site.'
 
     def handle(self, *args, **options):
-        site_domain = 'ayrabo.com'
-        site_name = 'ayrabo'
-
-        self.stdout.write('Updating default site name...')
-        try:
-            site = Site.objects.get(Q(name='example.com') | Q(name='escoresheet.com'))
-            site.domain = site_domain
-            site.name = site_name
-            site.save()
-        except Site.DoesNotExist:
-            pass
-        self.stdout.write('\n')
-
         self.stdout.write('Seeding sports...')
         sports = []
         for sport_name in SPORTS:

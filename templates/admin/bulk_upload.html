@@ -1,5 +1,6 @@
 {% extends 'admin/base_site.html' %}
-{% load crispy_forms_tags static %}
+{% load crispy_forms_tags i18n admin_urls %}
+
 {% block extrastyle %}
   {{ block.super }}
   <style>
@@ -15,38 +16,35 @@
       list-style: none;
     }
 
-    .has-error {
+    .has-error, .asteriskField {
       color: red;
     }
   </style>
 {% endblock %}
 
-{% block title %}Bulk Upload {{ model_cls }}s | {{ site_title|default:_('Django site admin') }}{% endblock %}
 
-{% block breadcrumbs %}
-  <div class="breadcrumbs">
-    <a href="{% url 'admin:index' %}">Home</a>
-    /
-    <a href="{{ url }}">Back to {{ model_cls|lower }} list display</a>
-  </div>
-{% endblock %}
+{% if not is_popup %}
+  {% block breadcrumbs %}
+    <div class="breadcrumbs">
+      <a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
+      &rsaquo; <a href="{% url 'admin:app_list' app_label=opts.app_label %}">{{ opts.app_config.verbose_name }}</a>
+      &rsaquo; <a href="{% url opts|admin_urlname:'changelist' %}">{{ opts.verbose_name_plural|capfirst }}</a>
+      &rsaquo; Bulk upload {{ opts.verbose_name_plural }}
+    </div>
+  {% endblock %}
+{% endif %}
+
+{% block content_title %}<h1 class="text-center">{{ title }}</h1>{% endblock %}
 
 {% block content %}
   <div class="text-center">
-    <h1>This page is staff only</h1>
-    <h3>Choose a file that contains {{ model_cls|lower }}s you want to bulk upload</h3>
-
     {% if formset and formset.errors %}
-      <br>
-      <p class="has-error">
-        Encountered {{ formset.total_error_count }} error{{ formset.total_error_count|pluralize }} while
-        parsing {{ file.name }}
-      </p>
-      <ul class="list text-center">
+      <p class="has-error">Please correct the errors below</p>
+      <ul class="list has-error">
         {% for form_errors in formset.errors %}
           {% if form_errors %}
             <li>
-              <div>Row {{ forloop.counter }} errors:</div>
+              <div>Row {{ forloop.counter }}:</div>
               {% for field, field_errors in form_errors.items %}
                 <div>
                   <strong>{{ field }}</strong>: {{ field_errors|join:', ' }}
@@ -60,7 +58,6 @@
     {% endif %}
 
     <form action="" method="post" enctype="multipart/form-data">
-      <br>
       {% csrf_token %}
       {{ form | crispy }}
       <br>
