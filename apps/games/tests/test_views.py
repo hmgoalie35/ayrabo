@@ -594,7 +594,7 @@ class HockeyGameAdminBulkUploadViewTests(BaseTestCase):
     def setUp(self):
         self.email = 'user@ayrabo.com'
         self.password = 'myweakpassword'
-        self.user = UserFactory(id=1, email=self.email, password=self.password, is_staff=True)
+        self.user = UserFactory(id=1, email=self.email, password=self.password, is_staff=True, is_superuser=True)
         sport = SportFactory(name='Ice Hockey')
         league = LeagueFactory(sport=sport, name='Long Island Amateur Hockey League')
         division = DivisionFactory(league=league, name='Midget Minor AA')

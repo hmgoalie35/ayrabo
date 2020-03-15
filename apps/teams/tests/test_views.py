@@ -28,7 +28,7 @@ class TeamAdminBulkUploadViewTests(BaseTestCase):
         self.url = self.format_url()
         self.email = 'user@ayrabo.com'
         self.password = 'myweakpassword'
-        self.user = UserFactory(email=self.email, password=self.password, is_staff=True)
+        self.user = UserFactory(email=self.email, password=self.password, is_staff=True, is_superuser=True)
 
     def test_post_valid_csv(self):
         ice_hockey = SportFactory(name='Ice Hockey')
