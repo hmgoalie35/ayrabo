@@ -40,6 +40,7 @@ class UserAdminModelFormSet(BaseModelFormSet):
 
 @admin.register(User)
 class UserAdmin(AdminBulkUploadMixin, BaseUserAdmin):
+    list_display = ('id',) + BaseUserAdmin.list_display
     bulk_upload_sample_csv = 'bulk_upload_users_example.csv'
     bulk_upload_model_form_class = UserAdminForm
     bulk_upload_model_formset_class = UserAdminModelFormSet
