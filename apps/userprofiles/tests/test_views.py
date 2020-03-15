@@ -124,7 +124,7 @@ class UserProfileAdminBulkUploadViewTests(BaseTestCase):
 
             self.assertHasMessage(response, 'Successfully created 1 user profile')
             self.assertEqual(up.gender, 'male')
-            self.assertEqual(up.birthday.isoformat(), '2020-03-13')
+            self.assertEqual(up.birthday.isoformat(), '1995-03-13')
             self.assertEqual(up.height, '5\' 6"')
             self.assertEqual(up.weight, 150)
             self.assertEqual(up.timezone, 'US/Eastern')
