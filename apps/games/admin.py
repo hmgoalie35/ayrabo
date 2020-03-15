@@ -102,10 +102,10 @@ class HockeyGameAdminModelFormSet(BaseModelFormSet):
     def get_form_kwargs(self, index):
         kwargs = super().get_form_kwargs(index)
         team_pk = self.data.get(f'form-{index}-team')
-        try:
-            team = Team.objects.get(pk=team_pk)
-        except Team.DoesNotExist:
-            raise
+        # This can raise a DoesNotExist, there's really no way to have this fail gracefully (via validation errors)
+        # We'd need to update the form to not require a team kwarg in the constructor, and have team be a required
+        # form field
+        team = Team.objects.get(pk=team_pk)
         kwargs.update({'team': team})
         return kwargs
 
