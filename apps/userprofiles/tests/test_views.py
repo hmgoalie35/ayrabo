@@ -1,5 +1,8 @@
+import os
 from datetime import date
 
+from django.conf import settings
+from django.core.files.uploadedfile import SimpleUploadedFile
 from django.urls import reverse
 
 from ayrabo.utils.testing import BaseTestCase
@@ -100,3 +103,52 @@ class UserProfileCreateViewTests(BaseTestCase):
             self.post_data['user_profile-weight'] = invalid_weight
             response = self.client.post(self.format_url(), data=self.post_data)
             self.assertFormError(response, 'form', 'weight', 'Enter a whole number.')
+
+
+class UserProfileAdminBulkUploadViewTests(BaseTestCase):
+    url = 'admin:userprofiles_userprofile_bulk_upload'
+
+    def setUp(self):
+        self.url = self.format_url()
+        self.email = 'user@ayrabo.com'
+        self.password = 'myweakpassword'
+        self.user = UserFactory(email=self.email, password=self.password, is_staff=True, is_superuser=True)
+
+    def test_post_valid_csv(self):
+        self.login(user=self.user)
+        user = UserFactory(id=3596, userprofile=None)
+        with open(os.path.join(settings.STATIC_DIR, 'csv_examples', 'bulk_upload_userprofiles_example.csv')) as f:
+            response = self.client.post(self.url, {'file': f}, follow=True)
+
+            up = user.userprofile
+
+            self.assertHasMessage(response, 'Successfully created 1 user profile')
+            self.assertEqual(up.gender, 'male')
+            self.assertEqual(up.birthday.isoformat(), '2020-03-13')
+            self.assertEqual(up.height, '5\' 6"')
+            self.assertEqual(up.weight, 150)
+            self.assertEqual(up.timezone, 'US/Eastern')
+
+    def test_post_invalid_csv(self):
+        self.login(email=self.email, password=self.password)
+        header = ['user', 'gender', 'birthday', 'height', 'weight', 'timezone']
+        row = ['', 'M', '2020-03-25', '6\' 0"', '125', 'US/Eastern']
+        content = f'{",".join(header)}\n{",".join(row)}'.encode()
+        f = SimpleUploadedFile('test.csv', content)
+        response = self.client.post(self.url, {'file': f}, follow=True)
+
+        self.assertListEqual(list(UserProfile.objects.values_list('user__email', flat=True)), [self.email])
+        self.assertFormsetError(
+            response,
+            'formset',
+            0,
+            'user',
+            ['This field is required.']
+        )
+        self.assertFormsetError(
+            response,
+            'formset',
+            0,
+            'gender',
+            ['Select a valid choice. M is not one of the available choices.']
+        )
