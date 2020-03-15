@@ -28,7 +28,6 @@ class TeamAdminBulkUploadViewTests(BaseTestCase):
         self.url = self.format_url()
         self.email = 'user@ayrabo.com'
         self.password = 'myweakpassword'
-        self.test_file_path = os.path.join(settings.BASE_DIR, 'static', 'csv_examples')
         self.user = UserFactory(email=self.email, password=self.password, is_staff=True)
 
     def test_post_valid_csv(self):
@@ -37,7 +36,7 @@ class TeamAdminBulkUploadViewTests(BaseTestCase):
         DivisionFactory(id=1, name='10U Milner', league=liahl)
         OrganizationFactory(id=1, name='Green Machine IceCats', sport=ice_hockey)
         self.login(email=self.email, password=self.password)
-        with open(os.path.join(self.test_file_path, 'bulk_upload_teams_example.csv')) as f:
+        with open(os.path.join(settings.STATIC_DIR, 'csv_examples', 'bulk_upload_teams_example.csv')) as f:
             response = self.client.post(self.url, {'file': f}, follow=True)
             self.assertHasMessage(response, 'Successfully created 1 team')
             self.assertEqual(Team.objects.count(), 1)

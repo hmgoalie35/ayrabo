@@ -22,6 +22,9 @@ NODE_MODULES_DIR = os.path.join(BASE_DIR, 'node_modules')
 APPS_DIR = os.path.join(BASE_DIR, 'apps')
 TEMPLATES_DIR = os.path.join(BASE_DIR, 'templates')
 LOGS_DIR = os.path.join(BASE_DIR, 'logs')
+STATIC_DIR = os.path.join(BASE_DIR, 'static')
+MEDIA_DIR = os.path.join(BASE_DIR, 'media')
+
 create_dir(LOGS_DIR)
 
 ENV_FILE = os.path.join(BASE_DIR, '.env')
@@ -340,7 +343,7 @@ EMAIL_PORT = env.int('EMAIL_PORT')
 
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+STATICFILES_DIRS = [STATIC_DIR]
 
 WEBPACK_LOADER = {
     'DEFAULT': {
@@ -350,7 +353,7 @@ WEBPACK_LOADER = {
 }
 
 MEDIA_URL = '/media/'
-MEDIA_ROOT = env.str('MEDIA_ROOT') or os.path.join(BASE_DIR, 'media')
+MEDIA_ROOT = env.str('MEDIA_ROOT') or MEDIA_DIR
 
 # Django all auth
 ACCOUNT_AUTHENTICATION_METHOD = 'email'

@@ -11,6 +11,8 @@ from .models import Permission, User
 class UserAdminForm(forms.ModelForm):
     # max_length taken from AbstractBaseUser
     username = forms.CharField(max_length=150, required=False)
+    # Email is not required by default when creating a user, we want it required
+    email = forms.EmailField()
 
     def clean(self):
         super().clean()

@@ -594,7 +594,6 @@ class HockeyGameAdminBulkUploadViewTests(BaseTestCase):
     def setUp(self):
         self.email = 'user@ayrabo.com'
         self.password = 'myweakpassword'
-        self.test_file_path = os.path.join(settings.BASE_DIR, 'static', 'csv_examples')
         self.user = UserFactory(id=1, email=self.email, password=self.password, is_staff=True)
         sport = SportFactory(name='Ice Hockey')
         league = LeagueFactory(sport=sport, name='Long Island Amateur Hockey League')
@@ -620,7 +619,7 @@ class HockeyGameAdminBulkUploadViewTests(BaseTestCase):
 
     def test_post_valid_csv(self):
         self.login(email=self.email, password=self.password)
-        with open(os.path.join(self.test_file_path, 'bulk_upload_hockeygames_example.csv')) as f:
+        with open(os.path.join(settings.STATIC_DIR, 'csv_examples', 'bulk_upload_hockeygames_example.csv')) as f:
             response = self.client.post(self.format_url(), {'file': f}, follow=True)
             self.assertHasMessage(response, 'Successfully created 1 hockey game')
             self.assertEqual(HockeyGame.objects.count(), 1)
