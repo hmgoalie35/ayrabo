@@ -18,6 +18,7 @@ class UserAdminForm(forms.ModelForm):
         super().clean()
         email = self.cleaned_data.get('email')
         self.cleaned_data.update({'username': email})
+        return self.cleaned_data
 
     class Meta:
         model = User
