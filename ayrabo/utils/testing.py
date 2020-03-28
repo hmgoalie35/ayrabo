@@ -109,6 +109,8 @@ def handle_time(value):
 
 
 class BaseTestCase(TestCase):
+    fixtures = ['sites.json']
+
     # Helper methods
     def get_user(self, username_or_email):
         return get_user(username_or_email)
@@ -191,6 +193,8 @@ class BaseTestCase(TestCase):
 
 
 class BaseAPITestCase(APITestCase):
+    fixtures = ['sites.json']
+
     ERROR_MESSAGE_DEFAULTS = {
         'not_found': {'detail': 'Not found.'},
         'unauthenticated': {'detail': 'Authentication credentials were not provided.'},

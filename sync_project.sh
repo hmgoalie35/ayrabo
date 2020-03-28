@@ -12,13 +12,18 @@ if [ "$1" == "--hard" ]; then
 fi
 
 if [ ! -e venv ]; then
+    print_step "Creating python virtual env"
     python3.6 -m venv venv/
 fi
 
-print_step "Installing pip packages"
+print_step "Installing python packages"
 source venv/bin/activate && pip install -U pip && pip install -U -r requirements.txt
 
-print_step "Installing npm packages"
+print_step "Installing node and npm"
+bash -ic "nvm install"
+bash -ic "nvm install-latest-npm"
+
+print_step "Installing node packages"
 npm install
 
 print_step "Starting postgres docker container"
@@ -28,10 +33,10 @@ print_step "Waiting for postgres docker container to start"
 sleep 4
 
 print_step "Running migrations"
-python manage.py migrate
+source venv/bin/activate && python manage.py migrate
 
 print_step "Seeding initial data"
-python manage.py seed
+source venv/bin/activate && python manage.py seed
 
 printf "\nMake sure to run the webpack watcher to compile your static assets: 'npm run dev'\n"
 print_step "Done"

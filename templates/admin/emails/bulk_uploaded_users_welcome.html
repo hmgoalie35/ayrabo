@@ -1,0 +1,18 @@
+{% extends 'emails/email_base.html' %}
+
+{% block content %}
+  <p>Hi {{ user.first_name }},</p>
+  <p>An {{ site.name }} staff member has created an account for you. Before logging in you need to confirm your email address and set a password.</p>
+  <p>
+    Check your inbox for an email explaining how to confirm your email address.
+    If you didn't receive an email click <a href="{{ confirm_email_url }}">here</a> and fill in the necessary information to request a new email confirmation.
+  </p>
+  <p>
+    After confirming your email address click <a href="{{ password_reset_url }}">here</a> and fill in the necessary information to request a password reset email.
+    You will receive an email explaining how to set your password. Setting your password is the same as resetting your password.</p>
+  <p>
+    Best,
+    <br>
+    The {{ site.name }} team
+  </p>
+{% endblock %}
