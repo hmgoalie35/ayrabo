@@ -184,9 +184,9 @@ class UserAdminBulkUploadViewTests(BaseTestCase):
         self.email = 'user@ayrabo.com'
         self.password = 'myweakpassword'
         self.user = UserFactory(email=self.email, password=self.password, is_staff=True, is_superuser=True)
+        self.login(email=self.email, password=self.password)
 
     def test_post_valid_csv(self):
-        self.login(email=self.email, password=self.password)
         with open(os.path.join(settings.STATIC_DIR, 'csv_examples', 'bulk_upload_users_example.csv')) as f:
             response = self.client.post(self.url, {'file': f}, follow=True)
             u = User.objects.get(email='test@ayrabo.com')
@@ -196,13 +196,17 @@ class UserAdminBulkUploadViewTests(BaseTestCase):
             self.assertEqual(u.username, 'test@ayrabo.com')
             self.assertEqual(u.first_name, 'Test')
             self.assertEqual(u.last_name, 'User')
+            self.assertFalse(u.has_usable_password())
             self.assertEqual(email_address.email, 'test@ayrabo.com')
             self.assertTrue(email_address.primary)
             self.assertFalse(email_address.verified)
-            self.assertIn('Please Confirm Your E-mail Address', mail.outbox[0].subject)
+
+            welcome_email = mail.outbox[0]
+            confirmation_email = mail.outbox[1]
+            self.assertEquals('Welcome to ayrabo!', welcome_email.subject)
+            self.assertEquals('[ayrabo] Please Confirm Your E-mail Address', confirmation_email.subject)
 
     def test_post_invalid_csv(self):
-        self.login(email=self.email, password=self.password)
         header = ['email', 'first_name', 'last_name']
         row = ['', 'Test', 'User']
         content = f'{",".join(header)}\n{",".join(row)}'.encode()

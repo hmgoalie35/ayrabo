@@ -2,9 +2,12 @@ from allauth.account.models import EmailAddress
 from django import forms
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
+from django.contrib.sites.shortcuts import get_current_site
 from django.forms import BaseModelFormSet
 
 from ayrabo.utils.admin.mixins import AdminBulkUploadMixin
+from ayrabo.utils.email import send_mail
+from ayrabo.utils.urls import get_absolute_url
 from .models import Permission, User
 
 
@@ -29,11 +32,30 @@ class UserAdminModelFormSet(BaseModelFormSet):
     def save(self, commit=True):
         instances = super().save(commit=commit)
         for user in instances:
+            user.set_unusable_password()
+            user.save()
+
             email_address = EmailAddress.objects.create(
                 user=user,
                 email=user.email,
                 primary=True,
                 verified=False
+            )
+
+            site = get_current_site(request=None)
+            # We want this informative welcome email to be sent first. It's possible the user doesn't actually receive
+            # this email first but at least we tried.
+            send_mail(
+                subject=f'Welcome to {site.name}!',
+                recipient_list=[user.email],
+                message='admin/emails/bulk_uploaded_users_welcome.txt',
+                html_message='admin/emails/bulk_uploaded_users_welcome.html',
+                context={
+                    'user': user,
+                    'site': site,
+                    'confirm_email_url': get_absolute_url('account_confirm_email', 'new-confirmation-link'),
+                    'password_reset_url': get_absolute_url('account_reset_password'),
+                }
             )
             email_address.send_confirmation()
         return instances

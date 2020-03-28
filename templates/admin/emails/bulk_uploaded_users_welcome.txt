@@ -1,0 +1,10 @@
+Hi {{ user.first_name }},
+
+An {{ site.name }} staff member has created an account for you. Before logging in you need to confirm your email address and set a password.
+
+Check your inbox for an email explaining how to confirm your email address. If you didn't receive an email click here {{ confirm_email_url }} and fill in the necessary information to request a new email confirmation.
+
+After confirming your email address click here {{ password_reset_url }} and fill in the necessary information to request a password reset email. You will receive an email explaining how to set your password. Setting your password is the same as resetting your password.
+
+Best,
+The {{ site.name }} team
