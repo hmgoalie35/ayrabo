@@ -1,6 +1,6 @@
 - name: Apply common to all host groups
   hosts: all
-  remote_user: ess
+  remote_user: ayrabo
   become: yes
 
   roles:
@@ -8,7 +8,7 @@
 
 - name: Provision db server
   hosts: dbservers
-  remote_user: ess
+  remote_user: ayrabo
   become: yes
   vars_files:
     - "vars/{{ server_type }}.yml"
