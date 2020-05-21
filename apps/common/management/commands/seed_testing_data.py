@@ -250,7 +250,7 @@ class Command(BaseCommand):
                 self.stdout.write(f'    Creating team {team_name}')
                 team, _ = self.create_team(team_name, division, organization)
                 if team.hockeyplayer_set.exists():
-                    self.stdout.write(f'      Players already exist, skipping user/player creation')
+                    self.stdout.write('      Players already exist, skipping user/player creation')
                     continue
                 self.stdout.write(f'        Creating {players_per_team} users')
                 users = self.create_users(players_per_team, random.choice(config.get('bday_year')))
