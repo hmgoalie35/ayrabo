@@ -33,7 +33,7 @@ before_install:
 install:
   - mv .env.travis .env
   - docker-compose up --build --quiet-pull -d postgres
-  - pip install -U pip && pip install -r requirements.txt
+  - pip install -U pip && pip install -U -r requirements.txt
   - npm install
   - npm run build
 
