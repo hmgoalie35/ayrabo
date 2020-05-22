@@ -104,12 +104,12 @@ class UploadTo(object):
         return self.path == other.path
 
 
-def chunk(l, n):
+def chunk(iterable, n):
     """
-    Yield successive n-sized chunks from l
+    Yield successive n-sized chunks from the iterable
     """
-    for i in range(0, len(l), n):
-        yield l[i:i + n]
+    for i in range(0, len(iterable), n):
+        yield iterable[i:i + n]
 
 
 def pluralize(text, count, suffix):
