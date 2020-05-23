@@ -1,6 +1,6 @@
 - name: Restore the database
   hosts: dbservers
-  remote_user: ess
+  remote_user: ayrabo
 
   vars_files:
     - "vars/{{ server_type }}.yml"

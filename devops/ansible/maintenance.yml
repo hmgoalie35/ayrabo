@@ -1,6 +1,6 @@
 - name: Toggle maintenance mode for webservers
   hosts: webservers
-  remote_user: ess
+  remote_user: ayrabo
   vars_prompt:
     - name: maintenance_mode
       prompt: Enable or disable maintenance mode. Choose from (on|off)

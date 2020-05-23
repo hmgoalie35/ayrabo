@@ -2,8 +2,8 @@
 * Install python2 and related packages on the machine running the playbooks (see command below)
 * Install python2 and related packages on the server
     * `sudo apt-get install python python-dev python-apt python-pip python-virtualenv -y`
-* Create user `ess`
-* Setup ssh keys for the `ess` user
+* Create user `ayrabo`
+* Setup ssh keys for the `ayrabo` user
 * Use the `devops.py` wrapper script
     * i.e. `devops/ansible/devops.py -m deploy -s qa -d master`. This will deploy the master branch to the qa host. Run `devops/ansible/devops.py --help` for more info.
 
