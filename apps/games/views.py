@@ -12,6 +12,7 @@ from scorekeepers.models import Scorekeeper
 from sports.models import Sport
 from teams.models import Team
 from teams.utils import get_team_detail_view_context
+from users.authorizers import GameAuthorizer
 from . import mappings
 
 
@@ -37,9 +38,9 @@ class GameCreateView(LoginRequiredMixin,
         return self.team
 
     def has_permission_func(self):
-        user = self.request.user
         team = self._get_team()
-        return Manager.objects.active().filter(user=user, team=team).exists()
+        game_authorizer = GameAuthorizer(user=self.request.user)
+        return game_authorizer.can_user_create(team=team)
 
     def get_form_class(self):
         form_cls = mappings.SPORT_GAME_CREATE_FORM_MAPPINGS.get(self.sport.name)

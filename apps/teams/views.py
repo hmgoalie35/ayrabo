@@ -8,13 +8,14 @@ from managers.models import Manager
 from players.mappings import get_player_model_cls
 from seasons.mappings import get_season_roster_model_cls
 from teams.utils import get_team_detail_view_context
+from users.authorizers import GameAuthorizer
 from .models import Team
 
 
 class AbstractTeamDetailView(LoginRequiredMixin, HandleSportNotConfiguredMixin, DetailView):
     context_object_name = 'team'
     pk_url_kwarg = 'team_pk'
-    queryset = Team.objects.select_related('division__league__sport')
+    queryset = Team.objects.select_related('division__league__sport', 'organization')
 
     def get_object(self, queryset=None):
         if hasattr(self, 'object'):
@@ -41,11 +42,10 @@ class TeamDetailScheduleView(AbstractTeamDetailView):
         team = self.get_object()
         season = context.get('season')
         game_list_context = get_game_list_view_context(user, self.sport, season, team=team)
-        team_ids_managed_by_user = game_list_context.get('team_ids_managed_by_user')
-        is_manager = team.id in team_ids_managed_by_user
+        game_authorizer = GameAuthorizer(user=user)
         context.update({
             # Game create form displays all seasons, might as well display the button as long as the user is a manager
-            'can_create_game': is_manager,
+            'can_create_game': game_authorizer.can_user_create(team=team),
             'current_season_page_url': reverse('teams:schedule', kwargs={'team_pk': team.pk})
         })
         context.update(game_list_context)
