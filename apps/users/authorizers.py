@@ -83,11 +83,21 @@ class GameAuthorizer(BaseAuthorizer):
     def can_user_update(self, team, *args, **kwargs):
         return self.can_user_create(team=team)
 
-    def can_user_update_game_rosters(self, home_team, away_team, sport, *args, **kwargs):
-        is_manager = self._is_manager_for_team(team=home_team) or self._is_manager_for_team(team=away_team)
-        is_org_admin = (
-            self._is_org_admin_for_org(organization=home_team.organization) or
-            self._is_org_admin_for_org(organization=away_team.organization)
-        )
+    def can_user_update_game_roster(self, team, sport):
+        """
+        Determine if the user can actually update the game roster for a team. A user may be able to update the game
+        roster for the home team but not the away team, for example.
+        """
+        is_manager = self._is_manager_for_team(team=team)
+        is_org_admin = self._is_org_admin_for_org(organization=team.organization)
         is_scorekeeper = self._is_scorekeeper_for_sport(sport=sport)
         return is_manager or is_org_admin or is_scorekeeper
+
+    def can_user_update_game_rosters(self, home_team, away_team, sport, *args, **kwargs):
+        """
+        Determine if the user can actually navigate to the game rosters update page (if links should be shown to them)
+        """
+        return (
+            self.can_user_update_game_roster(team=home_team, sport=sport) or
+            self.can_user_update_game_roster(team=away_team, sport=sport)
+        )
