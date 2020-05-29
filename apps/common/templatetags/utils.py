@@ -63,3 +63,8 @@ def get_seasons_nav_tab_url(context, profile_type):
         team = context.get('team')
         url = get_team_detail_schedule_url(team, season)
     return url
+
+
+@register.simple_tag()
+def dict_get(dictionary, key):
+    return dictionary.get(key) if dictionary else None
