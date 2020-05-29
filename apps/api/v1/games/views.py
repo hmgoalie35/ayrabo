@@ -39,10 +39,11 @@ class GameRostersRetrieveUpdateAPIView(generics.RetrieveUpdateAPIView):
     def get_serializer_context(self):
         context = super().get_serializer_context()
         obj = self.get_object()
-        context['can_update_home_roster'] = self.game_authorizer.can_user_update_game_roster(
+        can_update_game = obj.can_update()
+        context['can_update_home_roster'] = can_update_game and self.game_authorizer.can_user_update_game_roster(
             team=obj.home_team, sport=self.sport
         )
-        context['can_update_away_roster'] = self.game_authorizer.can_user_update_game_roster(
+        context['can_update_away_roster'] = can_update_game and self.game_authorizer.can_user_update_game_roster(
             team=obj.away_team, sport=self.sport
         )
         return context
