@@ -89,7 +89,7 @@ class GameUpdateView(LoginRequiredMixin,
         if hasattr(self, 'team'):
             return self.team
         self.team = get_object_or_404(
-            Team.objects.select_related('division', 'division__league', 'division__league__sport'),
+            Team.objects.select_related('division', 'division__league', 'division__league__sport', 'organization'),
             pk=self.kwargs.get('team_pk', None)
         )
         self.sport = self.team.division.league.sport
@@ -97,11 +97,11 @@ class GameUpdateView(LoginRequiredMixin,
 
     def has_permission_func(self):
         team = self._get_team()
-        user = self.request.user
         game = self.get_object()
-        can_update_game = Manager.objects.active().filter(user=user, team=game.team).exists()
-        # Allow active managers for the game's team and make sure the game is actually for the team from the url.
-        return can_update_game and team.id == game.team_id
+        game_authorizer = GameAuthorizer(user=self.request.user)
+        # NOTE: we are purposefully checking if the user can update the game's team, not game home team or game away
+        # team. We also need to remember to make sure the game is actually for the team from the url.
+        return game_authorizer.can_user_update(team=game.team) and team.id == game.team_id
 
     def get_success_url(self):
         return reverse('teams:schedule', kwargs={'team_pk': self.team.pk})
@@ -110,9 +110,16 @@ class GameUpdateView(LoginRequiredMixin,
         model_cls = mappings.SPORT_GAME_MODEL_MAPPINGS.get(self.sport.name, None)
         if model_cls is None:
             raise SportNotConfiguredException(self.sport)
-        pk = self.kwargs.get(self.pk_url_kwarg, None)
-        return get_object_or_404(model_cls.objects.select_related('home_team', 'home_team__division', 'away_team',
-                                                                  'away_team__division', 'team'), pk=pk)
+        return get_object_or_404(
+            model_cls.objects.select_related(
+                'home_team',
+                'home_team__division',
+                'away_team',
+                'away_team__division',
+                'team'
+            ),
+            pk=self.kwargs.get(self.pk_url_kwarg, None)
+        )
 
     def get_form_kwargs(self):
         form_kwargs = super().get_form_kwargs()
