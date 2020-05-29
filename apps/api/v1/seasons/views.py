@@ -25,7 +25,7 @@ class SeasonRostersListAPIView(generics.ListAPIView):
         if hasattr(self, 'team'):
             return self.team
         self.team = get_object_or_404(
-            Team.objects.select_related('division', 'division__league', 'division__league__sport'),
+            Team.objects.select_related('division', 'division__league', 'division__league__sport', 'organization'),
             pk=self.kwargs.get('pk')
         )
         self.sport = self.team.division.league.sport

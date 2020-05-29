@@ -101,3 +101,12 @@ class GameAuthorizer(BaseAuthorizer):
             self.can_user_update_game_roster(team=home_team, sport=sport) or
             self.can_user_update_game_roster(team=away_team, sport=sport)
         )
+
+
+class SeasonRosterAuthorizer(BaseAuthorizer):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.game_authorizer = GameAuthorizer(user=self.user)
+
+    def can_user_list(self, team, sport, *args, **kwargs):
+        return self.game_authorizer.can_user_update_game_roster(team=team, sport=sport)
