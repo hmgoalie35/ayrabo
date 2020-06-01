@@ -4,11 +4,10 @@ from django.views.generic import DetailView
 
 from ayrabo.utils.mixins import HandleSportNotConfiguredMixin
 from games.utils import get_game_list_view_context
-from managers.models import Manager
 from players.mappings import get_player_model_cls
 from seasons.mappings import get_season_roster_model_cls
 from teams.utils import get_team_detail_view_context
-from users.authorizers import GameAuthorizer
+from users.authorizers import GameAuthorizer, SeasonRosterAuthorizer
 from .models import Team
 
 
@@ -55,11 +54,6 @@ class TeamDetailScheduleView(AbstractTeamDetailView):
 class TeamDetailSeasonRostersView(AbstractTeamDetailView):
     template_name = 'teams/team_detail_season_rosters.html'
 
-    def can_user_list_season_rosters(self):
-        user = self.request.user
-        team = self.get_object()
-        return Manager.objects.active().filter(user=user, team=team).exists()
-
     def get_season_rosters(self, season, can_user_list):
         season_roster_cls = get_season_roster_model_cls(self.sport)
         if can_user_list:
@@ -74,15 +68,17 @@ class TeamDetailSeasonRostersView(AbstractTeamDetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         team = self.get_object()
+        sport = team.division.league.sport
         season = context.get('season')
-        can_user_list = self.can_user_list_season_rosters()
+        season_roster_authorizer = SeasonRosterAuthorizer(user=self.request.user)
+        can_user_list = season_roster_authorizer.can_user_list(team=team, sport=sport)
         season_rosters = self.get_season_rosters(season, can_user_list)
         context.update({
             'season_rosters': season_rosters,  # We'll just sort with datatables
             'has_season_rosters': season_rosters.exists(),
             'active_tab': 'season_rosters',
             'can_user_list': can_user_list,
-            'can_create_season_roster': can_user_list,
+            'can_user_create': season_roster_authorizer.can_user_create(team=team, sport=sport),
             'current_season_page_url': reverse('teams:season_rosters:list', kwargs={'team_pk': team.pk})
         })
         return context

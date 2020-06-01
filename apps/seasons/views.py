@@ -5,10 +5,10 @@ from django.urls import reverse
 from django.views import generic
 
 from ayrabo.utils.mixins import HandleSportNotConfiguredMixin, HasPermissionMixin
-from managers.models import Manager
 from seasons.mappings import get_season_roster_create_update_form_cls, get_season_roster_model_cls
 from teams.models import Team
 from teams.utils import get_team_detail_view_context
+from users.authorizers import SeasonRosterAuthorizer
 
 
 class SeasonRosterCreateView(LoginRequiredMixin,
@@ -23,16 +23,16 @@ class SeasonRosterCreateView(LoginRequiredMixin,
         if hasattr(self, 'team'):
             return self.team
         self.team = get_object_or_404(
-            Team.objects.select_related('division', 'division__league', 'division__league__sport'),
+            Team.objects.select_related('division__league__sport', 'organization'),
             pk=self.kwargs.get('team_pk')
         )
         self.sport = self.team.division.league.sport
         return self.team
 
     def has_permission_func(self):
-        user = self.request.user
+        season_roster_authorizer = SeasonRosterAuthorizer(user=self.request.user)
         team = self._get_team()
-        return Manager.objects.active().filter(user=user, team=team).exists()
+        return season_roster_authorizer.can_user_create(team=team, sport=self.sport)
 
     def get_form_class(self):
         return get_season_roster_create_update_form_cls(self.sport)
@@ -79,16 +79,16 @@ class SeasonRosterUpdateView(LoginRequiredMixin,
         if hasattr(self, 'team'):
             return self.team
         self.team = get_object_or_404(
-            Team.objects.select_related('division', 'division__league', 'division__league__sport'),
+            Team.objects.select_related('division__league__sport', 'organization'),
             pk=self.kwargs.get('team_pk')
         )
         self.sport = self.team.division.league.sport
         return self.team
 
     def has_permission_func(self):
-        user = self.request.user
+        season_roster_authorizer = SeasonRosterAuthorizer(user=self.request.user)
         team = self._get_team()
-        return Manager.objects.active().filter(user=user, team=team).exists()
+        return season_roster_authorizer.can_user_update(team=team, sport=self.sport)
 
     def get_form_class(self):
         return get_season_roster_create_update_form_cls(self.sport)
