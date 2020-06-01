@@ -4,17 +4,17 @@ from django.views.generic import DetailView
 
 from ayrabo.utils.mixins import HandleSportNotConfiguredMixin
 from games.utils import get_game_list_view_context
-from managers.models import Manager
 from players.mappings import get_player_model_cls
 from seasons.mappings import get_season_roster_model_cls
 from teams.utils import get_team_detail_view_context
+from users.authorizers import GameAuthorizer, SeasonRosterAuthorizer
 from .models import Team
 
 
 class AbstractTeamDetailView(LoginRequiredMixin, HandleSportNotConfiguredMixin, DetailView):
     context_object_name = 'team'
     pk_url_kwarg = 'team_pk'
-    queryset = Team.objects.select_related('division__league__sport')
+    queryset = Team.objects.select_related('division__league__sport', 'organization')
 
     def get_object(self, queryset=None):
         if hasattr(self, 'object'):
@@ -41,11 +41,10 @@ class TeamDetailScheduleView(AbstractTeamDetailView):
         team = self.get_object()
         season = context.get('season')
         game_list_context = get_game_list_view_context(user, self.sport, season, team=team)
-        team_ids_managed_by_user = game_list_context.get('team_ids_managed_by_user')
-        is_manager = team.id in team_ids_managed_by_user
+        game_authorizer = GameAuthorizer(user=user)
         context.update({
             # Game create form displays all seasons, might as well display the button as long as the user is a manager
-            'can_create_game': is_manager,
+            'can_create_game': game_authorizer.can_user_create(team=team),
             'current_season_page_url': reverse('teams:schedule', kwargs={'team_pk': team.pk})
         })
         context.update(game_list_context)
@@ -54,11 +53,6 @@ class TeamDetailScheduleView(AbstractTeamDetailView):
 
 class TeamDetailSeasonRostersView(AbstractTeamDetailView):
     template_name = 'teams/team_detail_season_rosters.html'
-
-    def can_user_list_season_rosters(self):
-        user = self.request.user
-        team = self.get_object()
-        return Manager.objects.active().filter(user=user, team=team).exists()
 
     def get_season_rosters(self, season, can_user_list):
         season_roster_cls = get_season_roster_model_cls(self.sport)
@@ -74,15 +68,17 @@ class TeamDetailSeasonRostersView(AbstractTeamDetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         team = self.get_object()
+        sport = team.division.league.sport
         season = context.get('season')
-        can_user_list = self.can_user_list_season_rosters()
+        season_roster_authorizer = SeasonRosterAuthorizer(user=self.request.user)
+        can_user_list = season_roster_authorizer.can_user_list(team=team, sport=sport)
         season_rosters = self.get_season_rosters(season, can_user_list)
         context.update({
             'season_rosters': season_rosters,  # We'll just sort with datatables
             'has_season_rosters': season_rosters.exists(),
             'active_tab': 'season_rosters',
             'can_user_list': can_user_list,
-            'can_create_season_roster': can_user_list,
+            'can_user_create': season_roster_authorizer.can_user_create(team=team),
             'current_season_page_url': reverse('teams:season_rosters:list', kwargs={'team_pk': team.pk})
         })
         return context

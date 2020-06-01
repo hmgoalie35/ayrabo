@@ -1,29 +1,32 @@
 from django.db.models import Q
 
 from games.mappings import get_game_model_cls
-from managers.models import Manager
-from scorekeepers.models import Scorekeeper
+from users.authorizers import GameAuthorizer
 
 
-def get_game_list_context(user, sport):
+def get_game_list_context(user, sport, games):
     """
-    Computes common values used when listing games. Mainly the team ids the user is a manager for and if the user is a
-    scorekeeper.
+    Computes common values used when listing games.
 
     :param user: User to get managers for
     :param sport: Only include managers for this sport
+    :param games: List of games
     :return: Dict containing common values for listing games
     """
-    manager_objects_for_user = Manager.objects.active().filter(user=user)
-    # It's more efficient to compute this once and use `in` rather than query to see if a manager exists for the user
-    # and some team.
-    team_ids_managed_by_user = manager_objects_for_user.filter(team__division__league__sport=sport).values_list(
-        'team_id', flat=True
-    )
-    is_scorekeeper = Scorekeeper.objects.active().filter(user=user, sport=sport).exists()
+    game_authorizer = GameAuthorizer(user=user)
+    game_authorizations = {}
+    for game in games:
+        game_authorizations.update({
+            game.pk: {
+                'can_user_update': game_authorizer.can_user_update(team=game.team),
+                'can_user_update_game_rosters': game_authorizer.can_user_update_game_rosters(
+                    home_team=game.home_team, away_team=game.away_team, sport=sport
+                )
+            }
+        })
+
     return {
-        'team_ids_managed_by_user': team_ids_managed_by_user,
-        'is_scorekeeper': is_scorekeeper,
+        'game_authorizations': game_authorizations,
         'sport': sport
     }
 
@@ -41,11 +44,14 @@ def optimize_games_query(qs):
     return qs.select_related(
         'home_team',
         'home_team__division',
+        'home_team__organization',
         'away_team',
         'away_team__division',
+        'away_team__organization',
         'type',
         'location',
-        'team'
+        'team',
+        'team__organization',
     )
 
 
@@ -69,8 +75,8 @@ def get_games(sport, season, team=None):
 
 def get_game_list_view_context(user, sport, season, team=None):
     context = {}
-    game_list_context = get_game_list_context(user, sport)
     games = get_games(sport, season, team=team)
+    game_list_context = get_game_list_context(user, sport, games)
     context.update({
         'active_tab': 'schedule',
         'season': season,  # Note `get_team_detail_view_context` is also setting this context key to the same value.

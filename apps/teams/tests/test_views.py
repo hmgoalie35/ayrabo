@@ -129,7 +129,6 @@ class TeamDetailScheduleViewTests(BaseTestCase):
     def test_get(self):
         response = self.client.get(self.formatted_url)
         context = response.context
-        team_ids_managed_by_user = [m.team_id for m in self.managers]
 
         self.assert_200(response)
         self.assertTemplateUsed('teams/team_detail_schedule.html')
@@ -149,8 +148,6 @@ class TeamDetailScheduleViewTests(BaseTestCase):
         self.assertListEqual(list(context.get('games')), [self.game2, self.game1])
         self.assertTrue(context.get('has_games'))
 
-        self.assertListEqual(list(context.get('team_ids_managed_by_user')), team_ids_managed_by_user)
-        self.assertFalse(context.get('is_scorekeeper'))
         self.assertEqual(context.get('sport'), self.ice_hockey)
 
     def test_get_past_season(self):
@@ -253,7 +250,7 @@ class TeamDetailSeasonRostersViewTests(BaseTestCase):
         self.assertTrue(context.get('has_season_rosters'))
         self.assertEqual(context.get('active_tab'), 'season_rosters')
         self.assertTrue(context.get('can_user_list'))
-        self.assertTrue(context.get('can_create_season_roster'))
+        self.assertTrue(context.get('can_user_create'))
         self.assertEqual(context.get('current_season_page_url'), self.formatted_url)
 
     def test_get_past_season(self):
@@ -272,7 +269,7 @@ class TeamDetailSeasonRostersViewTests(BaseTestCase):
         self.assertTrue(context.get('has_season_rosters'))
         self.assertEqual(context.get('schedule_link'), reverse('teams:seasons:schedule', kwargs=kwargs))
         self.assertEqual(context.get('season_rosters_link'), url)
-        self.assertTrue(context.get('can_create_season_roster'))
+        self.assertTrue(context.get('can_user_create'))
 
     def test_get_future_season(self):
         kwargs = {'team_pk': self.icecats.pk, 'season_pk': self.future_season.pk}
@@ -290,7 +287,7 @@ class TeamDetailSeasonRostersViewTests(BaseTestCase):
         self.assertFalse(context.get('has_season_rosters'))
         self.assertEqual(context.get('schedule_link'), reverse('teams:seasons:schedule', kwargs=kwargs))
         self.assertEqual(context.get('season_rosters_link'), url)
-        self.assertTrue(context.get('can_create_season_roster'))
+        self.assertTrue(context.get('can_user_create'))
 
 
 class TeamDetailPlayersViewTests(BaseTestCase):

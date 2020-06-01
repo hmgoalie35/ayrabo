@@ -1,3 +1,5 @@
+{% load dict_get from utils %}
+
 <table class="table js-table responsive-table table-thin-th-border" data-dom="<'pull-left'f>tpr">
   <thead>
   <tr>
@@ -45,7 +47,10 @@
           >Actions<i class="fa fa-fw fa-caret-down"></i>
           </a>
           <ul class="dropdown-menu dropdown-menu-right table-dropdown-menu" aria-labelledby="{{ game.id }}">
-            {% if game.team_id in team_ids_managed_by_user %}
+            {% dict_get game_authorizations game.pk as authorizations %}
+            {% dict_get authorizations 'can_user_update' as can_user_update %}
+            {% dict_get authorizations 'can_user_update_game_rosters' as can_user_update_game_rosters %}
+            {% if can_user_update %}
               <li>
                 <a
                   id="update-game-{{ game.pk }}"
@@ -54,7 +59,7 @@
                 </a>
               </li>
             {% endif %}
-            {% if game.home_team_id in team_ids_managed_by_user or game.away_team_id in team_ids_managed_by_user or is_scorekeeper %}
+            {% if can_user_update_game_rosters %}
               <li>
                 <a
                   id="update-game-rosters-{{ game.pk }}"

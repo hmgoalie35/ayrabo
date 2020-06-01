@@ -26,7 +26,7 @@ export const handleAPIError = (jqXHR) => {
   const error = jqXHR.responseJSON;
   // This isn't really doing much since ajax errors already get logged to the console. This hook
   // is mainly here for when we eventually push to sentry
-  console.log(jqXHR.status, error);
+  console.error(jqXHR.status, error);
 };
 
 export const isMobileDevice = () => /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(navigator.userAgent.toLowerCase());

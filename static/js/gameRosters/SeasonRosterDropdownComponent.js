@@ -2,7 +2,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { noop } from 'lodash/util';
-
+import cn from 'classnames';
 import { seasonRosterPropType } from '../common/proptypes';
 import SeasonRosterModalComponent from './SeasonRosterModalComponent';
 
@@ -33,11 +33,13 @@ const SeasonRosterDropdownComponent = (props) => {
     ));
   }
 
+  const disabled = seasonRosters === null;
+
   return (
     <div className="dropdown">
       <a
-        disabled={seasonRosters === null}
-        className="btn btn-link dropdown-toggle"
+        disabled={disabled}
+        className={cn('btn btn-link dropdown-toggle', { disabled })}
         role="button"
         id={id}
         data-toggle="dropdown"

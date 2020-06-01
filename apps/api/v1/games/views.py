@@ -4,9 +4,8 @@ from rest_framework.permissions import IsAuthenticated
 
 from api.exceptions import SportNotConfiguredAPIException
 from games import mappings
-from managers.models import Manager
-from scorekeepers.models import Scorekeeper
 from sports.models import Sport
+from users.authorizers import GameAuthorizer
 from . import serializers
 from .permissions import GameRostersRetrieveUpdatePermission
 
@@ -19,6 +18,10 @@ SPORT_SERIALIZER_CLASS_MAPPINGS = {
 class GameRostersRetrieveUpdateAPIView(generics.RetrieveUpdateAPIView):
     permission_classes = (IsAuthenticated, GameRostersRetrieveUpdatePermission)
     lookup_url_kwarg = 'game_pk'
+
+    def setup(self, *args, **kwargs):
+        super().setup(*args, **kwargs)
+        self.game_authorizer = GameAuthorizer(user=self.request.user)
 
     def _get_sport(self):
         if hasattr(self, 'sport'):
@@ -34,15 +37,19 @@ class GameRostersRetrieveUpdateAPIView(generics.RetrieveUpdateAPIView):
 
     def get_serializer_context(self):
         context = super().get_serializer_context()
+        self._get_sport()
         obj = self.get_object()
-        user = self.request.user
-        managers = Manager.objects.active().filter(user=user)
-        scorekeepers = Scorekeeper.objects.active().filter(user=user, sport=self.sport)
-        context['can_update_home_roster'] = managers.filter(team=obj.home_team).exists() or scorekeepers.exists()
-        context['can_update_away_roster'] = managers.filter(team=obj.away_team).exists() or scorekeepers.exists()
+        can_update_game = obj.can_update()
+        context['can_update_home_roster'] = can_update_game and self.game_authorizer.can_user_update_game_roster(
+            team=obj.home_team, sport=self.sport
+        )
+        context['can_update_away_roster'] = can_update_game and self.game_authorizer.can_user_update_game_roster(
+            team=obj.away_team, sport=self.sport
+        )
         return context
 
     def get_serializer_class(self):
+        self._get_sport()
         serializer_cls = SPORT_SERIALIZER_CLASS_MAPPINGS.get(self.sport.name)
         if serializer_cls is None:
             raise SportNotConfiguredAPIException(self.sport)
@@ -50,15 +57,17 @@ class GameRostersRetrieveUpdateAPIView(generics.RetrieveUpdateAPIView):
         return serializer_cls
 
     def get_queryset(self):
-        sport = self._get_sport()
-        model_cls = mappings.SPORT_GAME_MODEL_MAPPINGS.get(sport.name)
+        self._get_sport()
+        model_cls = mappings.SPORT_GAME_MODEL_MAPPINGS.get(self.sport.name)
         if model_cls is None:
-            raise SportNotConfiguredAPIException(sport)
+            raise SportNotConfiguredAPIException(self.sport)
 
         # FYI This view deals w/ the various game models
         return model_cls.objects.all().select_related(
             'home_team',
+            'home_team__organization',
             'away_team',
+            'away_team__organization',
             'team',
             'team__division',
             'team__division__league',

@@ -1,4 +1,5 @@
 import datetime
+from unittest import mock
 
 import pytz
 
@@ -28,7 +29,6 @@ class GameRostersRetrieveUpdateAPIViewTests(BaseAPITestCase):
             players.append(HockeyPlayerFactory(id=i, team=team, sport=sport))
         return players
 
-    # General
     def setUp(self):
         self.ice_hockey = SportFactory(id=1, name='Ice Hockey')
         self.liahl = LeagueFactory(name='Long Island Amateur Hockey League', sport=self.ice_hockey)
@@ -39,10 +39,18 @@ class GameRostersRetrieveUpdateAPIViewTests(BaseAPITestCase):
         self.away_team = TeamFactory(id=2, name='Aviator Gulls', division=self.mm_aa)
         self.away_players = self._create_players([6, 7, 8, 9, 10], self.away_team, self.ice_hockey)
 
-        self.game_type = GenericChoiceFactory(short_value='exhibition', long_value='Exhibition',
-                                              type=GenericChoice.GAME_TYPE, content_object=self.ice_hockey)
-        self.point_value = GenericChoiceFactory(short_value='2', long_value='2', type=GenericChoice.GAME_POINT_VALUE,
-                                                content_object=self.ice_hockey)
+        self.game_type = GenericChoiceFactory(
+            short_value='exhibition',
+            long_value='Exhibition',
+            type=GenericChoice.GAME_TYPE,
+            content_object=self.ice_hockey
+        )
+        self.point_value = GenericChoiceFactory(
+            short_value='2',
+            long_value='2',
+            type=GenericChoice.GAME_POINT_VALUE,
+            content_object=self.ice_hockey
+        )
 
         timezone = 'US/Eastern'
         us_eastern = pytz.timezone(timezone)
@@ -52,10 +60,19 @@ class GameRostersRetrieveUpdateAPIViewTests(BaseAPITestCase):
 
         self.start = datetime.datetime(month=12, day=27, year=2017, hour=19, minute=0)
         self.end = self.start + datetime.timedelta(hours=3)
-        self.game = HockeyGameFactory(id=1, home_team=self.home_team, team=self.home_team, away_team=self.away_team,
-                                      type=self.game_type, point_value=self.point_value,
-                                      start=us_eastern.localize(self.start), end=us_eastern.localize(self.end),
-                                      timezone=timezone, season=self.season, status=HockeyGame.SCHEDULED)
+        self.game = HockeyGameFactory(
+            id=1,
+            home_team=self.home_team,
+            team=self.home_team,
+            away_team=self.away_team,
+            type=self.game_type,
+            point_value=self.point_value,
+            start=us_eastern.localize(self.start),
+            end=us_eastern.localize(self.end),
+            timezone=timezone,
+            season=self.season,
+            status=HockeyGame.SCHEDULED
+        )
 
         self.user = UserFactory()
         SportRegistrationFactory(user=self.user, sport=self.ice_hockey, role=SportRegistration.MANAGER)
@@ -143,7 +160,9 @@ class GameRostersRetrieveUpdateAPIViewTests(BaseAPITestCase):
         self.assertListEqual(away_players, [6, 7])
 
     # Update
-    def test_patch(self):
+    @mock.patch('django.utils.timezone.now')
+    def test_patch(self, mock_now):
+        mock_now.return_value = datetime.datetime(month=8, day=27, year=2017, hour=19, minute=0, tzinfo=pytz.utc)
         self.game.home_players.add(self.home_players[0], self.home_players[1])
         self.game.away_players.add(self.away_players[0], self.away_players[1])
         self.login(user=self.user)
