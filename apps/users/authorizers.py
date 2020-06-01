@@ -51,6 +51,15 @@ class BaseAuthorizer(object):
         """
         return Scorekeeper.objects.active().filter(user=self.user).values_list('sport_id', flat=True)
 
+    def _is_manager_for_team(self, team):
+        return team.id in self.manager_team_ids
+
+    def _is_org_admin_for_org(self, organization):
+        return organization.id in self.org_admin_org_ids
+
+    def _is_scorekeeper_for_sport(self, sport):
+        return sport.id in self.scorekeeper_sport_ids
+
     def can_user_create(self, *args, **kwargs):
         return False
 
@@ -68,14 +77,6 @@ class BaseAuthorizer(object):
 
 
 class GameAuthorizer(BaseAuthorizer):
-    def _is_manager_for_team(self, team):
-        return team.id in self.manager_team_ids
-
-    def _is_org_admin_for_org(self, organization):
-        return organization.id in self.org_admin_org_ids
-
-    def _is_scorekeeper_for_sport(self, sport):
-        return sport.id in self.scorekeeper_sport_ids
 
     def can_user_create(self, team, *args, **kwargs):
         return self._is_manager_for_team(team=team) or self._is_org_admin_for_org(organization=team.organization)
@@ -104,9 +105,21 @@ class GameAuthorizer(BaseAuthorizer):
 
 
 class SeasonRosterAuthorizer(BaseAuthorizer):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.game_authorizer = GameAuthorizer(user=self.user)
+    def can_user_create(self, team, sport, *args, **kwargs):
+        is_manager = self._is_manager_for_team(team=team)
+        is_org_admin = self._is_org_admin_for_org(organization=team.organization)
+        return is_manager or is_org_admin
 
-    def can_user_list(self, team, sport, *args, **kwargs):
-        return self.game_authorizer.can_user_update_game_roster(team=team, sport=sport)
+    def can_user_update(self, team, sport, *args, **kwargs):
+        return self.can_user_create(team=team, sport=sport)
+
+    def can_user_list(self, team, sport, api=False, *args, **kwargs):
+        """
+        The season roster list api view allows scorekeepers to list (due to game roster update page listing season
+        rosters).
+        """
+        can_user_create = self.can_user_create(team, sport)
+        if api:
+            is_scorekeeper = self._is_scorekeeper_for_sport(sport=sport)
+            return can_user_create or is_scorekeeper
+        return can_user_create
