@@ -130,7 +130,6 @@ class LeagueDetailScheduleViewTests(AbstractLeagueDetailViewTestCase):
     # GET
     def test_get(self):
         response = self.client.get(self.format_url(slug=self.liahl.slug))
-        team_ids_managed_by_user = [m.team_id for m in self.managers]
         context = response.context
 
         self.assert_200(response)
@@ -148,14 +147,11 @@ class LeagueDetailScheduleViewTests(AbstractLeagueDetailViewTestCase):
         self.assertListEqual(list(context.get('games').order_by('id')), self.games)
         self.assertTrue(context.get('has_games'))
 
-        self.assertListEqual(list(context.get('team_ids_managed_by_user')), team_ids_managed_by_user)
-        self.assertFalse(context.get('is_scorekeeper'))
         self.assertEqual(context.get('sport'), self.ice_hockey)
 
     def test_get_past_season(self):
         url = reverse('leagues:seasons:schedule', kwargs={'slug': self.liahl.slug, 'season_pk': self.past_season.pk})
         response = self.client.get(url)
-        team_ids_managed_by_user = [m.team_id for m in self.managers]
         context = response.context
 
         self.assert_200(response)
@@ -176,8 +172,6 @@ class LeagueDetailScheduleViewTests(AbstractLeagueDetailViewTestCase):
         self.assertListEqual(list(context.get('games').order_by('id')), self.past_season_games)
         self.assertTrue(context.get('has_games'))
 
-        self.assertListEqual(list(context.get('team_ids_managed_by_user')), team_ids_managed_by_user)
-        self.assertFalse(context.get('is_scorekeeper'))
         self.assertEqual(context.get('sport'), self.ice_hockey)
 
     def test_get_future_season(self):

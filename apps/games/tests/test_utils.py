@@ -64,7 +64,6 @@ class UtilsTests(BaseTestCase):
             'season': season,
             'games': [],
             'has_games': False,
-            'team_ids_managed_by_user': [],
-            'is_scorekeeper': False,
-            'sport': self.ice_hockey
+            'sport': self.ice_hockey,
+            'game_authorizations': {},
         })
