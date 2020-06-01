@@ -105,13 +105,13 @@ class GameAuthorizer(BaseAuthorizer):
 
 
 class SeasonRosterAuthorizer(BaseAuthorizer):
-    def can_user_create(self, team, sport, *args, **kwargs):
+    def can_user_create(self, team, *args, **kwargs):
         is_manager = self._is_manager_for_team(team=team)
         is_org_admin = self._is_org_admin_for_org(organization=team.organization)
         return is_manager or is_org_admin
 
-    def can_user_update(self, team, sport, *args, **kwargs):
-        return self.can_user_create(team=team, sport=sport)
+    def can_user_update(self, team, *args, **kwargs):
+        return self.can_user_create(team=team)
 
     def can_user_list(self, team, sport, api=False, *args, **kwargs):
         """

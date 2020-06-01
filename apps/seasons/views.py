@@ -32,7 +32,7 @@ class SeasonRosterCreateView(LoginRequiredMixin,
     def has_permission_func(self):
         season_roster_authorizer = SeasonRosterAuthorizer(user=self.request.user)
         team = self._get_team()
-        return season_roster_authorizer.can_user_create(team=team, sport=self.sport)
+        return season_roster_authorizer.can_user_create(team=team)
 
     def get_form_class(self):
         return get_season_roster_create_update_form_cls(self.sport)
@@ -88,7 +88,7 @@ class SeasonRosterUpdateView(LoginRequiredMixin,
     def has_permission_func(self):
         season_roster_authorizer = SeasonRosterAuthorizer(user=self.request.user)
         team = self._get_team()
-        return season_roster_authorizer.can_user_update(team=team, sport=self.sport)
+        return season_roster_authorizer.can_user_update(team=team)
 
     def get_form_class(self):
         return get_season_roster_create_update_form_cls(self.sport)

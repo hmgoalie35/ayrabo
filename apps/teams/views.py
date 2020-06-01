@@ -78,7 +78,7 @@ class TeamDetailSeasonRostersView(AbstractTeamDetailView):
             'has_season_rosters': season_rosters.exists(),
             'active_tab': 'season_rosters',
             'can_user_list': can_user_list,
-            'can_user_create': season_roster_authorizer.can_user_create(team=team, sport=sport),
+            'can_user_create': season_roster_authorizer.can_user_create(team=team),
             'current_season_page_url': reverse('teams:season_rosters:list', kwargs={'team_pk': team.pk})
         })
         return context
