@@ -6,5 +6,4 @@ class SportNotConfiguredException(Exception):
         :param sport: The sport that isn't configured properly.
         """
         self.sport = sport
-        self.message = "{} hasn't been configured correctly in our system. " \
-                       "If you believe this is an error please contact us.".format(self.sport)
+        self.message = f'Site configuration for {self.sport.name} is still in progress.'
