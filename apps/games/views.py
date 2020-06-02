@@ -1,11 +1,13 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
-from django.shortcuts import get_object_or_404, redirect, reverse
+from django.shortcuts import get_object_or_404, redirect, render, reverse
 from django.views import generic
 
+from ayrabo.utils import send_season_not_configured_email
 from ayrabo.utils.exceptions import SportNotConfiguredException
 from ayrabo.utils.mixins import HandleSportNotConfiguredMixin, HasPermissionMixin
 from games.forms import DATETIME_INPUT_FORMAT
+from seasons.utils import get_current_season_or_from_pk
 from sports.models import Sport
 from teams.models import Team
 from teams.utils import get_team_detail_view_context
@@ -28,10 +30,13 @@ class GameCreateView(LoginRequiredMixin,
         if hasattr(self, 'team'):
             return self.team
         self.team = get_object_or_404(
-            Team.objects.select_related('division', 'division__league', 'division__league__sport'),
+            Team.objects.select_related('division__league__sport'),
             pk=self.kwargs.get('team_pk', None)
         )
-        self.sport = self.team.division.league.sport
+        division = self.team.division
+        league = division.league
+        self.sport = league.sport
+        self.season = get_current_season_or_from_pk(league=league, season_pk=None)
         return self.team
 
     def has_permission_func(self):
@@ -56,7 +61,7 @@ class GameCreateView(LoginRequiredMixin,
             'team': self.team,
             'active_tab': 'schedule'
         })
-        context.update(get_team_detail_view_context(self.team))
+        context.update(get_team_detail_view_context(team=self.team, season=self.season))
         return context
 
     def form_valid(self, form):
@@ -66,6 +71,10 @@ class GameCreateView(LoginRequiredMixin,
 
     def get(self, request, *args, **kwargs):
         self._get_team()
+        if self.season is None:
+            msg = f'Site configuration for {self.team.name} is still in progress.'
+            send_season_not_configured_email(obj_name=self.team.name, view_cls=self)
+            return render(request, 'misconfigurations/base.html', {'message': msg})
         return super().get(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
@@ -86,10 +95,13 @@ class GameUpdateView(LoginRequiredMixin,
         if hasattr(self, 'team'):
             return self.team
         self.team = get_object_or_404(
-            Team.objects.select_related('division', 'division__league', 'division__league__sport', 'organization'),
+            Team.objects.select_related('division__league__sport', 'organization'),
             pk=self.kwargs.get('team_pk', None)
         )
-        self.sport = self.team.division.league.sport
+        division = self.team.division
+        league = division.league
+        self.sport = league.sport
+        self.season = get_current_season_or_from_pk(league=league, season_pk=None)
         return self.team
 
     def has_permission_func(self):
@@ -153,11 +165,16 @@ class GameUpdateView(LoginRequiredMixin,
             'team': self.team,
             'active_tab': 'schedule'
         })
-        context.update(get_team_detail_view_context(self.team))
+        context.update(get_team_detail_view_context(team=self.team, season=self.season))
         return context
 
     def get(self, request, *args, **kwargs):
         self._get_team()
+        self.object = self.get_object()
+        if self.season is None:
+            msg = f'Site configuration for {self.object} is still in progress.'
+            send_season_not_configured_email(obj_name=str(self.object), view_cls=self)
+            return render(request, 'misconfigurations/base.html', {'message': msg})
         return super().get(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
