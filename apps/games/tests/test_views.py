@@ -142,7 +142,7 @@ class HockeyGameCreateViewTests(BaseTestCase):
         self._create_user(baseball, team, [SportRegistration.MANAGER], user={'email': email, 'password': self.password})
         self.login(email=email, password=self.password)
         response = self.client.get(self.format_url(team_pk=5))
-        self.assertTemplateUsed(response, 'sport_not_configured_msg.html')
+        self.assertTemplateUsed(response, 'misconfigurations/base.html')
 
     # POST
     def test_valid_post(self):
@@ -353,7 +353,7 @@ class HockeyGameUpdateViewTests(BaseTestCase):
         ManagerFactory(user=self.user, team=team)
         self.login(email=self.email, password=self.password)
         response = self.client.get(self.format_url(team_pk=team.pk, pk=self.game.id))
-        self.assertTemplateUsed(response, 'sport_not_configured_msg.html')
+        self.assertTemplateUsed(response, 'misconfigurations/base.html')
 
     def test_game_dne(self):
         self.login(email=self.email, password=self.password)
@@ -556,7 +556,7 @@ class GameRostersUpdateViewTests(BaseTestCase):
 
         response = self.client.get(self.format_url(slug=sport.slug, game_pk=1))
 
-        self.assertTemplateUsed(response, 'sport_not_configured_msg.html')
+        self.assertTemplateUsed(response, 'misconfigurations/base.html')
 
     def test_sport_dne(self):
         SportRegistrationFactory(user=self.user, sport=self.ice_hockey, role=SportRegistration.MANAGER)

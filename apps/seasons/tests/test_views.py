@@ -46,7 +46,7 @@ class SeasonRosterCreateViewTests(BaseTestCase):
         team = TeamFactory()
         ManagerFactory(team=team, user=self.user)
         response = self.client.get(self.format_url(team_pk=team.pk), follow=True)
-        self.assertTemplateUsed(response, 'sport_not_configured_msg.html')
+        self.assertTemplateUsed(response, 'misconfigurations/base.html')
 
     def test_has_permission_false(self):
         self.client.logout()
@@ -156,7 +156,7 @@ class SeasonRosterUpdateViewTests(BaseTestCase):
         team = TeamFactory()
         ManagerFactory(team=team, user=self.user)
         response = self.client.get(self.format_url(team_pk=team.pk, pk=self.season_roster.pk), follow=True)
-        self.assertTemplateUsed(response, 'sport_not_configured_msg.html')
+        self.assertTemplateUsed(response, 'misconfigurations/base.html')
 
     def test_has_permission_false_not_team_manager(self):
         self.client.logout()

@@ -58,7 +58,7 @@ class PlayerUpdateViewTests(BaseTestCase):
     def test_sport_not_configured(self):
         SportFactory(name='Not Configured', slug='not-configured')
         response = self.client.get(self.format_url(slug='not-configured', player_pk=self.player.pk))
-        self.assertTemplateUsed(response, 'sport_not_configured_msg.html')
+        self.assertTemplateUsed(response, 'misconfigurations/base.html')
 
     def test_sport_dne(self):
         response = self.client.get(self.format_url(slug='non-existent', player_pk=self.player.pk))
