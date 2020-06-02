@@ -32,7 +32,7 @@ class AbstractTeamDetailView(LoginRequiredMixin, HandleSportNotConfiguredMixin, 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         team = self.get_object()
-        context.update(get_team_detail_view_context(team, self.season))
+        context.update(get_team_detail_view_context(team=team, season=self.season))
         return context
 
     def get(self, request, *args, **kwargs):

@@ -177,7 +177,7 @@ class BaseTestCase(TestCase):
 
     def assertSportNotConfigured(self, url):
         response = self.client.get(url)
-        self.assertTemplateUsed(response, 'sport_not_configured_msg.html')
+        self.assertTemplateUsed(response, 'misconfigurations/base.html')
 
     def assertDictWithQuerySetEqual(self, dictionary, expected):
         cleaned_dict = {}

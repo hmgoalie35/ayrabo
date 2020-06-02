@@ -23,7 +23,7 @@ def get_team_detail_season_rosters_url(team, season):
     return reverse('teams:seasons:season_rosters-list', kwargs=kwargs)
 
 
-def get_team_detail_view_context(team, season=None):
+def get_team_detail_view_context(team, season):
     division = team.division
     league = division.league
     return {
