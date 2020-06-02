@@ -40,22 +40,12 @@ module.exports = function (env, argv) {
       filename: `js/${fileName}.js`,
       chunkFilename: `js/${fileName}.js`,
       path: buildDir,
-      library: 'App',
+      library: '[name]',
       publicPath,
     },
     optimization: {
       runtimeChunk: 'single',
       moduleIds: isProduction ? 'hashed' : 'named',
-      splitChunks: {
-        cacheGroups: {
-          globals: {
-            name: 'globals',
-            chunks: 'all',
-            test: /(noty\.js|clipboard)/,
-            minChunks: 1
-          }
-        }
-      },
     },
     module: {
       rules: [
@@ -115,15 +105,6 @@ module.exports = function (env, argv) {
           options: {
             outputPath: 'fonts/'
           }
-        },
-        {
-          test: require.resolve('noty'),
-          use: [
-            {
-              loader: 'expose-loader',
-              options: 'Noty'
-            }
-          ]
         },
         {
           test: require.resolve('clipboard'),
