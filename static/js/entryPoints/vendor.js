@@ -1,12 +1,11 @@
 /*
  ****************************** NOTE: ******************************
  The only js libraries that should be included here are those that need to be available
- globally e.g. Noty, jQuery, DataTables, etc.
- */
+ globally e.g. jQuery, DataTables, etc.
+*/
 import '../../scss/vendor.scss';
 
 import 'jquery';
-import 'noty';
 import 'clipboard';
 import 'bootstrap-select/dist/js/bootstrap-select.min';
 import 'eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min';
