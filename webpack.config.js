@@ -46,16 +46,6 @@ module.exports = function (env, argv) {
     optimization: {
       runtimeChunk: 'single',
       moduleIds: isProduction ? 'hashed' : 'named',
-      splitChunks: {
-        cacheGroups: {
-          globals: {
-            name: 'globals',
-            chunks: 'all',
-            test: /(clipboard)/,
-            minChunks: 1
-          }
-        }
-      },
     },
     module: {
       rules: [
