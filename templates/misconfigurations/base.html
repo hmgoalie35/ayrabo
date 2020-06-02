@@ -2,18 +2,13 @@
 
 {% block content %}
   <div class="container">
-    <div class="row">
+    <div class="row mt30">
       <div class="col-sm-offset-2 col-sm-8 col-sm-offset-2">
         <div class="text-center">
-          <br><br><br><br><br><br><br>
           <div class="alert alert-danger" role="alert">
-            {% if message %}
-              <p>{{ message }}</p>
-            {% else %}
-              <p>No message to display</p>
-            {% endif %}
+            <p>{{ message }}</p>
+            {% include 'includes/contact_info.html' %}
           </div>
-          <br><br>
           <a class="btn btn-back js-btn-back">Back</a>
         </div>
       </div>
