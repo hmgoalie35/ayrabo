@@ -47,7 +47,7 @@
         {% thumbnail away_team.logo 'sm' as away_team_thumb %}
         options.awayTeamLogo = '{{ away_team_thumb|data_uri }}';
       {% endif %}
-      App.initGameRostersUpdateComponent(options);
+      gameRosters.initGameRostersUpdateComponent(options);
     });
   </script>
 {% endblock %}
