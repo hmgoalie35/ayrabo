@@ -172,8 +172,8 @@ class GameUpdateView(LoginRequiredMixin,
         self._get_team()
         self.object = self.get_object()
         if self.season is None:
-            msg = f'Site configuration for {self.object} is still in progress.'
-            send_season_not_configured_email(obj_name=str(self.object), view_cls=self)
+            msg = f'Site configuration for {self.team.name} is still in progress.'
+            send_season_not_configured_email(obj_name=self.team.name, view_cls=self)
             return render(request, 'misconfigurations/base.html', {'message': msg})
         return super().get(request, *args, **kwargs)
 
