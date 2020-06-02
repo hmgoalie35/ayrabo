@@ -3,7 +3,6 @@ A module to store useful helper functions used throughout the code base
 """
 import os
 
-from django.conf import settings
 from django.core import mail
 from django.shortcuts import render
 from django.utils.crypto import get_random_string
@@ -45,20 +44,30 @@ def set_fields_disabled(read_only_fields, field_list):
             the_field.disabled = True
 
 
-def email_admins_sport_not_configured(sport_name, view_cls):
+def send_sport_not_configured_email(sport_name, view_cls):
     """
-    Sends an email to the admins specified in `settings.py` letting them know a sport was not configured properly. This
-    might be because a sport name => form class mapping wasn't updated, or anything of the sort.
+    Email the configured admins alerting them a sport was not configured properly.
 
-    :param sport_name: The sport that is not configured correctly
+    :param sport_name: Name of the sport that has been misconfigured
     :param view_cls: The Django view that caused the exception
     """
-    if not settings.DEBUG:
-        subject = '{sport_name} incorrectly configured'.format(sport_name=sport_name)
-        mail.mail_admins(subject,
-                         '{sport} incorrectly configured on the {page} ({cls}) page. '
-                         'You will likely need to add a mapping to the appropriate dictionary.'.format(
-                             sport=sport_name, page=view_cls.request.path, cls=view_cls.__class__.__name__))
+    mail.mail_admins(
+        f'{sport_name} misconfigured',
+        f'{sport_name} misconfigured on the {view_cls.request.path} ({view_cls.__class__.__name__}) page.'
+    )
+
+
+def send_season_not_configured_email(obj_name, view_cls):
+    """
+    Email the configured admins alerting them a season does not exist when it should.
+
+    :param obj_name: Name of the object (generally team or league) that does not have an associated season.
+    :param view_cls: The Django view that could not compute a season
+    """
+    mail.mail_admins(
+        f'Season for {obj_name} misconfigured',
+        f'Season for {obj_name} misconfigured on the {view_cls.request.path} ({view_cls.__class__.__name__}) page.'
+    )
 
 
 def handle_sport_not_configured(request, cls, e):
@@ -69,8 +78,8 @@ def handle_sport_not_configured(request, cls, e):
     :param cls: The view class the exception occurred in.
     :param e: The exception
     """
-    email_admins_sport_not_configured(e.sport, cls)
-    return render(request, 'sport_not_configured_msg.html', {'message': e.message})
+    send_sport_not_configured_email(e.sport, cls)
+    return render(request, 'misconfigurations/base.html', {'message': e.message})
 
 
 def get_namespace_for_role(role):

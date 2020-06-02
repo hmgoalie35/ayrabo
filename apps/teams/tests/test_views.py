@@ -150,6 +150,15 @@ class TeamDetailScheduleViewTests(BaseTestCase):
 
         self.assertEqual(context.get('sport'), self.ice_hockey)
 
+        # Current season DNE
+        self.game1.delete()
+        self.game2.delete()
+        self.current_season.delete()
+        response = self.client.get(self.formatted_url)
+        self.assert_200(response)
+        self.assertTemplateUsed(response, 'misconfigurations/base.html')
+        self.assertAdminEmailSent('Season for Green Machine IceCats misconfigured')
+
     def test_get_past_season(self):
         kwargs = {'team_pk': self.icecats_mm_aa.pk, 'season_pk': self.past_season.pk}
         url = reverse('teams:seasons:schedule', kwargs=kwargs)

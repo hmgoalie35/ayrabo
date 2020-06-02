@@ -17,18 +17,16 @@ from users.tests import UserFactory
 class SeasonRosterCreateViewTests(BaseTestCase):
     url = 'teams:season_rosters:create'
 
-    @classmethod
-    def setUpTestData(cls):
-        cls.ice_hockey = SportFactory(name='Ice Hockey')
-        cls.liahl = LeagueFactory(name='Long Island Amateur Hockey League', sport=cls.ice_hockey)
-        cls.mm_aa = DivisionFactory(name='Midget Minor AA', league=cls.liahl)
-        cls.icecats = TeamFactory(name='Green Machine IceCats', division=cls.mm_aa)
-        cls.liahl_season = SeasonFactory(league=cls.liahl)
-
     def setUp(self):
         self.email = 'user@ayrabo.com'
         self.password = 'myweakpassword'
         self.user = UserFactory(email=self.email, password=self.password)
+
+        self.ice_hockey = SportFactory(name='Ice Hockey')
+        self.liahl = LeagueFactory(name='Long Island Amateur Hockey League', sport=self.ice_hockey)
+        self.mm_aa = DivisionFactory(name='Midget Minor AA', league=self.liahl)
+        self.icecats = TeamFactory(name='Green Machine IceCats', division=self.mm_aa)
+        self.liahl_season = SeasonFactory(league=self.liahl)
 
         self.hockey_sr = SportRegistrationFactory(user=self.user, sport=self.ice_hockey, role=SportRegistration.MANAGER)
         self.hockey_manager = ManagerFactory(user=self.user, team=self.icecats)
@@ -46,7 +44,7 @@ class SeasonRosterCreateViewTests(BaseTestCase):
         team = TeamFactory()
         ManagerFactory(team=team, user=self.user)
         response = self.client.get(self.format_url(team_pk=team.pk), follow=True)
-        self.assertTemplateUsed(response, 'sport_not_configured_msg.html')
+        self.assertTemplateUsed(response, 'misconfigurations/base.html')
 
     def test_has_permission_false(self):
         self.client.logout()
@@ -80,6 +78,13 @@ class SeasonRosterCreateViewTests(BaseTestCase):
         self.assertEqual(context.get('team_display_name'), 'Green Machine IceCats - Midget Minor AA')
         self.assertIsNotNone(context.get('seasons'))
         self.assertEqual(context.get('active_tab'), 'season_rosters')
+
+        # Current season DNE
+        self.liahl_season.delete()
+        response = self.client.get(self.formatted_url)
+        self.assert_200(response)
+        self.assertTemplateUsed(response, 'misconfigurations/base.html')
+        self.assertAdminEmailSent('Season for Green Machine IceCats misconfigured')
 
     # POST
     def test_post_valid_hockeyseasonroster(self):
@@ -156,7 +161,7 @@ class SeasonRosterUpdateViewTests(BaseTestCase):
         team = TeamFactory()
         ManagerFactory(team=team, user=self.user)
         response = self.client.get(self.format_url(team_pk=team.pk, pk=self.season_roster.pk), follow=True)
-        self.assertTemplateUsed(response, 'sport_not_configured_msg.html')
+        self.assertTemplateUsed(response, 'misconfigurations/base.html')
 
     def test_has_permission_false_not_team_manager(self):
         self.client.logout()
@@ -212,6 +217,14 @@ class SeasonRosterUpdateViewTests(BaseTestCase):
         self.assertEqual(context.get('team_display_name'), 'Green Machine IceCats - Midget Minor AA')
         self.assertIsNotNone(context.get('seasons'))
         self.assertEqual(context.get('active_tab'), 'season_rosters')
+
+        # Current season DNE
+        self.season_roster.delete()
+        self.current_season.delete()
+        response = self.client.get(self.formatted_url)
+        self.assert_200(response)
+        self.assertTemplateUsed(response, 'misconfigurations/base.html')
+        self.assertAdminEmailSent('Season for Green Machine IceCats misconfigured')
 
     # POST
     def test_post_valid_changed_form(self):

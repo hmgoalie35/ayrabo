@@ -1,11 +1,13 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
-from django.shortcuts import get_object_or_404, redirect
+from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.views import generic
 
+from ayrabo.utils import send_season_not_configured_email
 from ayrabo.utils.mixins import HandleSportNotConfiguredMixin, HasPermissionMixin
 from seasons.mappings import get_season_roster_create_update_form_cls, get_season_roster_model_cls
+from seasons.utils import get_current_season_or_from_pk
 from teams.models import Team
 from teams.utils import get_team_detail_view_context
 from users.authorizers import SeasonRosterAuthorizer
@@ -26,7 +28,10 @@ class SeasonRosterCreateView(LoginRequiredMixin,
             Team.objects.select_related('division__league__sport', 'organization'),
             pk=self.kwargs.get('team_pk')
         )
-        self.sport = self.team.division.league.sport
+        division = self.team.division
+        league = division.league
+        self.sport = league.sport
+        self.season = get_current_season_or_from_pk(league=league, season_pk=None)
         return self.team
 
     def has_permission_func(self):
@@ -51,7 +56,7 @@ class SeasonRosterCreateView(LoginRequiredMixin,
             'team': self.team,
             'active_tab': 'season_rosters'
         })
-        context.update(get_team_detail_view_context(self.team))
+        context.update(get_team_detail_view_context(team=self.team, season=self.season))
         return context
 
     def get_success_url(self):
@@ -59,6 +64,10 @@ class SeasonRosterCreateView(LoginRequiredMixin,
 
     def get(self, request, *args, **kwargs):
         self._get_team()
+        if self.season is None:
+            msg = f'Site configuration for {self.team.name} is still in progress.'
+            send_season_not_configured_email(obj_name=self.team.name, view_cls=self)
+            return render(request, 'misconfigurations/base.html', {'message': msg})
         return super().get(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
@@ -82,7 +91,10 @@ class SeasonRosterUpdateView(LoginRequiredMixin,
             Team.objects.select_related('division__league__sport', 'organization'),
             pk=self.kwargs.get('team_pk')
         )
-        self.sport = self.team.division.league.sport
+        division = self.team.division
+        league = division.league
+        self.sport = league.sport
+        self.season = get_current_season_or_from_pk(league=league, season_pk=None)
         return self.team
 
     def has_permission_func(self):
@@ -113,7 +125,7 @@ class SeasonRosterUpdateView(LoginRequiredMixin,
             'team': self.team,
             'active_tab': 'season_rosters'
         })
-        context.update(get_team_detail_view_context(self.team))
+        context.update(get_team_detail_view_context(team=self.team, season=self.season))
         return context
 
     def form_valid(self, form):
@@ -126,6 +138,10 @@ class SeasonRosterUpdateView(LoginRequiredMixin,
 
     def get(self, request, *args, **kwargs):
         self._get_team()
+        if self.season is None:
+            msg = f'Site configuration for {self.team.name} is still in progress.'
+            send_season_not_configured_email(obj_name=self.team.name, view_cls=self)
+            return render(request, 'misconfigurations/base.html', {'message': msg})
         return super().get(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):

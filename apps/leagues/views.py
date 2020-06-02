@@ -1,7 +1,9 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.shortcuts import render
 from django.urls import reverse
 from django.views.generic import DetailView
 
+from ayrabo.utils import send_season_not_configured_email
 from ayrabo.utils.mixins import HandleSportNotConfiguredMixin
 from divisions.models import Division
 from games.utils import get_game_list_view_context
@@ -19,21 +21,29 @@ class AbstractLeagueDetailView(LoginRequiredMixin, HandleSportNotConfiguredMixin
         if hasattr(self, 'object'):
             return self.object
         self.object = super().get_object(queryset)
+        self.season = get_current_season_or_from_pk(self.object, self.kwargs.get('season_pk'))
         return self.object
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         league = self.get_object()
-        season = get_current_season_or_from_pk(league, self.kwargs.get('season_pk'))
-        schedule_link = season.league_detail_schedule_url
-        divisions_link = season.league_detail_divisions_url
+        schedule_link = self.season.league_detail_schedule_url
+        divisions_link = self.season.league_detail_divisions_url
         context.update({
-            'season': season,
+            'season': self.season,
             'schedule_link': schedule_link,
             'divisions_link': divisions_link,
             'seasons': Season.objects.get_for_league(league=league)
         })
         return context
+
+    def get(self, request, *args, **kwargs):
+        self.get_object()
+        if self.season is None:
+            msg = f'Site configuration for {self.object.name} is still in progress.'
+            send_season_not_configured_email(obj_name=self.object.name, view_cls=self)
+            return render(request, 'misconfigurations/base.html', {'message': msg})
+        return super().get(request, *args, **kwargs)
 
 
 class LeagueDetailScheduleView(AbstractLeagueDetailView):
