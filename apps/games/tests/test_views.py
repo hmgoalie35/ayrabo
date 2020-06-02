@@ -59,7 +59,7 @@ class HockeyGameCreateViewTests(BaseTestCase):
         )
         UserProfileFactory(user=self.user, timezone='US/Eastern')
 
-        self.create_past_current_future_seasons(league=self.liahl)
+        _, self.current_season, _ = self.create_past_current_future_seasons(league=self.liahl)
 
         self.season_start = datetime.date(month=12, day=27, year=2017)
         self.season = SeasonFactory(
@@ -128,6 +128,13 @@ class HockeyGameCreateViewTests(BaseTestCase):
         self.assertEqual(context.get('team_display_name'), 'Green Machine IceCats - Midget Minor AA')
         self.assertEqual(context.get('active_tab'), 'schedule')
         self.assertIsNotNone(context.get('seasons'))
+
+        # Current season DNE
+        self.current_season.delete()
+        response = self.client.get(self.format_url(team_pk=1))
+        self.assert_200(response)
+        self.assertTemplateUsed(response, 'misconfigurations/base.html')
+        self.assertAdminEmailSent('Season for Green Machine IceCats misconfigured')
 
     def test_get_team_dne(self):
         self.login(email=self.email, password=self.password)
@@ -290,7 +297,7 @@ class HockeyGameUpdateViewTests(BaseTestCase):
         us_eastern = pytz.timezone(timezone)
         UserProfileFactory(user=self.user, timezone=timezone)
 
-        self.create_past_current_future_seasons(league=self.liahl)
+        _, self.current_season, _ = self.create_past_current_future_seasons(league=self.liahl)
 
         self.season_start = datetime.date(month=12, day=27, year=2017)
         self.season = SeasonFactory(league=self.liahl, start_date=self.season_start)
@@ -400,6 +407,13 @@ class HockeyGameUpdateViewTests(BaseTestCase):
         self.assertEqual(context.get('team_display_name'), 'Green Machine IceCats - Midget Minor AA')
         self.assertEqual(context.get('active_tab'), 'schedule')
         self.assertIsNotNone(context.get('seasons'))
+
+        # Current season DNE
+        self.current_season.delete()
+        response = self.client.get(self.formatted_url)
+        self.assert_200(response)
+        self.assertTemplateUsed(response, 'misconfigurations/base.html')
+        self.assertAdminEmailSent('Season for Green Machine IceCats misconfigured')
 
     # POST
     def test_has_changed_custom_logic(self):
