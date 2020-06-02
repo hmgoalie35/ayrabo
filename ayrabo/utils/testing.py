@@ -1,6 +1,7 @@
 import re
 from datetime import datetime, timedelta
 
+from django.core import mail
 from django.db.models import Q, QuerySet
 from django.test import TestCase
 from django.urls import reverse
@@ -184,6 +185,11 @@ class BaseTestCase(TestCase):
         for k, v in dictionary.items():
             cleaned_dict[k] = list(v) if isinstance(v, QuerySet) else v
         self.assertDictEqual(cleaned_dict, expected)
+
+    def assertAdminEmailSent(self, subject):
+        email = mail.outbox[0]
+        self.assertEqual(f'[Django] {subject}', email.subject)
+        self.assertEqual(['support@ayrabo.com'], email.to)
 
     def assert_200(self, response):
         self.assertEqual(response.status_code, 200)

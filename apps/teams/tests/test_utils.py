@@ -74,7 +74,7 @@ class UtilsTests(BaseTestCase):
         )
 
     def test_get_team_detail_view_context_current_season(self):
-        result = utils.get_team_detail_view_context(self.icecats)
+        result = utils.get_team_detail_view_context(self.icecats, season=self.current_season)
         kwargs = {'team_pk': self.icecats.pk}
         self.expected_team_detail_view_context.update({
             'season': self.current_season,
@@ -85,7 +85,7 @@ class UtilsTests(BaseTestCase):
 
     def test_get_team_detail_view_context_past_season(self):
         kwargs = {'team_pk': self.icecats.pk, 'season_pk': self.past_season.pk}
-        result = utils.get_team_detail_view_context(self.icecats, season_pk=self.past_season.pk)
+        result = utils.get_team_detail_view_context(self.icecats, season=self.past_season)
         self.expected_team_detail_view_context.update({
             'season': self.past_season,
             'schedule_link': reverse('teams:seasons:schedule', kwargs=kwargs),
@@ -95,7 +95,7 @@ class UtilsTests(BaseTestCase):
 
     def test_get_team_detail_view_context_future_season(self):
         kwargs = {'team_pk': self.icecats.pk, 'season_pk': self.future_season.pk}
-        result = utils.get_team_detail_view_context(self.icecats, season_pk=self.future_season.pk)
+        result = utils.get_team_detail_view_context(self.icecats, season=self.future_season)
         self.expected_team_detail_view_context.update({
             'season': self.future_season,
             'schedule_link': reverse('teams:seasons:schedule', kwargs=kwargs),

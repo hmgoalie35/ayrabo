@@ -149,6 +149,16 @@ class LeagueDetailScheduleViewTests(AbstractLeagueDetailViewTestCase):
 
         self.assertEqual(context.get('sport'), self.ice_hockey)
 
+        # Current season DNE
+        self.game1.delete()
+        self.game2.delete()
+        self.game3.delete()
+        self.current_season.delete()
+        response = self.client.get(self.format_url(slug=self.liahl.slug))
+        self.assert_200(response)
+        self.assertTemplateUsed(response, 'misconfigurations/base.html')
+        self.assertAdminEmailSent('Season for Long Island Amateur Hockey League misconfigured')
+
     def test_get_past_season(self):
         url = reverse('leagues:seasons:schedule', kwargs={'slug': self.liahl.slug, 'season_pk': self.past_season.pk})
         response = self.client.get(url)
