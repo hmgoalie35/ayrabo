@@ -4,7 +4,6 @@ from django.shortcuts import get_object_or_404, redirect, render, reverse
 from django.views import generic
 
 from ayrabo.utils import send_season_not_configured_email
-from ayrabo.utils.exceptions import SportNotConfiguredException
 from ayrabo.utils.mixins import HandleSportNotConfiguredMixin, HasPermissionMixin
 from games.forms import DATETIME_INPUT_FORMAT
 from seasons.utils import get_current_season_or_from_pk
@@ -12,7 +11,11 @@ from sports.models import Sport
 from teams.models import Team
 from teams.utils import get_team_detail_view_context
 from users.authorizers import GameAuthorizer
-from . import mappings
+from .mappings import (
+    get_game_create_form_cls,
+    get_game_model_cls,
+    get_game_update_form_cls,
+)
 
 
 class GameCreateView(LoginRequiredMixin,
@@ -45,10 +48,7 @@ class GameCreateView(LoginRequiredMixin,
         return game_authorizer.can_user_create(team=team)
 
     def get_form_class(self):
-        form_cls = mappings.SPORT_GAME_CREATE_FORM_MAPPINGS.get(self.sport.name)
-        if form_cls is None:
-            raise SportNotConfiguredException(self.sport)
-        return form_cls
+        return get_game_create_form_cls(self.sport)
 
     def get_form_kwargs(self):
         form_kwargs = super().get_form_kwargs()
@@ -116,9 +116,7 @@ class GameUpdateView(LoginRequiredMixin,
         return reverse('teams:schedule', kwargs={'team_pk': self.team.pk})
 
     def get_object(self, queryset=None):
-        model_cls = mappings.SPORT_GAME_MODEL_MAPPINGS.get(self.sport.name, None)
-        if model_cls is None:
-            raise SportNotConfiguredException(self.sport)
+        model_cls = get_game_model_cls(self.sport)
         return get_object_or_404(
             model_cls.objects.select_related(
                 'home_team',
@@ -144,10 +142,7 @@ class GameUpdateView(LoginRequiredMixin,
         return form_kwargs
 
     def get_form_class(self):
-        form_cls = mappings.SPORT_GAME_UPDATE_FORM_MAPPINGS.get(self.sport.name)
-        if form_cls is None:
-            raise SportNotConfiguredException(self.sport)
-        return form_cls
+        return get_game_update_form_cls(self.sport)
 
     def form_valid(self, form):
         if form.has_changed():
@@ -210,9 +205,7 @@ class GameRostersUpdateView(LoginRequiredMixin,
         self._get_sport()
         if hasattr(self, 'game'):
             return self.game
-        model_cls = mappings.SPORT_GAME_MODEL_MAPPINGS.get(self.sport.name)
-        if model_cls is None:
-            raise SportNotConfiguredException(self.sport)
+        model_cls = get_game_model_cls(self.sport)
         self.game = get_object_or_404(
             model_cls.objects.select_related(
                 'home_team__division',
