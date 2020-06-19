@@ -3,6 +3,7 @@
 .fa-trash-red {
   cursor: pointer;
   color: indianred;
+
   &:hover {
     color: darkred;
   }
@@ -28,16 +29,13 @@
   @extend .text-danger;
 }
 
+// fa-warning is an icon
 .fa-color-warning {
   color: $brand-warning;
 }
 
 .fa-white {
   color: $white;
-}
-
-.fa-ayrabo-gray {
-  color: $ess-gray;
 }
 
 .fa-align-middle {

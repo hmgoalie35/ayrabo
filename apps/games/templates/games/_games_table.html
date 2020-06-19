@@ -50,6 +50,19 @@
             {% dict_get game_authorizations game.pk as authorizations %}
             {% dict_get authorizations 'can_user_update' as can_user_update %}
             {% dict_get authorizations 'can_user_update_game_rosters' as can_user_update_game_rosters %}
+            <li>
+              <a href="{% url 'sports:games:scoresheet' slug=sport.slug game_pk=game.pk %}">
+                {% if game.is_in_progress %}
+                  <i class="fa fa-circle fa-close-red animated flash infinite slower"></i>&nbsp;View Live
+                {# The scoresheet view will prevent premature initialization, we always show Start to users #}
+                {# that can start the game for a consistent experience #}
+                {% elif game.is_scheduled and can_user_update %}
+                  <i class="fa fa-play-circle-o fa-success"></i>&nbsp;Start
+                {% else %}
+                  <i class="fa fa-eye fa-primary"></i>&nbsp;View
+                {% endif %}
+              </a>
+            </li>
             {% if can_user_update %}
               <li>
                 <a
@@ -65,7 +78,7 @@
                   id="update-game-rosters-{{ game.pk }}"
                   href="{% url 'sports:games:rosters:update' slug=sport.slug game_pk=game.pk %}"
                 >
-                  <i class="fa fa-wrench fa-ayrabo-gray"></i>&nbsp;Rosters
+                  <i class="fa fa-wrench fa-primary"></i>&nbsp;Edit Game Rosters
                 </a>
               </li>
             {% endif %}
