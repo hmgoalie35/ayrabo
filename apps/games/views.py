@@ -14,6 +14,7 @@ from users.authorizers import GameAuthorizer
 from .mappings import (
     get_game_create_form_cls,
     get_game_model_cls,
+    get_game_scoresheet_form_cls,
     get_game_update_form_cls,
 )
 
@@ -175,6 +176,44 @@ class GameUpdateView(LoginRequiredMixin,
     def post(self, request, *args, **kwargs):
         self._get_team()
         return super().post(request, *args, **kwargs)
+
+
+class GameScoresheetView(LoginRequiredMixin, HandleSportNotConfiguredMixin, generic.UpdateView):
+    template_name = 'games/game_scoresheet.html'
+    context_object_name = 'game'
+    pk_url_kwarg = 'game_pk'
+
+    def _get_sport(self):
+        if hasattr(self, 'sport'):
+            return self.sport
+        self.sport = get_object_or_404(Sport, slug=self.kwargs.get('slug'))
+        return self.sport
+
+    def get_success_url(self):
+        return reverse('sports:games:scoresheet', kwargs={'slug': self.sport.slug, 'game_pk': self.object.pk})
+
+    def get_object(self, queryset=None):
+        model_cls = get_game_model_cls(self.sport)
+        return get_object_or_404(
+            model_cls.objects.select_related(
+                'home_team',
+                'home_team__division',
+                'away_team',
+                'away_team__division',
+            ),
+            pk=self.kwargs.get(self.pk_url_kwarg, None)
+        )
+
+    def get_form_class(self):
+        return get_game_scoresheet_form_cls(self.sport)
+
+    def get(self, *args, **kwargs):
+        self._get_sport()
+        return super().get(*args, **kwargs)
+
+    def post(self, *args, **kwargs):
+        self._get_sport()
+        return super().post(*args, **kwargs)
 
 
 class GameRostersUpdateView(LoginRequiredMixin,
