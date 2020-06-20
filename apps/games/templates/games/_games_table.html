@@ -51,7 +51,7 @@
             {% dict_get authorizations 'can_user_update' as can_user_update %}
             {% dict_get authorizations 'can_user_update_game_rosters' as can_user_update_game_rosters %}
             <li>
-              <a href="{% url 'sports:games:scoresheet' slug=sport.slug game_pk=game.pk %}">
+              <a id="game-scoresheet-{{ game.pk }}" href="{% url 'sports:games:scoresheet' slug=sport.slug game_pk=game.pk %}">
                 {% if game.is_in_progress %}
                   <i class="fa fa-circle fa-close-red animated flash infinite slower"></i>&nbsp;View Live
                 {# The scoresheet view will prevent premature initialization, we always show Start to users #}

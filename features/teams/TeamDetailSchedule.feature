@@ -50,6 +50,7 @@ Feature: Team schedule
     And I should see "10/23/2017 07:00 PM EDT"
     And I should see "10/23/2017 09:00 PM EDT"
     And I should not see "Aviator Gulls"
+    And I should see "Start"
 
   Scenario: View current season, not team manager
     Given The following game objects exist
@@ -62,6 +63,7 @@ Feature: Team schedule
     Then "create-game-btn" should not exist on the page
     And "create-game-btn-empty-state" should not exist on the page
     And "i.fa.fa-pencil" should not exist on the page
+    And I should see "View"
 
   Scenario: View current season
     Given I am on the "teams:schedule" page with kwargs "team_pk=1"
@@ -114,3 +116,12 @@ Feature: Team schedule
     Given I am on the "teams:seasons:schedule" page with kwargs "team_pk=1, season_pk=3"
     And I press "tab-item-schedule"
     Then I should be on the "teams:seasons:schedule" page with kwargs "team_pk=1, season_pk=3"
+
+  Scenario: Navigate to game scoresheet page
+    Given The following game objects exist
+      | id | home_team             | away_team        | type   | point_value | location | start               | end                 | timezone   | season |
+      | 1  | Green Machine IceCats | Long Island Edge | league | 2           | Iceland  | 10/23/2017 07:00 PM | 10/23/2017 09:00 PM | US/Eastern | 1      |
+    And I am on the "teams:schedule" page with kwargs "team_pk=1"
+    When I press "actions-dropdown-1"
+    And I press "game-scoresheet-1"
+    Then I should be on the "sports:games:scoresheet" page with kwargs "slug=ice-hockey, game_pk=1"
