@@ -179,3 +179,13 @@ class HockeyGameUpdateForm(DisableFormFieldsMixin, AbstractGameCreateUpdateForm)
         help_texts = {
             'timezone': None
         }
+
+
+class AbstractGameScoresheetForm(forms.ModelForm):
+    class Meta:
+        fields = ('status',)
+
+
+class HockeyGameScoresheetForm(AbstractGameScoresheetForm):
+    class Meta(AbstractGameScoresheetForm.Meta):
+        model = HockeyGame

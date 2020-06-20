@@ -95,7 +95,7 @@ class HockeyGameCreateViewTests(BaseTestCase):
         self.assertLoginRequired(self.format_url(team_pk=1))
 
     def test_not_team_manager(self):
-        team = TeamFactory(division=self.mm_aa)
+        team = TeamFactory(id=5, division=self.mm_aa)
         email = 'user2@ayrabo.com'
         self._create_user(
             self.ice_hockey,
@@ -145,10 +145,10 @@ class HockeyGameCreateViewTests(BaseTestCase):
     def test_get_sport_not_configured(self):
         baseball = SportFactory(name='Baseball')
         email = 'user2@ayrabo.com'
-        team = TeamFactory(id=5, name='New York Yankees', division__league__sport=baseball)
+        team = TeamFactory(id=6, name='New York Yankees', division__league__sport=baseball)
         self._create_user(baseball, team, [SportRegistration.MANAGER], user={'email': email, 'password': self.password})
         self.login(email=email, password=self.password)
-        response = self.client.get(self.format_url(team_pk=5))
+        response = self.client.get(self.format_url(team_pk=6))
         self.assertTemplateUsed(response, 'misconfigurations/base.html')
 
     # POST
@@ -274,9 +274,9 @@ class HockeyGameUpdateViewTests(BaseTestCase):
         self.ice_hockey = SportFactory(name='Ice Hockey')
         self.liahl = LeagueFactory(name='Long Island Amateur Hockey League', sport=self.ice_hockey)
         self.mm_aa = DivisionFactory(name='Midget Minor AA', league=self.liahl)
-        self.t1 = TeamFactory(id=1, name='Green Machine IceCats', division=self.mm_aa)
-        self.t2 = TeamFactory(id=2, division=self.mm_aa)
-        self.t3 = TeamFactory(id=3, division=self.mm_aa)
+        self.t1 = TeamFactory(id=7, name='Green Machine IceCats', division=self.mm_aa)
+        self.t2 = TeamFactory(id=8, division=self.mm_aa)
+        self.t3 = TeamFactory(id=9, division=self.mm_aa)
 
         self.game_type = GenericChoiceFactory(short_value='exhibition', long_value='Exhibition',
                                               type=GenericChoice.GAME_TYPE, content_object=self.ice_hockey)
@@ -355,7 +355,7 @@ class HockeyGameUpdateViewTests(BaseTestCase):
         """
         It's pretty hard to test this separately for the model and form class.
         """
-        team = TeamFactory()
+        team = TeamFactory(id=10)
         SportRegistrationFactory(user=self.user, sport=team.division.league.sport, role=SportRegistration.MANAGER)
         ManagerFactory(user=self.user, team=team)
         self.login(email=self.email, password=self.password)
@@ -474,6 +474,98 @@ class HockeyGameUpdateViewTests(BaseTestCase):
         self.assertEqual(self.game.away_players.count(), 0)
 
 
+class HockeyGameScoresheetViewTests(BaseTestCase):
+    url = 'sports:games:scoresheet'
+
+    def setUp(self):
+        self.email = 'user@ayrabo.com'
+        self.password = 'myweakpassword'
+
+        self.ice_hockey = SportFactory(name='Ice Hockey')
+        self.liahl = LeagueFactory(name='Long Island Amateur Hockey League', sport=self.ice_hockey)
+        self.mm_aa = DivisionFactory(name='Midget Minor AA', league=self.liahl)
+        self.t1 = TeamFactory(id=11, name='Green Machine IceCats', division=self.mm_aa)
+        self.t2 = TeamFactory(id=12, name='Aviator Gulls', division=self.mm_aa)
+
+        self.game_type = GenericChoiceFactory(
+            short_value='exhibition',
+            long_value='Exhibition',
+            type=GenericChoice.GAME_TYPE,
+            content_object=self.ice_hockey
+        )
+        self.point_value = GenericChoiceFactory(
+            short_value='2',
+            long_value='2',
+            type=GenericChoice.GAME_POINT_VALUE,
+            content_object=self.ice_hockey
+        )
+
+        timezone = 'US/Eastern'
+        us_eastern = pytz.timezone(timezone)
+
+        self.user = UserFactory(email=self.email, password=self.password, userprofile__timezone=timezone)
+
+        self.season_start = datetime.date(month=12, day=27, year=2017)
+        self.season = SeasonFactory(league=self.liahl, start_date=self.season_start)
+
+        self.start = datetime.datetime(month=12, day=27, year=2017, hour=19, minute=0)
+        self.end = self.start + datetime.timedelta(hours=3)
+        location = LocationFactory()
+        self.game = HockeyGameFactory(
+            id=1,
+            home_team=self.t1,
+            team=self.t1,
+            away_team=self.t2,
+            type=self.game_type,
+            point_value=self.point_value,
+            location=location,
+            start=us_eastern.localize(self.start),
+            end=us_eastern.localize(self.end),
+            timezone=timezone,
+            season=self.season,
+            status=HockeyGame.SCHEDULED
+        )
+        self.formatted_url = self.format_url(slug=self.ice_hockey.slug, game_pk=1)
+        self.login(user=self.user)
+
+    def test_login_required(self):
+        self.client.logout()
+        self.assertLoginRequired(self.formatted_url)
+
+    def test_get_sport(self):
+        response = self.client.get(self.formatted_url)
+        self.assert_200(response)
+
+        response = self.client.get(self.format_url(slug='baseball', game_pk=1))
+        self.assert_404(response)
+
+    def test_get_success_url(self):
+        response = self.client.post(self.formatted_url, data={'status': 'scheduled'})
+
+        expected = reverse('sports:games:scoresheet', kwargs={'slug': self.ice_hockey.slug, 'game_pk': self.game.pk})
+        self.assertRedirects(response, expected)
+
+    def test_get_object(self):
+        # Sport misconfigured
+        SportFactory(name='soccer')
+        self.assertSportNotConfigured(self.format_url(slug='soccer', game_pk=1))
+
+        # Game DNE
+        response = self.client.get(self.format_url(slug=self.ice_hockey.slug, game_pk=2222))
+        self.assert_404(response)
+
+        # Game exists
+        response = self.client.get(self.formatted_url)
+        self.assert_200(response)
+        self.assertEqual(response.context['game'], self.game)
+
+    def test_get(self):
+        pass
+
+    def test_post(self):
+        pass
+
+
 class GameRostersUpdateViewTests(BaseTestCase):
     url = 'sports:games:rosters:update'
 
@@ -484,8 +576,8 @@ class GameRostersUpdateViewTests(BaseTestCase):
         self.ice_hockey = SportFactory(name='Ice Hockey')
         self.liahl = LeagueFactory(name='Long Island Amateur Hockey League', sport=self.ice_hockey)
         self.mm_aa = DivisionFactory(name='Midget Minor AA', league=self.liahl)
-        self.t1 = TeamFactory(id=1, name='Green Machine IceCats', division=self.mm_aa)
-        self.t2 = TeamFactory(id=2, name='Aviator Gulls', division=self.mm_aa)
+        self.t1 = TeamFactory(id=13, name='Green Machine IceCats', division=self.mm_aa)
+        self.t2 = TeamFactory(id=14, name='Aviator Gulls', division=self.mm_aa)
 
         self.game_type = GenericChoiceFactory(short_value='exhibition', long_value='Exhibition',
                                               type=GenericChoice.GAME_TYPE, content_object=self.ice_hockey)

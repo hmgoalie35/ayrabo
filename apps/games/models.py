@@ -19,11 +19,13 @@ class AbstractGame(TimestampedModel):
     POSTPONED = 'postponed'
     CANCELLED = 'cancelled'
     COMPLETED = 'completed'
+    IN_PROGRESS = 'in_progress'
     GAME_STATUSES = (
         (SCHEDULED, 'Scheduled'),
         (POSTPONED, 'Postponed'),
         (CANCELLED, 'Cancelled'),
         (COMPLETED, 'Completed'),
+        (IN_PROGRESS, 'In Progress'),
     )
 
     GRACE_PERIOD = datetime.timedelta(hours=24)
@@ -64,8 +66,20 @@ class AbstractGame(TimestampedModel):
     def end_formatted(self):
         return self.datetime_formatted(self.end)
 
+    @property
+    def is_in_progress(self):
+        return self.status == self.IN_PROGRESS
+
+    @property
+    def is_scheduled(self):
+        return self.status == self.SCHEDULED
+
     def can_update(self):
         return self.status not in [self.COMPLETED] and timezone_util.now() <= self.end + self.GRACE_PERIOD
+
+    def can_initialize(self):
+        # When the start date passes the second part of the clause will always be true, hence why we also check status
+        return self.status in [self.SCHEDULED] and timezone_util.now() >= self.start - self.GRACE_PERIOD
 
     def init_periods(self, duration):
         """
