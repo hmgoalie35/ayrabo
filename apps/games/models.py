@@ -79,6 +79,7 @@ class AbstractGame(TimestampedModel):
 
     def can_initialize(self):
         # When the start date passes the second part of the clause will always be true, hence why we also check status
+        # TODO Can probably update this to start - grace period <= timezone.now() <= start
         return self.status in [self.SCHEDULED] and timezone_util.now() >= self.start - self.GRACE_PERIOD
 
     def init_periods(self, duration):
