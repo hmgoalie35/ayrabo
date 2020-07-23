@@ -41,7 +41,7 @@
     "font-awesome": "4.7.0",
     "glob": "7.1.6",
     "jquery": "2.2.4",
-    "lodash": "4.17.15",
+    "lodash": "4.17.19",
     "merge": "1.2.1",
     "mini-css-extract-plugin": "0.9.0",
     "moment": "2.26.0",

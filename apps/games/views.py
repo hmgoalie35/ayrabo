@@ -196,10 +196,11 @@ class GameScoresheetView(LoginRequiredMixin, HandleSportNotConfiguredMixin, gene
         model_cls = get_game_model_cls(self.sport)
         return get_object_or_404(
             model_cls.objects.select_related(
-                'home_team',
-                'home_team__division',
-                'away_team',
-                'away_team__division',
+                'home_team__division__league',
+                'away_team__division__league',
+                'type',
+                'location',
+                'season',
             ),
             pk=self.kwargs.get(self.pk_url_kwarg, None)
         )

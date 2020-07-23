@@ -1,0 +1,14 @@
+<div class="text-center">
+  <h3>{{ header_txt }}</h3>
+  <div>
+    {% include 'includes/team_logo.html' with team=team %}
+    {{ team.name }} - {{ team.division.name }}
+  </div>
+  <div class="mt5">
+    {# Teams can be from different leagues #}
+    {% with league=team.division.league %}
+      {% include 'includes/league_logo.html' with league=league %}
+      {{ league.name }}
+    {% endwith %}
+  </div>
+</div>
