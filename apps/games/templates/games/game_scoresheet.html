@@ -1,14 +1,27 @@
 {% extends 'site_base.html' %}
 
-{% block title %}Game #{{ game.pk }} {{ game.home_team.name }} vs. {{ game.away_team.name }}{% endblock %}
+{% block title %}{{ game.home_team.name }} vs. {{ game.away_team.name }} - {{ game.start_formatted }}{% endblock %}
 
 {% block content %}
-  <div class="container">
+  <div class="container-fluid">
 
     <div class="row">
-      <div class="col-md-12">
-        <h3 class="text-center">{{ game }}</h3>
-        <h4 class="text-center">{{ game.start|timeuntil }} until game start</h4>
+      <div class="col-md-push-4 col-md-4">
+        <div class="text-center mt20">
+          <div><h4>{{ game.start_formatted }}</h4></div>
+          {% with location=game.location %}
+            <div><h4>at <a href="{% url 'locations:detail' slug=location.slug %}">{{ location.name }}</a></h4></div>
+          {% endwith %}
+          <div><strong>Type:</strong> {{ game.type.long_value }}</div>
+          <div><strong>Status:</strong> {{ game.get_status_display }}</div>
+          <div><strong>Season:</strong> {{ game.season|cut:" Season" }}</div>
+        </div>
+      </div>
+      <div class="col-md-pull-4 col-md-4">
+        {% include 'games/_game_scoresheet_team_section.html' with team=game.home_team header_txt='Home Team' %}
+      </div>
+      <div class="col-md-4">
+        {% include 'games/_game_scoresheet_team_section.html' with team=game.away_team header_txt='Away Team' %}
       </div>
     </div>
 
