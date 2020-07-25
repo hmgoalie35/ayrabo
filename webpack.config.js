@@ -111,7 +111,9 @@ module.exports = function (env, argv) {
           use: [
             {
               loader: 'expose-loader',
-              options: 'ClipboardJS'
+              options: {
+                exposes: 'ClipboardJS'
+              }
             }
           ]
         },
@@ -120,11 +122,9 @@ module.exports = function (env, argv) {
           use: [
             {
               loader: 'expose-loader',
-              options: 'jQuery'
-            },
-            {
-              loader: 'expose-loader',
-              options: '$'
+              options: {
+                exposes: ['jQuery', '$']
+              }
             }
           ]
         }
