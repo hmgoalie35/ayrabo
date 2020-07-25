@@ -25,5 +25,23 @@
       </div>
     </div>
 
+    <div class="row">
+      <hr>
+    </div>
+
+    {% if can_user_take_score %}
+      <div class="row">TODO</div>
+    {% else %}
+      <div class="row">
+        <div class="text-center">
+          <h2>{{ game.get_status_display }}</h2>
+          {% if game.is_scheduled %}
+            <h3>Countdown to Game Start</h3>
+            <h4>{{ game.start|timeuntil }}</h4>
+          {% endif %}
+        </div>
+      </div>
+    {% endif %}
+
   </div>
 {% endblock %}

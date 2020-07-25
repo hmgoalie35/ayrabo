@@ -183,6 +183,10 @@ class GameScoresheetView(LoginRequiredMixin, HandleSportNotConfiguredMixin, gene
     context_object_name = 'game'
     pk_url_kwarg = 'game_pk'
 
+    def setup(self, *args, **kwargs):
+        super().setup(*args, **kwargs)
+        self.game_authorizer = GameAuthorizer(user=self.request.user)
+
     def _get_sport(self):
         if hasattr(self, 'sport'):
             return self.sport
@@ -207,6 +211,13 @@ class GameScoresheetView(LoginRequiredMixin, HandleSportNotConfiguredMixin, gene
 
     def get_form_class(self):
         return get_game_scoresheet_form_cls(self.sport)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.update({
+            'can_user_take_score': self.game_authorizer.can_user_take_score(),
+        })
+        return context
 
     def get(self, *args, **kwargs):
         self._get_sport()

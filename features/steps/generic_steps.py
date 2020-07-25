@@ -249,8 +249,8 @@ def step_impl(context, start, end):
 
 @step('The page should contain "(?P<text>.*)"')
 def step_impl(context, text):
-    bodyText = find_element(context, 'body').text
-    context.test.assertIn(text, bodyText)
+    body_text = find_element(context, 'body').text
+    context.test.assertIn(text, body_text)
 
 
 @step('I should not see "(?P<text>.*)"')
