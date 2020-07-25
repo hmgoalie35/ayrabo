@@ -103,6 +103,15 @@ class GameAuthorizer(BaseAuthorizer):
             self.can_user_update_game_roster(team=away_team, sport=sport)
         )
 
+    def can_user_take_score(self):
+        # coach for either team
+        # org admin for either team
+        # manager for either team
+        # scorekeeper for sport
+        # Refs?
+        # TODO
+        return False
+
 
 class SeasonRosterAuthorizer(BaseAuthorizer):
     def can_user_create(self, team, *args, **kwargs):

@@ -39,3 +39,9 @@ Feature: Game scoresheet
     And I should see "Away Team"
     And I should see "Long Island Edge"
     And I should see "Long Island Amateur Hockey League"
+
+  Scenario: User can't take score, view game before started
+    Given I am on the "sports:games:scoresheet" page with kwargs "slug=ice-hockey, game_pk=1"
+    Then "Scheduled" should show up 2 times
+    And I should see "Countdown to Game Start"
+    And I should see "minutes"
