@@ -19,7 +19,8 @@ module.exports = {
       functions: 'only-multiline',
     }],
     'operator-linebreak': 'off',
-    'arrow-parens': ['error', 'as-needed', { 'requireForBlockBody': true }],
+    'arrow-parens': ['error', 'as-needed', { requireForBlockBody: true }],
+    'no-multiple-empty-lines': 'off',
     // React
     'react/jsx-wrap-multilines': 'off',
     'react/jsx-one-expression-per-line': 'off',
