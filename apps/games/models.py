@@ -74,6 +74,14 @@ class AbstractGame(TimestampedModel):
     def is_scheduled(self):
         return self.status == self.SCHEDULED
 
+    @property
+    def home_players(self):
+        raise NotImplementedError()
+
+    @property
+    def away_players(self):
+        raise NotImplementedError()
+
     def can_update(self):
         return self.status not in [self.COMPLETED] and timezone_util.now() <= self.end + self.GRACE_PERIOD
 
@@ -126,15 +134,45 @@ class AbstractGame(TimestampedModel):
 
 
 class HockeyGame(AbstractGame):
-    home_players = models.ManyToManyField('players.HockeyPlayer', verbose_name='Home Roster', related_name='home_games')
-    away_players = models.ManyToManyField('players.HockeyPlayer', verbose_name='Away Roster', related_name='away_games')
+    home_players_old = models.ManyToManyField(
+        'players.HockeyPlayer',
+        verbose_name='Home Roster',
+        related_name='home_games'
+    )
+    away_players_old = models.ManyToManyField(
+        'players.HockeyPlayer',
+        verbose_name='Away Roster',
+        related_name='away_games'
+    )
+
+    @property
+    def home_players(self):
+        return
+
+    @property
+    def away_players(self):
+        return
 
 
 class BaseballGame(AbstractGame):
-    home_players = models.ManyToManyField('players.BaseballPlayer', verbose_name='Home Roster',
-                                          related_name='home_games')
-    away_players = models.ManyToManyField('players.BaseballPlayer', verbose_name='Away Roster',
-                                          related_name='away_games')
+    home_players_old = models.ManyToManyField(
+        'players.BaseballPlayer',
+        verbose_name='Home Roster',
+        related_name='home_games'
+    )
+    away_players_old = models.ManyToManyField(
+        'players.BaseballPlayer',
+        verbose_name='Away Roster',
+        related_name='away_games'
+    )
+
+    @property
+    def home_players(self):
+        return
+
+    @property
+    def away_players(self):
+        return
 
 
 class HockeyGoal(TimestampedModel):

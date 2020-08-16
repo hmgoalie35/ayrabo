@@ -38,11 +38,6 @@ class AbstractGameAdminForm(forms.ModelForm):
         self.fields['home_team'].queryset = teams
         self.fields['away_team'].queryset = teams
 
-        PlayerModel = self.fields['home_players'].queryset.model
-        players = PlayerModel.objects.active().select_related('user').filter(sport=sport)
-        self.fields['home_players'].queryset = players
-        self.fields['away_players'].queryset = players
-
         GenericChoiceModel = self.fields['type'].queryset.model
         choices = GenericChoiceModel.objects.get_choices(instance=sport)
         self.fields['type'].queryset = choices.filter(type=GenericChoice.GAME_TYPE)
@@ -59,7 +54,7 @@ class AbstractGameAdminForm(forms.ModelForm):
     away_team = TeamModelChoiceField(queryset=Team.objects.all())
 
     class Meta:
-        fields = COMMON_FIELDS + ['home_players', 'away_players']
+        fields = COMMON_FIELDS
 
 
 class HockeyGameAdminForm(AbstractGameAdminForm):
@@ -94,7 +89,6 @@ class HockeyAssistAdminForm(forms.ModelForm):
 class AbstractGameAdmin(admin.ModelAdmin):
     list_display = COMMON_GAME_FIELDS
     search_fields = ['home_team__name', 'away_team__name', 'type__long_value', 'location__name']
-    filter_horizontal = ['home_players', 'away_players']
 
 
 class HockeyGameAdminModelFormSet(BaseModelFormSet):
