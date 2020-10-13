@@ -16,7 +16,7 @@
     "@babel/preset-env": "7.11.5",
     "@babel/preset-react": "7.10.4",
     "animate.css": "3.7.2",
-    "autoprefixer": "10.0.1",
+    "autoprefixer": "9.8.6",
     "babel-loader": "8.1.0",
     "bootstrap": "3.4.1",
     "bootstrap-sass": "3.4.1",
