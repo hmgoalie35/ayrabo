@@ -52,6 +52,21 @@ class HockeyGameFactory(AbstractGameFactory):
                 self.away_players.add(player)
 
 
+class AbstractGamePlayerFactory(django.DjangoModelFactory):
+    team = SubFactory(TeamFactory)
+
+    class Meta:
+        abstract = True
+
+
+class HockeyGamePlayerFactory(AbstractGamePlayerFactory):
+    game = SubFactory(HockeyGameFactory)
+    player = SubFactory(HockeyPlayerFactory)
+
+    class Meta:
+        model = models.HockeyGamePlayer
+
+
 class HockeyGoalFactory(django.DjangoModelFactory):
     game = SubFactory(HockeyGameFactory)
     period = SubFactory('periods.tests.HockeyPeriodFactory')

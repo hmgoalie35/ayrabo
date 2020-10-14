@@ -8,7 +8,7 @@ from ayrabo.utils.testing import BaseTestCase
 from common.models import GenericChoice
 from common.tests import GenericChoiceFactory
 from games.models import AbstractGame, HockeyGoal
-from games.tests import HockeyGameFactory, HockeyGoalFactory
+from games.tests import HockeyGameFactory, HockeyGamePlayerFactory, HockeyGoalFactory
 from periods.models import HockeyPeriod
 from periods.tests import HockeyPeriodFactory
 from players.tests import HockeyPlayerFactory
@@ -131,6 +131,78 @@ class AbstractGameModelTests(BaseTestCase):
         self.game.end = self.game.start + datetime.timedelta(hours=2)
         self.game.save()
         self.assertFalse(self.game.can_initialize())
+
+
+class HockeyGameModelTests(BaseTestCase):
+    def setUp(self):
+        self.sport = SportFactory()
+        self.point_value = GenericChoiceFactory(content_object=self.sport,
+                                                short_value='1',
+                                                long_value='1',
+                                                type=GenericChoice.GAME_POINT_VALUE)
+        self.game_type = GenericChoiceFactory(content_object=self.sport,
+                                              short_value='exhibition',
+                                              long_value='Exhibition',
+                                              type=GenericChoice.GAME_TYPE)
+        self.tz_name = 'US/Eastern'
+        self.home_team = TeamFactory(name='New York Islanders')
+        self.away_team = TeamFactory(name='New York Rangers', division=self.home_team.division)
+        # 12/16/2017 @ 07:00PM
+        self.start = pytz.utc.localize(datetime.datetime(year=2017, month=12, day=16, hour=19))
+        self.game = HockeyGameFactory(type=self.game_type, point_value=self.point_value, start=self.start,
+                                      timezone=self.tz_name, home_team=self.home_team, away_team=self.away_team)
+        self.home_player1 = HockeyPlayerFactory(sport=self.sport, team=self.home_team)
+        self.home_player2 = HockeyPlayerFactory(sport=self.sport, team=self.home_team)
+        self.away_player1 = HockeyPlayerFactory(sport=self.sport, team=self.away_team)
+        self.away_player2 = HockeyPlayerFactory(sport=self.sport, team=self.away_team)
+
+        # Use to make sure _get_roster filters by the current game
+        HockeyGamePlayerFactory(game__type=self.game_type, game__point_value=self.point_value)
+
+        self.home_hockey_game_player1 = HockeyGamePlayerFactory(
+            team=self.home_team,
+            game=self.game,
+            player=self.home_player1
+        )
+        self.home_hockey_game_player2 = HockeyGamePlayerFactory(
+            team=self.home_team,
+            game=self.game,
+            player=self.home_player2
+        )
+        self.away_hockey_game_player1 = HockeyGamePlayerFactory(
+            team=self.away_team,
+            game=self.game,
+            player=self.away_player1
+        )
+        self.away_hockey_game_player2 = HockeyGamePlayerFactory(
+            team=self.away_team,
+            game=self.game,
+            player=self.away_player2
+        )
+
+    def test_get_roster(self):
+        self.assertEqual(
+            list(self.game._get_roster(self.home_team)),
+            [self.home_hockey_game_player1, self.home_hockey_game_player2]
+        )
+
+    def test_get_players(self):
+        self.assertEqual(
+            list(self.game._get_players(self.away_team)),
+            [self.away_player1, self.away_player2]
+        )
+
+    def test_home_players(self):
+        self.assertEqual(
+            list(self.game.home_players),
+            [self.home_player1, self.home_player2]
+        )
+
+    def test_away_players(self):
+        self.assertEqual(
+            list(self.game.away_players),
+            [self.away_player1, self.away_player2]
+        )
 
 
 class HockeyGoalModelTests(BaseTestCase):
