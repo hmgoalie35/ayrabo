@@ -8,7 +8,7 @@ from django.utils import timezone as timezone_util
 
 from common.models import TimestampedModel
 from periods.models import HockeyPeriod
-from players.models import HockeyPlayer
+from players.models import BaseballPlayer, HockeyPlayer
 from userprofiles.models import UserProfile
 
 
@@ -173,13 +173,13 @@ class BaseballGame(AbstractGame):
         related_name='away_games'
     )
 
-    @property
-    def home_players(self):
-        return
+    def _get_roster(self, team):
+        return BaseballGamePlayer.objects.filter(game=self, team=team)
 
-    @property
-    def away_players(self):
-        return
+    def _get_players(self, team):
+        roster = self._get_roster(team)
+        player_ids = roster.values_list('player', flat=True)
+        return BaseballPlayer.objects.filter(id__in=player_ids)
 
 
 class AbstractGamePlayer(TimestampedModel):
@@ -199,6 +199,16 @@ class HockeyGamePlayer(AbstractGamePlayer):
 
     class Meta(AbstractGamePlayer.Meta):
         # team isn't necessary because a player is already unique together w/ a team
+        unique_together = (
+            ('game', 'player'),
+        )
+
+
+class BaseballGamePlayer(AbstractGamePlayer):
+    game = models.ForeignKey(BaseballGame, on_delete=models.PROTECT)
+    player = models.ForeignKey('players.BaseballPlayer', on_delete=models.PROTECT)
+
+    class Meta(AbstractGamePlayer.Meta):
         unique_together = (
             ('game', 'player'),
         )
