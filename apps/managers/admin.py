@@ -1,12 +1,31 @@
 from django.contrib import admin
+from django import forms
 
-from .models import Manager
+from ayrabo.utils.admin.mixins import AdminBulkUploadMixin
+from sports.models import SportRegistration
+from . import models
 
 
-@admin.register(Manager)
-class ManagerAdmin(admin.ModelAdmin):
+class ManagerAdminModelFormSet(forms.BaseModelFormSet):
+    def save(self, commit=True):
+        instances = super().save(commit=commit)
+        for instance in instances:
+            SportRegistration.objects.get_or_create(
+                user=instance.user,
+                sport=instance.team.division.league.sport,
+                role=SportRegistration.MANAGER,
+                defaults={'is_complete': True},
+            )
+        return instances
+
+
+@admin.register(models.Manager)
+class ManagerAdmin(AdminBulkUploadMixin, admin.ModelAdmin):
     list_display = ['id', 'name', 'user', 'team', 'division', 'league', 'sport', 'is_active']
     search_fields = ['user__email', 'team__name']
+    bulk_upload_sample_csv = 'bulk_upload_managers_example.csv'
+    bulk_upload_form_fields = ('user', 'team', 'is_active')
+    bulk_upload_model_formset_class = ManagerAdminModelFormSet
 
     def name(self, obj):
         return str(obj)

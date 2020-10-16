@@ -8,7 +8,7 @@ class AdminBulkUploadForm(forms.Form):
     file = forms.FileField(label='CSV File', validators=[FileExtensionValidator(allowed_extensions=['csv'])])
 
     def is_valid_mime_type(self, mime_type):
-        return mime_type in ['text/csv', 'text/plain']
+        return mime_type in ['application/csv', 'text/csv', 'text/plain']
 
     def clean_file(self):
         f = self.cleaned_data['file']
