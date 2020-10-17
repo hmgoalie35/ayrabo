@@ -1,4 +1,8 @@
+import os
+
 from django.urls import reverse
+from django.core.files.uploadedfile import SimpleUploadedFile
+from django.conf import settings
 
 from ayrabo.utils.testing import BaseTestCase
 from ayrabo.utils.urls import url_with_query_string
@@ -11,6 +15,66 @@ from sports.models import SportRegistration
 from sports.tests import SportFactory, SportRegistrationFactory
 from teams.tests import TeamFactory
 from users.tests import UserFactory
+
+
+class CoachAdminBulkUploadViewTests(BaseTestCase):
+    url = 'admin:coaches_coach_bulk_upload'
+
+    def setUp(self):
+        self.url = self.format_url()
+        self.email = 'user@ayrabo.com'
+        self.password = 'myweakpassword'
+        self.user = UserFactory(id=5000, email=self.email, password=self.password, is_staff=True, is_superuser=True)
+        self.position = 'head_coach'
+        self.sport = SportFactory(name='Ice Hockey')
+        self.league = LeagueFactory(sport=self.sport)
+        self.division = DivisionFactory(league=self.league)
+        self.team = TeamFactory(id=3, division=self.division)
+
+    def test_post_valid_csv(self):
+        self.login(user=self.user)
+        with open(os.path.join(settings.STATIC_DIR, 'csv_examples', 'bulk_upload_coaches_example.csv')) as f:
+            response = self.client.post(self.url, {'file': f}, follow=True)
+
+            coach = Coach.objects.first()
+            sport_registrations = SportRegistration.objects.filter(user=self.user)
+
+            self.assertHasMessage(response, 'Successfully created 1 Coach')
+            self.assertEqual(coach.user, self.user)
+            self.assertEqual(coach.team, self.team)
+            self.assertEqual(coach.position, self.position)
+            self.assertEqual(coach.is_active, False)
+            self.assertEqual(sport_registrations.count(), 1)
+
+    def test_post_invalid_csv(self):
+        self.login(user=self.user)
+        header = ['user', 'position', 'team', 'is_active']
+        row = ['', 'INVALID', 'INVALID', '']
+        content = f'{",".join(header)}\n{",".join(row)}'.encode()
+        f = SimpleUploadedFile('test.csv', content)
+        response = self.client.post(self.url, {'file': f}, follow=True)
+
+        self.assertFormsetError(
+            response,
+            'formset',
+            0,
+            'user',
+            ['This field is required.']
+        )
+        self.assertFormsetError(
+            response,
+            'formset',
+            0,
+            'position',
+            ['Select a valid choice. INVALID is not one of the available choices.']
+        )
+        self.assertFormsetError(
+            response,
+            'formset',
+            0,
+            'team',
+            ['Select a valid choice. That choice is not one of the available choices.']
+        )
 
 
 class CoachesUpdateViewTests(BaseTestCase):
