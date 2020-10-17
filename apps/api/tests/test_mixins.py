@@ -244,7 +244,7 @@ class BulkUpdateMixinTests(BaseAPITestCase):
         # Request data missing required fields
         request = self.factory.post(
             'testing',
-            data=[{'id': self.instance1.id, 'name': ''}, {'id': self.instance2.id, 'count': None}]
+            data=[{'id': self.instance1.id, 'name': ''}, {'id': self.instance2.id, 'count': None}, {}]
         )
         response = self.view(request)
         response.render()
@@ -253,9 +253,11 @@ class BulkUpdateMixinTests(BaseAPITestCase):
 
         err1 = response.data[0]
         err2 = response.data[1]
+        err3 = response.data[2]
 
         self.assertEqual(str(err1.get('name')[0]), 'This field may not be blank.')
         self.assertEqual(str(err2.get('count')[0]), 'This field may not be null.')
+        self.assertEqual(str(err3.get('id')[0]), 'This field is required.')
 
     def test_valid_post(self):
         request = self.factory.post(
