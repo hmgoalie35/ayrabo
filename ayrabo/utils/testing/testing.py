@@ -10,14 +10,13 @@ from rest_framework import status
 from rest_framework.reverse import reverse as drf_reverse
 from rest_framework.test import APITestCase
 
-from seasons.tests import SeasonFactory
-from users.models import User
-
 
 def get_user(username_or_email):
     """
     This function is used in *_step.py files, so can't move it to the BaseTestCase class
     """
+    from users.models import User
+
     return User.objects.get(Q(email=username_or_email) | Q(username=username_or_email))
 
 
@@ -131,6 +130,8 @@ class BaseTestCase(TestCase):
         return _login(self.client, user, email, password)
 
     def create_past_current_future_seasons(self, league, teams=None):
+        from seasons.tests import SeasonFactory
+
         start_date = timezone.now().date()
         kwargs = {
             'league': league

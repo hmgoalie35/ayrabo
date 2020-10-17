@@ -434,6 +434,7 @@ try:
         PASSWORD_HASHERS = [
             'django.contrib.auth.hashers.MD5PasswordHasher',
         ]
+        INSTALLED_APPS.append('ayrabo.utils.testing')
         RUNNING_AUTOMATED_TESTS = True
         logging.disable(logging.CRITICAL)
 except ImportError:
