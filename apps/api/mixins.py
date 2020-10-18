@@ -55,11 +55,11 @@ class BulkViewActionMixin(DynamicSerializerMixin):
 
 
 class BulkCreateMixin:
-    """Bulk create model instances in an atomic transaction."""
+    """Bulk create model instances in an atomic transaction. Make sure you include `CreateModelMixin` in the viewset."""
 
     @transaction.atomic()
     @action(detail=False, methods=['post'], url_path='bulk/create')
-    def bulk_create(self, request):
+    def bulk_create(self, request, *args, **kwargs):
         self.validate_bulk_action_data(data=request.data)
         # Bulk create is already supported by DRF
         return self.create(request)
@@ -70,13 +70,15 @@ class BulkUpdateMixin:
 
     @transaction.atomic()
     @action(detail=False, methods=['post'], url_path='bulk/update')
-    def bulk_update(self, request):
+    def bulk_update(self, request, *args, **kwargs):
         self.validate_bulk_action_data(data=request.data)
-        # TODO Permissions, can even update the objs?
         serializer = self.get_serializer(data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
-        serializer.bulk_update()
+        self.perform_bulk_update(serializer)
         return Response(serializer.data)
+
+    def perform_bulk_update(self, serializer):
+        serializer.bulk_update()
 
 
 class BulkDeleteMixin:
@@ -84,10 +86,12 @@ class BulkDeleteMixin:
 
     @transaction.atomic()
     @action(detail=False, methods=['post'], url_path='bulk/delete')
-    def bulk_delete(self, request):
+    def bulk_delete(self, request, *args, **kwargs):
         self.validate_bulk_action_data(data=request.data)
-        # TODO Permissions, can even delete the objs?
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        serializer.bulk_delete()
+        self.perform_bulk_delete(serializer)
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+    def perform_bulk_delete(self, serializer):
+        serializer.bulk_delete()
