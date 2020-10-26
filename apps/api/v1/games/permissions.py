@@ -1,11 +1,12 @@
 from rest_framework import permissions
 
 
-class GameRostersRetrieveUpdatePermission(permissions.BasePermission):
-
-    def has_object_permission(self, request, view, obj):
+class GamePlayerViewSetPermission(permissions.BasePermission):
+    def has_permission(self, request, view):
+        # The same permission check is used for the update game roster page, seems to fine to use the same check for the
+        # api
         return view.game_authorizer.can_user_update_game_rosters(
-            home_team=obj.home_team,
-            away_team=obj.away_team,
+            home_team=view.game.home_team,
+            away_team=view.game.away_team,
             sport=view.sport
         )
