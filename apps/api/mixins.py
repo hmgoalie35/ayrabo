@@ -55,14 +55,37 @@ class BulkViewActionMixin(DynamicSerializerMixin):
 
 
 class BulkCreateMixin:
-    """Bulk create model instances in an atomic transaction. Make sure you include `CreateModelMixin` in the viewset."""
+    """Bulk create model instances in an atomic transaction."""
 
     @transaction.atomic()
     @action(detail=False, methods=['post'], url_path='bulk/create')
     def bulk_create(self, request, *args, **kwargs):
+        """
+        Relying on the `CreateModelMixin` here (which provides bulk create functionality) means the developer has to
+        support both bulk create and single create functionality when they probably only care about bulk create. Use of
+        this mixin should result in solely bulk create functionality being included, nothing else. Bulk create and
+        single create need to be completely separate, opt-in mixins.
+        """
         self.validate_bulk_action_data(data=request.data)
-        # Bulk create is already supported by DRF
-        return self.create(request)
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_bulk_create(serializer)
+        headers = self.get_bulk_create_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
+    def perform_bulk_create(self, serializer):
+        # We'll still use the built in serializer bulk create functionality
+        serializer.save()
+
+    def get_bulk_create_success_headers(self, data):
+        """
+        Same thing `CreateModelMixin` provides, however we don't want the function names clashing. A view or viewset
+        might include both `CreateModelMixin` and `BulkCreateMixin`.
+        """
+        try:
+            return {'Location': str(data[api_settings.URL_FIELD_NAME])}
+        except (TypeError, KeyError):
+            return {}
 
 
 class BulkUpdateMixin:

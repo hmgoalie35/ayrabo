@@ -15,7 +15,6 @@ class GamePlayerViewSet(BulkViewActionMixin,
                         BulkUpdateMixin,
                         BulkDeleteMixin,
                         mixins.ListModelMixin,
-                        mixins.CreateModelMixin,
                         viewsets.GenericViewSet):
     """
     API for game players (aka game rosters)

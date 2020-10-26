@@ -52,7 +52,11 @@ class BulkViewActionMixinViewSet(BulkViewActionMixin, viewsets.GenericViewSet):
     serializer_class_mappings = {'bulk_create': BulkCreateDummyModelSerializer}
 
 
-class DummyModelViewSet(BulkViewActionMixin, BulkCreateMixin, BulkUpdateMixin, BulkDeleteMixin, viewsets.ModelViewSet):
+class DummyModelViewSet(BulkViewActionMixin,
+                        BulkCreateMixin,
+                        BulkUpdateMixin,
+                        BulkDeleteMixin,
+                        viewsets.GenericViewSet):
     queryset = DummyModel.objects.all()
     serializer_class = DummyModelSerializer
     serializer_class_mappings = {
