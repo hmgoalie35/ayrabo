@@ -60,12 +60,10 @@ class BulkCreateMixin:
     @transaction.atomic()
     @action(detail=False, methods=['post'], url_path='bulk/create')
     def bulk_create(self, request, *args, **kwargs):
-        """
-        Relying on the `CreateModelMixin` here (which provides bulk create functionality) means the developer has to
-        support both bulk create and single create functionality when they probably only care about bulk create. Use of
-        this mixin should result in solely bulk create functionality being included, nothing else. Bulk create and
-        single create need to be completely separate, opt-in mixins.
-        """
+        # Relying on the `CreateModelMixin` here (which provides bulk create functionality) means the developer has to
+        # support both bulk create and single create functionality when they probably only care about bulk create. Use
+        # of this mixin should result in solely bulk create functionality being included, nothing else. Bulk create and
+        # single create need to be completely separate, opt-in mixins.
         self.validate_bulk_action_data(data=request.data)
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
