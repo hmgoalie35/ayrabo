@@ -47,8 +47,10 @@ class AbstractBulkCreateModelSerializer(serializers.ModelSerializer):
 
 class AbstractBulkUpdateModelSerializer(serializers.ModelSerializer):
     def __init__(self, *args, **kwargs):
-        self.fields['id'] = serializers.PrimaryKeyRelatedField(queryset=self.Meta.model.objects.all())
         super().__init__(*args, **kwargs)
+        view = self.context.get('view')
+        # Can use `self.Meta.model.objects.all()` or something similar
+        self.fields['id'] = serializers.PrimaryKeyRelatedField(queryset=view.get_queryset())
 
     def validate(self, data):
         # There's some weirdness with partial=True that doesn't actually validate a payload like [{}] includes id
@@ -64,8 +66,10 @@ class AbstractBulkUpdateModelSerializer(serializers.ModelSerializer):
 
 class AbstractBulkDeleteModelSerializer(serializers.ModelSerializer):
     def __init__(self, *args, **kwargs):
-        self.fields['id'] = serializers.PrimaryKeyRelatedField(queryset=self.Meta.model.objects.all())
         super().__init__(*args, **kwargs)
+        view = self.context.get('view')
+        # Can use `self.Meta.model.objects.all()` or something similar
+        self.fields['id'] = serializers.PrimaryKeyRelatedField(queryset=view.get_queryset())
 
     class Meta:
         model = None  # Remember to update me

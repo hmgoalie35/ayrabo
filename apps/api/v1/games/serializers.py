@@ -1,59 +1,96 @@
-from django.core import exceptions
+from django.db.models import Q
 from rest_framework import serializers
 
-from games.models import HockeyGame
-from players.models import HockeyPlayer
+from api.exceptions import SportNotConfiguredAPIException
+from api.serializers import (
+    AbstractBulkCreateModelSerializer,
+    AbstractBulkDeleteModelSerializer,
+    AbstractBulkUpdateModelSerializer,
+)
+from games.models import HockeyGamePlayer
+from teams.models import Team
 
 
-class AbstractGameRosterSerializer(serializers.ModelSerializer):
-    player_model_cls = None
-    not_permitted_msg = 'You do not have permission to perform this action.'
+class AbstractGamePlayerCreateSerializer(serializers.ModelSerializer):
 
-    def __init__(self, instance=None, *args, **kwargs):
-        super().__init__(instance, *args, **kwargs)
-        if self.player_model_cls is None:  # pragma: no cover
-            raise exceptions.ImproperlyConfigured('You need to specify player_model_cls.')
+    def __init__(self, *args, **kwargs):
+        from games.mappings import get_game_model_cls
+        from players.mappings import get_player_model_cls
 
-        if instance:
-            # This prevents players from other teams, divisions, leagues from being added to the roster. If this
-            # serializer isn't used to add players, it is possible the player will be successfully added but the api
-            # endpoint won't include that player.
-            qs = self.player_model_cls.objects.active().select_related('user')
-            home_players = qs.filter(team=instance.home_team)
-            away_players = qs.filter(team=instance.away_team)
-        else:
-            empty_qs = self.player_model_cls.objects.none()
-            home_players = empty_qs
-            away_players = empty_qs
+        super().__init__(*args, **kwargs)
+        sport = self.context.get('sport')
+        game = self.context.get('game')
 
-        self.fields['home_players'] = serializers.PrimaryKeyRelatedField(
-            many=True,
-            queryset=home_players,
-            label='Home Roster'
-        )
-        self.fields['away_players'] = serializers.PrimaryKeyRelatedField(
-            many=True,
-            queryset=away_players,
-            label='Away Roster'
+        game_model_cls = get_game_model_cls(sport, exception_cls=SportNotConfiguredAPIException)
+        player_model_cls = get_player_model_cls(sport, exception_cls=SportNotConfiguredAPIException)
+        home_team = game.home_team
+        away_team = game.away_team
+
+        self.fields['team'].queryset = Team.objects.filter(Q(id=home_team.id) | Q(id=away_team.id))
+        # Making these fields dynamic requires digging deep into drf, not worth the effort
+        self.fields['game'].queryset = game_model_cls.objects.filter(id=game.id)
+        self.fields['player'].queryset = player_model_cls.objects.active().select_related('user').filter(
+            Q(team=home_team) | Q(team=away_team)
         )
 
-    def validate_home_players(self, value):
-        if not self.context.get('can_update_home_roster'):
-            raise serializers.ValidationError(self.not_permitted_msg)
-        return value
+    def validate(self, attrs):
+        err_msg = 'You do not have permission to manage game players for this team.'
 
-    def validate_away_players(self, value):
-        if not self.context.get('can_update_away_roster'):
-            raise serializers.ValidationError(self.not_permitted_msg)
-        return value
+        game = self.context.get('game')
+        team = attrs.get('team')
+        team_id = team.id
+        home_team_id = game.home_team_id
+        away_team_id = game.away_team_id
+        player = attrs.get('player')
+        can_update_home_roster = self.context.get('can_update_home_roster')
+        can_update_away_roster = self.context.get('can_update_away_roster')
+
+        # Make sure the user is authorized to update the game roster for the given team
+        # It doesn't make sense for both of these if clauses to execute but should be fine to keep it like this
+        if team_id == home_team_id and not can_update_home_roster:
+            raise serializers.ValidationError({'team': err_msg})
+        if team_id == away_team_id and not can_update_away_roster:
+            raise serializers.ValidationError({'team': err_msg})
+
+        # Make sure the player actually belongs to the given team
+        if player.team_id != team_id:
+            raise serializers.ValidationError({'player': 'Player does not belong to the specified team.'})
+
+        return attrs
 
     class Meta:
-        model = None
-        fields = ('home_players', 'away_players')
+        # Subclasses should include all fields referenced above in the `fields = (...)` variable
+        pass
 
 
-class HockeyGameRosterSerializer(AbstractGameRosterSerializer):
-    player_model_cls = HockeyPlayer
+class HockeyGamePlayerSerializer(serializers.ModelSerializer):
+    """
+    Basic serializer that should only be used for listing. To support single create, etc please look at the validation
+    logic the abstract game player bulk create serializer is doing.
+    """
 
-    class Meta(AbstractGameRosterSerializer.Meta):
-        model = HockeyGame
+    class Meta:
+        model = HockeyGamePlayer
+        fields = ('id', 'team', 'is_starting', 'game', 'player')
+
+
+class HockeyGamePlayerBulkCreateSerializer(AbstractGamePlayerCreateSerializer, AbstractBulkCreateModelSerializer):
+    class Meta(AbstractBulkCreateModelSerializer.Meta):
+        model = HockeyGamePlayer
+        # Game will likely be available to us (since it is present in the url) but omitting here means we don't get the
+        # validation for unique constraint (b/w game & player) violations. Might as well just include game here and have
+        # the client send it
+        fields = ('id', 'team', 'is_starting', 'game', 'player')
+
+
+# TODO check user authorized to update game player(s) for the provided team(s)
+class HockeyGamePlayerBulkUpdateSerializer(AbstractBulkUpdateModelSerializer):
+    class Meta(AbstractBulkUpdateModelSerializer.Meta):
+        model = HockeyGamePlayer
+        fields = ('id', 'is_starting')
+
+
+# TODO check user authorized to delete game player(s) for the provided team(s)
+class HockeyGamePlayerBulkDeleteSerializer(AbstractBulkDeleteModelSerializer):
+    class Meta(AbstractBulkDeleteModelSerializer.Meta):
+        model = HockeyGamePlayer
