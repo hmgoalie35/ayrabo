@@ -11,6 +11,24 @@ from games.models import HockeyGamePlayer
 from teams.models import Team
 
 
+def validate_user_authorized_to_manage_team(team, game, context):
+    """
+    Validate the user is authorized to manage game players for the specified team.
+    """
+    err_msg = 'You do not have permission to manage game players for this team.'
+
+    team_id = team.id
+    home_team_id = game.home_team_id
+    away_team_id = game.away_team_id
+    can_update_home_roster = context.get('can_update_home_roster')
+    can_update_away_roster = context.get('can_update_away_roster')
+    # Make sure the user is authorized to update the game roster for the given team
+    if team_id == home_team_id and not can_update_home_roster:
+        raise serializers.ValidationError({'team': err_msg})
+    if team_id == away_team_id and not can_update_away_roster:
+        raise serializers.ValidationError({'team': err_msg})
+
+
 class AbstractGamePlayerCreateSerializer(serializers.ModelSerializer):
 
     def __init__(self, *args, **kwargs):
@@ -34,23 +52,12 @@ class AbstractGamePlayerCreateSerializer(serializers.ModelSerializer):
         )
 
     def validate(self, attrs):
-        err_msg = 'You do not have permission to manage game players for this team.'
-
-        game = self.context.get('game')
         team = attrs.get('team')
+        game = self.context.get('game')
         team_id = team.id
-        home_team_id = game.home_team_id
-        away_team_id = game.away_team_id
         player = attrs.get('player')
-        can_update_home_roster = self.context.get('can_update_home_roster')
-        can_update_away_roster = self.context.get('can_update_away_roster')
 
-        # Make sure the user is authorized to update the game roster for the given team
-        # It doesn't make sense for both of these if clauses to execute but should be fine to keep it like this
-        if team_id == home_team_id and not can_update_home_roster:
-            raise serializers.ValidationError({'team': err_msg})
-        if team_id == away_team_id and not can_update_away_roster:
-            raise serializers.ValidationError({'team': err_msg})
+        validate_user_authorized_to_manage_team(team, game, self.context)
 
         # Make sure the player actually belongs to the given team
         if player.team_id != team_id:
@@ -83,14 +90,30 @@ class HockeyGamePlayerBulkCreateSerializer(AbstractGamePlayerCreateSerializer, A
         fields = ('id', 'team', 'is_starting', 'game', 'player')
 
 
-# TODO check user authorized to update game player(s) for the provided team(s)
 class HockeyGamePlayerBulkUpdateSerializer(AbstractBulkUpdateModelSerializer):
+    def validate(self, attrs):
+        instance = attrs.get('id')
+        team = instance.team
+        game = instance.game
+
+        validate_user_authorized_to_manage_team(team, game, self.context)
+
+        return attrs
+
     class Meta(AbstractBulkUpdateModelSerializer.Meta):
         model = HockeyGamePlayer
         fields = ('id', 'is_starting')
 
 
-# TODO check user authorized to delete game player(s) for the provided team(s)
 class HockeyGamePlayerBulkDeleteSerializer(AbstractBulkDeleteModelSerializer):
+    def validate(self, attrs):
+        instance = attrs.get('id')
+        team = instance.team
+        game = instance.game
+
+        validate_user_authorized_to_manage_team(team, game, self.context)
+
+        return attrs
+
     class Meta(AbstractBulkDeleteModelSerializer.Meta):
         model = HockeyGamePlayer
