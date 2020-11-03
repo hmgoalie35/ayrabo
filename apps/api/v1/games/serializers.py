@@ -22,11 +22,13 @@ def validate_user_authorized_to_manage_team(team, game, context):
     away_team_id = game.away_team_id
     can_update_home_roster = context.get('can_update_home_roster')
     can_update_away_roster = context.get('can_update_away_roster')
-    # Make sure the user is authorized to update the game roster for the given team
-    if team_id == home_team_id and not can_update_home_roster:
-        raise serializers.ValidationError({'team': err_msg})
-    if team_id == away_team_id and not can_update_away_roster:
-        raise serializers.ValidationError({'team': err_msg})
+    # Could just return one huge clause here bit I figured this is a little easier to reason about/unit test
+    if team_id == home_team_id and can_update_home_roster:
+        return True
+    if team_id == away_team_id and can_update_away_roster:
+        return True
+    # I think it's better design to default to raising an exception
+    raise serializers.ValidationError({'team': err_msg})
 
 
 class AbstractGamePlayerCreateSerializer(serializers.ModelSerializer):
