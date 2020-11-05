@@ -1,4 +1,5 @@
 import datetime
+from unittest import mock
 
 import pytz
 from rest_framework import serializers
@@ -7,19 +8,23 @@ from api.exceptions import SportNotConfiguredAPIException
 from api.v1.games.serializers import (
     AbstractGamePlayerCreateSerializer,
     HockeyGamePlayerBulkCreateSerializer,
+    HockeyGamePlayerBulkDeleteSerializer, HockeyGamePlayerBulkUpdateSerializer, HockeyGamePlayerSerializer,
     validate_user_authorized_to_manage_team,
 )
 from ayrabo.utils.testing import BaseAPITestCase
 from common.models import GenericChoice
 from common.tests import GenericChoiceFactory
 from divisions.tests import DivisionFactory
-from games.models import AbstractGame
-from games.tests import HockeyGameFactory
+from games.models import AbstractGame, HockeyGamePlayer
+from games.tests import HockeyGameFactory, HockeyGamePlayerFactory
 from leagues.tests import LeagueFactory
 from players.tests import HockeyPlayerFactory
 from seasons.tests import SeasonFactory
 from sports.tests import SportFactory
 from teams.tests import TeamFactory
+
+
+PERMISSION_DENIED_MSG = 'You do not have permission to manage game players for this team.'
 
 
 class FixtureDataMixin:
@@ -79,22 +84,21 @@ class FixtureDataMixin:
 
 class ValidationUtilsTests(FixtureDataMixin, BaseAPITestCase):
     def test_validate_user_authorized_to_manage_team(self):
-        err_msg = 'You do not have permission to manage game players for this team.'
-        with self.assertRaisesMessage(serializers.ValidationError, err_msg):
+        with self.assertRaisesMessage(serializers.ValidationError, PERMISSION_DENIED_MSG):
             validate_user_authorized_to_manage_team(
                 self.home_team,
                 self.game,
                 {'can_update_home_roster': False, 'can_update_away_roster': True}
             )
 
-        with self.assertRaisesMessage(serializers.ValidationError, err_msg):
+        with self.assertRaisesMessage(serializers.ValidationError, PERMISSION_DENIED_MSG):
             validate_user_authorized_to_manage_team(
                 self.away_team,
                 self.game,
                 {'can_update_home_roster': True, 'can_update_away_roster': False}
             )
 
-        with self.assertRaisesMessage(serializers.ValidationError, err_msg):
+        with self.assertRaisesMessage(serializers.ValidationError, PERMISSION_DENIED_MSG):
             validate_user_authorized_to_manage_team(
                 TeamFactory(id=222),
                 self.game,
@@ -163,20 +167,225 @@ class AbstractGamePlayerCreateSerializerTests(FixtureDataMixin, BaseAPITestCase)
         )
 
     def test_validate(self):
-        pass
+        player1 = self.home_players[0]
+        player2 = self.away_players[0]
+
+        with self.assertRaisesMessage(serializers.ValidationError, PERMISSION_DENIED_MSG):
+            s = HockeyGamePlayerBulkCreateSerializer(
+                data={'team': self.home_team.id, 'game': self.game.id, 'player': player1.id},
+                context={
+                    'sport': self.ice_hockey,
+                    'game': self.game,
+                    'can_update_home_roster': False,
+                    'can_update_away_roster': False
+                }
+            )
+            s.is_valid(raise_exception=True)
+
+        with self.assertRaisesMessage(serializers.ValidationError, 'Player does not belong to the specified team.'):
+            s = HockeyGamePlayerBulkCreateSerializer(
+                data={'team': self.home_team.id, 'game': self.game.id, 'player': player2.id},
+                context={
+                    'sport': self.ice_hockey,
+                    'game': self.game,
+                    'can_update_home_roster': True,
+                    'can_update_away_roster': False
+                }
+            )
+            s.is_valid(raise_exception=True)
 
 
-class HockeyGamePlayerSerializerTests(BaseAPITestCase):
-    pass
+class HockeyGamePlayerSerializerTests(FixtureDataMixin, BaseAPITestCase):
+    def test_serializer(self):
+        home_team_player = self.home_players[0]
+        away_team_player = self.away_players[0]
+        home_team_game_player = HockeyGamePlayerFactory(
+            id=1,
+            team=self.home_team,
+            is_starting=True,
+            game=self.game,
+            player=home_team_player
+        )
+        away_team_game_player = HockeyGamePlayerFactory(
+            id=2,
+            team=self.away_team,
+            is_starting=False,
+            game=self.game,
+            player=away_team_player
+        )
+        # Game players for both home and away teams
+        s = HockeyGamePlayerSerializer([home_team_game_player, away_team_game_player], many=True)
+
+        self.assertEqual(s.data, [
+            {
+                'id': 1,
+                'team': self.home_team.id,
+                'is_starting': True,
+                'game': self.game.id,
+                'player': home_team_player.id
+            },
+            {
+                'id': 2,
+                'team': self.away_team.id,
+                'is_starting': False,
+                'game': self.game.id,
+                'player': away_team_player.id
+            }
+        ])
 
 
-class HockeyGamePlayerBulkCreateSerializerTests(BaseAPITestCase):
-    pass
+class HockeyGamePlayerBulkCreateSerializerTests(FixtureDataMixin, BaseAPITestCase):
+    def test_bulk_create(self):
+        context = {
+            'sport': self.ice_hockey,
+            'game': self.game,
+            'can_update_home_roster': True,
+            'can_update_away_roster': True
+        }
+        player1 = self.home_players[0]
+        player2 = self.away_players[0]
+
+        s = HockeyGamePlayerBulkCreateSerializer(
+            data=[
+                {'team': self.home_team.id, 'is_starting': True, 'game': self.game.id, 'player': player2.id},
+                {'team': self.away_team.id, 'is_starting': False, 'game': self.game.id, 'player': player1.id},
+            ],
+            many=True,
+            context=context
+        )
+        self.assertFalse(s.is_valid())
+
+        s = HockeyGamePlayerBulkCreateSerializer(
+            data=[
+                {'team': self.home_team.id, 'is_starting': True, 'game': self.game.id, 'player': player1.id},
+                {'team': self.away_team.id, 'is_starting': False, 'game': self.game.id, 'player': player2.id},
+            ],
+            many=True,
+            context=context
+        )
+        s.is_valid(raise_exception=True)
+        s.save()
+        self.assertEqual(HockeyGamePlayer.objects.count(), 2)
 
 
-class HockeyGamePlayerBulkUpdateSerializerTests(BaseAPITestCase):
-    pass
+class HockeyGamePlayerBulkUpdateSerializerTests(FixtureDataMixin, BaseAPITestCase):
+    def setUp(self):
+        super().setUp()
+        self.home_team_player = self.home_players[0]
+        self.away_team_player = self.away_players[0]
+        self.home_team_game_player = HockeyGamePlayerFactory(
+            id=1,
+            team=self.home_team,
+            is_starting=True,
+            game=self.game,
+            player=self.home_team_player
+        )
+        self.away_team_game_player = HockeyGamePlayerFactory(
+            id=2,
+            team=self.away_team,
+            is_starting=True,
+            game=self.game,
+            player=self.away_team_player
+        )
+        mock_view = mock.Mock()
+        mock_view.get_queryset.return_value = HockeyGamePlayer.objects.filter(
+            id__in=[self.home_team_game_player.id, self.away_team_game_player.id]
+        )
+        self.context = {
+            'view': mock_view,
+            'sport': self.ice_hockey,
+            'game': self.game,
+            'can_update_home_roster': True,
+            'can_update_away_roster': True
+        }
+
+    def test_validate(self):
+        self.context.update({'can_update_home_roster': False, 'can_update_away_roster': False})
+        s = HockeyGamePlayerBulkUpdateSerializer(
+            data=[
+                {'id': self.home_team_game_player.id, 'is_starting': False},
+                {'id': self.away_team_game_player.id, 'is_starting': False},
+            ],
+            many=True,
+            context=self.context
+        )
+        self.assertFalse(s.is_valid())
+
+    def test_serializer(self):
+        s = HockeyGamePlayerBulkUpdateSerializer(
+            data=[
+                {'id': self.home_team_game_player.id, 'is_starting': False, 'team': self.away_team.id},
+                {'id': self.away_team_game_player.id, 'is_starting': False, 'team': self.home_team.id},
+            ],
+            many=True,
+            context=self.context
+        )
+        s.is_valid()
+        s.bulk_update()
+
+        self.home_team_game_player.refresh_from_db()
+        self.away_team_game_player.refresh_from_db()
+
+        # Make sure user can't change the teams
+        self.assertFalse(self.home_team_game_player.is_starting)
+        self.assertEqual(self.home_team_game_player.team_id, self.home_team.id)
+        self.assertFalse(self.away_team_game_player.is_starting)
+        self.assertEqual(self.away_team_game_player.team_id, self.away_team.id)
 
 
-class HockeyGamePlayerBulkDeleteSerializerTests(BaseAPITestCase):
-    pass
+class HockeyGamePlayerBulkDeleteSerializerTests(FixtureDataMixin, BaseAPITestCase):
+    def setUp(self):
+        super().setUp()
+        self.home_team_player = self.home_players[0]
+        self.away_team_player = self.away_players[0]
+        self.home_team_game_player = HockeyGamePlayerFactory(
+            id=1,
+            team=self.home_team,
+            is_starting=True,
+            game=self.game,
+            player=self.home_team_player
+        )
+        self.away_team_game_player = HockeyGamePlayerFactory(
+            id=2,
+            team=self.away_team,
+            is_starting=True,
+            game=self.game,
+            player=self.away_team_player
+        )
+        mock_view = mock.Mock()
+        mock_view.get_queryset.return_value = HockeyGamePlayer.objects.filter(
+            id__in=[self.home_team_game_player.id, self.away_team_game_player.id]
+        )
+        self.context = {
+            'view': mock_view,
+            'sport': self.ice_hockey,
+            'game': self.game,
+            'can_update_home_roster': True,
+            'can_update_away_roster': True
+        }
+
+    def test_validate(self):
+        self.context.update({'can_update_home_roster': False, 'can_update_away_roster': False})
+        s = HockeyGamePlayerBulkDeleteSerializer(
+            data=[
+                {'id': self.home_team_game_player.id},
+                {'id': self.away_team_game_player.id},
+            ],
+            many=True,
+            context=self.context
+        )
+        self.assertFalse(s.is_valid())
+
+    def test_serializer(self):
+        s = HockeyGamePlayerBulkDeleteSerializer(
+            data=[
+                {'id': self.home_team_game_player.id},
+                {'id': self.away_team_game_player.id},
+            ],
+            many=True,
+            context=self.context
+        )
+        s.is_valid()
+        s.bulk_delete()
+
+        self.assertEqual(HockeyGamePlayer.objects.count(), 0)
