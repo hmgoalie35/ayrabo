@@ -232,10 +232,13 @@ class BaseAPITestCase(APITestCase):
         error_messages = error_message_overrides or self.ERROR_MESSAGE_DEFAULTS.get(status_name)
 
         self.assertEqual(response.status_code, status_code)
-        self.assertDictEqual(response.data, error_messages)
+        self.assertEqual(response.data, error_messages)
 
     def assert_200(self, response):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def assert_201(self, response):
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
     def assert_204(self, response):
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
