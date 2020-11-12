@@ -94,6 +94,7 @@ class HockeyGamePlayerBulkCreateSerializer(AbstractGamePlayerCreateSerializer, A
 
 class HockeyGamePlayerBulkUpdateSerializer(AbstractBulkUpdateModelSerializer):
     def validate(self, attrs):
+        super().validate(attrs)
         instance = attrs.get('id')
         team = instance.team
         game = instance.game

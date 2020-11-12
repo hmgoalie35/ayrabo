@@ -40,12 +40,14 @@ class BulkCreateUpdateDeleteListSerializer(serializers.ListSerializer):
 
 
 class AbstractBulkCreateModelSerializer(serializers.ModelSerializer):
+    """Abstract serializer for bulk create"""
     class Meta:
         model = None
         list_serializer_class = BulkCreateUpdateDeleteListSerializer
 
 
 class AbstractBulkUpdateModelSerializer(serializers.ModelSerializer):
+    """Abstract serializer for bulk update. Make sure you call `super` in any subclasses if overriding `validate`"""
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         view = self.context.get('view')
@@ -65,6 +67,7 @@ class AbstractBulkUpdateModelSerializer(serializers.ModelSerializer):
 
 
 class AbstractBulkDeleteModelSerializer(serializers.ModelSerializer):
+    """Abstract serializer for bulk delete"""
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         view = self.context.get('view')
