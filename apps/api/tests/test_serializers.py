@@ -1,4 +1,5 @@
 from collections import OrderedDict
+from unittest import mock
 
 from rest_framework import serializers
 
@@ -27,11 +28,16 @@ class BulkCreateUpdateDeleteListSerializerTests(BaseAPITestCase):
     def setUp(self):
         self.instance1 = DummyModel.objects.create(name='Isles', count=1)
         self.instance2 = DummyModel.objects.create(name='Rags', count=2)
+        self.mock_view = mock.Mock()
+        self.mock_view.get_queryset.return_value = DummyModel.objects.filter(
+            id__in=[self.instance1.id, self.instance2.id]
+        )
+        self.context = {'view': self.mock_view}
 
     def test_bulk_update(self):
         data = [{'id': self.instance1.id, 'count': 100}, {'id': self.instance2.id, 'name': 'Flyers'}]
         serializer = BulkCreateUpdateDeleteListSerializer(
-            child=BulkUpdateDummyModelSerializer(),
+            child=BulkUpdateDummyModelSerializer(context=self.context),
             data=data,
             partial=True
         )
@@ -52,7 +58,10 @@ class BulkCreateUpdateDeleteListSerializerTests(BaseAPITestCase):
 
     def test_bulk_delete(self):
         data = [{'id': self.instance1.id}, {'id': self.instance2.id}]
-        serializer = BulkCreateUpdateDeleteListSerializer(child=BulkDeleteDummyModelSerializer(), data=data)
+        serializer = BulkCreateUpdateDeleteListSerializer(
+            child=BulkDeleteDummyModelSerializer(context=self.context),
+            data=data
+        )
         serializer.is_valid(raise_exception=True)
 
         num_deleted, extra_info = serializer.bulk_delete()
@@ -64,7 +73,7 @@ class BulkCreateUpdateDeleteListSerializerTests(BaseAPITestCase):
         instance3 = DummyModel.objects.create(name='Canes', count=11)
         # We're explicitly passing data to `to_representation` so we don't need to go crazy making this serializer
         # perfect
-        serializer = BulkCreateUpdateDeleteListSerializer(child=BulkUpdateDummyModelSerializer())
+        serializer = BulkCreateUpdateDeleteListSerializer(child=BulkUpdateDummyModelSerializer(context=self.context))
 
         result = serializer.to_representation([{'id': self.instance1}, OrderedDict(id=self.instance2), instance3])
 
@@ -83,7 +92,9 @@ class AbstractBulkCreateModelSerializerTests(BaseAPITestCase):
 
 class AbstractBulkUpdateModelSerializerTests(BaseAPITestCase):
     def setUp(self):
-        self.serializer = BulkUpdateDummyModelSerializer()
+        mock_view = mock.Mock()
+        mock_view.get_queryset.return_value = []
+        self.serializer = BulkUpdateDummyModelSerializer(context={'view': mock_view})
 
     def test_init(self):
         # DRF removes the default id field so we need to explicitly set it so the serializer actually validates the ids
@@ -99,7 +110,9 @@ class AbstractBulkUpdateModelSerializerTests(BaseAPITestCase):
 
 class AbstractBulkDeleteModelSerializerTests(BaseAPITestCase):
     def setUp(self):
-        self.serializer = BulkDeleteDummyModelSerializer()
+        mock_view = mock.Mock()
+        mock_view.get_queryset.return_value = []
+        self.serializer = BulkDeleteDummyModelSerializer(context={'view': mock_view})
 
     def test_init(self):
         self.assertIs(type(self.serializer.fields.get('id')), serializers.PrimaryKeyRelatedField)

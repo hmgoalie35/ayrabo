@@ -263,21 +263,21 @@ class GamePlayerViewSetTests(BaseAPITestCase):
         self.assertEqual(HockeyGamePlayer.objects.filter(game=self.game).count(), 3)
         self.assertEqual(response.data, [
             {
-                'id': 2,
+                'id': 4,
                 'team': self.home_team.pk,
                 'is_starting': True,
                 'game': self.game.pk,
                 'player': self.home_player1.pk
             },
             {
-                'id': 3,
+                'id': 5,
                 'team': self.home_team.pk,
                 'is_starting': False,
                 'game': self.game.pk,
                 'player': self.home_player2.pk
             },
             {
-                'id': 4,
+                'id': 6,
                 'team': self.away_team.pk,
                 'is_starting': True,
                 'game': self.game.pk,
