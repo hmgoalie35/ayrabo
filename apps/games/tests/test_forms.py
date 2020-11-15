@@ -7,15 +7,17 @@ from ayrabo.utils.testing import BaseTestCase
 from common.models import GenericChoice
 from common.tests import GenericChoiceFactory
 from divisions.tests import DivisionFactory
-from games.forms import HockeyGameCreateForm
+from games.forms import HockeyGameCreateForm, HockeyGameUpdateForm
+from games.tests import HockeyGameFactory, HockeyGamePlayerFactory
 from leagues.tests import LeagueFactory
+from players.tests import HockeyPlayerFactory
 from seasons.tests import SeasonFactory
 from sports.tests import SportFactory
 from teams.tests import TeamFactory
 
 
 # Tests for the .clean method can be found in test_views
-class AbstractGameCreateFormTests(BaseTestCase):
+class AbstractGameCreateUpdateForm(BaseTestCase):
     """
     Testing the abstract class via `HockeyGameCreateForm`.
     """
@@ -34,10 +36,20 @@ class AbstractGameCreateFormTests(BaseTestCase):
         self.squirt = DivisionFactory(name='Squirt', league=self.liahl)
         self.squirt_teams = TeamFactory.create_batch(3, division=self.squirt)
 
-        GenericChoiceFactory(id=1, short_value='exhibition', long_value='Exhibition',
-                             type=GenericChoice.GAME_TYPE, content_object=self.ice_hockey)
-        GenericChoiceFactory(id=2, short_value='2', long_value='2', type=GenericChoice.GAME_POINT_VALUE,
-                             content_object=self.ice_hockey)
+        self.game_type = GenericChoiceFactory(
+            id=1,
+            short_value='exhibition',
+            long_value='Exhibition',
+            type=GenericChoice.GAME_TYPE,
+            content_object=self.ice_hockey
+        )
+        self.point_value = GenericChoiceFactory(
+            id=2,
+            short_value='2',
+            long_value='2',
+            type=GenericChoice.GAME_POINT_VALUE,
+            content_object=self.ice_hockey
+        )
 
     def test_teams_filtered_by_division(self):
         form = self.form_cls(team=self.t4)
@@ -69,3 +81,39 @@ class AbstractGameCreateFormTests(BaseTestCase):
         timezone.activate(pytz.timezone('US/Eastern'))
         form = self.form_cls(team=self.t4)
         self.assertEqual(form.fields['timezone'].initial, 'US/Eastern')
+
+    def test_save_update_case(self):
+        season = SeasonFactory(league=self.liahl)
+        instance = HockeyGameFactory(
+            home_team=self.t1,
+            team=self.t1,
+            away_team=self.t2,
+            type=self.game_type,
+            point_value=self.point_value,
+            season=season,
+        )
+        HockeyGamePlayerFactory(
+            game=instance,
+            player=HockeyPlayerFactory(sport=self.ice_hockey, team=self.t2),
+            team=self.t2
+        )
+        # We're changing the away team
+        form = HockeyGameUpdateForm(
+            instance=instance,
+            team=self.t1,
+            data={
+                'home_team': self.t1.id,
+                'away_team': self.t3.id,
+                'type': self.game_type.pk,
+                'point_value': self.point_value.pk,
+                'location': instance.pk,
+                'start': instance.start,
+                'end': instance.end,
+                'timezone': instance.timezone,
+                'season': instance.season.pk,
+                'status': instance.status,
+            }
+        )
+        form.is_valid()
+        form.save()
+        self.assertEqual(instance._get_game_players(self.t2).count(), 0)
