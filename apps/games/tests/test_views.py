@@ -13,7 +13,7 @@ from common.tests import GenericChoiceFactory
 from divisions.tests import DivisionFactory
 from games.forms import DATETIME_INPUT_FORMAT
 from games.models import HockeyGame
-from games.tests import HockeyGameFactory
+from games.tests import HockeyGameFactory, HockeyGamePlayerFactory
 from leagues.tests import LeagueFactory
 from locations.tests import LocationFactory
 from managers.tests import ManagerFactory
@@ -278,10 +278,18 @@ class HockeyGameUpdateViewTests(BaseTestCase):
         self.t2 = TeamFactory(id=8, division=self.mm_aa)
         self.t3 = TeamFactory(id=9, division=self.mm_aa)
 
-        self.game_type = GenericChoiceFactory(short_value='exhibition', long_value='Exhibition',
-                                              type=GenericChoice.GAME_TYPE, content_object=self.ice_hockey)
-        self.point_value = GenericChoiceFactory(short_value='2', long_value='2', type=GenericChoice.GAME_POINT_VALUE,
-                                                content_object=self.ice_hockey)
+        self.game_type = GenericChoiceFactory(
+            short_value='exhibition',
+            long_value='Exhibition',
+            type=GenericChoice.GAME_TYPE,
+            content_object=self.ice_hockey
+        )
+        self.point_value = GenericChoiceFactory(
+            short_value='2',
+            long_value='2',
+            type=GenericChoice.GAME_POINT_VALUE,
+            content_object=self.ice_hockey
+        )
 
         self.user, self.sport_registrations, self.manager = self._create_user(
             self.ice_hockey,
@@ -305,10 +313,19 @@ class HockeyGameUpdateViewTests(BaseTestCase):
         self.start = datetime.datetime(month=12, day=27, year=2017, hour=19, minute=0)
         self.end = self.start + datetime.timedelta(hours=3)
         location = LocationFactory()
-        self.game = HockeyGameFactory(home_team=self.t1, team=self.t1, away_team=self.t2, type=self.game_type,
-                                      point_value=self.point_value, location=location,
-                                      start=us_eastern.localize(self.start), end=us_eastern.localize(self.end),
-                                      timezone=timezone, season=self.season, status=HockeyGame.SCHEDULED)
+        self.game = HockeyGameFactory(
+            home_team=self.t1,
+            team=self.t1,
+            away_team=self.t2,
+            type=self.game_type,
+            point_value=self.point_value,
+            location=location,
+            start=us_eastern.localize(self.start),
+            end=us_eastern.localize(self.end),
+            timezone=timezone,
+            season=self.season,
+            status=HockeyGame.SCHEDULED
+        )
         self.post_data = {
             'home_team': self.t1.id,
             'away_team': self.t2.id,
@@ -454,24 +471,30 @@ class HockeyGameUpdateViewTests(BaseTestCase):
         self.game.home_team = self.t2
         self.game.away_team = self.t1
         self.game.save()
-        player = HockeyPlayerFactory(sport=self.ice_hockey, team=self.t2)
-        self.game.home_players.add(player)
+        HockeyGamePlayerFactory(
+            team=self.t2,
+            player=HockeyPlayerFactory(sport=self.ice_hockey, team=self.t2),
+            game=self.game
+        )
         self.login(email=self.email, password=self.password)
         self.post_data.update({'home_team': self.t3.id, 'away_team': self.t1.id})
 
         self.client.post(self.formatted_url, data=self.post_data, follow=True)
         self.game.refresh_from_db()
-        self.assertEqual(self.game.home_players.count(), 0)
+        self.assertEqual(self.game._get_game_players(self.t2).count(), 0)
 
     def test_post_change_away_team(self):
-        player = HockeyPlayerFactory(sport=self.ice_hockey, team=self.t2)
-        self.game.away_players.add(player)
+        HockeyGamePlayerFactory(
+            team=self.t2,
+            player=HockeyPlayerFactory(sport=self.ice_hockey, team=self.t2),
+            game=self.game
+        )
         self.login(email=self.email, password=self.password)
         self.post_data.update({'away_team': self.t3.id})
 
         self.client.post(self.formatted_url, data=self.post_data, follow=True)
         self.game.refresh_from_db()
-        self.assertEqual(self.game.away_players.count(), 0)
+        self.assertEqual(self.game._get_game_players(self.t2).count(), 0)
 
 
 class HockeyGameScoresheetViewTests(BaseTestCase):
