@@ -7,7 +7,7 @@ from django.utils import timezone
 from ayrabo.utils.testing import BaseTestCase
 from common.models import GenericChoice
 from common.tests import GenericChoiceFactory
-from games.models import AbstractGame, HockeyGoal
+from games.models import AbstractGame, HockeyGamePlayer, HockeyGoal
 from games.tests import HockeyGameFactory, HockeyGamePlayerFactory, HockeyGoalFactory
 from periods.models import HockeyPeriod
 from periods.tests import HockeyPeriodFactory
@@ -156,7 +156,7 @@ class HockeyGameModelTests(BaseTestCase):
         self.away_player1 = HockeyPlayerFactory(sport=self.sport, team=self.away_team)
         self.away_player2 = HockeyPlayerFactory(sport=self.sport, team=self.away_team)
 
-        # Use to make sure _get_roster filters by the current game
+        # Use to make sure _get_game_players filters by the current game
         HockeyGamePlayerFactory(game__type=self.game_type, game__point_value=self.point_value)
 
         self.home_hockey_game_player1 = HockeyGamePlayerFactory(
@@ -180,29 +180,30 @@ class HockeyGameModelTests(BaseTestCase):
             player=self.away_player2
         )
 
-    def test_get_roster(self):
+    def test_get_game_players(self):
         self.assertEqual(
-            list(self.game._get_roster(self.home_team)),
+            list(self.game._get_game_players(self.home_team.pk)),
             [self.home_hockey_game_player1, self.home_hockey_game_player2]
         )
 
-    def test_get_players(self):
+    def test_home_team_game_players(self):
         self.assertEqual(
-            list(self.game._get_players(self.away_team)),
-            [self.away_player1, self.away_player2]
+            list(self.game.home_team_game_players),
+            [self.home_hockey_game_player1, self.home_hockey_game_player2]
         )
 
-    def test_home_players(self):
+    def test_away_team_game_players(self):
         self.assertEqual(
-            list(self.game.home_players),
-            [self.home_player1, self.home_player2]
+            list(self.game.away_team_game_players),
+            [self.away_hockey_game_player1, self.away_hockey_game_player2]
         )
 
-    def test_away_players(self):
-        self.assertEqual(
-            list(self.game.away_players),
-            [self.away_player1, self.away_player2]
-        )
+    def test_delete_game_players(self):
+        self.game.delete_game_players(self.home_team)
+        qs = HockeyGamePlayer.objects.filter(game=self.game)
+        self.assertEqual(qs.filter(team=self.home_team).count(), 0)
+        # Make sure we only delete the home team game players
+        self.assertEqual(qs.filter(team=self.away_team).count(), 2)
 
 
 class HockeyGoalModelTests(BaseTestCase):

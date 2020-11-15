@@ -8,7 +8,6 @@ from django.utils import timezone as timezone_util
 
 from common.models import TimestampedModel
 from periods.models import HockeyPeriod
-from players.models import BaseballPlayer, HockeyPlayer
 from userprofiles.models import UserProfile
 
 
@@ -75,19 +74,32 @@ class AbstractGame(TimestampedModel):
     def is_scheduled(self):
         return self.status == self.SCHEDULED
 
-    def _get_roster(self, team):
-        raise NotImplementedError()
-
-    def _get_players(self, team):
+    def _get_game_players(self, team_or_team_pk):
+        # Note: the implementation of this function should support both team instances and team pks. Django's `.filter`
+        # supports both, `.filter(team=team_or_team_pk)`
         raise NotImplementedError()
 
     @property
-    def home_players(self):
-        return self._get_players(self.home_team)
+    def home_team_game_players(self):
+        """Fetch game players for the home team, i.e. the home team roster"""
+        return self._get_game_players(self.home_team.pk)
 
     @property
-    def away_players(self):
-        return self._get_players(self.away_team)
+    def away_team_game_players(self):
+        """Fetch game players for the away team, i.e. the away team roster"""
+        return self._get_game_players(self.away_team.pk)
+
+    def delete_game_players(self, team_or_team_pk):
+        """
+        Delete game players (i.e. the roster) for this game and the given team. The team pk is an explicit arg here
+        because when changing home and/or away teams self.home_team might already be the new home team. The user most
+        likely wants to delete the game players for the old team in that case, hence why we just make team pk an arg
+        here.
+
+        :param team_or_team_pk: Team instance or team pk
+        :return: Default return value of the delete qs method
+        """
+        return self._get_game_players(team_or_team_pk).delete()
 
     def can_update(self):
         return self.status not in [self.COMPLETED] and timezone_util.now() <= self.end + self.GRACE_PERIOD
@@ -152,13 +164,8 @@ class HockeyGame(AbstractGame):
         related_name='away_games'
     )
 
-    def _get_roster(self, team):
-        return HockeyGamePlayer.objects.filter(game=self, team=team)
-
-    def _get_players(self, team):
-        roster = self._get_roster(team)
-        player_ids = roster.values_list('player', flat=True)
-        return HockeyPlayer.objects.filter(id__in=player_ids)
+    def _get_game_players(self, team_or_team_pk):
+        return HockeyGamePlayer.objects.filter(game=self, team=team_or_team_pk)
 
 
 class BaseballGame(AbstractGame):
@@ -173,13 +180,8 @@ class BaseballGame(AbstractGame):
         related_name='away_games'
     )
 
-    def _get_roster(self, team):
-        return BaseballGamePlayer.objects.filter(game=self, team=team)
-
-    def _get_players(self, team):
-        roster = self._get_roster(team)
-        player_ids = roster.values_list('player', flat=True)
-        return BaseballPlayer.objects.filter(id__in=player_ids)
+    def _get_game_players(self, team_or_team_pk):
+        return BaseballGamePlayer.objects.filter(game=self, team=team_or_team_pk)
 
 
 class AbstractGamePlayer(TimestampedModel):

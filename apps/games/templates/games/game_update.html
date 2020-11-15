@@ -56,7 +56,7 @@
       </div>
     </div>
 
-    {% if game.home_players.exists or game.away_players.exists %}
+    {% if game.home_team_game_players.exists or game.away_team_game_players.exists %}
       <div class="modal fade" tabindex="-1" role="dialog" id="roster-warning-modal">
         <div class="modal-dialog" role="document">
           <div class="modal-content">
@@ -89,9 +89,9 @@
   <script>
     $(function () {
       var homeTeamId = {{ game.home_team_id }};
-      var homeTeamRostersSet = {{ game.home_players.exists|booltojson }};
+      var homeTeamRostersSet = {{ game.home_team_game_players.exists|booltojson }};
       var awayTeamId = {{ game.away_team_id }};
-      var awayTeamRostersSet = {{ game.away_players.exists|booltojson }};
+      var awayTeamRostersSet = {{ game.away_team_game_players.exists|booltojson }};
 
       $('.js-modal-continue').click(function () {
         $('#update_game_form').submit();
