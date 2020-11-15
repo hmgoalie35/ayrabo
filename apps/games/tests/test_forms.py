@@ -106,7 +106,7 @@ class AbstractGameCreateUpdateForm(BaseTestCase):
                 'away_team': self.t3.id,
                 'type': self.game_type.pk,
                 'point_value': self.point_value.pk,
-                'location': instance.pk,
+                'location': instance.location.pk,
                 'start': instance.start,
                 'end': instance.end,
                 'timezone': instance.timezone,
@@ -115,5 +115,6 @@ class AbstractGameCreateUpdateForm(BaseTestCase):
             }
         )
         form.is_valid()
+        print(form.errors)
         form.save()
         self.assertEqual(instance._get_game_players(self.t2).count(), 0)

@@ -65,8 +65,8 @@ Feature: Update a game
 
   Scenario: Form disabled
     Given The following game object exists
-      | id | home_team             | away_team     | type   | point_value | location | start               | end                 | timezone   | season | status    |
-      | 4  | Green Machine IceCats | Aviator Gulls | league | 2           | Iceland  | 11/23/2017 07:00 PM | 11/23/2017 10:00 PM | US/Eastern | 1      | completed |
+      | id | home_team             | away_team     | type   | point_value | location  | start               | end                 | timezone   | season | status    |
+      | 4  | Green Machine IceCats | Aviator Gulls | league | 2           | Iceland v | 11/23/2017 07:00 PM | 11/23/2017 10:00 PM | US/Eastern | 1      | completed |
     And I am on the "teams:games:update" page with kwargs "team_pk=1, pk=4"
     Then I should see "Updates to this game are no longer permitted."
     And I should see "Back"
@@ -76,7 +76,9 @@ Feature: Update a game
     Given The following player object exists
       | id | username_or_email | sport      | team                  | jersey_number | position | handedness |
       | 1  | john@tavares.com  | Ice Hockey | Green Machine IceCats | 35            | G        | Left       |
-    And "1" is added to "away_players" for the game with kwargs "pk=1"
+    And The following game players exist
+      | id | player_pk | game_pk | team_pk |
+      | 1  | 1         | 1       | 2       |
     And I am on the "teams:games:update" page with kwargs "team_pk=1, pk=1"
     And I select "Aviator Gulls - Midget Minor AA" from "id_away_team"
     And I press "update_game_btn" which opens "roster-warning-modal"
