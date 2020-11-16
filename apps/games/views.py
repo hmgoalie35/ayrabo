@@ -146,14 +146,7 @@ class GameUpdateView(LoginRequiredMixin,
         return get_game_update_form_cls(self.sport)
 
     def form_valid(self, form):
-        if form.has_changed():
-            response = super().form_valid(form)
-            if 'home_team' in form.changed_data:
-                self.object.home_players.clear()
-            if 'away_team' in form.changed_data:
-                self.object.away_players.clear()
-            return response
-        return redirect(self.get_success_url())
+        return super().form_valid(form) if form.has_changed() else redirect(self.get_success_url())
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

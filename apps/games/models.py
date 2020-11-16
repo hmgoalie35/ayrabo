@@ -74,6 +74,33 @@ class AbstractGame(TimestampedModel):
     def is_scheduled(self):
         return self.status == self.SCHEDULED
 
+    def _get_game_players(self, team_or_team_pk):
+        # Note: the implementation of this function should support both team instances and team pks. Django's `.filter`
+        # supports both, `.filter(team=team_or_team_pk)`
+        raise NotImplementedError()
+
+    @property
+    def home_team_game_players(self):
+        """Fetch game players for the home team, i.e. the home team roster"""
+        return self._get_game_players(self.home_team.pk)
+
+    @property
+    def away_team_game_players(self):
+        """Fetch game players for the away team, i.e. the away team roster"""
+        return self._get_game_players(self.away_team.pk)
+
+    def delete_game_players(self, team_or_team_pk):
+        """
+        Delete game players (i.e. the roster) for this game and the given team. The team pk is an explicit arg here
+        because when changing home and/or away teams self.home_team might already be the new home team. The user most
+        likely wants to delete the game players for the old team in that case, hence why we just make team pk an arg
+        here.
+
+        :param team_or_team_pk: Team instance or team pk
+        :return: Default return value of the delete qs method
+        """
+        return self._get_game_players(team_or_team_pk).delete()
+
     def can_update(self):
         return self.status not in [self.COMPLETED] and timezone_util.now() <= self.end + self.GRACE_PERIOD
 
@@ -126,15 +153,67 @@ class AbstractGame(TimestampedModel):
 
 
 class HockeyGame(AbstractGame):
-    home_players = models.ManyToManyField('players.HockeyPlayer', verbose_name='Home Roster', related_name='home_games')
-    away_players = models.ManyToManyField('players.HockeyPlayer', verbose_name='Away Roster', related_name='away_games')
+    home_players_old = models.ManyToManyField(
+        'players.HockeyPlayer',
+        verbose_name='Home Roster',
+        related_name='home_games'
+    )
+    away_players_old = models.ManyToManyField(
+        'players.HockeyPlayer',
+        verbose_name='Away Roster',
+        related_name='away_games'
+    )
+
+    def _get_game_players(self, team_or_team_pk):
+        return HockeyGamePlayer.objects.filter(game=self, team=team_or_team_pk)
 
 
 class BaseballGame(AbstractGame):
-    home_players = models.ManyToManyField('players.BaseballPlayer', verbose_name='Home Roster',
-                                          related_name='home_games')
-    away_players = models.ManyToManyField('players.BaseballPlayer', verbose_name='Away Roster',
-                                          related_name='away_games')
+    home_players_old = models.ManyToManyField(
+        'players.BaseballPlayer',
+        verbose_name='Home Roster',
+        related_name='home_games'
+    )
+    away_players_old = models.ManyToManyField(
+        'players.BaseballPlayer',
+        verbose_name='Away Roster',
+        related_name='away_games'
+    )
+
+    def _get_game_players(self, team_or_team_pk):
+        return BaseballGamePlayer.objects.filter(game=self, team=team_or_team_pk)
+
+
+class AbstractGamePlayer(TimestampedModel):
+    """
+    This model and its subclasses model a game roster.
+    """
+    team = models.ForeignKey('teams.Team', on_delete=models.PROTECT)
+    is_starting = models.BooleanField(verbose_name='Is Starting', default=False)
+
+    class Meta:
+        abstract = True
+
+
+class HockeyGamePlayer(AbstractGamePlayer):
+    game = models.ForeignKey(HockeyGame, on_delete=models.PROTECT)
+    player = models.ForeignKey('players.HockeyPlayer', on_delete=models.PROTECT)
+
+    class Meta(AbstractGamePlayer.Meta):
+        # team isn't necessary because a player is already unique together w/ a team
+        unique_together = (
+            ('game', 'player'),
+        )
+
+
+class BaseballGamePlayer(AbstractGamePlayer):
+    game = models.ForeignKey(BaseballGame, on_delete=models.PROTECT)
+    player = models.ForeignKey('players.BaseballPlayer', on_delete=models.PROTECT)
+
+    class Meta(AbstractGamePlayer.Meta):
+        unique_together = (
+            ('game', 'player'),
+        )
 
 
 class HockeyGoal(TimestampedModel):

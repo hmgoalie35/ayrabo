@@ -4,10 +4,9 @@ import pytz
 from behave import *
 from django.utils import timezone
 
-from ayrabo.utils.testing import string_to_kwargs_dict
 from common.models import GenericChoice
 from games.models import HockeyGame
-from games.tests import HockeyGameFactory
+from games.tests import HockeyGameFactory, HockeyGamePlayerFactory
 from locations.models import Location
 from players.models import HockeyPlayer
 from seasons.models import Season
@@ -61,10 +60,11 @@ def step_impl(context):
         HockeyGameFactory(**kwargs)
 
 
-@step('"(?P<player_ids>[^"]*)" is added to "(?P<roster>home_players|away_players)" for the game with kwargs "(?P<kwarg_data>[^"]*)"')  # noqa
-def step_impl(context, player_ids, roster, kwarg_data):
-    ids = [int(p.strip()) for p in player_ids.split(',')]
-    players = [HockeyPlayer.objects.get(id=p_id) for p_id in ids]
-    kwargs = string_to_kwargs_dict(kwarg_data)
-    game = get_object(HockeyGame, **kwargs)
-    getattr(game, roster).add(*players)
+@step('The following game players exist')
+def step_impl(context):
+    for row in context.table:
+        data = row.as_dict()
+        team = get_object(Team, pk=data.pop('team_pk'))
+        game = get_object(HockeyGame, pk=data.pop('game_pk'))
+        player = get_object(HockeyPlayer, pk=data.pop('player_pk'))
+        HockeyGamePlayerFactory(team=team, game=game, player=player, **data)

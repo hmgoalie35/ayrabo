@@ -6,7 +6,7 @@ from django.utils import timezone
 from ayrabo.utils.admin.mixins import AdminBulkUploadMixin
 from ayrabo.utils.form_fields import SeasonModelChoiceField, TeamModelChoiceField
 from common.models import GenericChoice
-from games.models import HockeyGame
+from games.models import HockeyGame, HockeyGamePlayer
 from seasons.models import Season
 from sports.models import Sport
 from teams.models import Team
@@ -38,11 +38,6 @@ class AbstractGameAdminForm(forms.ModelForm):
         self.fields['home_team'].queryset = teams
         self.fields['away_team'].queryset = teams
 
-        PlayerModel = self.fields['home_players'].queryset.model
-        players = PlayerModel.objects.active().select_related('user').filter(sport=sport)
-        self.fields['home_players'].queryset = players
-        self.fields['away_players'].queryset = players
-
         GenericChoiceModel = self.fields['type'].queryset.model
         choices = GenericChoiceModel.objects.get_choices(instance=sport)
         self.fields['type'].queryset = choices.filter(type=GenericChoice.GAME_TYPE)
@@ -59,7 +54,7 @@ class AbstractGameAdminForm(forms.ModelForm):
     away_team = TeamModelChoiceField(queryset=Team.objects.all())
 
     class Meta:
-        fields = COMMON_FIELDS + ['home_players', 'away_players']
+        fields = COMMON_FIELDS
 
 
 class HockeyGameAdminForm(AbstractGameAdminForm):
@@ -94,7 +89,6 @@ class HockeyAssistAdminForm(forms.ModelForm):
 class AbstractGameAdmin(admin.ModelAdmin):
     list_display = COMMON_GAME_FIELDS
     search_fields = ['home_team__name', 'away_team__name', 'type__long_value', 'location__name']
-    filter_horizontal = ['home_players', 'away_players']
 
 
 class HockeyGameAdminModelFormSet(BaseModelFormSet):
@@ -121,6 +115,33 @@ class HockeyGameAdmin(AdminBulkUploadMixin, AbstractGameAdmin):
     bulk_upload_sample_csv = 'bulk_upload_hockeygames_example.csv'
     bulk_upload_model_form_class = HockeyGameAdminCreateForm
     bulk_upload_model_formset_class = HockeyGameAdminModelFormSet
+
+
+class AbstractGamePlayerAdmin(admin.ModelAdmin):
+    # I want a specific ordering so we'll let subclasses define list display
+    list_filter = ('is_starting',)
+    # We'll always have fields called game and player for the sport specific subclasses so should be
+    # good to include those here
+    search_fields = ('team__name', 'player__user__first_name', 'player__user__last_name')
+    raw_id_fields = ('team', 'game', 'player')
+
+    def division(self, obj):
+        return obj.team.division.name
+
+    def has_add_permission(self, request):
+        """
+        We aren't checking if the player and team match, team is actually a team for the chosen game, etc.
+        We don't want broken records being created so we'll disable adding and changing for now
+        """
+        return False
+
+    def has_change_permission(self, request, obj=None):
+        return False
+
+
+@admin.register(HockeyGamePlayer)
+class HockeyGamePlayerAdmin(AbstractGamePlayerAdmin):
+    list_display = ('id', 'game_id', 'player', 'team', 'division', 'is_starting', 'created')
 
 
 @admin.register(HockeyGoal)

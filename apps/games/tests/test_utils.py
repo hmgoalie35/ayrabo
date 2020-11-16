@@ -53,7 +53,7 @@ class UtilsTests(BaseTestCase):
         HockeyGameFactory(home_team=t2, away_team=t3, type=game_type, point_value=point_value, timezone=tz,
                           season=season, start=g3_start)
         result = utils.get_games(self.ice_hockey, season, team=team)
-        self.assertListEqual(list(result), [game2, game1])
+        self.assertEqual(list(result), [game2, game1])
 
     def test_get_game_list_view_context(self):
         season = SeasonFactory(league=self.liahl)

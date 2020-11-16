@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash
 
 print_step () {
     printf "\n\n>>> $1\n\n"
@@ -20,8 +20,7 @@ print_step "Installing python packages"
 source venv/bin/activate && pip install -U pip && pip install -U -r requirements.txt
 
 print_step "Installing node and npm"
-bash -ic "nvm install"
-bash -ic "nvm install-latest-npm"
+source ~/.nvm/nvm.sh && nvm install && nvm install-latest-npm
 
 print_step "Installing node packages"
 npm install

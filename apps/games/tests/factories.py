@@ -35,21 +35,20 @@ class HockeyGameFactory(AbstractGameFactory):
     class Meta:
         model = models.HockeyGame
 
-    @post_generation
-    def home_players(self, create, extracted, **kwargs):
-        if not create:
-            return
-        if extracted:
-            for player in extracted:
-                self.home_players.add(player)
 
-    @post_generation
-    def away_players(self, create, extracted, **kwargs):
-        if not create:
-            return
-        if extracted:
-            for player in extracted:
-                self.away_players.add(player)
+class AbstractGamePlayerFactory(django.DjangoModelFactory):
+    team = SubFactory(TeamFactory)
+
+    class Meta:
+        abstract = True
+
+
+class HockeyGamePlayerFactory(AbstractGamePlayerFactory):
+    game = SubFactory(HockeyGameFactory)
+    player = SubFactory(HockeyPlayerFactory)
+
+    class Meta:
+        model = models.HockeyGamePlayer
 
 
 class HockeyGoalFactory(django.DjangoModelFactory):

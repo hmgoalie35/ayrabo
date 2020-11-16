@@ -18,6 +18,20 @@ DATETIME_INPUT_FORMAT = '%m/%d/%Y %I:%M %p'
 
 
 class AbstractGameCreateUpdateForm(forms.ModelForm):
+    season = SeasonModelChoiceField(queryset=Season.objects.all())
+    home_team = TeamModelChoiceField(queryset=Team.objects.all(), label='Home Team')
+    away_team = TeamModelChoiceField(queryset=Team.objects.all(), label='Away Team')
+    start = forms.DateTimeField(
+        input_formats=[DATETIME_INPUT_FORMAT],
+        label='Game Start',
+        widget=widgets.DateTimeInput(format=DATETIME_INPUT_FORMAT)
+    )
+    end = forms.DateTimeField(
+        input_formats=[DATETIME_INPUT_FORMAT],
+        label='Game End',
+        widget=widgets.DateTimeInput(format=DATETIME_INPUT_FORMAT)
+    )
+
     def __init__(self, *args, **kwargs):
         self.team = kwargs.pop('team', None)
         super().__init__(*args, **kwargs)
@@ -70,20 +84,6 @@ class AbstractGameCreateUpdateForm(forms.ModelForm):
 
         # The current timezone is the same as the timezone on the user's profile.
         self.fields['timezone'].initial = timezone.get_current_timezone_name()
-
-    season = SeasonModelChoiceField(queryset=Season.objects.all())
-    home_team = TeamModelChoiceField(queryset=Team.objects.all(), label='Home Team')
-    away_team = TeamModelChoiceField(queryset=Team.objects.all(), label='Away Team')
-    start = forms.DateTimeField(
-        input_formats=[DATETIME_INPUT_FORMAT],
-        label='Game Start',
-        widget=widgets.DateTimeInput(format=DATETIME_INPUT_FORMAT)
-    )
-    end = forms.DateTimeField(
-        input_formats=[DATETIME_INPUT_FORMAT],
-        label='Game End',
-        widget=widgets.DateTimeInput(format=DATETIME_INPUT_FORMAT)
-    )
 
     class Meta:
         fields = ['home_team', 'away_team', 'type', 'point_value', 'location', 'start', 'end', 'timezone', 'season']
@@ -150,6 +150,19 @@ class AbstractGameCreateUpdateForm(forms.ModelForm):
             raise ValidationError(field_errors)
 
         return cleaned_data
+
+    def save(self, commit=True):
+        instance = super().save(commit=commit)
+        # instance.home_team and instance.away_team are already changed to the new team at this point. We need to use
+        # the initial values. Also note this will be triggered when games are created, I don't see it as a huge issue
+        # as of now so not going to special case.
+        if 'home_team' in self.changed_data:
+            original_home_team_id = self.initial.get('home_team')
+            instance.delete_game_players(original_home_team_id)
+        if 'away_team' in self.changed_data:
+            original_away_team_id = self.initial.get('away_team')
+            instance.delete_game_players(original_away_team_id)
+        return instance
 
 
 class HockeyGameCreateForm(AbstractGameCreateUpdateForm):
