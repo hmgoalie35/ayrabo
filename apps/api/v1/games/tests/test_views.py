@@ -50,6 +50,11 @@ class GamePlayerViewSetTests(BaseAPITestCase):
             team=self.away_team,
             player=self.away_player1
         )
+        self.away_game_player2 = HockeyGamePlayerFactory(
+            game=self.game,
+            team=self.away_team,
+            player=self.away_player2
+        )
 
     def setUp(self):
         self.ice_hockey = SportFactory(id=1, name='Ice Hockey')
@@ -61,6 +66,7 @@ class GamePlayerViewSetTests(BaseAPITestCase):
         self.home_player2 = HockeyPlayerFactory(id=2, team=self.home_team, sport=self.ice_hockey)
         self.away_team = TeamFactory(id=2, name='Aviator Gulls', division=self.mm_aa)
         self.away_player1 = HockeyPlayerFactory(id=3, team=self.away_team, sport=self.ice_hockey)
+        self.away_player2 = HockeyPlayerFactory(id=4, team=self.away_team, sport=self.ice_hockey, is_active=False)
 
         self.game_type = GenericChoiceFactory(
             short_value='exhibition',
@@ -117,13 +123,13 @@ class GamePlayerViewSetTests(BaseAPITestCase):
             id=55,
             game=self.game2,
             team=self.additional_team,
-            player=HockeyPlayerFactory(id=4, team=self.additional_team, sport=self.ice_hockey)
+            player=HockeyPlayerFactory(id=5, team=self.additional_team, sport=self.ice_hockey)
         )
         HockeyGamePlayerFactory(
             id=54,
             game=self.game2,
             team=self.away_team,
-            player=HockeyPlayerFactory(id=5, team=self.away_team, sport=self.ice_hockey)
+            player=HockeyPlayerFactory(id=6, team=self.away_team, sport=self.ice_hockey)
         )
 
         self.user = UserFactory()
@@ -223,7 +229,7 @@ class GamePlayerViewSetTests(BaseAPITestCase):
         response = self.client.get(self._get_list_url(self.ice_hockey.pk, self.game.pk))
 
         self.assert_200(response)
-        self.assertEqual(
+        self.assertCountEqual(
             response.data,
             [
                 {
@@ -360,7 +366,8 @@ class GamePlayerViewSetTests(BaseAPITestCase):
             {'id': self.home_game_player2.id},
         ])
         self.assert_204(response)
-        self.assertEqual(HockeyGamePlayer.objects.filter(game=self.game).count(), 1)
+        # There are still 2 game players for the away team, one of which is an inactive player
+        self.assertEqual(HockeyGamePlayer.objects.filter(game=self.game).count(), 2)
 
     def test_bulk_delete_invalid(self):
         self._create_game_players()
@@ -371,11 +378,13 @@ class GamePlayerViewSetTests(BaseAPITestCase):
             {'id': self.home_game_player1.id},
             {'id': self.home_game_player2.id},
             {'id': self.away_game_player1.id},
+            {'id': self.away_game_player2.id},
         ])
         self.assertAPIError(response, 'validation_error', [
             {'id': ['This field is required.']},
             {},
             {},
-            {'team': ['You do not have permission to manage game players for this team.']}
+            {'team': ['You do not have permission to manage game players for this team.']},
+            {'id': [f'Invalid pk "{self.away_game_player2.id}" - object does not exist.']}
         ])
-        self.assertEqual(HockeyGamePlayer.objects.filter(game=self.game).count(), 3)
+        self.assertEqual(HockeyGamePlayer.objects.filter(game=self.game).count(), 4)

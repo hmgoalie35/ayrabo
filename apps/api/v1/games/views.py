@@ -72,4 +72,4 @@ class GamePlayerViewSet(BulkViewActionMixin,
     def get_queryset(self):
         model_cls = get_game_player_model_cls(self.sport)
         # Return objs for one of the AbstractGamePlayer model subclasses
-        return model_cls.objects.select_related('team', 'game', 'player').filter(game=self.game)
+        return model_cls.objects.select_related('team', 'game', 'player').filter(game=self.game, player__is_active=True)
