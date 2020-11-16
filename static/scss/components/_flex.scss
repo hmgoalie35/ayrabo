@@ -1,0 +1,30 @@
+/**
+  A place to put common flexbox properties. These are intended for simple cases where it doesn't make sense to create
+  a new class.
+*/
+
+$directions: flex-start, flex-end, center, space-between;
+
+.flex {
+  display: flex;
+}
+
+.flex-column
+{
+  flex-direction: column;
+}
+
+.flex-row
+{
+  flex-direction: row;
+}
+
+@each $direction in $directions {
+  .flex-justify-#{$direction} {
+    justify-content: $direction;
+  }
+
+  .flex-align-#{$direction} {
+    align-items: $direction;
+  }
+}

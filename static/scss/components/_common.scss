@@ -38,6 +38,15 @@ body {
   cursor: pointer;
 }
 
+.no-outline {
+  outline: none;
+
+  &:focus
+  {
+    outline: none;
+  }
+}
+
 .password-guidelines {
   margin-right: 5px;
 }
