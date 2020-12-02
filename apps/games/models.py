@@ -71,8 +71,20 @@ class AbstractGame(TimestampedModel):
         return self.status == self.IN_PROGRESS
 
     @property
+    def is_completed(self):
+        return self.status == self.COMPLETED
+
+    @property
     def is_scheduled(self):
         return self.status == self.SCHEDULED
+
+    @property
+    def is_postponed(self):
+        return self.status == self.POSTPONED
+
+    @property
+    def is_cancelled(self):
+        return self.status == self.CANCELLED
 
     def _get_game_players(self, team_or_team_pk):
         # Note: the implementation of this function should support both team instances and team pks. Django's `.filter`

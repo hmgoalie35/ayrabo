@@ -92,6 +92,15 @@ class AbstractGameModelTests(BaseTestCase):
         self.game.save()
         self.assertFalse(self.game.is_in_progress)
 
+    def test_is_completed(self):
+        self.game.status = AbstractGame.COMPLETED
+        self.game.save()
+        self.assertTrue(self.game.is_completed)
+
+        self.game.status = AbstractGame.SCHEDULED
+        self.game.save()
+        self.assertFalse(self.game.is_completed)
+
     def test_is_scheduled(self):
         self.game.status = AbstractGame.SCHEDULED
         self.game.save()
@@ -100,6 +109,24 @@ class AbstractGameModelTests(BaseTestCase):
         self.game.status = AbstractGame.CANCELLED
         self.game.save()
         self.assertFalse(self.game.is_scheduled)
+
+    def test_is_postponed(self):
+        self.game.status = AbstractGame.POSTPONED
+        self.game.save()
+        self.assertTrue(self.game.is_postponed)
+
+        self.game.status = AbstractGame.CANCELLED
+        self.game.save()
+        self.assertFalse(self.game.is_postponed)
+
+    def test_is_cancelled(self):
+        self.game.status = AbstractGame.CANCELLED
+        self.game.save()
+        self.assertTrue(self.game.is_cancelled)
+
+        self.game.status = AbstractGame.SCHEDULED
+        self.game.save()
+        self.assertFalse(self.game.is_cancelled)
 
     def test_can_update_true(self):
         self.game.status = AbstractGame.SCHEDULED
