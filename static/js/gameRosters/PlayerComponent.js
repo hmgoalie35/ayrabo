@@ -57,7 +57,7 @@ class PlayerComponent extends React.Component {
     }
 
     return (
-      <div className={classNames('list-group-item animated fadeIn flex flex-align-center flex-justify-space-between', { disabled: !canUpdate })}>
+      <div className={classNames('list-group-item list-group-item-slim animated fadeIn flex flex-align-center flex-justify-space-between', { disabled: !canUpdate })}>
         <span>{`#${player.jersey_number} ${user.first_name} ${user.last_name} ${player.position}`}</span>
         {canUpdate &&
           <div className="flex flex-align-center">
