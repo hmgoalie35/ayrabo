@@ -177,7 +177,10 @@ class HockeyGame(AbstractGame):
     )
 
     def _get_game_players(self, team_or_team_pk):
-        return HockeyGamePlayer.objects.filter(game=self, team=team_or_team_pk)
+        return HockeyGamePlayer.objects.filter(
+            game=self,
+            team=team_or_team_pk
+        ).select_related('player__user').order_by('player__jersey_number')
 
 
 class BaseballGame(AbstractGame):
@@ -193,7 +196,10 @@ class BaseballGame(AbstractGame):
     )
 
     def _get_game_players(self, team_or_team_pk):
-        return BaseballGamePlayer.objects.filter(game=self, team=team_or_team_pk)
+        return BaseballGamePlayer.objects.filter(
+            game=self,
+            team=team_or_team_pk
+        ).select_related('player__user').order_by('player__jersey_number')
 
 
 class AbstractGamePlayer(TimestampedModel):
