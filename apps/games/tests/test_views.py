@@ -593,6 +593,7 @@ class HockeyGameScoresheetViewTests(BaseTestCase):
         self.assertFalse(context.get('can_user_take_score'))
 
     def test_post(self):
+        # TODO test game rosters required, game rosters starting goalie, etc
         pass
 
 

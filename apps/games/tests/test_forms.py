@@ -17,7 +17,7 @@ from teams.tests import TeamFactory
 
 
 # Tests for the .clean method can be found in test_views
-class AbstractGameCreateUpdateForm(BaseTestCase):
+class AbstractGameCreateUpdateFormTests(BaseTestCase):
     """
     Testing the abstract class via `HockeyGameCreateForm`.
     """
@@ -115,6 +115,5 @@ class AbstractGameCreateUpdateForm(BaseTestCase):
             }
         )
         form.is_valid()
-        print(form.errors)
         form.save()
         self.assertEqual(instance._get_game_players(self.t2).count(), 0)
