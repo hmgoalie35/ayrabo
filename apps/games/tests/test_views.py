@@ -588,7 +588,7 @@ class HockeyGameScoresheetViewTests(BaseTestCase):
         context = response.context
         self.assert_200(response)
         self.assertTemplateUsed(response, 'games/game_scoresheet.html')
-        self.assertEquals(context.get('sport'), self.ice_hockey)
+        self.assertEqual(context.get('sport'), self.ice_hockey)
         # TODO add more tests around this ctx var
         self.assertFalse(context.get('can_user_take_score'))
 

@@ -1,0 +1,15 @@
+{% if queryset and queryset.exists %}
+  <ul class="list-group game-player-widget">
+    {% for instance in queryset %}
+      <li class="list-group-item list-group-item-slim text-left">
+        {% with player=instance.player %}
+          #{{ player.jersey_number }} {{ player.user.get_full_name }} {{ player.position }}
+        {% endwith %}
+        {% if instance.is_starting %}<span class="badge badge-info">Starter</span>{% endif %}
+      </li>
+    {% endfor %}
+  </ul>
+{% else %}
+  {# This is the same text the game roster update page displays when there are no players #}
+  <p class="mt5">There are no players on this roster.</p>
+{% endif %}
