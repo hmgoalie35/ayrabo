@@ -63,3 +63,9 @@ export const createNotification = (text, type) => {
 };
 
 export const pluralize = (text, count, suffix = 's') => (count === 1 ? text : `${text}${suffix}`);
+
+export const redirect = to => window.location.replace(to);
+
+export const navigate = to => window.location.assign(to);
+
+export const reload = () => window.location.reload();
