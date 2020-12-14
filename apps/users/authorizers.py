@@ -103,14 +103,11 @@ class GameAuthorizer(BaseAuthorizer):
             self.can_user_update_game_roster(team=away_team, sport=sport)
         )
 
-    def can_user_take_score(self):
-        # coach for either team
-        # org admin for either team
-        # manager for either team
-        # scorekeeper for sport
-        # Refs?
-        # TODO
-        return False
+    def can_user_take_score(self, game, sport, *args, **kwargs):
+        return (
+            game.can_initialize() and
+            self.can_user_update_game_rosters(game.home_team, game.away_team, sport, *args, **kwargs)
+        )
 
 
 class SeasonRosterAuthorizer(BaseAuthorizer):

@@ -207,8 +207,10 @@ class GameScoresheetView(LoginRequiredMixin, HandleSportNotConfiguredMixin, gene
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        game = self.object
         context.update({
-            'can_user_take_score': self.game_authorizer.can_user_take_score(),
+            'can_user_take_score': self.game_authorizer.can_user_take_score(game, self.sport),
+            'sport': self.sport,
         })
         return context
 
