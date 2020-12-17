@@ -180,7 +180,7 @@ class HockeyGame(AbstractGame):
         return HockeyGamePlayer.objects.filter(
             game=self,
             team=team_or_team_pk
-        ).select_related('player__user').order_by('player__jersey_number')
+        ).select_related('player__user').order_by('-is_starting', 'player__jersey_number')
 
 
 class BaseballGame(AbstractGame):
@@ -199,7 +199,7 @@ class BaseballGame(AbstractGame):
         return BaseballGamePlayer.objects.filter(
             game=self,
             team=team_or_team_pk
-        ).select_related('player__user').order_by('player__jersey_number')
+        ).select_related('player__user').order_by('-is_starting', 'player__jersey_number')
 
 
 class AbstractGamePlayer(TimestampedModel):
