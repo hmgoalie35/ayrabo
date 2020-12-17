@@ -1,0 +1,156 @@
+[
+  {
+    "id": 1,
+    "game": 3,
+    "is_starting": false,
+    "player": 3061,
+    "team": 201
+  },
+  {
+    "id": 2,
+    "player": 3062,
+    "game": 3,
+    "is_starting": false,
+    "team": 201
+  },
+  {
+    "id": 3,
+    "player": 3063,
+    "game": 3,
+    "is_starting": false,
+    "team": 201
+  },
+  {
+    "id": 4,
+    "player": 3064,
+    "game": 3,
+    "is_starting": false,
+    "team": 201
+  },
+  {
+    "id": 5,
+    "player": 3065,
+    "game": 3,
+    "is_starting": false,
+    "team": 201
+  },
+  {
+    "id": 6,
+    "player": 3066,
+    "game": 3,
+    "is_starting": false,
+    "team": 201
+  },
+  {
+    "id": 7,
+    "player": 3067,
+    "game": 3,
+    "is_starting": false,
+    "team": 201
+  },
+  {
+    "id": 8,
+    "player": 3068,
+    "game": 3,
+    "is_starting": false,
+    "team": 201
+  },
+  {
+    "id": 9,
+    "player": 3069,
+    "game": 3,
+    "is_starting": false,
+    "team": 201
+  },
+  {
+    "id": 10,
+    "player": 3070,
+    "game": 3,
+    "is_starting": false,
+    "team": 201
+  },
+  {
+    "id": 11,
+    "player": 3071,
+    "game": 3,
+    "is_starting": false,
+    "team": 201
+  },
+  {
+    "id": 12,
+    "player": 3072,
+    "game": 3,
+    "is_starting": false,
+    "team": 201
+  },
+  {
+    "id": 13,
+    "player": 3073,
+    "game": 3,
+    "is_starting": false,
+    "team": 201
+  },
+  {
+    "id": 14,
+    "player": 3074,
+    "game": 3,
+    "is_starting": false,
+    "team": 201
+  },
+  {
+    "id": 15,
+    "player": 3075,
+    "game": 3,
+    "is_starting": false,
+    "team": 201
+  },
+  {
+    "id": 16,
+    "player": 3076,
+    "game": 3,
+    "is_starting": false,
+    "team": 201
+  },
+  {
+    "id": 17,
+    "player": 3077,
+    "game": 3,
+    "is_starting": false,
+    "team": 201
+  },
+  {
+    "id": 18,
+    "player": 3078,
+    "game": 3,
+    "is_starting": false,
+    "team": 201
+  },
+  {
+    "id": 19,
+    "player": 3079,
+    "game": 3,
+    "is_starting": false,
+    "team": 201
+  },
+  {
+    "id": 20,
+    "player": 3080,
+    "game": 3,
+    "is_starting": false,
+    "team": 201
+  },
+  {
+    "id": 21,
+    "player": 3081,
+    "game": 3,
+    "is_starting": false,
+    "team": 201
+  },
+  {
+    "id": 22,
+    "player": 3082,
+    "game": 3,
+    "is_starting": false,
+    "team": 201
+  }
+]

@@ -16,7 +16,9 @@ const getComponent = (
   selectedPlayers,
   allPlayers,
   canUpdate = true,
-  handleAddPlayers = jest.fn()
+  handleAddPlayers = jest.fn(),
+  handleRemovePlayer = jest.fn(),
+  handleToggleStartingGoalie = jest.fn(),
 ) => {
   const props = {
     teamName: 'Green Machine IceCats Midget Minor AA',
@@ -28,7 +30,8 @@ const getComponent = (
     selectedPlayers,
     allPlayers,
     handleAddPlayers,
-    handleRemovePlayer: jest.fn(),
+    handleRemovePlayer,
+    handleToggleStartingGoalie
   };
   return mount(<GameRosterComponent {...props} />);
 };
