@@ -55,9 +55,7 @@ export default class GameRostersUpdateComponent extends React.Component {
         homeTeamPlayersResult,
         awayTeamPlayersResult,
         sportId,
-        gameId,
-        homeTeamId,
-        awayTeamId
+        gameId
       );
     });
   }
@@ -192,7 +190,7 @@ export default class GameRostersUpdateComponent extends React.Component {
     }).map(player => ({
       team: player.team,
       player: player.id,
-      is_starting: player.is_starting,
+      is_starting: player.is_starting || false,
       game: gameId,
     }));
 
