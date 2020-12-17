@@ -465,14 +465,14 @@ export default class GameRostersUpdateComponent extends React.Component {
               <div className="btn-toolbar text-center">
                 {backButton}
                 <button
-                  className="btn btn-link"
+                  className="btn btn-default"
                   type="button"
                   id="cancel-update-game-roster-btn"
                   /* onClick handler doesn't get called when the button is disabled */
                   onClick={() => reload()}
                   disabled={disableUpdateButton}
                 >
-                  Cancel
+                  Undo
                 </button>
                 <button
                   className="btn btn-success"

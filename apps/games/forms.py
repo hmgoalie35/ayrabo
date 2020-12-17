@@ -228,7 +228,7 @@ class AbstractGameScoresheetForm(forms.ModelForm):
                 """
                 <p class="text-muted">
                   <i class="fa fa-fw fa-lg fa-color-warning fa-lightbulb-o"></i>
-                  Ensure game rosters only include players that are present at the game
+                  Game rosters should only include players that are attending the game
                 </p>
                 """
             )
