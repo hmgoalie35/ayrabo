@@ -4,7 +4,7 @@ import Noty from 'noty';
  * Toggle the api error banner
  * @param state The state to toggle the error banner to. Choose from `show` or `hide`
  */
-export const toggleAPIErrorMessage = (state) => {
+export const toggleAPIErrorMessage = (state, message = '') => {
   let animateClass = null;
   // true means class is added, false means class is removed
   let classState = null;
@@ -15,6 +15,8 @@ export const toggleAPIErrorMessage = (state) => {
     animateClass = 'fadeOut';
     classState = true;
   }
+
+  if (message) $('.js-api-error-text').html(message);
   $('.js-api-error').animateCss(animateClass).toggleClass('hidden', classState);
 };
 

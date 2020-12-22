@@ -295,10 +295,10 @@ export default class GameRostersUpdateComponent extends React.Component {
     if (deletes.length) totalActions += 1;
 
     let successes = 0;
-    let errors = 0;
+    const errors = [];
 
     const handleAlways = () => {
-      const allActionsComplete = successes + errors === totalActions;
+      const allActionsComplete = successes + errors.length === totalActions;
       if (allActionsComplete) {
         if (successes > 0) {
           this.getRosters(homeTeamPlayers, awayTeamPlayers, sportId, gameId);
@@ -310,7 +310,11 @@ export default class GameRostersUpdateComponent extends React.Component {
             createNotification('Some of your updates were not saved. Please refresh and try again.', 'warning').show();
           }
         } else {
-          toggleAPIErrorMessage('show');
+          let message = `We experienced ${errors.length} issue${errors.length > 1 ? 's' : ''} with your request`;
+          message += `<ul>
+            ${errors.filter(error => error.non_field_errors != null).map(error => `<li>${error.non_field_errors}</li>`)}
+          </ul>`;
+          toggleAPIErrorMessage('show', message);
         }
       }
     };
@@ -320,7 +324,7 @@ export default class GameRostersUpdateComponent extends React.Component {
     };
 
     const handleError = (jqXHR) => {
-      errors += 1;
+      errors.push(jqXHR.responseJSON);
       handleAPIError(jqXHR);
     };
 
