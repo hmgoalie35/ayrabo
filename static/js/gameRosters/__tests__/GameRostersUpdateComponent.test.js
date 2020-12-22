@@ -103,7 +103,7 @@ describe('componentDidMount', () => {
   });
 });
 
-describe('cleanPlayers', () => {
+describe('syncPlayersToGamePlayers', () => {
   test('merges game players and player objects', () => {
     const mergedHomePlayer = {
       "id": 3061,
@@ -125,7 +125,7 @@ describe('cleanPlayers', () => {
     };
 
     const component = getComponent();
-    const result = component.instance().cleanPlayers([homeGamePlayers[0]], homePlayers);
+    const result = component.instance().syncPlayersToGamePlayers(homePlayers, [homeGamePlayers[0]]);
     expect(result[0]).toEqual(mergedHomePlayer);
   });
 });

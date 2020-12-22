@@ -84,18 +84,39 @@ export default class GameRostersUpdateComponent extends React.Component {
         playersByTeam[gamePlayer.team].push(gamePlayer);
       });
 
-      const homePlayers = this.addTypeaheadLabel(homeTeamPlayers);
-      const awayPlayers = this.addTypeaheadLabel(awayTeamPlayers);
+      const homeTeamPlayersSynced =
+        this.syncPlayersToGamePlayers(homeTeamPlayers, playersByTeam[homeTeamId]);
+      const awayTeamPlayersSynced =
+        this.syncPlayersToGamePlayers(awayTeamPlayers, playersByTeam[awayTeamId]);
+
+      const homePlayers = this.addTypeaheadLabel(homeTeamPlayersSynced);
+      const awayPlayers = this.addTypeaheadLabel(awayTeamPlayersSynced);
 
       this.setState({
         homeTeamPlayers: homePlayers,
         awayTeamPlayers: awayPlayers,
-        selectedHomeTeamPlayers: this.cleanPlayers(playersByTeam[homeTeamId], homePlayers),
-        selectedAwayTeamPlayers: this.cleanPlayers(playersByTeam[awayTeamId], awayPlayers),
+        selectedHomeTeamPlayers:
+          this.filterAndSyncPlayers(homeTeamPlayers, playersByTeam[homeTeamId]),
+        selectedAwayTeamPlayers:
+          this.filterAndSyncPlayers(awayTeamPlayers, playersByTeam[awayTeamId]),
         savedHomeTeamGamePlayers: playersByTeam[homeTeamId],
         savedAwayTeamGamePlayers: playersByTeam[awayTeamId],
       });
     }, jqXHR => handleAPIError(jqXHR));
+  }
+
+  syncPlayersToGamePlayers(players, gamePlayers) {
+    return players.map((player) => {
+      const gamePlayer = gamePlayers.find(gp => gp.player === player.id);
+
+      return {
+        ...gamePlayer,
+        ...player,
+
+        // Override is_starting with game player value
+        is_starting: gamePlayer ? gamePlayer.is_starting : false,
+      };
+    });
   }
 
   addPlayers(currentPlayers, newPlayers) {
@@ -333,20 +354,16 @@ export default class GameRostersUpdateComponent extends React.Component {
 
   /**
    * Takes a list of game player data and returns an array of merged player objects
-   * @param gamePlayers Array of game player objects
    * @param players Array of player objects
+   * @param gamePlayers Array of game player objects
    */
-  cleanPlayers(gamePlayers, players) {
-    return gamePlayers.filter((gp) => {
-      const player = players.find(el => gp.player === el.id);
-      return player !== undefined;
-    }).map((gp) => {
-      const player = players.find(el => gp.player === el.id);
-      return {
-        ...gp,
-        ...player,
-      };
+  filterAndSyncPlayers(players, gamePlayers) {
+    const filteredPlayers = players.filter((p) => {
+      const gamePlayer = gamePlayers.find(gp => p.id === gp.player);
+      return gamePlayer !== undefined;
     });
+
+    return this.syncPlayersToGamePlayers(filteredPlayers, gamePlayers);
   }
 
   addTypeaheadLabel(players) {
