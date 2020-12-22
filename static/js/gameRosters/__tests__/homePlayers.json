@@ -290,7 +290,6 @@
     "team": 201,
     "jersey_number": 21,
     "is_active": true,
-    "is_starting": true,
     "position": "G",
     "handedness": "Right"
   },
@@ -305,7 +304,6 @@
     "team": 201,
     "jersey_number": 22,
     "is_active": true,
-    "is_starting": false,
     "position": "G",
     "handedness": "Left"
   }

@@ -5,8 +5,13 @@ import PlayerComponent from '../PlayerComponent';
 import homePlayers from './homePlayers.json';
 
 
+const setAsStarter = (player) => {
+  player.is_starting = true;
+  return player;
+};
+
 const homeTeamPlayer = homePlayers[0];
-const startingGoalie = homePlayers[20];
+const startingGoalie = setAsStarter(homePlayers[20]);
 const goalie = homePlayers[21];
 
 const getComponent = (player, canUpdate = true, handleRemovePlayer = jest.fn(), handleToggleStartingGoalie = jest.fn()) => {
