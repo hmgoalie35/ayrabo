@@ -131,12 +131,15 @@ export default class GameRostersUpdateComponent extends React.Component {
     const {
       selectedHomeTeamPlayers,
       selectedAwayTeamPlayers,
+      homeTeamPlayers,
+      awayTeamPlayers,
     } = this.state;
     const { homeTeamId } = this.props;
     const isHomePlayer = player.team === homeTeamId;
     const selectedPlayers = isHomePlayer ? selectedHomeTeamPlayers : selectedAwayTeamPlayers;
+    const players = isHomePlayer ? homeTeamPlayers : awayTeamPlayers;
 
-    selectedPlayers.forEach((selectedPlayer) => {
+    const setStarter = (selectedPlayer) => {
       const sPlayer = selectedPlayer;
       if (sPlayer.position === 'G') {
         if (sPlayer.id === player.id) {
@@ -145,7 +148,10 @@ export default class GameRostersUpdateComponent extends React.Component {
           sPlayer.is_starting = false;
         }
       }
-    });
+    };
+
+    selectedPlayers.forEach(setStarter);
+    players.forEach(setStarter);
 
     const state = {
       disableUpdateButton: false,
@@ -153,8 +159,10 @@ export default class GameRostersUpdateComponent extends React.Component {
 
     if (isHomePlayer) {
       state.selectedHomeTeamPlayers = selectedPlayers;
+      state.homeTeamPlayers = players;
     } else {
       state.selectedAwayTeamPlayers = selectedPlayers;
+      state.awayTeamPlayers = players;
     }
 
     this.setState(state);
