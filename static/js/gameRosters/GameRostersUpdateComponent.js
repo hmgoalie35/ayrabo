@@ -3,7 +3,12 @@ import PropTypes from 'prop-types';
 import { uniqBy } from 'lodash/array';
 
 import APIClient from '../common/APIClient';
-import { createNotification, handleAPIError, toggleAPIErrorMessage } from '../common/utils';
+import {
+  createNotification,
+  handleAPIError,
+  pluralize,
+  toggleAPIErrorMessage,
+} from '../common/utils';
 import GameRosterComponent from './GameRosterComponent';
 
 
@@ -318,7 +323,7 @@ export default class GameRostersUpdateComponent extends React.Component {
             createNotification('Some of your updates were not saved. Please refresh and try again.', 'warning').show();
           }
         } else {
-          let message = `We experienced ${errors.length} issue${errors.length > 1 ? 's' : ''} with your request`;
+          let message = `We experienced ${errors.length} ${pluralize('issue', errors.length)} with your request`;
           message += `<ul>
             ${errors.filter(error => error.non_field_errors != null).map(error => `<li>${error.non_field_errors}</li>`)}
           </ul>`;
