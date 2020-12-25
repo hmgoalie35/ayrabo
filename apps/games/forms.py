@@ -231,11 +231,14 @@ class AbstractGameScoresheetForm(forms.ModelForm):
                   Game rosters should only include players that are attending the game
                 </p>
                 """
-            )
+            ),
+            Row(
+                Column('period_duration', css_class='col-sm-offset-4 col-sm-4')
+            ),
         )
 
     class Meta:
-        fields = ('home_team_game_roster', 'away_team_game_roster')
+        fields = ('home_team_game_roster', 'away_team_game_roster', 'period_duration')
 
 
 class HockeyGameScoresheetForm(AbstractGameScoresheetForm):

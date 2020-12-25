@@ -214,6 +214,11 @@ class GameScoresheetView(LoginRequiredMixin, HandleSportNotConfiguredMixin, gene
         })
         return context
 
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        self.object.init_periods()
+        return response
+
     def get(self, *args, **kwargs):
         self._get_sport()
         return super().get(*args, **kwargs)
