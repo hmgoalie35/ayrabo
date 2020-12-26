@@ -195,16 +195,6 @@ class HockeyGameUpdateForm(DisableFormFieldsMixin, AbstractGameCreateUpdateForm)
         }
 
 
-GAME_ROSTERS_EDIT_BTN = Div(
-    HTML(
-        """
-        <a href="{% url 'sports:games:rosters:update' slug=sport.slug game_pk=game.pk %}">Edit</a>
-        """
-    ),
-    css_class='pull-right'
-)
-
-
 class AbstractGameScoresheetForm(forms.ModelForm):
     home_team_game_roster = GamePlayerField(queryset=None)
     away_team_game_roster = GamePlayerField(queryset=None)
@@ -219,7 +209,16 @@ class AbstractGameScoresheetForm(forms.ModelForm):
         self.helper.disable_csrf = True
         self.helper.form_tag = False
         self.helper.layout = Layout(
-            Row(GAME_ROSTERS_EDIT_BTN),
+            Row(
+                Div(
+                    HTML(
+                        """
+                        <a href="{% url 'sports:games:rosters:update' slug=sport.slug game_pk=game.pk %}">Edit</a>
+                        """
+                    ),
+                    css_class='pull-right'
+                )
+            ),
             Row(
                 Column('home_team_game_roster', css_class='col-sm-6'),
                 Column('away_team_game_roster', css_class='col-sm-6'),
