@@ -472,7 +472,7 @@ export default class GameRostersUpdateComponent extends React.Component {
                   onClick={() => reload()}
                   disabled={disableUpdateButton}
                 >
-                  Undo
+                  Cancel
                 </button>
                 <button
                   className="btn btn-success"
