@@ -30,6 +30,7 @@ class AbstractGame(TimestampedModel):
     )
 
     GRACE_PERIOD = datetime.timedelta(hours=24)
+    START_GAME_GRACE_PERIOD = datetime.timedelta(minutes=30)
 
     home_team = models.ForeignKey(
         'teams.Team',
@@ -152,12 +153,19 @@ class AbstractGame(TimestampedModel):
         # TODO Can probably update this to start - grace period <= timezone.now() <= start
         return self.status in [self.SCHEDULED] and timezone_util.now() >= self.start - self.GRACE_PERIOD
 
+    def can_start_game(self):
+        return timezone_util.now() >= self.start - self.START_GAME_GRACE_PERIOD
+
     def init_periods(self):
         """
         Initialize the periods (or the equivalent term for the relevant sport) for this game. This *MUST* support both
         creates and updates since this function may get called multiple times.
         """
         raise NotImplementedError()
+
+    def init_game(self):
+        self.status = self.IN_PROGRESS
+        self.save()
 
     def clean_datetime(self, dt):
         """
