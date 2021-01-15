@@ -7,7 +7,6 @@ import {
   createNotification,
   handleAPIError,
   pluralize,
-  toggleAPIErrorMessage,
 } from '../common/utils';
 import GameRosterComponent from './GameRosterComponent';
 
@@ -327,7 +326,7 @@ export default class GameRostersUpdateComponent extends React.Component {
           message += `<ul>
             ${errors.filter(error => error.non_field_errors != null).map(error => `<li>${error.non_field_errors}</li>`)}
           </ul>`;
-          toggleAPIErrorMessage('show', message);
+          createNotification(message, 'error').show();
         }
       }
     };
