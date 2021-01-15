@@ -276,6 +276,8 @@ describe('handleSubmit', () => {
     // Prevents tooltip() not being defined error
     component.instance().componentDidUpdate = jest.fn();
     component.setState({
+      homeTeamPlayers: addTypeaheadLabel(homePlayers),
+      awayTeamPlayers: addTypeaheadLabel(awayPlayers),
       selectedHomeTeamPlayers: component.instance().syncPlayersToGamePlayers([homePlayers[20]], homeGamePlayers),
       selectedAwayTeamPlayers: component.instance().syncPlayersToGamePlayers([awayPlayers[20]], awayGamePlayers),
       savedHomeTeamGamePlayers: [homeGamePlayers[20]],
@@ -309,6 +311,8 @@ describe('handleSubmit', () => {
     // Prevents tooltip() not being defined error
     component.instance().componentDidUpdate = jest.fn();
     component.setState({
+      homeTeamPlayers: addTypeaheadLabel(homePlayers),
+      awayTeamPlayers: addTypeaheadLabel(awayPlayers),
       selectedHomeTeamPlayers: [homePlayers[20]],
       selectedAwayTeamPlayers: [awayPlayers[20]],
       savedHomeTeamGamePlayers: [homeGamePlayers[1], homeGamePlayers[20]],
