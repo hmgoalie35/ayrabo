@@ -4,7 +4,9 @@ import { mount } from 'enzyme';
 import GameRostersUpdateComponent from '../GameRostersUpdateComponent';
 import GameRosterComponent from '../GameRosterComponent';
 import homePlayers from './homePlayers.json';
+import homeGamePlayers from './homeGamePlayers.json';
 import awayPlayers from './awayPlayers.json';
+import awayGamePlayers from './awayGamePlayers.json';
 
 
 const homeTeam = {
@@ -48,7 +50,7 @@ const awayTeamPlayer = {
 };
 
 const sportId = 1;
-const gameId = 100;
+const gameId = 3;
 const seasonId = 5;
 
 beforeEach(() => {
@@ -75,6 +77,12 @@ const addTypeaheadLabel = players => players.map(p => ({
   label: `#${p.jersey_number} ${p.user.first_name} ${p.user.last_name}`,
 }));
 
+const stripId = (gamePlayer) => {
+  const temp = Object.assign({}, gamePlayer);
+  delete temp['id'];
+  return temp;
+}
+
 describe('componentDidMount', () => {
   test('fetch players for the home and away teams', () => {
     const mockGetPlayers = jest.fn();
@@ -95,12 +103,30 @@ describe('componentDidMount', () => {
   });
 });
 
-describe('cleanPlayers', () => {
-  test('converts ids into player objects', () => {
+describe('syncPlayersToGamePlayers', () => {
+  test('merges game players and player objects', () => {
+    const mergedHomePlayer = {
+      "id": 3061,
+      "user": {
+        "id": 3062,
+        "first_name": "Caleb",
+        "last_name": "Gordon"
+      },
+      "sport": 1,
+      "team": 201,
+      "jersey_number": 1,
+      "is_active": true,
+      "position": "C",
+      "handedness": "Left",
+      "game": 3,
+      "is_starting": false,
+      "player": 3061,
+      "team": 201
+    };
+
     const component = getComponent();
-    const result = component.instance().cleanPlayers([3061, 3062], homePlayers);
-    expect(result[0]).toEqual(homePlayers[0]);
-    expect(result[1]).toEqual(homePlayers[1]);
+    const result = component.instance().syncPlayersToGamePlayers(homePlayers, [homeGamePlayers[0]]);
+    expect(result[0]).toEqual(mergedHomePlayer);
   });
 });
 
@@ -180,33 +206,158 @@ describe('Adding/removing players', () => {
 });
 
 describe('handleSubmit', () => {
-  test('Disables update button and creates notification', async () => {
+  test('Adds players', async () => {
     const component = getComponent(true, true);
     // We have the function resolve some dummy value, we could add the correct api response.
-    const mockClientPatch = jest.fn();
-    mockClientPatch.mockReturnValueOnce(Promise.resolve(true));
-    component.instance().client.patch = mockClientPatch;
+    const mockClientPost = jest.fn();
+    mockClientPost.mockReturnValueOnce($.Deferred());
+    component.instance().client.post = mockClientPost;
 
     // Prevents tooltip() not being defined error
     component.instance().componentDidUpdate = jest.fn();
     component.setState({
       selectedHomeTeamPlayers: [],
       selectedAwayTeamPlayers: [],
+      savedHomeTeamGamePlayers: [],
+      savedAwayTeamGamePlayers: [],
     });
     component.instance().handleAddHomeTeamPlayers([homePlayers[0]]);
     component.instance().handleAddHomeTeamPlayers([homePlayers[1]]);
     component.instance().handleAddAwayTeamPlayers([awayPlayers[0]]);
     component.find('form').simulate('submit');
 
-    await expect(mockClientPatch).toHaveBeenCalledWith(
-      `sports/${sportId}/games/${gameId}/rosters`,
-      {
-        home_players: [3061, 3062],
-        away_players: [3215],
-      },
+    await expect(mockClientPost).toHaveBeenCalledWith(
+      `sports/${sportId}/games/${gameId}/players/bulk/create`,
+      [
+        stripId(homeGamePlayers[0]),
+        stripId(homeGamePlayers[1]),
+        stripId(awayGamePlayers[0])
+      ]
     );
-    expect(component.state('disableUpdateButton')).toBe(true);
-    // I can't figure out how to mock createNotification
+  });
+  test('Removes players', async () => {
+    const component = getComponent(true, true);
+    // We have the function resolve some dummy value, we could add the correct api response.
+    const mockClientPost = jest.fn();
+    mockClientPost.mockReturnValueOnce($.Deferred());
+    component.instance().client.post = mockClientPost;
+
+    // Prevents tooltip() not being defined error
+    component.instance().componentDidUpdate = jest.fn();
+    component.setState({
+      selectedHomeTeamPlayers: [],
+      selectedAwayTeamPlayers: [],
+      savedHomeTeamGamePlayers: [homeGamePlayers[0]],
+      savedAwayTeamGamePlayers: [awayGamePlayers[0]],
+    });
+    component.instance().handleRemoveHomeTeamPlayer(homePlayers[0]);
+    component.instance().handleRemoveAwayTeamPlayer(awayPlayers[0]);
+    component.find('form').simulate('submit');
+
+    await expect(mockClientPost).toHaveBeenCalledWith(
+      `sports/${sportId}/games/${gameId}/players/bulk/delete`,
+      [
+        {
+          id: homeGamePlayers[0].id
+        },
+        {
+          id: awayGamePlayers[0].id
+        }
+      ],
+    );
+  });
+  test('Updates players', async () => {
+    const component = getComponent(true, true);
+    // We have the function resolve some dummy value, we could add the correct api response.
+    const mockClientPost = jest.fn();
+    mockClientPost.mockReturnValueOnce($.Deferred());
+    component.instance().client.post = mockClientPost;
+
+    // Prevents tooltip() not being defined error
+    component.instance().componentDidUpdate = jest.fn();
+    component.setState({
+      homeTeamPlayers: addTypeaheadLabel(homePlayers),
+      awayTeamPlayers: addTypeaheadLabel(awayPlayers),
+      selectedHomeTeamPlayers: component.instance().syncPlayersToGamePlayers([homePlayers[20]], homeGamePlayers),
+      selectedAwayTeamPlayers: component.instance().syncPlayersToGamePlayers([awayPlayers[20]], awayGamePlayers),
+      savedHomeTeamGamePlayers: [homeGamePlayers[20]],
+      savedAwayTeamGamePlayers: [awayGamePlayers[20]],
+    });
+    component.instance().handleToggleStartingGoalie(homePlayers[20], true);
+    component.instance().handleToggleStartingGoalie(awayPlayers[20], true);
+    component.find('form').simulate('submit');
+
+    await expect(mockClientPost).toHaveBeenCalledWith(
+      `sports/${sportId}/games/${gameId}/players/bulk/update`,
+      [
+        {
+          id: homeGamePlayers[20].id,
+          is_starting: true
+        },
+        {
+          id: awayGamePlayers[20].id,
+          is_starting: true
+        }
+      ],
+    );
+  });
+  test('All actions', async () => {
+    const component = getComponent(true, true);
+    // We have the function resolve some dummy value, we could add the correct api response.
+    const mockClientPost = jest.fn();
+    mockClientPost.mockReturnValue($.Deferred());
+    component.instance().client.post = mockClientPost;
+
+    // Prevents tooltip() not being defined error
+    component.instance().componentDidUpdate = jest.fn();
+    component.setState({
+      homeTeamPlayers: addTypeaheadLabel(homePlayers),
+      awayTeamPlayers: addTypeaheadLabel(awayPlayers),
+      selectedHomeTeamPlayers: [homePlayers[20]],
+      selectedAwayTeamPlayers: [awayPlayers[20]],
+      savedHomeTeamGamePlayers: [homeGamePlayers[1], homeGamePlayers[20]],
+      savedAwayTeamGamePlayers: [awayGamePlayers[1], awayGamePlayers[20]]
+    });
+    component.instance().handleAddHomeTeamPlayers([homePlayers[0]]);
+    component.instance().handleAddHomeTeamPlayers([awayPlayers[0]]);
+    component.instance().handleRemoveHomeTeamPlayer(homePlayers[1]);
+    component.instance().handleRemoveAwayTeamPlayer(awayPlayers[1]);
+    component.instance().handleToggleStartingGoalie(homePlayers[20], true);
+    component.instance().handleToggleStartingGoalie(awayPlayers[20], true);
+
+    component.find('form').simulate('submit');
+
+    await expect(mockClientPost).toHaveBeenNthCalledWith(1,
+      `sports/${sportId}/games/${gameId}/players/bulk/create`,
+      [
+        stripId(homeGamePlayers[0]),
+        stripId(awayGamePlayers[0]),
+      ]
+    );
+    await expect(mockClientPost).toHaveBeenNthCalledWith(2,
+      `sports/${sportId}/games/${gameId}/players/bulk/update`,
+      [
+        {
+          id: homeGamePlayers[20].id,
+          is_starting: true
+        },
+        {
+          id: awayGamePlayers[20].id,
+          is_starting: true
+        }
+      ],
+    );
+    await expect(mockClientPost).toHaveBeenNthCalledWith(3,
+      `sports/${sportId}/games/${gameId}/players/bulk/delete`,
+      [
+        {
+          id: homeGamePlayers[1].id
+        },
+        {
+          id: awayGamePlayers[1].id
+        }
+      ],
+    );
   });
 });
 

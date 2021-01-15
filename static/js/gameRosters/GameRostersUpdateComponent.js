@@ -3,7 +3,11 @@ import PropTypes from 'prop-types';
 import { uniqBy } from 'lodash/array';
 
 import APIClient from '../common/APIClient';
-import { createNotification, handleAPIError, toggleAPIErrorMessage } from '../common/utils';
+import {
+  createNotification,
+  handleAPIError,
+  pluralize,
+} from '../common/utils';
 import GameRosterComponent from './GameRosterComponent';
 
 
@@ -19,6 +23,7 @@ export default class GameRostersUpdateComponent extends React.Component {
     this.handleAddAwayTeamPlayers = this.handleAddAwayTeamPlayers.bind(this);
     this.handleRemoveHomeTeamPlayer = this.handleRemoveHomeTeamPlayer.bind(this);
     this.handleRemoveAwayTeamPlayer = this.handleRemoveAwayTeamPlayer.bind(this);
+    this.handleToggleStartingGoalie = this.handleToggleStartingGoalie.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.addPlayers = this.addPlayers.bind(this);
     this.removePlayer = this.removePlayer.bind(this);
@@ -30,6 +35,9 @@ export default class GameRostersUpdateComponent extends React.Component {
       // Rosters being manipulated by the user
       selectedHomeTeamPlayers: null,
       selectedAwayTeamPlayers: null,
+      // Current roster state in backend
+      savedHomeTeamGamePlayers: null,
+      savedAwayTeamGamePlayers: null,
       disableUpdateButton: true,
     };
   }
@@ -51,7 +59,7 @@ export default class GameRostersUpdateComponent extends React.Component {
         homeTeamPlayersResult,
         awayTeamPlayersResult,
         sportId,
-        gameId,
+        gameId
       );
     });
   }
@@ -68,19 +76,51 @@ export default class GameRostersUpdateComponent extends React.Component {
   }
 
   getRosters(homeTeamPlayers, awayTeamPlayers, sportId, gameId) {
+    const { homeTeamId, awayTeamId } = this.props;
+
     return this.client.get(
-      `sports/${sportId}/games/${gameId}/rosters`
+      `sports/${sportId}/games/${gameId}/players`
     ).then((data) => {
-      const { home_players: homeTeamPlayerIds, away_players: awayTeamPlayerIds } = data;
-      const homePlayers = this.addTypeaheadLabel(homeTeamPlayers);
-      const awayPlayers = this.addTypeaheadLabel(awayTeamPlayers);
+      const playersByTeam = {};
+      playersByTeam[homeTeamId] = [];
+      playersByTeam[awayTeamId] = [];
+      data.forEach((gamePlayer) => {
+        playersByTeam[gamePlayer.team].push(gamePlayer);
+      });
+
+      const homeTeamPlayersSynced =
+        this.syncPlayersToGamePlayers(homeTeamPlayers, playersByTeam[homeTeamId]);
+      const awayTeamPlayersSynced =
+        this.syncPlayersToGamePlayers(awayTeamPlayers, playersByTeam[awayTeamId]);
+
+      const homePlayers = this.addTypeaheadLabel(homeTeamPlayersSynced);
+      const awayPlayers = this.addTypeaheadLabel(awayTeamPlayersSynced);
+
       this.setState({
         homeTeamPlayers: homePlayers,
         awayTeamPlayers: awayPlayers,
-        selectedHomeTeamPlayers: this.cleanPlayers(homeTeamPlayerIds, homePlayers),
-        selectedAwayTeamPlayers: this.cleanPlayers(awayTeamPlayerIds, awayPlayers),
+        selectedHomeTeamPlayers:
+          this.filterAndSyncPlayers(homeTeamPlayers, playersByTeam[homeTeamId]),
+        selectedAwayTeamPlayers:
+          this.filterAndSyncPlayers(awayTeamPlayers, playersByTeam[awayTeamId]),
+        savedHomeTeamGamePlayers: playersByTeam[homeTeamId],
+        savedAwayTeamGamePlayers: playersByTeam[awayTeamId],
       });
     }, jqXHR => handleAPIError(jqXHR));
+  }
+
+  syncPlayersToGamePlayers(players, gamePlayers) {
+    return players.map((player) => {
+      const gamePlayer = gamePlayers.find(gp => gp.player === player.id);
+
+      return {
+        ...gamePlayer,
+        ...player,
+
+        // Override is_starting with game player value
+        is_starting: gamePlayer ? gamePlayer.is_starting : false,
+      };
+    });
   }
 
   addPlayers(currentPlayers, newPlayers) {
@@ -91,36 +131,155 @@ export default class GameRostersUpdateComponent extends React.Component {
     return currentPlayers.filter(player => player.id !== removedPlayer.id);
   }
 
+  handleToggleStartingGoalie(player, isStarting) {
+    const {
+      selectedHomeTeamPlayers,
+      selectedAwayTeamPlayers,
+      homeTeamPlayers,
+      awayTeamPlayers,
+    } = this.state;
+    const { homeTeamId } = this.props;
+    const isHomePlayer = player.team === homeTeamId;
+    const selectedPlayers = isHomePlayer ? selectedHomeTeamPlayers : selectedAwayTeamPlayers;
+    const players = isHomePlayer ? homeTeamPlayers : awayTeamPlayers;
+
+    const setStarter = (selectedPlayer) => {
+      const sPlayer = selectedPlayer;
+      if (sPlayer.position === 'G') {
+        if (sPlayer.id === player.id) {
+          sPlayer.is_starting = isStarting;
+        } else {
+          sPlayer.is_starting = false;
+        }
+      }
+    };
+
+    selectedPlayers.forEach(setStarter);
+    players.forEach(setStarter);
+
+    const state = {
+      disableUpdateButton: false,
+    };
+
+    if (isHomePlayer) {
+      state.selectedHomeTeamPlayers = selectedPlayers;
+      state.homeTeamPlayers = players;
+    } else {
+      state.selectedAwayTeamPlayers = selectedPlayers;
+      state.awayTeamPlayers = players;
+    }
+
+    this.setState(state);
+  }
+
   handleAddHomeTeamPlayers(selected) {
     const { selectedHomeTeamPlayers } = this.state;
+    const addedPlayers = this.addPlayers(selectedHomeTeamPlayers, selected);
     this.setState({
-      selectedHomeTeamPlayers: this.addPlayers(selectedHomeTeamPlayers, selected),
+      selectedHomeTeamPlayers: addedPlayers,
       disableUpdateButton: false,
     });
   }
 
   handleRemoveHomeTeamPlayer(removedPlayer) {
     const { selectedHomeTeamPlayers } = this.state;
+    const removedPlayers = this.removePlayer(selectedHomeTeamPlayers, removedPlayer);
     this.setState({
-      selectedHomeTeamPlayers: this.removePlayer(selectedHomeTeamPlayers, removedPlayer),
+      selectedHomeTeamPlayers: removedPlayers,
       disableUpdateButton: false,
     });
   }
 
   handleAddAwayTeamPlayers(selected) {
     const { selectedAwayTeamPlayers } = this.state;
+    const addedPlayers = this.addPlayers(selectedAwayTeamPlayers, selected);
     this.setState({
-      selectedAwayTeamPlayers: this.addPlayers(selectedAwayTeamPlayers, selected),
+      selectedAwayTeamPlayers: addedPlayers,
       disableUpdateButton: false,
     });
   }
 
   handleRemoveAwayTeamPlayer(removedPlayer) {
     const { selectedAwayTeamPlayers } = this.state;
+    const removedPlayers = this.removePlayer(selectedAwayTeamPlayers, removedPlayer);
     this.setState({
-      selectedAwayTeamPlayers: this.removePlayer(selectedAwayTeamPlayers, removedPlayer),
+      selectedAwayTeamPlayers: removedPlayers,
       disableUpdateButton: false,
     });
+  }
+
+  buildCreates() {
+    const {
+      selectedHomeTeamPlayers,
+      selectedAwayTeamPlayers,
+      savedHomeTeamGamePlayers,
+      savedAwayTeamGamePlayers,
+    } = this.state;
+    const { gameId } = this.props;
+
+    const filterCreates = (selectedData, savedData) => selectedData.filter((player) => {
+      const savedPlayer = savedData.find(gp => player.id === gp.player);
+      return savedPlayer === undefined;
+    }).map(player => ({
+      team: player.team,
+      player: player.id,
+      is_starting: player.is_starting || false,
+      game: gameId,
+    }));
+
+    let data = [];
+    data = data.concat(filterCreates(selectedHomeTeamPlayers, savedHomeTeamGamePlayers));
+    data = data.concat(filterCreates(selectedAwayTeamPlayers, savedAwayTeamGamePlayers));
+
+    return data;
+  }
+
+  buildUpdates() {
+    const {
+      selectedHomeTeamPlayers,
+      selectedAwayTeamPlayers,
+      savedHomeTeamGamePlayers,
+      savedAwayTeamGamePlayers,
+    } = this.state;
+
+    const filterUpdates = (selectedData, savedData) => selectedData.filter((player) => {
+      const savedPlayer = savedData.find(gp => player.id === gp.player);
+      return savedPlayer !== undefined && savedPlayer.is_starting !== player.is_starting;
+    }).map((player) => {
+      const gamePlayer = savedData.find(gp => player.id === gp.player);
+      return {
+        id: gamePlayer.id,
+        is_starting: player.is_starting,
+      };
+    });
+
+    let data = [];
+    data = data.concat(filterUpdates(selectedHomeTeamPlayers, savedHomeTeamGamePlayers));
+    data = data.concat(filterUpdates(selectedAwayTeamPlayers, savedAwayTeamGamePlayers));
+
+    return data;
+  }
+
+  buildDeletes() {
+    const {
+      selectedHomeTeamPlayers,
+      selectedAwayTeamPlayers,
+      savedHomeTeamGamePlayers,
+      savedAwayTeamGamePlayers,
+    } = this.state;
+
+    const filterDeletes = (selectedData, savedData) => savedData.filter((gp) => {
+      const selectedPlayer = selectedData.find(player => player.id === gp.player);
+      return selectedPlayer === undefined;
+    }).map(player => ({
+      id: player.id,
+    }));
+
+    let data = [];
+    data = data.concat(filterDeletes(selectedHomeTeamPlayers, savedHomeTeamGamePlayers));
+    data = data.concat(filterDeletes(selectedAwayTeamPlayers, savedAwayTeamGamePlayers));
+
+    return data;
   }
 
   handleSubmit(e) {
@@ -128,44 +287,99 @@ export default class GameRostersUpdateComponent extends React.Component {
     e.stopPropagation();
 
     const {
+      homeTeamPlayers,
+      awayTeamPlayers,
+    } = this.state;
+
+    const {
       gameId,
       sportId,
-      canUpdateHomeTeamRoster,
-      canUpdateAwayTeamRoster,
     } = this.props;
-    const { selectedHomeTeamPlayers, selectedAwayTeamPlayers } = this.state;
 
-    const data = {};
-    if (canUpdateHomeTeamRoster) {
-      data.home_players = selectedHomeTeamPlayers.map(player => player.id);
-    }
-    if (canUpdateAwayTeamRoster) {
-      data.away_players = selectedAwayTeamPlayers.map(player => player.id);
-    }
+    let totalActions = 0;
 
-    this.client.patch(
-      `sports/${sportId}/games/${gameId}/rosters`,
-      data
-    ).then(
-      () => {
-        this.setState({ disableUpdateButton: true });
-        toggleAPIErrorMessage('hide');
-        createNotification('Your updates have been saved.', 'success').show();
-      },
-      (jqXHR) => {
-        toggleAPIErrorMessage('show');
-        handleAPIError(jqXHR);
+    const creates = this.buildCreates();
+    const updates = this.buildUpdates();
+    const deletes = this.buildDeletes();
+
+    if (creates.length) totalActions += 1;
+    if (updates.length) totalActions += 1;
+    if (deletes.length) totalActions += 1;
+
+    let successes = 0;
+    const errors = [];
+
+    const handleAlways = () => {
+      const allActionsComplete = successes + errors.length === totalActions;
+      if (allActionsComplete) {
+        if (successes > 0) {
+          this.getRosters(homeTeamPlayers, awayTeamPlayers, sportId, gameId);
+          this.setState({ disableUpdateButton: true });
+
+          if (successes === totalActions) {
+            createNotification('Your updates have been saved.', 'success').show();
+          } else {
+            createNotification('Some of your updates were not saved. Please refresh and try again.', 'warning').show();
+          }
+        } else {
+          let message = `We experienced ${errors.length} ${pluralize('issue', errors.length)} with your request`;
+          message += `<ul>
+            ${errors.filter(error => error.non_field_errors != null).map(error => `<li>${error.non_field_errors}</li>`)}
+          </ul>`;
+          createNotification(message, 'error').show();
+        }
       }
-    );
+    };
+
+    const handleSuccess = () => {
+      successes += 1;
+    };
+
+    const handleError = (jqXHR) => {
+      errors.push(jqXHR.responseJSON);
+      handleAPIError(jqXHR);
+    };
+
+    if (creates.length) {
+      this.client.post(
+        `sports/${sportId}/games/${gameId}/players/bulk/create`,
+        creates
+      ).then(handleSuccess, handleError).always(handleAlways);
+    }
+
+    if (updates.length) {
+      this.client.post(
+        `sports/${sportId}/games/${gameId}/players/bulk/update`,
+        updates
+      ).then(handleSuccess, handleError).always(handleAlways);
+    }
+
+    if (deletes.length) {
+      this.client.post(
+        `sports/${sportId}/games/${gameId}/players/bulk/delete`,
+        deletes
+      ).then(handleSuccess, handleError).always(handleAlways);
+    }
+
+    if (totalActions === 0) {
+      createNotification('No updates were made to rosters, double check your changes and try again', 'warning').show();
+      this.getRosters(homeTeamPlayers, awayTeamPlayers, sportId, gameId);
+      this.setState({ disableUpdateButton: true });
+    }
   }
 
   /**
-   * Takes a list of player ids and returns an array of the corresponding player objects.
-   * @param playerIds Array of player ids
+   * Takes a list of game player data and returns an array of merged player objects
    * @param players Array of player objects
+   * @param gamePlayers Array of game player objects
    */
-  cleanPlayers(playerIds, players) {
-    return playerIds.map(id => players.find(el => id === el.id));
+  filterAndSyncPlayers(players, gamePlayers) {
+    const filteredPlayers = players.filter((p) => {
+      const gamePlayer = gamePlayers.find(gp => p.id === gp.player);
+      return gamePlayer !== undefined;
+    });
+
+    return this.syncPlayersToGamePlayers(filteredPlayers, gamePlayers);
   }
 
   addTypeaheadLabel(players) {
@@ -212,6 +426,7 @@ export default class GameRostersUpdateComponent extends React.Component {
               teamType="Home"
               handleAddPlayers={this.handleAddHomeTeamPlayers}
               handleRemovePlayer={this.handleRemoveHomeTeamPlayer}
+              handleToggleStartingGoalie={this.handleToggleStartingGoalie}
             />
             <GameRosterComponent
               teamName={awayTeamName}
@@ -224,6 +439,7 @@ export default class GameRostersUpdateComponent extends React.Component {
               teamType="Away"
               handleAddPlayers={this.handleAddAwayTeamPlayers}
               handleRemovePlayer={this.handleRemoveAwayTeamPlayer}
+              handleToggleStartingGoalie={this.handleToggleStartingGoalie}
             />
           </div>
 

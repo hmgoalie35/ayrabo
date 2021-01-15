@@ -69,8 +69,11 @@ export default class GameRosterComponent extends React.Component {
       teamType,
       handleAddPlayers,
       handleRemovePlayer,
+      handleToggleStartingGoalie,
     } = this.props;
     const { seasonRosters } = this.state;
+    const sortedPlayers = selectedPlayers ?
+      selectedPlayers.sort((a, b) => a.jersey_number - b.jersey_number) : [];
 
     let element;
     if (selectedPlayers === null) {
@@ -90,15 +93,16 @@ export default class GameRosterComponent extends React.Component {
     } else {
       element = (
         <React.Fragment>
-          {selectedPlayers.map(player => (
+          {sortedPlayers.map(player => (
             <PlayerComponent
               key={player.id}
               player={player}
               canUpdate={canUpdate}
               handleRemovePlayer={handleRemovePlayer}
+              handleToggleStartingGoalie={handleToggleStartingGoalie}
             />)
           )}
-          <div className="text-center mt5">
+          <div className="text-center mt10">
             {`${selectedPlayers.length} ${pluralize('player', selectedPlayers.length)}`}
           </div>
         </React.Fragment>
@@ -157,6 +161,7 @@ GameRosterComponent.propTypes = {
   teamType: PropTypes.oneOf(['Home', 'Away']).isRequired,
   handleAddPlayers: PropTypes.func.isRequired,
   handleRemovePlayer: PropTypes.func.isRequired,
+  handleToggleStartingGoalie: PropTypes.func.isRequired,
 };
 
 GameRosterComponent.defaultProps = {
