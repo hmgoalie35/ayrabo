@@ -9,6 +9,7 @@ from common.tests import GenericChoiceFactory
 from divisions.tests import DivisionFactory
 from games import utils
 from games.tests import HockeyGameFactory
+from games.utils import get_start_game_not_allowed_msg
 from leagues.tests import LeagueFactory
 from seasons.tests import SeasonFactory
 from sports.tests import SportFactory
@@ -67,3 +68,9 @@ class UtilsTests(BaseTestCase):
             'sport': self.ice_hockey,
             'game_authorizations': {},
         })
+
+    def test_get_start_game_not_allowed_msg(self):
+        self.assertEqual(
+            get_start_game_not_allowed_msg(),
+            'Games can only be started 30 minutes before the scheduled start time.'
+        )

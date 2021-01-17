@@ -1,6 +1,8 @@
 from django.db.models import Q
 
+from ayrabo.utils import timedelta_to_hours_minutes_seconds
 from games.mappings import get_game_model_cls
+from games.models import AbstractGame
 from users.authorizers import GameAuthorizer
 
 
@@ -85,3 +87,8 @@ def get_game_list_view_context(user, sport, season, team=None):
     })
     context.update(game_list_context)
     return context
+
+
+def get_start_game_not_allowed_msg():
+    _, minutes, _ = timedelta_to_hours_minutes_seconds(AbstractGame.START_GAME_GRACE_PERIOD)
+    return f'Games can only be started {int(minutes)} minutes before the scheduled start time.'

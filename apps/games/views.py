@@ -3,7 +3,7 @@ from django.contrib.messages.views import SuccessMessageMixin
 from django.shortcuts import get_object_or_404, redirect, render, reverse
 from django.views import generic
 
-from ayrabo.utils import send_season_not_configured_email, timedelta_to_hours_minutes_seconds
+from ayrabo.utils import send_season_not_configured_email
 from ayrabo.utils.mixins import HandleSportNotConfiguredMixin, HasPermissionMixin
 from games.forms import DATETIME_INPUT_FORMAT
 from seasons.utils import get_current_season_or_from_pk
@@ -17,7 +17,7 @@ from .mappings import (
     get_game_scoresheet_form_cls,
     get_game_update_form_cls,
 )
-from .models import AbstractGame
+from .utils import get_start_game_not_allowed_msg
 
 
 class GameCreateView(LoginRequiredMixin,
@@ -180,10 +180,6 @@ class GameScoresheetView(LoginRequiredMixin, HandleSportNotConfiguredMixin, Succ
     def setup(self, *args, **kwargs):
         super().setup(*args, **kwargs)
         self.game_authorizer = GameAuthorizer(user=self.request.user)
-        _, minutes, _ = timedelta_to_hours_minutes_seconds(AbstractGame.START_GAME_GRACE_PERIOD)
-        self.start_game_not_allowed_msg = (
-            f'Games can only be started {int(minutes)} minutes before the scheduled start time.'
-        )
 
     def _get_sport(self):
         if hasattr(self, 'sport'):
@@ -216,7 +212,6 @@ class GameScoresheetView(LoginRequiredMixin, HandleSportNotConfiguredMixin, Succ
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         kwargs.update({
-            'start_game_not_allowed_msg': self.start_game_not_allowed_msg,
             'is_save_and_start_game_action': self._is_save_and_start_game_action(),
         })
         return kwargs
@@ -230,7 +225,7 @@ class GameScoresheetView(LoginRequiredMixin, HandleSportNotConfiguredMixin, Succ
         context.update({
             'can_user_take_score': self.game_authorizer.can_user_take_score(game, self.sport),
             'can_start_game': game.can_start_game(),
-            'start_game_not_allowed_msg': self.start_game_not_allowed_msg,
+            'start_game_not_allowed_msg': get_start_game_not_allowed_msg(),
             'sport': self.sport,
         })
         return context
