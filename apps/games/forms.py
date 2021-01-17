@@ -200,6 +200,8 @@ class AbstractGameScoresheetForm(forms.ModelForm):
     away_team_game_roster = GamePlayerField(queryset=None)
 
     def __init__(self, *args, **kwargs):
+        self.start_game_not_allowed_msg = kwargs.pop('start_game_not_allowed_msg')
+        self.is_save_and_start_game_action = kwargs.pop('is_save_and_start_game_action')
         super().__init__(*args, **kwargs)
         game = self.instance
         self.fields['home_team_game_roster'] = GamePlayerField(queryset=game.home_team_game_players)
@@ -235,6 +237,12 @@ class AbstractGameScoresheetForm(forms.ModelForm):
                 Column('period_duration', css_class='col-sm-offset-4 col-sm-4')
             ),
         )
+
+    def clean(self):
+        cleaned_data = super().clean()
+        if self.is_save_and_start_game_action and not self.instance.can_start_game():
+            raise ValidationError(self.start_game_not_allowed_msg)
+        return cleaned_data
 
     class Meta:
         fields = ('home_team_game_roster', 'away_team_game_roster', 'period_duration')
