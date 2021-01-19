@@ -200,10 +200,6 @@ class AbstractGameScoresheetForm(forms.ModelForm):
     away_team_game_roster = GamePlayerField(queryset=None)
 
     def __init__(self, *args, **kwargs):
-        # Circular dependency
-        from .utils import get_start_game_not_allowed_msg
-
-        self.start_game_not_allowed_msg = get_start_game_not_allowed_msg()
         self.is_save_and_start_game_action = kwargs.pop('is_save_and_start_game_action')
         super().__init__(*args, **kwargs)
         game = self.instance
@@ -244,7 +240,10 @@ class AbstractGameScoresheetForm(forms.ModelForm):
     def clean(self):
         cleaned_data = super().clean()
         if self.is_save_and_start_game_action and not self.instance.can_start_game():
-            raise ValidationError(self.start_game_not_allowed_msg)
+            # Circular dependency
+            from .utils import get_start_game_not_allowed_msg
+            msg = get_start_game_not_allowed_msg()
+            raise ValidationError(msg)
         return cleaned_data
 
     class Meta:
