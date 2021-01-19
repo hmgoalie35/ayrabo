@@ -39,10 +39,11 @@
               {% csrf_token %}
               {% crispy form %}
               <a class="btn btn-back js-btn-back">Back</a>
-              <button class="btn btn-success" type="submit" name="save">Save</button>
+              <button class="btn btn-success" type="submit" name="save" id="save-btn">Save</button>
               <button
                 class="btn btn-primary {% if not can_start_game %}disabled{% endif %}"
                 type="button"
+                id="save-and-start-game-btn"
                 {% if can_start_game %}
                 data-toggle="modal"
                 data-target="#save-and-start-game-modal"
@@ -71,7 +72,9 @@
                     </div>
                     <div class="modal-footer">
                       <button type="button" class="btn btn-link" data-dismiss="modal">Cancel</button>
-                      <button type="submit" class="btn btn-primary" name="save_and_start_game">Continue</button>
+                      <button type="submit" class="btn btn-primary" name="save_and_start_game" id="modal-btn-continue">
+                        Continue
+                      </button>
                     </div>
                   </div>
                 </div>

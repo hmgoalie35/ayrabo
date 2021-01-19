@@ -214,7 +214,12 @@ class AbstractGameScoresheetForm(forms.ModelForm):
                 Div(
                     HTML(
                         """
-                        <a href="{% url 'sports:games:rosters:update' slug=sport.slug game_pk=game.pk %}">Edit</a>
+                        <a
+                          id="game-roster-edit-btn"
+                          href="{% url 'sports:games:rosters:update' slug=sport.slug game_pk=game.pk %}"
+                        >
+                          Edit
+                        </a>
                         """
                     ),
                     css_class='pull-right'

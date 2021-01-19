@@ -25,7 +25,6 @@ class AbstractGameFactory(django.DjangoModelFactory):
     season = SubFactory(SeasonFactory)
     team = LazyAttribute(lambda obj: obj.home_team)
     created_by = SubFactory(UserFactory)
-    period_duration = 15
 
     class Meta:
         model = models.AbstractGame
