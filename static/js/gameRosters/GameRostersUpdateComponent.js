@@ -6,7 +6,9 @@ import APIClient from '../common/APIClient';
 import {
   createNotification,
   handleAPIError,
+  navigate,
   pluralize,
+  reload,
 } from '../common/utils';
 import GameRosterComponent from './GameRosterComponent';
 
@@ -410,6 +412,20 @@ export default class GameRostersUpdateComponent extends React.Component {
       disableUpdateButton,
     } = this.state;
 
+    let backButton = null;
+    const { referrer } = document;
+    if (referrer) {
+      backButton = (
+        <button
+          className="btn btn-back"
+          type="button"
+          onClick={() => navigate(referrer)}
+        >
+          Back
+        </button>
+      );
+    }
+
     return (
       <div className="game-rosters-update-component">
 
@@ -446,7 +462,18 @@ export default class GameRostersUpdateComponent extends React.Component {
           {(canUpdateHomeTeamRoster || canUpdateAwayTeamRoster) &&
           <div className="row">
             <div className="col-md-12">
-              <div className="text-center">
+              <div className="btn-toolbar text-center">
+                {backButton}
+                <button
+                  className="btn btn-default"
+                  type="button"
+                  id="cancel-update-game-roster-btn"
+                  /* onClick handler doesn't get called when the button is disabled */
+                  onClick={() => reload()}
+                  disabled={disableUpdateButton}
+                >
+                  Cancel
+                </button>
                 <button
                   className="btn btn-success"
                   type="submit"
@@ -454,16 +481,6 @@ export default class GameRostersUpdateComponent extends React.Component {
                   disabled={disableUpdateButton}
                 >
                   Update
-                </button>
-                <button
-                  className="btn btn-link"
-                  type="button"
-                  id="cancel-update-game-roster-btn"
-                  /* onClick handler doesn't get called when the button is disabled */
-                  onClick={() => window.location.reload()}
-                  disabled={disableUpdateButton}
-                >
-                  Cancel
                 </button>
               </div>
             </div>

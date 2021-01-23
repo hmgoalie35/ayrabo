@@ -1,5 +1,6 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
+from django.core.exceptions import PermissionDenied
 from django.shortcuts import get_object_or_404, redirect, render, reverse
 from django.views import generic
 
@@ -17,6 +18,7 @@ from .mappings import (
     get_game_scoresheet_form_cls,
     get_game_update_form_cls,
 )
+from .utils import get_start_game_not_allowed_msg
 
 
 class GameCreateView(LoginRequiredMixin,
@@ -171,7 +173,7 @@ class GameUpdateView(LoginRequiredMixin,
         return super().post(request, *args, **kwargs)
 
 
-class GameScoresheetView(LoginRequiredMixin, HandleSportNotConfiguredMixin, generic.UpdateView):
+class GameScoresheetView(LoginRequiredMixin, HandleSportNotConfiguredMixin, SuccessMessageMixin, generic.UpdateView):
     template_name = 'games/game_scoresheet.html'
     context_object_name = 'game'
     pk_url_kwarg = 'game_pk'
@@ -185,6 +187,12 @@ class GameScoresheetView(LoginRequiredMixin, HandleSportNotConfiguredMixin, gene
             return self.sport
         self.sport = get_object_or_404(Sport, slug=self.kwargs.get('slug'))
         return self.sport
+
+    def _is_save_action(self):
+        return 'save' in self.request.POST
+
+    def _is_save_and_start_game_action(self):
+        return 'save_and_start_game' in self.request.POST
 
     def get_success_url(self):
         return reverse('sports:games:scoresheet', kwargs={'slug': self.sport.slug, 'game_pk': self.object.pk})
@@ -202,22 +210,62 @@ class GameScoresheetView(LoginRequiredMixin, HandleSportNotConfiguredMixin, gene
             pk=self.kwargs.get(self.pk_url_kwarg, None)
         )
 
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs.update({
+            'is_save_and_start_game_action': self._is_save_and_start_game_action(),
+        })
+        return kwargs
+
     def get_form_class(self):
         return get_game_scoresheet_form_cls(self.sport)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        game = self.object
         context.update({
-            'can_user_take_score': self.game_authorizer.can_user_take_score(),
+            'can_user_take_score': self.game_authorizer.can_user_take_score(game, self.sport),
+            'can_start_game': game.can_start_game(),
+            'start_game_not_allowed_msg': get_start_game_not_allowed_msg(),
+            'sport': self.sport,
         })
         return context
 
+    def get_success_message(self, cleaned_data):
+        # This message will only get displayed when the overridden `form_valid` calls `super`
+        if self._is_save_action():
+            return 'Your updates have been saved.'
+        if self._is_save_and_start_game_action():
+            return 'You have successfully started this game.'
+        return None
+
+    def form_valid(self, form):
+        if (self._is_save_action() and form.has_changed()) or self._is_save_and_start_game_action():
+            # Calling super means the `SuccessMessageMixin` will get called
+            response = super().form_valid(form)
+            # We want this to happen after super is called so we know the form has been saved
+            self.object.init_periods()
+            # Form validation checks if we can actually start the game so no need to include a check here
+            if self._is_save_and_start_game_action():
+                self.object.init_game()
+        else:
+            response = redirect(self.get_success_url())
+        return response
+
     def get(self, *args, **kwargs):
         self._get_sport()
+        # We don't perform the same check as in the post func because anybody can view this page since it's the
+        # scoresheet page
         return super().get(*args, **kwargs)
 
     def post(self, *args, **kwargs):
         self._get_sport()
+        self.object = self.get_object()
+        # User's are only shown the submission form if they can take score so this is definitely an edge case, but we
+        # still want to check. Could add this check to the form's .clean method but we really shouldn't even allow an
+        # unauthorized request to get that far, hence why we catch it here
+        if not self.game_authorizer.can_user_take_score(self.object, self.sport):
+            raise PermissionDenied()
         return super().post(*args, **kwargs)
 
 

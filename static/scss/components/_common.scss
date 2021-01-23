@@ -9,6 +9,7 @@ body {
 
 .nav-tab {
   color: $dusty-gray;
+
   &:hover {
     color: $dove-gray;
   }
@@ -17,15 +18,22 @@ body {
 .list-group-item {
   &__hoverable {
     cursor: pointer;
+
     &:hover {
       background-color: $concrete;
     }
   }
+
   &__flush-bottom {
     &:last-child {
       margin-bottom: -1px;
     }
   }
+}
+
+.list-group-item-slim {
+  padding-top: 5px;
+  padding-bottom: 5px;
 }
 
 .vertical-line-left {
@@ -41,8 +49,7 @@ body {
 .no-outline {
   outline: none;
 
-  &:focus
-  {
+  &:focus {
     outline: none;
   }
 }

@@ -80,13 +80,13 @@ export default class GameRosterComponent extends React.Component {
       element = (<div className="mt20 text-center"><Loading /></div>);
     } else if (selectedPlayers.length === 0) {
       element = (
-        <div className="list-group-item text-center">
+        <div className="list-group-item list-group-item-slim text-center">
           There are no players on this roster.
         </div>
       );
     } else if (!canUpdate) {
       element = (
-        <div className="list-group-item text-center">
+        <div className="list-group-item list-group-item-slim text-center">
           This game roster is currently unavailable.
         </div>
       );

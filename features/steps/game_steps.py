@@ -35,13 +35,16 @@ def step_impl(context):
             obj_id = None
 
         home_team = get_object(Team, name=data.get('home_team'))
+
         start = data.get('start', None)
         if start == 'today':
             start = timezone.now()
-        end = data.get('end', None)
-        if end == 'today':
-            end = start + datetime.timedelta(hours=3)
+        elif start == 'tomorrow':
+            start = timezone.now() + datetime.timedelta(days=1)
 
+        end = data.get('end', None)
+        if end == 'today' or end == 'tomorrow':
+            end = start + datetime.timedelta(hours=3)
         kwargs = {
             'id': obj_id,
             'home_team': home_team,

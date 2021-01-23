@@ -7,6 +7,7 @@ from django.db import models
 from django.utils import timezone as timezone_util
 
 from common.models import TimestampedModel
+from periods.model_fields import PeriodDurationField
 from periods.models import HockeyPeriod
 from userprofiles.models import UserProfile
 
@@ -29,28 +30,59 @@ class AbstractGame(TimestampedModel):
     )
 
     GRACE_PERIOD = datetime.timedelta(hours=24)
+    START_GAME_GRACE_PERIOD = datetime.timedelta(minutes=30)
 
-    home_team = models.ForeignKey('teams.Team', verbose_name='Home Team', on_delete=models.PROTECT,
-                                  related_name='home_%(class)ss')
-    away_team = models.ForeignKey('teams.Team', verbose_name='Away Team', on_delete=models.PROTECT,
-                                  related_name='away_%(class)ss')
-    type = models.ForeignKey('common.GenericChoice', verbose_name='Game Type', on_delete=models.PROTECT,
-                             related_name='+')
-    point_value = models.ForeignKey('common.GenericChoice', verbose_name='Point Value', on_delete=models.PROTECT,
-                                    related_name='+')
+    home_team = models.ForeignKey(
+        'teams.Team',
+        verbose_name='Home Team',
+        on_delete=models.PROTECT,
+        related_name='home_%(class)ss'
+    )
+    away_team = models.ForeignKey(
+        'teams.Team',
+        verbose_name='Away Team',
+        on_delete=models.PROTECT,
+        related_name='away_%(class)ss'
+    )
+    type = models.ForeignKey(
+        'common.GenericChoice',
+        verbose_name='Game Type',
+        on_delete=models.PROTECT,
+        related_name='+'
+    )
+    point_value = models.ForeignKey(
+        'common.GenericChoice',
+        verbose_name='Point Value',
+        on_delete=models.PROTECT,
+        related_name='+'
+    )
     status = models.CharField(verbose_name='Status', max_length=255, choices=GAME_STATUSES, default=SCHEDULED)
-    location = models.ForeignKey('locations.Location', verbose_name='Location', on_delete=models.PROTECT,
-                                 related_name='%(class)ss')
+    location = models.ForeignKey(
+        'locations.Location',
+        verbose_name='Location',
+        on_delete=models.PROTECT,
+        related_name='%(class)ss'
+    )
     start = models.DateTimeField(verbose_name='Game Start')
     end = models.DateTimeField(verbose_name='Game End')
     # In forms, the default value will be the user's timezone (set in their profile)
     timezone = models.CharField(max_length=128, choices=settings.COMMON_TIMEZONES, verbose_name='Timezone')
-    season = models.ForeignKey('seasons.Season', verbose_name='Season', on_delete=models.PROTECT,
-                               related_name='%(class)ss')
+    season = models.ForeignKey(
+        'seasons.Season',
+        verbose_name='Season',
+        on_delete=models.PROTECT,
+        related_name='%(class)ss'
+    )
     # Used to track which team this game was created for
     team = models.ForeignKey('teams.Team', null=True, verbose_name='Team', on_delete=models.PROTECT)
-    created_by = models.ForeignKey('users.User', null=True, verbose_name='Created By',
-                                   related_name='%(class)ss_created', on_delete=models.PROTECT)
+    created_by = models.ForeignKey(
+        'users.User',
+        null=True,
+        verbose_name='Created By',
+        related_name='%(class)ss_created',
+        on_delete=models.PROTECT
+    )
+    period_duration = PeriodDurationField()
 
     def datetime_localized(self, dt):
         return dt.astimezone(pytz.timezone(self.timezone))
@@ -71,8 +103,20 @@ class AbstractGame(TimestampedModel):
         return self.status == self.IN_PROGRESS
 
     @property
+    def is_completed(self):
+        return self.status == self.COMPLETED
+
+    @property
     def is_scheduled(self):
         return self.status == self.SCHEDULED
+
+    @property
+    def is_postponed(self):
+        return self.status == self.POSTPONED
+
+    @property
+    def is_cancelled(self):
+        return self.status == self.CANCELLED
 
     def _get_game_players(self, team_or_team_pk):
         # Note: the implementation of this function should support both team instances and team pks. Django's `.filter`
@@ -109,15 +153,19 @@ class AbstractGame(TimestampedModel):
         # TODO Can probably update this to start - grace period <= timezone.now() <= start
         return self.status in [self.SCHEDULED] and timezone_util.now() >= self.start - self.GRACE_PERIOD
 
-    def init_periods(self, duration):
-        """
-        Creates the 1st, 2nd, 3rd and OT1 periods for this game.
+    def can_start_game(self):
+        return timezone_util.now() >= self.start - self.START_GAME_GRACE_PERIOD
 
-        :param duration: Duration of this period, must be a timedelta instance.
+    def init_periods(self):
         """
-        period_choices = HockeyPeriod.PERIOD_CHOICES[:4]
-        for period_choice in period_choices:
-            HockeyPeriod.objects.get_or_create(game=self, name=period_choice[0], duration=duration)
+        Initialize the periods (or the equivalent term for the relevant sport) for this game. This *MUST* support both
+        creates and updates since this function may get called multiple times.
+        """
+        raise NotImplementedError()
+
+    def init_game(self):
+        self.status = self.IN_PROGRESS
+        self.save()
 
     def clean_datetime(self, dt):
         """
@@ -165,7 +213,25 @@ class HockeyGame(AbstractGame):
     )
 
     def _get_game_players(self, team_or_team_pk):
-        return HockeyGamePlayer.objects.filter(game=self, team=team_or_team_pk)
+        return HockeyGamePlayer.objects.filter(
+            game=self,
+            team=team_or_team_pk
+        ).select_related('player__user').order_by('-is_starting', 'player__jersey_number')
+
+    def init_periods(self):
+        """
+        Creates/updates the 1st, 2nd and 3rd periods.
+        """
+        period_choices = HockeyPeriod.PERIOD_CHOICES[:3]
+        periods = []
+        for period_choice in period_choices:
+            obj, _ = HockeyPeriod.objects.update_or_create(
+                defaults={'duration': self.period_duration},
+                game=self,
+                name=period_choice[0]
+            )
+            periods.append(obj)
+        return periods
 
 
 class BaseballGame(AbstractGame):
@@ -181,7 +247,13 @@ class BaseballGame(AbstractGame):
     )
 
     def _get_game_players(self, team_or_team_pk):
-        return BaseballGamePlayer.objects.filter(game=self, team=team_or_team_pk)
+        return BaseballGamePlayer.objects.filter(
+            game=self,
+            team=team_or_team_pk
+        ).select_related('player__user').order_by('-is_starting', 'player__jersey_number')
+
+    def init_periods(self):
+        return []
 
 
 class AbstractGamePlayer(TimestampedModel):

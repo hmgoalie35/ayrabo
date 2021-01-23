@@ -17,12 +17,12 @@
               </div>
               <ul class="list-group">
                 {% for team in division.teams.all %}
-                  <li class="list-group-item">
+                  <li class="list-group-item list-group-item-slim">
                     {% include 'includes/team_logo.html' with team=team %}
                     <a href="{% url 'teams:schedule' team_pk=team.pk %}">{{ team.name }}</a>
                   </li>
                 {% empty %}
-                  <li class="list-group-item text-center">
+                  <li class="list-group-item list-group-item-slim text-center">
                     There are no teams tied to {{ division.name }} at this time.
                   </li>
                 {% endfor %}

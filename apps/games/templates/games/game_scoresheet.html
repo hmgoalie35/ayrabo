@@ -1,4 +1,5 @@
 {% extends 'site_base.html' %}
+{% load crispy_forms_tags %}
 
 {% block title %}{{ game.home_team.name }} vs. {{ game.away_team.name }} - {{ game.start_formatted }}{% endblock %}
 
@@ -30,7 +31,58 @@
     </div>
 
     {% if can_user_take_score %}
-      <div class="row">TODO</div>
+      <div class="row">
+        <div class="text-center">
+          <h2>Initialize Game</h2>
+          <div class="col-md-offset-3 col-md-6">
+            <form action="" method="post">
+              {% csrf_token %}
+              {% crispy form %}
+              <a class="btn btn-back js-btn-back">Back</a>
+              <button class="btn btn-success" type="submit" name="save" id="save-btn">Save</button>
+              <button
+                class="btn btn-primary {% if not can_start_game %}disabled{% endif %}"
+                type="button"
+                id="save-and-start-game-btn"
+                {% if can_start_game %}
+                data-toggle="modal"
+                data-target="#save-and-start-game-modal"
+                {% else %}
+                {# the disabled attribute prevents tooltips from working on chrome & edge so we don't use it here #}
+                data-toggle="tooltip"
+                data-placement="top"
+                title="{{ start_game_not_allowed_msg }}"
+                {% endif %}
+              >
+                Save & Start Game
+              </button>
+              <div class="modal fade text-left" tabindex="-1" role="dialog" id="save-and-start-game-modal">
+                <br><br><br><br><br>
+                <div class="modal-dialog" role="document">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                      </button>
+                      <h4 class="modal-title">Are You Sure?</h4>
+                    </div>
+                    <div class="modal-body">
+                      You won't be able to edit certain fields after starting the game. Please ensure everything is
+                      correct before continuing.
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-link" data-dismiss="modal">Cancel</button>
+                      <button type="submit" class="btn btn-primary" name="save_and_start_game" id="modal-btn-continue">
+                        Continue
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
     {% else %}
       <div class="row">
         <div class="text-center">

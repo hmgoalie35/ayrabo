@@ -7,7 +7,8 @@ from ayrabo.utils.testing import BaseTestCase
 from common.models import GenericChoice
 from common.tests import GenericChoiceFactory
 from divisions.tests import DivisionFactory
-from games.forms import HockeyGameCreateForm, HockeyGameUpdateForm
+from games.forms import HockeyGameCreateForm, HockeyGameScoresheetForm, HockeyGameUpdateForm
+from games.models import AbstractGame
 from games.tests import HockeyGameFactory, HockeyGamePlayerFactory
 from leagues.tests import LeagueFactory
 from players.tests import HockeyPlayerFactory
@@ -17,7 +18,7 @@ from teams.tests import TeamFactory
 
 
 # Tests for the .clean method can be found in test_views
-class AbstractGameCreateUpdateForm(BaseTestCase):
+class AbstractGameCreateUpdateFormTests(BaseTestCase):
     """
     Testing the abstract class via `HockeyGameCreateForm`.
     """
@@ -115,6 +116,77 @@ class AbstractGameCreateUpdateForm(BaseTestCase):
             }
         )
         form.is_valid()
-        print(form.errors)
         form.save()
         self.assertEqual(instance._get_game_players(self.t2).count(), 0)
+
+
+class AbstractGameScoresheetFormTests(BaseTestCase):
+    """Testing this abstract class via `HockeyGameScoresheetForm`"""
+
+    def setUp(self):
+        self.sport = SportFactory()
+        self.point_value = GenericChoiceFactory(
+            content_object=self.sport,
+            short_value='1',
+            long_value='1',
+            type=GenericChoice.GAME_POINT_VALUE
+        )
+        self.game_type = GenericChoiceFactory(
+            content_object=self.sport,
+            short_value='exhibition',
+            long_value='Exhibition',
+            type=GenericChoice.GAME_TYPE
+        )
+        self.tz_name = 'US/Eastern'
+        self.home_team = TeamFactory(name='New York Islanders')
+        self.away_team = TeamFactory(name='New York Rangers', division=self.home_team.division)
+        self.game = HockeyGameFactory(
+            status=AbstractGame.SCHEDULED,
+            type=self.game_type,
+            point_value=self.point_value,
+            start=pytz.utc.localize(datetime.datetime(year=2017, month=12, day=16, hour=19)),
+            timezone=self.tz_name,
+            home_team=self.home_team,
+            away_team=self.away_team,
+            period_duration=20,
+        )
+        HockeyGamePlayerFactory(
+            team=self.home_team,
+            game=self.game,
+            player__position='G',
+            is_starting=True,
+        )
+        HockeyGamePlayerFactory(
+            team=self.away_team,
+            game=self.game,
+            player__position='G',
+            is_starting=True,
+        )
+        self.form_cls = HockeyGameScoresheetForm
+
+    def test_clean(self):
+        form = self.form_cls(
+            instance=self.game,
+            data={'period_duration': 15},
+            is_save_and_start_game_action=False,
+        )
+        form.is_valid()
+
+        self.assertEqual(form.non_field_errors(), [])
+
+        now = timezone.now()
+        start = now + datetime.timedelta(hours=1)
+        self.game.start = start
+        self.game.end = start + datetime.timedelta(hours=2)
+        self.game.save()
+        form = self.form_cls(
+            instance=self.game,
+            data={'period_duration': 15},
+            is_save_and_start_game_action=True,
+        )
+        form.is_valid()
+
+        self.assertEqual(
+            form.non_field_errors(),
+            ['Games can only be started 30 minutes before the scheduled start time.']
+        )

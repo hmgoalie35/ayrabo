@@ -1,13 +1,14 @@
 from django.db import models
 
 from common.models import TimestampedModel
+from .model_fields import PeriodDurationField
 
 
 class AbstractPlayingPeriod(TimestampedModel):
     """
     Abstract base class for periods, quarters, halves, etc.
     """
-    duration = models.DurationField(verbose_name='Duration')
+    duration = PeriodDurationField()
     complete = models.BooleanField(verbose_name='Complete', default=False)
 
     class Meta:

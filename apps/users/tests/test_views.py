@@ -203,8 +203,8 @@ class UserAdminBulkUploadViewTests(BaseTestCase):
 
             welcome_email = mail.outbox[0]
             confirmation_email = mail.outbox[1]
-            self.assertEquals('Welcome to ayrabo!', welcome_email.subject)
-            self.assertEquals('[ayrabo] Please Confirm Your E-mail Address', confirmation_email.subject)
+            self.assertEqual('Welcome to ayrabo!', welcome_email.subject)
+            self.assertEqual('[ayrabo] Please Confirm Your E-mail Address', confirmation_email.subject)
 
     def test_post_invalid_csv(self):
         header = ['email', 'first_name', 'last_name']

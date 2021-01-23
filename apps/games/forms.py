@@ -1,6 +1,6 @@
 from crispy_forms.bootstrap import PrependedText
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Div, Layout
+from crispy_forms.layout import Column, Div, HTML, Layout, Row
 from django import forms
 from django.core.exceptions import ValidationError
 from django.forms import widgets
@@ -9,6 +9,7 @@ from django.utils import timezone
 from ayrabo.utils.form_fields import SeasonModelChoiceField, TeamModelChoiceField
 from ayrabo.utils.mixins import DisableFormFieldsMixin
 from common.models import GenericChoice
+from games.form_fields import GamePlayerField
 from games.models import HockeyGame
 from seasons.models import Season
 from teams.models import Team
@@ -195,8 +196,63 @@ class HockeyGameUpdateForm(DisableFormFieldsMixin, AbstractGameCreateUpdateForm)
 
 
 class AbstractGameScoresheetForm(forms.ModelForm):
+    home_team_game_roster = GamePlayerField(queryset=None)
+    away_team_game_roster = GamePlayerField(queryset=None)
+
+    def __init__(self, *args, **kwargs):
+        self.is_save_and_start_game_action = kwargs.pop('is_save_and_start_game_action')
+        super().__init__(*args, **kwargs)
+        game = self.instance
+        self.fields['home_team_game_roster'] = GamePlayerField(queryset=game.home_team_game_players)
+        self.fields['away_team_game_roster'] = GamePlayerField(queryset=game.away_team_game_players)
+        self.helper = FormHelper()
+        # csrf token manually included in template
+        self.helper.disable_csrf = True
+        self.helper.form_tag = False
+        self.helper.layout = Layout(
+            Row(
+                Div(
+                    HTML(
+                        """
+                        <a
+                          id="game-roster-edit-btn"
+                          href="{% url 'sports:games:rosters:update' slug=sport.slug game_pk=game.pk %}"
+                        >
+                          Edit
+                        </a>
+                        """
+                    ),
+                    css_class='pull-right'
+                )
+            ),
+            Row(
+                Column('home_team_game_roster', css_class='col-sm-6'),
+                Column('away_team_game_roster', css_class='col-sm-6'),
+            ),
+            HTML(
+                """
+                <p class="text-muted">
+                  <i class="fa fa-fw fa-lg fa-color-warning fa-lightbulb-o"></i>
+                  Game rosters should only include players that are attending the game
+                </p>
+                """
+            ),
+            Row(
+                Column('period_duration', css_class='col-sm-offset-4 col-sm-4')
+            ),
+        )
+
+    def clean(self):
+        cleaned_data = super().clean()
+        if self.is_save_and_start_game_action and not self.instance.can_start_game():
+            # Circular dependency
+            from .utils import get_start_game_not_allowed_msg
+            msg = get_start_game_not_allowed_msg()
+            raise ValidationError(msg)
+        return cleaned_data
+
     class Meta:
-        fields = ('status',)
+        fields = ('home_team_game_roster', 'away_team_game_roster', 'period_duration')
 
 
 class HockeyGameScoresheetForm(AbstractGameScoresheetForm):

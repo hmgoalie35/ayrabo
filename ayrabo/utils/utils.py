@@ -123,3 +123,10 @@ def chunk(iterable, n):
 
 def pluralize(text, count, suffix):
     return text if count == 1 else f'{text}{suffix}'
+
+
+def timedelta_to_hours_minutes_seconds(td):
+    total_seconds = td.total_seconds()
+    hours, remaining = divmod(total_seconds, 3600)
+    minutes, seconds = divmod(remaining, 60)
+    return hours, minutes, seconds

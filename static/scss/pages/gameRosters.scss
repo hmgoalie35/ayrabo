@@ -1,14 +1,11 @@
 .game-rosters-update-component {
-  .list-group-item {
-    padding-top: 5px;
-    padding-bottom: 5px;
-  }
-
-  .set-starter-label
-  {
-    &:hover
-    {
+  .set-starter-label {
+    &:hover {
       background-color: $gray-dark;
     }
+  }
+
+  .btn-toolbar .btn {
+    float: none;
   }
 }
