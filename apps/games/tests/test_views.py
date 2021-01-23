@@ -6,6 +6,7 @@ import pytz
 from django.conf import settings
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.urls import reverse
+from django.utils import timezone as timezone_util
 
 from ayrabo.utils.testing import BaseTestCase
 from common.models import GenericChoice
@@ -17,6 +18,8 @@ from games.tests import HockeyGameFactory, HockeyGamePlayerFactory
 from leagues.tests import LeagueFactory
 from locations.tests import LocationFactory
 from managers.tests import ManagerFactory
+from periods.models import HockeyPeriod
+from players.models import HockeyPlayer
 from players.tests import HockeyPlayerFactory
 from scorekeepers.tests import ScorekeeperFactory
 from seasons.tests import SeasonFactory
@@ -500,6 +503,12 @@ class HockeyGameUpdateViewTests(BaseTestCase):
 class HockeyGameScoresheetViewTests(BaseTestCase):
     url = 'sports:games:scoresheet'
 
+    def _set_starting_goalies(self):
+        self.home_team_game_player1.is_starting = True
+        self.home_team_game_player1.save()
+        self.away_team_game_player1.is_starting = True
+        self.away_team_game_player1.save()
+
     def setUp(self):
         self.email = 'user@ayrabo.com'
         self.password = 'myweakpassword'
@@ -507,8 +516,8 @@ class HockeyGameScoresheetViewTests(BaseTestCase):
         self.ice_hockey = SportFactory(name='Ice Hockey')
         self.liahl = LeagueFactory(name='Long Island Amateur Hockey League', sport=self.ice_hockey)
         self.mm_aa = DivisionFactory(name='Midget Minor AA', league=self.liahl)
-        self.t1 = TeamFactory(id=11, name='Green Machine IceCats', division=self.mm_aa)
-        self.t2 = TeamFactory(id=12, name='Aviator Gulls', division=self.mm_aa)
+        self.home_team = TeamFactory(id=11, name='Green Machine IceCats', division=self.mm_aa)
+        self.away_team = TeamFactory(id=12, name='Aviator Gulls', division=self.mm_aa)
 
         self.game_type = GenericChoiceFactory(
             short_value='exhibition',
@@ -524,30 +533,79 @@ class HockeyGameScoresheetViewTests(BaseTestCase):
         )
 
         timezone = 'US/Eastern'
-        us_eastern = pytz.timezone(timezone)
 
         self.user = UserFactory(email=self.email, password=self.password, userprofile__timezone=timezone)
+        self.manager = ManagerFactory(user=self.user, team=self.home_team)
 
-        self.season_start = datetime.date(month=12, day=27, year=2017)
-        self.season = SeasonFactory(league=self.liahl, start_date=self.season_start)
+        season = SeasonFactory(league=self.liahl)
 
-        self.start = datetime.datetime(month=12, day=27, year=2017, hour=19, minute=0)
-        self.end = self.start + datetime.timedelta(hours=3)
+        self.start = timezone_util.now() + datetime.timedelta(minutes=15)
+        self.end = self.start + datetime.timedelta(hours=2)
         location = LocationFactory()
         self.game = HockeyGameFactory(
             id=1,
-            home_team=self.t1,
-            team=self.t1,
-            away_team=self.t2,
+            home_team=self.home_team,
+            team=self.home_team,
+            away_team=self.away_team,
             type=self.game_type,
             point_value=self.point_value,
             location=location,
-            start=us_eastern.localize(self.start),
-            end=us_eastern.localize(self.end),
+            start=self.start,
+            end=self.end,
             timezone=timezone,
-            season=self.season,
+            season=season,
             status=HockeyGame.SCHEDULED
         )
+        self.home_team_player1 = HockeyPlayerFactory(
+            sport=self.ice_hockey,
+            team=self.home_team,
+            jersey_number='1',
+            position=HockeyPlayer.GOALTENDER
+        )
+        self.home_team_game_player1 = HockeyGamePlayerFactory(
+            team=self.home_team_player1.team,
+            is_starting=False,
+            game=self.game,
+            player=self.home_team_player1
+        )
+        self.home_team_player2 = HockeyPlayerFactory(
+            sport=self.ice_hockey,
+            team=self.home_team,
+            jersey_number='2',
+            position=HockeyPlayer.CENTER
+        )
+        self.home_team_game_player2 = HockeyGamePlayerFactory(
+            team=self.home_team_player2.team,
+            is_starting=False,
+            game=self.game,
+            player=self.home_team_player2
+        )
+
+        self.away_team_player1 = HockeyPlayerFactory(
+            sport=self.ice_hockey,
+            team=self.away_team,
+            jersey_number='1',
+            position=HockeyPlayer.GOALTENDER
+        )
+        self.away_team_game_player1 = HockeyGamePlayerFactory(
+            team=self.away_team_player1.team,
+            is_starting=False,
+            game=self.game,
+            player=self.away_team_player1
+        )
+        self.away_team_player2 = HockeyPlayerFactory(
+            sport=self.ice_hockey,
+            team=self.away_team,
+            jersey_number='2',
+            position=HockeyPlayer.CENTER
+        )
+        self.away_team_game_player2 = HockeyGamePlayerFactory(
+            team=self.away_team_player2.team,
+            is_starting=False,
+            game=self.game,
+            player=self.away_team_player2
+        )
+
         self.formatted_url = self.format_url(slug=self.ice_hockey.slug, game_pk=1)
         self.login(user=self.user)
 
@@ -561,12 +619,6 @@ class HockeyGameScoresheetViewTests(BaseTestCase):
 
         response = self.client.get(self.format_url(slug='baseball', game_pk=1))
         self.assert_404(response)
-
-    def test_get_success_url(self):
-        response = self.client.post(self.formatted_url, data={'status': 'scheduled'})
-
-        expected = reverse('sports:games:scoresheet', kwargs={'slug': self.ice_hockey.slug, 'game_pk': self.game.pk})
-        self.assertRedirects(response, expected)
 
     def test_get_object(self):
         # Sport misconfigured
@@ -588,13 +640,111 @@ class HockeyGameScoresheetViewTests(BaseTestCase):
         context = response.context
         self.assert_200(response)
         self.assertTemplateUsed(response, 'games/game_scoresheet.html')
+        self.assertTrue(context.get('can_user_take_score'))
+        self.assertTrue(context.get('can_start_game'))
+        self.assertEqual(
+            context.get('start_game_not_allowed_msg'),
+            'Games can only be started 30 minutes before the scheduled start time.'
+        )
         self.assertEqual(context.get('sport'), self.ice_hockey)
-        # TODO add more tests around this ctx var
-        self.assertFalse(context.get('can_user_take_score'))
 
-    def test_post(self):
-        # TODO test game rosters required, game rosters starting goalie, etc
-        pass
+    def test_post_save_action_invalid(self):
+        self.home_team_game_player1.delete()
+        self.home_team_game_player2.delete()
+
+        response = self.client.post(self.formatted_url, data={'save': '', 'period_duration': -1})
+
+        self.assertFormError(response, 'form', 'home_team_game_roster', 'This field is required.')
+        self.assertFormError(response, 'form', 'away_team_game_roster', 'Please select a starting goaltender.')
+        self.assertFormError(response, 'form', 'period_duration', ['Ensure this value is greater than or equal to 1.'])
+        self.assertEqual(HockeyPeriod.objects.count(), 0)
+
+        response = self.client.post(self.formatted_url, data={'save': ''})
+        self.assertFormError(response, 'form', 'period_duration', 'This field is required.')
+
+    def test_post_save_action_valid(self):
+        self._set_starting_goalies()
+
+        response = self.client.post(self.formatted_url, data={'save': '', 'period_duration': 15}, follow=True)
+
+        self.game.refresh_from_db()
+
+        self.assertEqual(self.game.period_duration, 15)
+        self.assertHasMessage(response, 'Your updates have been saved.')
+        periods = HockeyPeriod.objects.filter(game=self.game)
+        self.assertEqual(periods.count(), 3)
+        self.assertEqual(list(periods.values_list('duration', flat=True)), [15, 15, 15])
+        self.assertEqual(self.game.status, HockeyGame.SCHEDULED)
+        self.assertTrue(response.context.get('can_user_take_score'))
+        expected = reverse('sports:games:scoresheet', kwargs={'slug': self.ice_hockey.slug, 'game_pk': self.game.pk})
+        self.assertRedirects(response, expected)
+
+        # Updating again should update hockey period durations
+
+        self.client.post(self.formatted_url, data={'save': '', 'period_duration': 20}, follow=True)
+
+        self.game.refresh_from_db()
+
+        self.assertEqual(self.game.period_duration, 20)
+        periods = HockeyPeriod.objects.filter(game=self.game)
+        self.assertEqual(periods.count(), 3)
+        self.assertEqual(list(periods.values_list('duration', flat=True)), [20, 20, 20])
+
+    def test_post_save_and_start_game_action_invalid(self):
+        start = timezone_util.now() + datetime.timedelta(minutes=45)
+        self.game.start = start
+        self.game.end = start + datetime.timedelta(hours=2)
+        self.game.save()
+        response = self.client.post(self.formatted_url, data={'save_and_start_game': '', 'period_duration': 65})
+
+        self.game.refresh_from_db()
+
+        self.assertFormError(
+            response,
+            'form',
+            None,
+            'Games can only be started 30 minutes before the scheduled start time.'
+        )
+        self.assertFormError(response, 'form', 'period_duration', ['Ensure this value is less than or equal to 60.'])
+        self.assertEqual(self.game.status, HockeyGame.SCHEDULED)
+        self.assertEqual(HockeyPeriod.objects.filter(game=self.game).count(), 0)
+
+        self.home_team_game_player1.delete()
+        self.home_team_game_player2.delete()
+
+        response = self.client.post(self.formatted_url, data={'save_and_start_game': '', 'period_duration': ''})
+
+        self.assertFormError(response, 'form', 'home_team_game_roster', 'This field is required.')
+        self.assertFormError(response, 'form', 'away_team_game_roster', 'Please select a starting goaltender.')
+        self.assertFormError(response, 'form', 'period_duration', 'This field is required.')
+
+    def test_post_save_and_start_game_action_valid(self):
+        self._set_starting_goalies()
+
+        response = self.client.post(
+            self.formatted_url,
+            data={'save_and_start_game': '', 'period_duration': 20},
+            follow=True
+        )
+
+        self.game.refresh_from_db()
+
+        self.assertEqual(self.game.period_duration, 20)
+        self.assertHasMessage(response, 'You have successfully started this game.')
+        periods = HockeyPeriod.objects.filter(game=self.game)
+        self.assertEqual(periods.count(), 3)
+        self.assertEqual(list(periods.values_list('duration', flat=True)), [20, 20, 20])
+        self.assertEqual(self.game.status, HockeyGame.IN_PROGRESS)
+        self.assertFalse(response.context.get('can_user_take_score'))
+
+        expected = reverse('sports:games:scoresheet', kwargs={'slug': self.ice_hockey.slug, 'game_pk': self.game.pk})
+        self.assertRedirects(response, expected)
+
+    def test_post_no_permission(self):
+        self.manager.delete()
+        response = self.client.post(self.formatted_url, data={'save_and_start_game': '', 'period_duration': 20})
+        self.assertEqual(response.status_code, 403)
+        self.assertTemplateUsed('403.html')
 
 
 class GameRostersUpdateViewTests(BaseTestCase):

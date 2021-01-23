@@ -1,5 +1,6 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
+from django.core.exceptions import PermissionDenied
 from django.shortcuts import get_object_or_404, redirect, render, reverse
 from django.views import generic
 
@@ -257,6 +258,12 @@ class GameScoresheetView(LoginRequiredMixin, HandleSportNotConfiguredMixin, Succ
 
     def post(self, *args, **kwargs):
         self._get_sport()
+        self.object = self.get_object()
+        # User's are only shown the submission form if they can take score so this is definitely an edge case, but we
+        # still want to check. Could add this check to the form's .clean method but we really shouldn't even allow an
+        # unauthorized request to get that far, hence why we catch it here
+        if not self.game_authorizer.can_user_take_score(self.object, self.sport):
+            raise PermissionDenied()
         return super().post(*args, **kwargs)
 
 

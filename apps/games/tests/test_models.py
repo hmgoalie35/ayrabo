@@ -117,9 +117,16 @@ class AbstractGameModelTests(BaseTestCase):
 
         start = us_eastern.localize(datetime.datetime(month=12, day=26, year=2017, hour=19, minute=0))
         end = start + datetime.timedelta(hours=3)
-        game = HockeyGameFactory(type=self.game_type, point_value=self.point_value, start=start, end=end,
-                                 timezone=tz_pacific,
-                                 home_team=self.home_team, away_team=self.away_team)
+        game = HockeyGameFactory(
+            type=self.game_type,
+            point_value=self.point_value,
+            start=start,
+            end=end,
+            timezone=tz_pacific,
+            home_team=self.home_team,
+            away_team=self.away_team,
+            period_duration=15,
+        )
         game.full_clean()
         game.save()
         game.refresh_from_db()
