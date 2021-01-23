@@ -254,6 +254,8 @@ class GameScoresheetView(LoginRequiredMixin, HandleSportNotConfiguredMixin, Succ
 
     def get(self, *args, **kwargs):
         self._get_sport()
+        # We don't perform the same check as in the post func because anybody can view this page since it's the
+        # scoresheet page
         return super().get(*args, **kwargs)
 
     def post(self, *args, **kwargs):
