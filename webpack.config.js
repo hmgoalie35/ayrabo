@@ -45,7 +45,7 @@ module.exports = function (env, argv) {
     },
     optimization: {
       runtimeChunk: 'single',
-      moduleIds: isProduction ? 'hashed' : 'named',
+      moduleIds: isProduction ? 'deterministic' : 'named',
     },
     module: {
       rules: [

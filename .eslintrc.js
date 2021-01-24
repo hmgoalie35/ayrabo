@@ -28,6 +28,7 @@ module.exports = {
     'react/jsx-props-no-spreading': 'off',
     'react/jsx-fragments': ['error', 'element'],
     'react/jsx-curly-newline': 'off',
+    'react/sort-comp': 'off',
     // Import
     'import/no-extraneous-dependencies': 'off',
   },
